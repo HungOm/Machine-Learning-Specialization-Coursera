@@ -1232,3 +1232,22 @@ body.rd-on .rd-zone { display: block; }
 .pretest .pt-b p { font-size: 14px; margin: 0 0 7px; }
 .pretest .pt-b p:last-child { margin: 0; }
 @media print { .pretest details.pt[open] .pt-b { display: block; } }
+
+/* ---- faded steps: you finish the solution rather than read it ---- */
+ol.work li.wfade { background: var(--amber-soft); border-radius: var(--radius-sm);
+  margin: 3px -7px; padding: 6px 7px; }
+ol.work li.wfade .ws { color: var(--ink); }
+ol.work details.wf > summary { cursor: pointer; list-style: none;
+  font: 700 11.5px/1.5 var(--sans); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--amber); display: inline-flex; align-items: center; gap: 6px; }
+ol.work details.wf > summary::-webkit-details-marker { display: none; }
+ol.work details.wf > summary::before { content: "▸"; font-size: 10px;
+  transition: transform .15s; }
+ol.work details.wf[open] > summary::before { transform: rotate(90deg); }
+ol.work details.wf > summary:hover { text-decoration: underline; }
+ol.work details.wf:focus-within > summary { outline: 2px solid var(--amber);
+  outline-offset: 3px; border-radius: 4px; }
+ol.work details.wf[open] > summary { margin-bottom: 3px; }
+@media print { ol.work details.wf > summary { display: none; }
+  ol.work details.wf .wa { display: block !important; }
+  ol.work li.wfade { background: none; } }

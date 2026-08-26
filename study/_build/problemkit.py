@@ -13,7 +13,7 @@ import html as _h
 
 
 def P(pid, ask, steps, answer, lesson, level=2, why=None, hint=None, tag="",
-      gist=None, check=None):
+      gist=None, check=None, fade=None):
     """One problem.
 
     pid    : permanent id, e.g. "f0w1-p07"
@@ -30,9 +30,33 @@ def P(pid, ask, steps, answer, lesson, level=2, why=None, hint=None, tag="",
     check  : optional — a SECOND way to land on the same answer: a sanity check
              computed differently, or what the number actually means. The steps
              show you can get the answer; this shows you can trust it.
+    fade   : optional — how many trailing steps to hide behind "your turn".
+             None means decide from the length (see fade_count). 0 disables it
+             for a problem whose last step is not something you could work out.
     """
     return dict(pid=pid, ask=ask, steps=steps, answer=answer, lesson=lesson,
-                level=level, why=why, hint=hint, tag=tag, gist=gist, check=check)
+                level=level, why=why, hint=hint, tag=tag, gist=gist, check=check,
+                fade=fade)
+
+
+def fade_count(n_steps, fade=None):
+    """How many trailing steps to blank — BACKWARD fading.
+
+    Reading a finished solution feels like understanding and mostly is not.
+    Completing one is the version that shows up in the results (Sweller &
+    Cooper 1985's completion effect; Renkl & Atkinson 2003 on fading).
+
+    Backwards, because the last step is the one you are most ready to do: every
+    step before it is still there as support. Longer solutions carry more
+    support, so they can afford to give back two.
+    """
+    if fade is not None:
+        return max(0, min(int(fade), n_steps - 1))
+    if n_steps >= 5:
+        return 2
+    if n_steps >= 3:
+        return 1
+    return 0
 
 
 LEVEL_NAME = {1: "warm-up", 2: "core", 3: "stretch"}
@@ -55,8 +79,18 @@ def render(p, n, up="../"):
                      '<div>%s</div></details>' % p["hint"])
     gist = ('<div class="pgist"><span class="tag">In plain words</span>%s</div>'
            % p["gist"]) if p.get("gist") else ""
-    work = "".join('<li><span class="ws">%s</span><span class="wa">%s</span></li>'
-                   % (w, a) for w, a in p["steps"])
+    steps = p["steps"]
+    nf = fade_count(len(steps), p.get("fade"))
+    first_faded = len(steps) - nf
+    rows = []
+    for i, (w, a) in enumerate(steps):
+        if i >= first_faded:
+            rows.append('<li class="wfade"><span class="ws">%s</span>'
+                        '<details class="wf"><summary>your turn</summary>'
+                        '<span class="wa">%s</span></details></li>' % (w, a))
+        else:
+            rows.append('<li><span class="ws">%s</span><span class="wa">%s</span></li>' % (w, a))
+    work = "".join(rows)
     check = ('<div class="pcheck"><span class="tag">A second way to see it</span>%s</div>'
              % p["check"]) if p.get("check") else ""
     why = ('<div class="pwhy"><span class="tag">What this is really testing</span>%s</div>'
