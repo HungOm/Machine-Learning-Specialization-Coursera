@@ -1340,3 +1340,47 @@ ol.chq li:last-child { margin-bottom: 0; }
   border-top: 1px solid var(--line); }
 .ixletter:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .bookidx .ix-home { font-weight: 700; }
+
+/* ============================================================
+   Mobile hardening. Three real problems found by audit:
+   1. A long unbreakable token in a table cell (e.g.
+      model.compile(loss=BinaryCrossentropy()), 40 chars) beats
+      width:100% and pushes the whole PAGE sideways.
+   2. symtab's fixed 92px + 150px columns leave ~130px for the
+      remaining three on a 375px screen.
+   3. touch-action:none on the concept map swallowed vertical
+      swipes, so the page could not be scrolled past it.
+   ============================================================ */
+
+/* 1 — no cell may widen the page; long tokens break instead */
+table td, table th { overflow-wrap: anywhere; word-break: break-word; }
+table td code, table th code { overflow-wrap: anywhere; }
+
+/* a table that still cannot fit scrolls inside itself, never the body */
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* NOT overflow-x:hidden on html/body — that silently breaks position:sticky,
+   which the topbar, the sidebar and the symbols table header all rely on.
+   The cell-level break above stops the overflow at its source instead. */
+
+@media (max-width: 620px) {
+  /* 2 — give the narrow columns back on small screens */
+  table.symtab td.sy { width: auto; min-width: 54px; }
+  table.symtab td.sa { width: auto; }
+  table.symtab td, table.symtab th { padding: 7px 6px; font-size: 13px; }
+  table.decode, table.data, table.mini, table.chgrid { font-size: 13px; }
+  table.decode td, table.data td, table.mini td { padding: 6px 5px; }
+
+  /* the map is a poor experience at phone width — keep it, shrink it */
+  #conceptmap { height: 46vh; }
+  .maplegend { gap: 9px; }
+
+  /* comfortable tap targets */
+  .rd-nav, .nav, .btn { min-height: 38px; }
+  .pretest details.pt > summary,
+  .explain details.ex > summary,
+  ol.work details.wf > summary { padding: 4px 0; min-height: 30px; }
+}
+
+/* 3 — vertical swipe must still scroll the page over a canvas.
+   pan-y keeps the page scrollable while horizontal drags still pan. */
+#conceptmap { touch-action: pan-y; }
