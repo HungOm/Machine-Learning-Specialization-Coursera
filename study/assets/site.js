@@ -41,6 +41,33 @@
     document.querySelectorAll('[data-slug-link]').forEach(function (a) {
       if (done[a.dataset.slugLink]) a.classList.add('seen');
     });
+
+    /* Remember the last lesson opened, so the cover can offer "continue".
+       Guard on .runhead, not on data-slug: the index, problem, scratch and lab
+       pages all carry sentinel slugs like "__index__", and keying off the slug
+       alone recorded the index itself as the last lesson read — storing the
+       cover's own title as the thing to continue from. */
+    var runhead = document.querySelector('main .runhead');
+    if (slug && slug.indexOf('__') !== 0 && runhead) {
+      try {
+        var h1 = document.querySelector('main h1');
+        var t = '';
+        if (h1) [].forEach.call(h1.childNodes, function (n) {
+          /* skip the § number, keep the title */
+          if (n.nodeType === 1 && n.classList && n.classList.contains('secno')) return;
+          t += n.textContent || '';
+        });
+        var run = runhead.querySelector('.ch');
+        var right = runhead.querySelector('.right');
+        localStorage.setItem('mls-last-v1', JSON.stringify({
+          href: location.pathname.split('/').slice(-2).join('/'),
+          title: t.trim() || slug,
+          slug: slug,
+          sec: right ? right.textContent.trim() : '',
+          chapter: run ? run.textContent.trim() : ''
+        }));
+      } catch (e) { }
+    }
     var btn = document.getElementById('done-btn');
     function syncBtn() {
       if (!btn) return;

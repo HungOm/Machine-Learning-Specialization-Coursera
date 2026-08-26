@@ -17,6 +17,12 @@ HERO = """
       <div><b>4</b>parts</div><div><b>12</b>chapters</div>
       <div><b>{total}</b>lessons</div><div><b>156</b>problems</div>
     </div>
+    <nav class="cover-nav" aria-label="Start reading">
+      <a class="cv-btn primary" data-cover-resume href="f0/w1-01-what-is-a-function.html">
+        <b>Start reading</b><i>&sect;&nbsp;1.1 &middot; What a function is</i></a>
+      <a class="cv-btn" data-cover-contents href="#lessons"><b>Contents</b><i>12 chapters</i></a>
+      <a class="cv-btn" href="review.html"><b>Review</b><i>due today</i></a>
+    </nav>
     <p class="cover-by">Hung Om</p>
   </div>
   <button class="cover-next" data-cover-next type="button">

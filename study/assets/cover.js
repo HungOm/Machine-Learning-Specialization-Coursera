@@ -111,6 +111,28 @@
       size();
     });
 
+    /* ---- resume: "Start reading" becomes "Continue" once you have begun ---- */
+    var resume = shell && shell.querySelector('[data-cover-resume]');
+    if (resume) {
+      try {
+        var last = JSON.parse(localStorage.getItem('mls-last-v1') || 'null');
+        if (last && last.href && last.title) {
+          resume.href = last.href;
+          resume.querySelector('b').textContent = 'Continue';
+          resume.querySelector('i').textContent =
+            (last.sec ? last.sec.replace(/\s*·.*$/, '') + ' · ' : '') + last.title;
+        }
+      } catch (e) { }
+    }
+
+    /* In full screen the topbar and sidebar are gone — every in-page anchor on
+       the cover has to leave full screen first, or the click appears to do
+       nothing at all. */
+    if (shell) shell.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#"]');
+      if (a && fsOn()) toggleFs();
+    });
+
     var nextBtn = shell && shell.querySelector('[data-cover-next]');
     if (nextBtn) nextBtn.addEventListener('click', function () {
       if (fsOn()) { toggleFs(); return; }
