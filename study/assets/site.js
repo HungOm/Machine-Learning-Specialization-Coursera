@@ -89,5 +89,33 @@
       var sb = document.querySelector('.sidebar');
       if (sb && here.offsetTop > sb.clientHeight - 80) sb.scrollTop = here.offsetTop - sb.clientHeight / 2;
     }
+
+    /* Notebook links, when this is served from GitHub Pages.
+       The lab links are relative (../../C1 - .../foo.ipynb) so they work
+       offline from file:// — which is the primary way this site is used.
+       But Pages serves a .ipynb as a raw file, so the browser downloads it
+       instead of showing it. On github.io only, point those links at the
+       repo's blob view instead, which renders notebooks properly. */
+    var host = location.hostname || '';
+    var m = host.match(/^([^.]+)\.github\.io$/);
+    if (m && location.pathname.indexOf('/study/') !== -1) {
+      var user = m[1];
+      var repo = location.pathname.split('/')[1];
+      if (repo) {
+        var base = 'https://github.com/' + user + '/' + repo + '/blob/main/';
+        var links = document.querySelectorAll('a[href$=".ipynb"]');
+        Array.prototype.forEach.call(links, function (a) {
+          var raw = a.getAttribute('href');
+          if (!raw || /^https?:/i.test(raw)) return;
+          /* resolve the relative href, then re-root it onto the blob view */
+          var abs = new URL(raw, location.href).pathname;
+          var prefix = '/' + repo + '/';
+          if (abs.indexOf(prefix) === 0) abs = abs.slice(prefix.length);
+          a.setAttribute('href', base + abs);
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener');
+        });
+      }
+    }
   });
 })();
