@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Build it from scratch</title>
+<title>Concept map</title>
 <link rel="stylesheet" href="assets/base.css">
 <link rel="stylesheet" href="assets/print.css" media="print">
 <script src="assets/site.js"></script>
@@ -12,11 +12,11 @@
 <script src="assets/gloss-data.js"></script>
 <script src="assets/gloss.js"></script>
 </head>
-<body data-slug="__scratch__">
+<body data-slug="__map__">
 <header class="topbar">
   <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
   <a class="brand" href="index.html">ML<span>&#183;</span>notes</a>
-  <span class="crumb">From scratch &#183; <b>10 algorithms in pure NumPy</b></span>
+  <span class="crumb">Concept map &#183; <b>what leans on what</b></span>
   <span class="spacer"></span>
   <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
   <button class="btn" id="theme-btn" title="theme">&#9689;</button>
@@ -220,20 +220,44 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">10 runnable files &#183; 1317 lines &#183; 90 annotated steps</p>
-<h1>Build it from scratch</h1>
-<p class="lede">Every algorithm in the specialization, implemented in pure NumPy with no
-scikit-learn and no TensorFlow, then checked against something independent &#8212; a numerical
-gradient, a closed-form solution, or the library's own answer. You do not really know
-backpropagation until you have written the four lines that do it and watched the numbers match.</p>
-<div class="callout key"><span class="tag">These files really run</span>
-<p>They live in <code>study/scratch/code/</code> and you can run any of them right now with
-<code>python3 &lt;file&gt;</code>. The code on each page is <b>read out of the file at build time</b>
-and the output shown beneath each block is <b>what that block actually printed</b>. If a file
-broke, the page would show the error instead.</p></div>
-<h2><span class="ico">&#128295;</span>The lane, in order</h2><ol class="problist"><li><a data-slug-link="scratch-01-linear-regression" href="scratch/01-linear-regression.html"><span class="n">01</span><span class="pt"><b>Linear regression</b><span class="pgs">Cost, gradient and gradient descent in about sixty lines, then checked twice — once against a numerical gradient,…</span></span><span class="tag2">01_linear_regression.py</span></a></li><li><a data-slug-link="scratch-02-logistic-regression" href="scratch/02-logistic-regression.html"><span class="n">02</span><span class="pt"><b>Logistic regression and regularization</b><span class="pgs">The same skeleton as file 01 with three substitutions — a sigmoid, a log loss, and a λ term — plus a numerical trap…</span></span><span class="tag2">02_logistic_regression.py</span></a></li><li><a data-slug-link="scratch-03-forward-propagation" href="scratch/03-forward-propagation.html"><span class="n">03</span><span class="pt"><b>Forward propagation</b><span class="pgs">From one neuron to a whole network. The loop version and the matrix version, side by side, producing identical…</span></span><span class="tag2">03_neural_net_forward.py</span></a></li><li><a data-slug-link="scratch-04-backpropagation" href="scratch/04-backpropagation.html"><span class="n">04</span><span class="pt"><b>Backpropagation</b><span class="pgs">Every gradient derived by hand and checked numerically, then used to train a network on XOR — the smallest problem a…</span></span><span class="tag2">04_backprop.py</span></a></li><li><a data-slug-link="scratch-05-softmax" href="scratch/05-softmax.html"><span class="n">05</span><span class="pt"><b>Softmax and multi-class</b><span class="pgs">Including the numerical trap that &lt;code&gt;from_logits=True&lt;/code&gt; exists to avoid, demonstrated by breaking the naive…</span></span><span class="tag2">05_softmax.py</span></a></li><li><a data-slug-link="scratch-06-decision-tree" href="scratch/06-decision-tree.html"><span class="n">06</span><span class="pt"><b>A decision tree</b><span class="pgs">No gradients, no learning rate, no initialisation. Just counting, comparing, and recursion — on the exact ten-animal…</span></span><span class="tag2">06_decision_tree.py</span></a></li><li><a data-slug-link="scratch-07-kmeans" href="scratch/07-kmeans.html"><span class="n">07</span><span class="pt"><b>k-means</b><span class="pgs">Two functions of about ten lines each. The interesting part is what the cost function is for — it is not optimised…</span></span><span class="tag2">07_kmeans.py</span></a></li><li><a data-slug-link="scratch-08-pca" href="scratch/08-pca.html"><span class="n">08</span><span class="pt"><b>PCA</b><span class="pgs">Done twice — once through the covariance matrix and its eigenvectors, once through the SVD — and shown to agree,…</span></span><span class="tag2">08_pca.py</span></a></li><li><a data-slug-link="scratch-09-collaborative-filtering" href="scratch/09-collaborative-filtering.html"><span class="n">09</span><span class="pt"><b>Collaborative filtering</b><span class="pgs">Learning the user preferences &lt;i&gt;and&lt;/i&gt; the film features at the same time, from nothing but ratings. Includes the…</span></span><span class="tag2">09_collaborative_filtering.py</span></a></li><li><a data-slug-link="scratch-10-reinforcement-learning" href="scratch/10-reinforcement-learning.html"><span class="n">10</span><span class="pt"><b>Reinforcement learning</b><span class="pgs">Three algorithms on the six-state Mars rover: value iteration, which knows the rules, and Q-learning, which does not…</span></span><span class="tag2">10_reinforcement_learning.py</span></a></li></ol>
-<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
+<p class="runhead"><span class="part">Apparatus</span><span class="d">&#183;</span><span class="ch">Concept map</span><span class="right">172 lessons &#183; 412 links</span></p>
+<h1>What leans on what</h1>
+<p class="lede">Every lesson in the book, and every place one leans on another. The links are
+not drawn by hand &mdash; a lesson that uses a cross-referenced term is joined to whichever lesson
+<b>teaches</b> that term, so this map is generated from the text and cannot drift from it.</p>
+
+<div class="mapwrap">
+  <div class="maphead">
+    <b>Drag to pan &#183; click a lesson</b>
+    <span class="maplegend">
+      <span><i data-p="I"></i>Foundations</span>
+      <span><i data-p="II"></i>Supervised</span>
+      <span><i data-p="III"></i>Neural nets</span>
+      <span><i data-p="IV"></i>Unsup &#183; RL</span>
+    </span>
+    <button class="btn" id="map-reset" title="reset view">reset</button>
+  </div>
+  <canvas id="conceptmap"></canvas>
+  <div class="mapfoot" id="mapfoot">Reading order runs left to right. Bigger dots are leaned on
+    by more lessons &mdash; those are the ones worth over-learning.</div>
+</div>
+
+<h2><span class="ico">&#128207;</span>The load-bearing lessons</h2>
+<p>Counted, not guessed: these are the lessons the most other lessons depend on.</p>
+<ol class="loadbearing" id="loadbearing"></ol>
+
+<h2><span class="ico">&#129504;</span>Why a map at all</h2>
+<p>A book is a line; understanding is not. Concept and knowledge maps are the one
+well-evidenced study technique this site did not have &mdash; a meta-analysis in
+<i>Review of Educational Research</i> found learners who work with them retain and transfer
+more than those who read the equivalent text (Nesbit &amp; Adesope, 2006).</p>
+<p>It answers what the linear book cannot: <b>everything &#931; touches</b>; <b>what has to be
+solid before chapter 7</b>; <b>which ideas are load-bearing</b>. Click any lesson to see what it
+leans on and what leans on it.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
 </main>
 </div>
+<script src="assets/mapdata.js"></script>
+<script src="assets/map.js"></script>
 </body>
 </html>

@@ -1274,3 +1274,32 @@ ol.work details.wf[open] > summary { margin-bottom: 3px; }
 .explain .ex-b p { font-size: 14px; margin: 0 0 7px; }
 .explain .ex-b p:last-child { margin: 0; }
 @media print { .explain details.ex .ex-b { display: block; } }
+
+/* ---- concept map ---- */
+.mapwrap { border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; background: var(--bg-panel); margin: 18px 0 26px; }
+.maphead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 14px; border-bottom: 1px solid var(--line-soft);
+  font-size: 13px; color: var(--ink-soft); }
+.maphead b { color: var(--ink); font-size: 13.5px; }
+.maplegend { margin-left: auto; display: flex; gap: 13px; flex-wrap: wrap; }
+.maplegend span { display: flex; align-items: center; gap: 5px; font-size: 11.5px;
+  color: var(--ink-faint); }
+.maplegend i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+.maplegend i[data-p="I"]   { background: var(--accent); }
+.maplegend i[data-p="II"]  { background: var(--blue); }
+.maplegend i[data-p="III"] { background: var(--purple); }
+.maplegend i[data-p="IV"]  { background: var(--green); }
+#conceptmap { display: block; width: 100%; height: min(62vh, 520px);
+  touch-action: none; cursor: grab; }
+.mapfoot { padding: 10px 14px; border-top: 1px solid var(--line-soft);
+  font-size: 12.5px; color: var(--ink-faint); min-height: 42px; }
+.mapfoot b { color: var(--ink); }
+ol.loadbearing { list-style: none; counter-reset: lb; padding: 0; margin: 12px 0 0; }
+ol.loadbearing li { counter-increment: lb; display: flex; align-items: baseline; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; }
+ol.loadbearing li::before { content: counter(lb); font: 700 11px/1 var(--sans);
+  color: var(--ink-faint); min-width: 16px; font-variant-numeric: tabular-nums; }
+ol.loadbearing .lb-n { margin-left: auto; font-size: 12px; color: var(--ink-faint);
+  white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media print { #conceptmap { height: 300px; } .maphead .btn { display: none; } }

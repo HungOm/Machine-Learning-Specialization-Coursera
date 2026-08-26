@@ -249,6 +249,140 @@ def badge_api_calls(html_text):
     return CODE_INNER.sub(repl, html_text)
 
 
+MAPPAGE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept map</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/print.css" media="print">
+<script src="assets/site.js"></script>
+<script src="assets/search.js"></script>
+<script>window.GLOSS_UP="";</script>
+<script src="assets/gloss-data.js"></script>
+<script src="assets/gloss.js"></script>
+</head>
+<body data-slug="__map__">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">Concept map &#183; <b>what leans on what</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="runhead"><span class="part">Apparatus</span><span class="d">&#183;</span><span class="ch">Concept map</span><span class="right">{n} lessons &#183; {e} links</span></p>
+<h1>What leans on what</h1>
+<p class="lede">Every lesson in the book, and every place one leans on another. The links are
+not drawn by hand &mdash; a lesson that uses a cross-referenced term is joined to whichever lesson
+<b>teaches</b> that term, so this map is generated from the text and cannot drift from it.</p>
+
+<div class="mapwrap">
+  <div class="maphead">
+    <b>Drag to pan &#183; click a lesson</b>
+    <span class="maplegend">
+      <span><i data-p="I"></i>Foundations</span>
+      <span><i data-p="II"></i>Supervised</span>
+      <span><i data-p="III"></i>Neural nets</span>
+      <span><i data-p="IV"></i>Unsup &#183; RL</span>
+    </span>
+    <button class="btn" id="map-reset" title="reset view">reset</button>
+  </div>
+  <canvas id="conceptmap"></canvas>
+  <div class="mapfoot" id="mapfoot">Reading order runs left to right. Bigger dots are leaned on
+    by more lessons &mdash; those are the ones worth over-learning.</div>
+</div>
+
+<h2><span class="ico">&#128207;</span>The load-bearing lessons</h2>
+<p>Counted, not guessed: these are the lessons the most other lessons depend on.</p>
+<ol class="loadbearing" id="loadbearing"></ol>
+
+<h2><span class="ico">&#129504;</span>Why a map at all</h2>
+<p>A book is a line; understanding is not. Concept and knowledge maps are the one
+well-evidenced study technique this site did not have &mdash; a meta-analysis in
+<i>Review of Educational Research</i> found learners who work with them retain and transfer
+more than those who read the equivalent text (Nesbit &amp; Adesope, 2006).</p>
+<p>It answers what the linear book cannot: <b>everything &#931; touches</b>; <b>what has to be
+solid before chapter 7</b>; <b>which ideas are load-bearing</b>. Click any lesson to see what it
+leans on and what leans on it.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+<script src="assets/mapdata.js"></script>
+<script src="assets/map.js"></script>
+</body>
+</html>
+"""
+
+
+def build_map(weeks, flat):
+    """The concept map: which lesson leans on which.
+
+    Built from the cross-reference data the site already carries, not from a
+    hand-drawn diagram — a lesson that badges a term gets an edge to whichever
+    lesson TEACHES that term. So the graph cannot drift from the text: add a
+    badge and the edge appears, remove one and it goes.
+
+    Concept maps are the one well-evidenced technique this site was missing
+    (Nesbit & Adesope 2006). The value is showing what a linear book cannot:
+    which ideas are load-bearing, and what has to be solid before chapter N.
+    """
+    import content_f0ref, content_courseref, content_apiref, content_formulaparts
+    file_of = {rec["file"]: rec for rec in flat}
+
+    # term -> the lesson that teaches it
+    teaches = {}
+    for mod in _refreshers() + _load_modules(API_MODULES) + _load_modules(FORMULA_PART_MODULES):
+        for t in getattr(mod, "TERMS", []):
+            href = (t.get("more_href") or "").split("#")[0]
+            if href in file_of:                      # lessons only, not reference.html
+                teaches[t["key"]] = href
+
+    nodes, index = [], {}
+    for rec in flat:
+        index[rec["file"]] = len(nodes)
+        nodes.append({
+            "f": rec["file"], "t": rec["L"]["title"], "sec": rec["sec"],
+            "ch": rec["chapter"], "part": rec["part"],
+        })
+
+    seen, edges = set(), []
+    for rec in flat:
+        path = os.path.join(ROOT, rec["file"])
+        if not os.path.exists(path):
+            continue
+        html_text = open(path, encoding="utf-8").read()
+        body = html_text[html_text.find("<main"):]
+        for key in sorted(set(re.findall(r'data-g="([a-zA-Z0-9-]+)"', body))):
+            tgt = teaches.get(key)
+            if not tgt or tgt == rec["file"]:
+                continue
+            pair = (index[rec["file"]], index[tgt])
+            if pair not in seen:
+                seen.add(pair)
+                edges.append(list(pair))
+
+    for a, b in edges:                                # how load-bearing each is
+        nodes[b]["d"] = nodes[b].get("d", 0) + 1
+    for n in nodes:
+        n.setdefault("d", 0)
+
+    with open(os.path.join(ROOT, "assets", "mapdata.js"), "w", encoding="utf-8") as f:
+        f.write("/* generated by build.py — see build_map() */\n"
+                "window.MAP = " + json.dumps({"nodes": nodes, "edges": edges},
+                                             ensure_ascii=False, separators=(",", ":")) + ";\n")
+    wr(os.path.join(ROOT, "map.html"),
+       MAPPAGE.format(sidebar=sidebar(weeks, flat, "__map__", 0),
+                      n=len(nodes), e=len(edges)))
+    return len(nodes), len(edges)
+
+
 def build_gloss():
     """window.GLOSS for the floating refresher cards."""
     data = {}
@@ -334,7 +468,8 @@ def sidebar(weeks, flat, current_slug, depth):
     out.append('<a href="%slabs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>' % up)
     out.append('<a href="%sprogress.html" style="font-weight:700">▲ Progress</a>' % up)
     out.append('<a href="%sreference.html" style="font-weight:700">☰ Reference sheet</a>' % up)
-    out.append('<a href="%ssymbols.html" style="font-weight:700;margin-bottom:10px">∑ Symbol glossary</a>' % up)
+    out.append('<a href="%ssymbols.html" style="font-weight:700">∑ Symbol glossary</a>' % up)
+    out.append('<a href="%smap.html" style="font-weight:700;margin-bottom:10px">◈ Concept map</a>' % up)
     for w in weeks:
         out.append('<h4>%s · W%s — %s</h4>' % (w["course"], w["week"], html.escape(w["title"])))
         for rec in flat:
@@ -2096,6 +2231,7 @@ def build():
     build_review(weeks, flat, cards)
     build_reference(weeks, flat, cards)
     n_sym = build_symbols(weeks, flat)
+    n_mn, n_me = build_map(weeks, flat)
     if _CODE_CACHE and not _CODE_CACHE.get("__none__"):
         print("       + %d NumPy snippets on the reference sheet (all executed)"
               % sum(1 for k in _CODE_CACHE if not k.startswith("__")))
