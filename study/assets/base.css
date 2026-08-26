@@ -1065,3 +1065,17 @@ body.refmode-plain .refcode { display: none; }
   color: var(--ink); line-height: 1.55; }
 .pcheck .tag { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .07em;
   text-transform: uppercase; color: var(--green); margin-bottom: 4px; }
+
+/* ---- site footer ---- */
+.sitefoot { margin-top: 46px; padding-top: 14px; border-top: 1px solid var(--line-soft);
+  font-size: 12.5px; color: var(--ink-faint); text-align: center; }
+.sitefoot .sep { padding: 0 5px; opacity: .6; }
+
+/* ---- about / credits, on the study plan ---- */
+.about { margin-top: 34px; padding: 20px 22px; background: var(--bg-sunk);
+  border: 1px solid var(--line-soft); border-radius: var(--radius); }
+.about h2 { font-family: var(--serif); font-size: 19px; margin: 0 0 10px; }
+.about p { font-size: 14.5px; margin: 0 0 10px; }
+.about p:last-child { margin-bottom: 0; }
+.about .credits { font-size: 13px; color: var(--ink-soft); line-height: 1.7;
+  border-top: 1px dashed var(--line); padding-top: 10px; }

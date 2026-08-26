@@ -360,6 +360,7 @@ PAGE = """<!doctype html>
 {prev}
 {next}
 </nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="{up}assets/meta.js"></script>
@@ -399,6 +400,7 @@ INDEX = """<!doctype html>
 </aside>
 <main>
 {body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="assets/anim.js"></script>
@@ -488,6 +490,7 @@ working &#8212; the whole method rests on the interval matching your real forget
 <p style="color:var(--ink-faint);font-size:13.5px">Progress is stored in this browser only
 (<code>localStorage</code>), never uploaded. Use <b>export</b> before clearing site data or switching
 machines. Keyboard: <code>space</code> reveals, <code>1</code>&#8211;<code>4</code> grade.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="assets/deck.js"></script>
@@ -565,6 +568,7 @@ attached.</p>
 <p style="color:var(--ink-faint);font-size:14px">Each entry links to the lesson it came from. Same content
 as the spaced-repetition deck &#8212; if you fix a mistake here, fix it in
 <code>study/_build/cards_c*.py</code> and rebuild.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -780,6 +784,7 @@ knowing how to pronounce it &#8212; so that column is not a joke.</p>
 <p style="color:var(--ink-faint);font-size:14px">If a symbol here is still opaque, the
 <a href="f0/w1-03-greek-letters.html">Foundations lesson on Greek letters</a> says each one out loud, and
 the <a href="f0/w1-01-what-is-a-function.html">maths lane</a> works through the ideas behind them.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script>
@@ -1020,6 +1025,7 @@ wipes them. The JSON backup restores everything.</p>
   <span id="anki-msg" style="font-size:12.5px;color:var(--ink-faint)"></span>
 </p>
 </div>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="assets/deck.js"></script>
@@ -1079,6 +1085,7 @@ forward to tomorrow and shows up in <a href="../progress.html">weak spots</a>.</
 {prev}
 {next}
 </nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="../assets/meta.js"></script>
@@ -1126,6 +1133,7 @@ feels much better than it works: you stop having to decide <i>what kind of probl
 which is the part you must actually do when it counts. Mixed practice feels harder and sticks
 better. That is not a mistake in the ordering.</p></div>
 {body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1239,6 +1247,7 @@ python3 {file}</code></pre>
 {prev}
 {next}
 </nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1285,6 +1294,7 @@ backpropagation until you have written the four lines that do it and watched the
 and the output shown beneath each block is <b>what that block actually printed</b>. If a file
 broke, the page would show the error instead.</p></div>
 {body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1411,6 +1421,7 @@ LABPAGE = """<!doctype html>
 {prev}
 {next}
 </nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1457,6 +1468,7 @@ deliberately never reproduced</b> &#8212; writing it is the entire point of the 
 What you get instead is the specification: what to return, in what shape, and which mistake
 to expect.</p></div>
 {body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1638,6 +1650,7 @@ built on, with the papers, so you can check any of it.</p>
 <a href="reference.html">reference sheet</a> carries a <b>&#9998; on paper</b> line saying what to
 draw for that one thing. The <a href="review.html">review trainer</a> handles the spacing between
 sessions, which is the one part a study session cannot do for itself.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 </body>
@@ -1786,6 +1799,7 @@ answer, and is deliberately last.</p>
 own marking &#8212; they are as honest as you are. The
 <a href="progress.html">progress dashboard</a> shows the same data from the other direction:
 what you are getting wrong rather than what you have finished.</p>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
 </main>
 </div>
 <script src="assets/meta.js"></script>

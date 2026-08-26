@@ -297,4 +297,21 @@ FOOT = """
 <hr>
 <p style="color:var(--ink-faint);font-size:14px">Progress is stored only in this browser (localStorage) —
 nothing is uploaded anywhere. Keyboard: <code>←</code> and <code>→</code> move between lessons.</p>
+
+<section class="about">
+<h2>About</h2>
+<p>Study notes built while working through the <b>Machine Learning Specialization</b> — structured
+and edited by <b>Hung Om</b>, with the lesson text drafted using Claude. The Foundations track, the
+five-lane structure and the choice of what to cover are the parts worth judging; the prose is a
+means to them.</p>
+<p class="credits">
+Course material by Andrew Ng —
+<a href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener">DeepLearning.AI &amp; Stanford Online</a>,
+on Coursera. These notes are an independent study companion, not affiliated with or endorsed by
+either.<br>
+Assignment notebooks in this repository come from
+<a href="https://github.com/greyhatguy007/Machine-Learning-Specialization-Coursera" target="_blank" rel="noopener">greyhatguy007/Machine-Learning-Specialization-Coursera</a>,
+which this is forked from.
+</p>
+</section>
 """

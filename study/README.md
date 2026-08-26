@@ -3,6 +3,23 @@
 A self-contained static site of study notes for the Machine Learning Specialization.
 No build tools, no CDN, no internet needed to read it. Just open `index.html`.
 
+**Read it online:** <https://hungom.github.io/Machine-Learning-Specialization-Coursera/>
+
+## About
+
+Study notes built while working through the **Machine Learning Specialization** — structured and
+edited by **Hung Om**, with the lesson text drafted using Claude. The Foundations track, the
+five-lane structure and the choice of what to cover are the parts worth judging; the prose is a
+means to them.
+
+Course material by Andrew Ng — [DeepLearning.AI & Stanford
+Online](https://www.coursera.org/specializations/machine-learning-introduction), on Coursera.
+These notes are an independent study companion, not affiliated with or endorsed by either.
+
+Assignment notebooks in this repository come from
+[greyhatguy007/Machine-Learning-Specialization-Coursera](https://github.com/greyhatguy007/Machine-Learning-Specialization-Coursera),
+which this is forked from.
+
 ```
 open study/index.html          # macOS
 ```
