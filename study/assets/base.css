@@ -1303,3 +1303,40 @@ ol.loadbearing li::before { content: counter(lb); font: 700 11px/1 var(--sans);
 ol.loadbearing .lb-n { margin-left: auto; font-size: 12px; color: var(--ink-faint);
   white-space: nowrap; font-variant-numeric: tabular-nums; }
 @media print { #conceptmap { height: 300px; } .maphead .btn { display: none; } }
+
+/* ---- chapter opener / closer: the joins between chapters ---- */
+.chopen { border: 1px solid var(--accent); border-left-width: 3px;
+  border-radius: var(--radius); background: var(--accent-soft);
+  padding: 16px 18px; margin: 0 0 22px; }
+.chopen > .tag, .chclose > .tag { display: block; font: 700 9.5px/1 var(--sans);
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
+.chopen .hook { font-size: 15.5px; margin: 0 0 12px; }
+table.chgrid { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.chgrid td { padding: 6px 6px; border-bottom: 1px solid var(--accent); vertical-align: top; }
+table.chgrid tr:last-child td { border-bottom: 0; }
+table.chgrid td:first-child { font-weight: 700; width: 34%; white-space: nowrap; color: var(--ink); }
+table.chgrid td:last-child { color: var(--ink-soft); }
+.chclose { border: 1px solid var(--green); border-left-width: 3px;
+  border-radius: var(--radius); background: var(--green-soft);
+  padding: 16px 18px; margin: 26px 0 0; }
+.chclose > .tag { color: var(--green); }
+.chclose p { font-size: 14px; margin: 0 0 10px; color: var(--ink-soft); }
+ol.chq { margin: 0; padding-left: 20px; font-size: 14.5px; }
+ol.chq li { margin-bottom: 7px; }
+ol.chq li:last-child { margin-bottom: 0; }
+
+/* ---- back-of-book index ---- */
+.bookidx { columns: 2; column-gap: 36px; margin-top: 14px; }
+@media (max-width: 640px) { .bookidx { columns: 1; } }
+.bookidx .ix { break-inside: avoid; display: flex; gap: 6px; align-items: baseline;
+  padding: 4px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+.bookidx .ix .t { color: var(--ink); }
+.bookidx .ix .d { flex: 1; border-bottom: 1px dotted var(--line); margin: 0 4px 4px; min-width: 12px; }
+.bookidx .ix .p { white-space: nowrap; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.bookidx .ix .p a { text-decoration: none; }
+.bookidx .ix .p a:hover { text-decoration: underline; }
+.ixletter { break-inside: avoid; font: 700 11px/1 var(--sans); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); margin: 14px 0 5px; padding-top: 8px;
+  border-top: 1px solid var(--line); }
+.ixletter:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.bookidx .ix-home { font-weight: 700; }

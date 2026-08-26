@@ -53,7 +53,8 @@ TERMS = [
  dict(key="hyperparameter-native", label="hyperparameter", say="“hyper-parameter”",
       gist="A setting <b>you</b> choose before training starts — not something gradient descent learns.",
       body="<p>w and b are parameters: the data determines them. The learning rate α is a "
-           "hyperparameter: you pick it, and a bad choice is a you-problem, not a data problem.</p>",
+           "hyperparameter: you pick it, and a bad choice is a you-problem, not a data problem.</p>"
+           "<div class='gq'>α = 0.01 — chosen · w = 4.7 — learned</div><p>Gradient descent finds w from the data. It never touches α; you set that before training starts, and a bad choice is yours.</p>",
       ml="Every knob you turn without running gradient descent on it — α, the number of layers, "
          "λ, k in k-means — is a hyperparameter.",
       more_href=C1 % (1, "11-learning-rate"), more_label="C1 W1 · The learning rate"),
@@ -62,7 +63,8 @@ TERMS = [
       gist="Training has stopped making meaningful progress — J has flattened out.",
       body="<p>Not the same as “finished successfully”. A run can converge to a mediocre answer just "
            "as easily as a good one; convergence only says the numbers stopped moving, not that "
-           "they stopped somewhere good.</p>",
+           "they stopped somewhere good.</p>"
+           "<div class='gq'>J: 12.0 → 11.99 → 11.99 → 11.99</div><p>Converged — running longer will not help. Note it says nothing about 11.99 being <em>good</em>; if the fit is poor the problem is the model, not the optimiser.</p>",
       ml="The plot-J-against-iterations habit exists specifically to let you see convergence happen, "
          "rather than guessing at how many iterations are “enough”.",
       more_href=C1 % (1, "09-implementing-gradient-descent"),
@@ -84,7 +86,8 @@ TERMS = [
            "underneath it — great on the data it has seen, bad on data it hasn't.",
       body="<p>The tell: training performance is excellent and performance on new examples is not. "
            "A model too simple to capture the pattern at all is the opposite problem, "
-           "<b>underfitting</b>.</p>",
+           "<b>underfitting</b>.</p>"
+           "<div class='gq'>training error 0.5% · test error 12%</div><p>Nearly perfect on what it studied, badly wrong on anything new. The gap between those two numbers <em>is</em> overfitting.</p>",
       ml="Regularisation, more data, and simpler models are the three standard fixes — Course 2 "
          "Week 3 turns diagnosing which one you need into a repeatable procedure.",
       more_href=C1 % (3, "08-the-problem-of-overfitting"),
@@ -138,7 +141,8 @@ TERMS = [
            "cross-entropy for more.",
       body="<p>Same idea as log loss, extended: penalise the model in proportion to how far its "
            "predicted probability was from being confidently correct, for whichever class the "
-           "example actually belongs to.</p>",
+           "example actually belongs to.</p>"
+           "<div class='gq'>y = 1, f = 0.9 → −log(0.9) = 0.105</div><p>Confident and right, so almost no penalty. Predict 0.1 instead and it becomes 2.30 — twenty times worse for the same single example.</p>",
       ml="TensorFlow's <code>BinaryCrossentropy</code> and <code>SparseCategoricalCrossentropy</code> "
          "loss functions are exactly this, by name.",
       more_href=C2 % (2, "07-softmax"), more_label="C2 W2 · Softmax"),
@@ -171,7 +175,8 @@ TERMS = [
            "training data.</p><p><b>High variance</b> (overfitting): so flexible it fits the "
            "training data's noise, and would fit a different sample completely differently — "
            "\"sensitive to which examples you happened to train on\" is the sense of \"variance\" "
-           "meant here, not the spread-around-a-mean formula.</p>",
+           "meant here, not the spread-around-a-mean formula.</p>"
+           "<div class='gq'>high bias: train 12%, test 13% · high variance: train 0.5%, test 12%</div><p>The training error alone separates them. Bad on both means too simple; good on one and bad on the other means it memorised.</p>",
       ml="Diagnosing which one you have decides the fix: high bias wants a bigger model or more "
          "features; high variance wants more data, regularisation, or a simpler model.",
       more_href=C2 % (3, "04-bias-and-variance"),

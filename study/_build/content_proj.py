@@ -53,7 +53,8 @@ TERMS = [
            "against — north and east, say. An orthonormal basis is one where the "
            "directions do not overlap at all and each is one unit long.</p>"
            "<p>Because they are perpendicular, each direction measures something "
-           "the others cannot see. No double counting.</p>",
+           "the others cannot see. No double counting.</p>"
+           "<div class='gq'>e₁ = [1, 0], e₂ = [0, 1] → e₁ · e₂ = 0, ‖e₁‖ = 1</div><p>At right angles, and each of length 1. That is the whole definition, and it is why dotting with one gives a distance directly.</p>",
       ml="PCA returns an orthonormal basis. That is why the second component adds "
          "genuinely new information rather than repeating the first."),
 ]

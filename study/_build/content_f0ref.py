@@ -73,7 +73,8 @@ TERMS = [
            "and see how much J moves.",
       body="<p>Picture standing on a hillside with two dials, w and b. A partial derivative asks: "
            "“if I turn <i>only</i> the w dial, which way does the height change?” — "
-           "ignoring what turning b would do.</p>",
+           "ignoring what turning b would do.</p>"
+           "<div class='gq'>J = w² + b², at w = 3, b = 4</div><p>∂J/∂w = 2w = <b>6</b> — b is frozen and contributes nothing. ∂J/∂b = 2b = <b>8</b>, freezing w instead.</p>",
       ml="This is the piece gradient descent actually computes — one partial derivative per "
          "parameter, however many thousands there are.",
       more_href=F0 % "06-partial-derivatives", more_label="F0 W1 · Partial derivatives"),
@@ -83,7 +84,8 @@ TERMS = [
       body="<p>∇J is not one number. For a model with w₁, w₂ and b, it is the list "
            "[∂J/∂w₁, ∂J/∂w₂, ∂J/∂b] — one slope per parameter, "
            "bundled together. It points in the direction J grows fastest, which is why gradient descent "
-           "steps in the <i>opposite</i> direction.</p>",
+           "steps in the <i>opposite</i> direction.</p>"
+           "<div class='gq'>J = w² + b², at (3, 4) → ∇J = [6, 8]</div><p>Not one number — one per parameter, bundled. A network with a million weights has a million-entry gradient, built exactly this way.</p>",
       ml="A neural network with a million weights has a million-entry gradient. Same idea, just a longer list.",
       more_href=F0 % "06-partial-derivatives", more_label="F0 W1 · Partial derivatives"),
 
@@ -98,7 +100,8 @@ TERMS = [
  dict(key="vector-f0", label="vector", say="“vector”",
       gist="An ordered list of numbers, treated as one thing. [3, 7, 1] is a vector of length 3.",
       body="<p>The order matters — [3, 7] and [7, 3] are different vectors. In this specialization, "
-           "a vector is almost always one training example's features, or one layer's worth of weights.</p>",
+           "a vector is almost always one training example's features, or one layer's worth of weights.</p>"
+           "<div class='gq'>one house = [1400, 3, 2, 18]</div><p>Square feet, bedrooms, floors, age — a length-4 vector, and one row of your training set. Stack 100 of them and you have a (100, 4) matrix.</p>",
       ml="x with an arrow (x⃗) or in bold (<b>x</b>) both mean the same thing: “all the "
          "features of one example, together.”",
       more_href=F0 % "09-vectors", more_label="F0 W1 · Vectors"),
@@ -106,14 +109,16 @@ TERMS = [
  dict(key="matrix-f0", label="matrix", say="“matrix”",
       gist="A grid of numbers — rows and columns. A stack of vectors.",
       body="<p>Shape is always written <b>rows × columns</b>. A (100, 4) matrix is 100 examples, "
-           "each with 4 features — 100 rows, 4 columns.</p>",
+           "each with 4 features — 100 rows, 4 columns.</p>"
+           "<div class='gq'>X.shape → (100, 4)</div><p>100 houses down, 4 measurements across. Rows first, always — <code>X[7]</code> is house 7, <code>X[:, 2]</code> is every house's floor count.</p>",
       ml="The whole training set X is one matrix. Every layer's weights W is a matrix, one column per unit.",
       more_href=F0 % "11-matrices", more_label="F0 W1 · Matrices and shapes"),
 
  dict(key="matmul-f0", label="AB", say="“matrix multiplication”",
       gist="Row of the first, dotted with column of the second, for every combination. Not elementwise.",
       body="<p>(m, n) times (n, k) gives (m, k) — the inner dimensions must match, and they "
-           "disappear from the answer's shape.</p>",
+           "disappear from the answer's shape.</p>"
+           "<div class='gq'>(2 × <b>3</b>) @ (<b>3</b> × 4) = (2 × 4)</div><p>The inner 3s must match and then vanish. Try (2×3) @ (2×3) and NumPy refuses — 3 ≠ 2.</p>",
       ml="A whole layer's forward pass is one matrix multiplication: every unit's dot product with the "
          "input, computed at once.",
       more_href=F0 % "12-matrix-multiplication", more_label="F0 W1 · Matrix multiplication"),
@@ -121,7 +126,8 @@ TERMS = [
  dict(key="transpose-f0", label="A<sup>T</sup>", say="“a transpose”",
       gist="Flip a matrix over its diagonal — rows become columns, columns become rows.",
       body="<p>A (100, 4) matrix transposed becomes (4, 100). The numbers do not change, only which "
-           "direction they are read in.</p>",
+           "direction they are read in.</p>"
+           "<div class='gq'>[[1, 2, 3]] is (1, 3) → .T is (3, 1)</div><p>Same three numbers, turned on their side. Nothing about the data changed; what you can multiply it with did.</p>",
       ml="Used constantly to make shapes line up for a dot product or matrix multiply — "
          "<code>X.T @ err</code> is a very common line in this course.",
       more_href=F0 % "13-transpose", more_label="F0 W1 · Transpose"),
@@ -147,7 +153,8 @@ TERMS = [
 
  dict(key="probability-f0", label="P(x)", say="“probability of x”",
       gist="A number from 0 to 1 saying how likely something is. 0 = never, 1 = certain.",
-      body="<p>All the probabilities of every possible outcome must add up to exactly <b>1</b>.</p>",
+      body="<p>All the probabilities of every possible outcome must add up to exactly <b>1</b>.</p>"
+           "<div class='gq'>P(spam) = 0.7 → P(not spam) = 0.3</div><p>They must add to 1, because one of them has to happen. That single constraint is what makes a classifier's outputs readable as chances.</p>",
       ml="Logistic regression's output is literally a probability. Anomaly detection compares a "
          "probability against a threshold.",
       more_href=F0 % "16-probability", more_label="F0 W1 · Probability basics"),
@@ -171,7 +178,8 @@ TERMS = [
       gist="The bell curve — fully described by just two numbers: where it is centred (μ) and "
            "how wide it is (σ²).",
       body="<p>Most values land near the mean μ; the chance of a value drops off the further it is "
-           "from μ, at a rate set by σ.</p>",
+           "from μ, at a rate set by σ.</p>"
+           "<div class='gq'>heights: μ = 170 cm, σ = 10 cm</div><p>Someone 180 cm is exactly 1σ above the mean — common. At 200 cm they are 3σ out, which is where anomaly detection starts paying attention.</p>",
       ml="Anomaly detection fits a normal distribution to “normal” data, then flags anything "
          "the curve says is very unlikely.",
       more_href=F0 % "18-normal-distribution", more_label="F0 W1 · The normal distribution"),
@@ -188,7 +196,8 @@ TERMS = [
  dict(key="derivative-f0", label="dJ/dw", say="“the derivative”",
       gist="The slope of a curve at one exact point — a single number with a sign.",
       body="<p>Positive means the curve rises to the right there; negative means it falls. Zero means "
-           "flat — momentarily neither rising nor falling.</p>",
+           "flat — momentarily neither rising nor falling.</p>"
+           "<div class='gq'>J = w², at w = 3 → dJ/dw = 2w = 6</div><p>Positive, so the cost rises as w rises: step left. At w = −3 it is −6, so step right. The sign alone tells you which way.</p>",
       ml="Gradient descent's entire update rule is built from one idea: subtract a small multiple of "
          "the derivative, so you move downhill.",
       more_href=F0 % "05-derivatives", more_label="F0 W1 · What a derivative actually is"),
@@ -206,7 +215,8 @@ TERMS = [
       body="<p>Add a length-4 vector to every row of a (100, 4) matrix, and NumPy repeats the vector "
            "100 times without you writing a loop or copying anything in memory.</p>"
            "<p>Convenient, and a real source of silent bugs when the shapes you meant to line up "
-           "don't, and NumPy broadcasts them anyway instead of raising an error.</p>",
+           "don't, and NumPy broadcasts them anyway instead of raising an error.</p>"
+           "<div class='gq'>(100, 4) − (4,) → (100, 4)</div><p>The 4-number row is reused for all 100 rows without being copied. That is feature scaling in one line — and the reason a shape mistake can run silently instead of erroring.</p>",
       ml="Feature scaling is one broadcast: (X − mu) divides a whole matrix by a single row of "
          "per-feature values.",
       more_href=F0W2 % "08-broadcasting", more_label="F0 W2 · Broadcasting"),

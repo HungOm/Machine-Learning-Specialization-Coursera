@@ -107,7 +107,8 @@ TERMS = [
            "the square corner.",
       body="<p>The other two sides are named relative to whichever angle you are "
            "looking at: <b>opposite</b> (across from it) and <b>adjacent</b> "
-           "(next to it).</p>",
+           "(next to it).</p>"
+           "<div class='gq'>sides 3 and 4 → hypotenuse √(9 + 16) = 5</div><p>The long slanted side. A vector drawn as an arrow is exactly this, which is why its length uses the same formula.</p>",
       ml="A vector drawn as an arrow is the hypotenuse of a triangle made from its "
          "components, which is why its length uses Pythagoras."),
 

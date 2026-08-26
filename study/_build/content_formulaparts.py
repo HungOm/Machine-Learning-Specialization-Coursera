@@ -29,7 +29,8 @@ TERMS = [
       gist="One number saying how wrong the model currently is — smaller is better, and training "
            "means searching for the w and b that make this as small as possible.",
       body="<p>Every cost function in this specialization does the same job with a different "
-           "formula underneath: turn “how good is this model” into one comparable number.</p>",
+           "formula underneath: turn “how good is this model” into one comparable number.</p>"
+           "<div class='gq'>data (1,1) (2,2) (3,3): J(1, 0) = 0 · J(0.5, 0) = 0.583</div><p>w = 1 passes through every point, so the cost is exactly zero. Get the slope wrong and the number climbs — that climb is the only thing training is trying to stop.</p>",
       ml="J for squared error (C1), log loss for classification (C1 W3), and the same shape of "
          "idea for a neural network, k-means, or PCA — always a single number, always smaller-is-better.",
       more_href=C1 % (1, "05-cost-function-formula"), more_label="C1 W1 · The cost function formula"),
@@ -69,7 +70,8 @@ TERMS = [
       gist="An instruction to overwrite a value, not a mathematical claim that two things are equal.",
       body="<p><code>w := w − 1</code> is perfectly sensible as an instruction — subtract 1 from "
            "w's current value — while <code>w = w − 1</code> is mathematically false for any w. "
-           "Code just writes it as <code>=</code> and relies on you knowing which meaning is meant.</p>",
+           "Code just writes it as <code>=</code> and relies on you knowing which meaning is meant.</p>"
+           "<div class='gq'>w = 5, α = 0.1, slope = 2 → w := 5 − 0.1(2) = 4.8</div><p>Read as “w becomes 4.8”. As an equation w = w − 0.2 would be nonsense; as an instruction it is one step downhill.</p>",
       ml="Every parameter update in this specialization — linear regression, logistic regression, "
          "every neural network — is this same kind of overwrite, not an equation to solve.",
       more_href=C1 % (1, "09-implementing-gradient-descent"),
@@ -80,7 +82,8 @@ TERMS = [
            "learns on its own.",
       body="<p>Too small and training crawls. Too large and it overshoots, oscillates, or diverges "
            "outright. There is no formula that hands you the right value — the standard approach "
-           "is to try a ladder (0.001, 0.003, 0.01, 0.03, …) and watch what J does.</p>",
+           "is to try a ladder (0.001, 0.003, 0.01, 0.03, …) and watch what J does.</p>"
+           "<div class='gq'>slope 2, α = 0.1 → step 0.2 · α = 10 → step 20</div><p>Same slope, same hill. The first inches downhill; the second leaps clean over the valley and lands higher up the far side.</p>",
       ml="The single most-tuned hyperparameter in this specialization — identical role whether "
          "the model is linear regression or a deep network.",
       more_href=C1 % (1, "11-learning-rate"), more_label="C1 W1 · The learning rate"),
@@ -112,7 +115,8 @@ TERMS = [
       body="<p>A change in w affects a large-x example more than a small-x one — an x = 4 house "
            "responds four times as much as an x = 1 house — so large-x examples pull harder on "
            "w's gradient. b shifts every prediction by the same fixed amount, so every example "
-           "gets an equal vote and no such factor appears.</p>",
+           "gets an equal vote and no such factor appears.</p>"
+           "<div class='gq'>error 2 on a house with x = 4 → w gets 2 × 4 = 8, b gets 2</div><p>The big house pushes w four times harder, because w is what x multiplies. b is added to every prediction equally, so every example pushes it the same.</p>",
       ml="The same asymmetry shows up every time a w-derivative and a b-derivative are compared "
          "side by side — logistic regression, a neural network layer, all of them.",
       more_href=C1 % (1, "12-gradient-descent-for-linear-regression"),
@@ -132,7 +136,8 @@ TERMS = [
       gist="How good it is to take action <b>a</b> from state <b>s</b> — reward right now, plus the "
            "best you can still do afterwards.",
       body="<p>Every reinforcement learning algorithm on this site is, underneath, a strategy for "
-           "getting an estimate of Q to satisfy the Bellman equation.</p>",
+           "getting an estimate of Q to satisfy the Bellman equation.</p>"
+           "<div class='gq'>Q(4, ←) = 0 + 0.5 × 25 = 12.5</div><p>Nothing collected right now, plus half of the 25 you can reach from where you land. Compare it with Q(4, →) and take the bigger — that is the whole decision.</p>",
       ml="Once you have Q, the best policy is simple: from any state, take whichever action has the "
          "highest Q.",
       more_href=C3 % (3, "06-state-action-value-function"),
@@ -141,7 +146,8 @@ TERMS = [
  dict(key="reward-r", label="R(s)", say="“the reward”",
       gist="What you collect immediately for being in this state — the one part of the equation "
            "that needs no lookahead at all.",
-      body="<p>Purely local: R(s) depends only on the current state, never on what happens next.</p>",
+      body="<p>Purely local: R(s) depends only on the current state, never on what happens next.</p>"
+           "<div class='gq'>R(1) = 100 · R(4) = 0 · R(6) = 40</div><p>Purely local: R(4) is 0 no matter what you do next. Everything about the future lives in the other half of the equation.</p>",
       ml="Designing R is most of the actual work of setting up a reinforcement learning problem — "
          "get the rewards wrong and the agent optimises for the wrong thing.",
       more_href=C3 % (3, "08-bellman-equation"), more_label="C3 W3 · The Bellman equation"),
@@ -158,7 +164,8 @@ TERMS = [
       gist="The value of the state you land in — assuming you play optimally from that point "
            "onward.",
       body="<p>This is exactly V(s′), written out. The whole Bellman equation is recursive because "
-           "this piece is itself defined by the same equation, one step further along.</p>",
+           "this piece is itself defined by the same equation, one step further along.</p>"
+           "<div class='gq'>from state 3: Q(3,←) = 25, Q(3,→) = 6.25 → max = 25</div><p>The best you can do from there, assuming you keep playing well. That single number stands in for the entire rest of the journey.</p>",
       ml="This is the piece every RL algorithm is really estimating — you never get to see it "
          "directly, only build up a better and better guess of it through experience.",
       more_href=C3 % (3, "08-bellman-equation"), more_label="C3 W3 · The Bellman equation"),
@@ -167,7 +174,8 @@ TERMS = [
       gist="Put x into the machine named f, and read off what comes out. <b>Not</b> f multiplied by x.",
       body="<p>f(3) means “run the rule for f, using 3”, not “f times 3”. The brackets mean "
            "<b>applied to</b>, never multiplication — the single most common misreading of this "
-           "notation.</p>",
+           "notation.</p>"
+           "<div class='gq'>f(x) = 2x + 1 → f(3) = 7</div><p>Not f × 3. The brackets mean “run the rule on 3”: 2(3) + 1. Feed 3 in next week and it is still 7.</p>",
       ml="Every model in this specialization — f(x) = wx+b, f(x) = g(w·x+b), a whole neural "
          "network — is this same idea: a name for a rule, with an input in brackets.",
       more_href=F0W1 % "01-what-is-a-function", more_label="F0 W1 · What a function is"),
@@ -177,7 +185,8 @@ TERMS = [
            "their average <b>size</b>, both updated a little every step rather than recomputed from "
            "scratch.",
       body="<p>β₁ and β₂ (typically 0.9 and 0.999) decide how much of the old average survives each "
-           "update versus how much the newest gradient counts.</p>",
+           "update versus how much the newest gradient counts.</p>"
+           "<div class='gq'>β₁ = 0.9, first gradient 2 → m = 0.2 · v = 0.004</div><p>Each update keeps 90% of the old average and 10% of the newest gradient, so one odd step barely moves it — which is exactly the point.</p>",
       ml="v being large means this parameter's gradient has been erratic recently, which is exactly "
          "the signal Adam uses to shrink that parameter's effective step size.",
       more_href="c2/w2-11-advanced-optimization.html",

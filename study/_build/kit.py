@@ -51,6 +51,37 @@ def explain(ask, because, tag="Say it out loud"):
             '<div class="ex-b">%s</div></details></div>' % (tag, ask, because))
 
 
+def chapter_open(rests_on, able_to, leads_to, hook):
+    """The chapter opener: arrive knowing why you are here.
+
+    A book tells you what you are walking into. Each lesson in this site is
+    self-contained, which is a strength inside the lesson and leaves the joins
+    between chapters silent — so this names what the chapter rests on, what it
+    buys you, and where it goes next.
+    """
+    return ('<div class="chopen"><span class="tag">Before this chapter</span>'
+            '<p class="hook">%s</p>'
+            '<table class="chgrid"><tbody>'
+            '<tr><td>Rests on</td><td>%s</td></tr>'
+            '<tr><td>You will be able to</td><td>%s</td></tr>'
+            '<tr><td>Leads to</td><td>%s</td></tr>'
+            '</tbody></table></div>' % (hook, rests_on, able_to, leads_to))
+
+
+def chapter_close(items):
+    """The chapter closer: retrieval practice at the boundary.
+
+    Placed where the research says it works — at a join, before the next
+    chapter overwrites what you just read. Questions only; no answers, because
+    the point is the attempt and the lessons above are the answer key.
+    """
+    lis = "".join("<li>%s</li>" % q for q in items)
+    return ('<div class="chclose"><span class="tag">Before moving on</span>'
+            '<p>Cover the chapter and answer these from memory. Anything you '
+            'fumble names the lesson to reread.</p>'
+            '<ol class="chq">%s</ol></div>' % lis)
+
+
 def card(body):
     return '<div class="card">%s</div>' % body
 

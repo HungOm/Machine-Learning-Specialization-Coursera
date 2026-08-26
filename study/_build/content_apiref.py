@@ -76,7 +76,8 @@ TERMS = [
            "loop.",
       body="<p><code>np.dot</code> handles both a plain vector·vector dot product and a full "
            "matrix multiply, depending on the shapes you give it. <code>@</code> is shorthand for "
-           "the same operation: <code>A @ B</code> is <code>np.matmul(A, B)</code>.</p>",
+           "the same operation: <code>A @ B</code> is <code>np.matmul(A, B)</code>.</p>"
+           "<div class='gq'>np.dot([1,2,3], [4,5,6]) → 32</div><p>4 + 10 + 18. Same as <code>a @ b</code>. Note <code>a * b</code> gives <code>[4,10,18]</code> instead — the products without the summing.</p>",
       ml="This single call is what replaces the explicit for-loop version of a neural network "
          "layer — same maths, no Python loop.",
       more_href=F0W2 % "09-dot-in-code", more_label="F0 W2 · np.dot, matmul and @"),
@@ -118,7 +119,8 @@ TERMS = [
       gist="Tells the model <b>how</b> to train — which loss function, which optimizer — before "
            "any training happens.",
       body="<p>Nothing is computed here. This just configures the training run that "
-           "<code>model.fit</code> is about to do.</p>",
+           "<code>model.fit</code> is about to do.</p>"
+           "<div class='gq'>model.compile(loss=BinaryCrossentropy(), optimizer=Adam(1e-3))</div><p>Nothing is computed. You are naming the cost function and the optimizer that <code>fit</code> will then use.</p>",
       ml="The loss you pass here (<code>BinaryCrossentropy</code>, "
          "<code>SparseCategoricalCrossentropy</code>...) is the actual cost function from the maths, "
          "by another name.",
@@ -138,7 +140,8 @@ TERMS = [
  dict(key="tfpredict-api", label="model.predict(...)", say="“predict”",
       gist="Runs the trained model forward on new data — inference, not training.",
       body="<p>No gradients, no learning, nothing changes about the model. Just: take these "
-           "inputs, run forward propagation, return the outputs.</p>",
+           "inputs, run forward propagation, return the outputs.</p>"
+           "<div class='gq'>model.predict(X) → array of shape (m, 1)</div><p>One output per row you passed in. No gradients, no learning — the weights are untouched.</p>",
       ml="This is the “using” half of a model, as opposed to fit's “learning” half.",
       more_href=C2 % (2, "01-tensorflow-training"),
       more_label="C2 W2 · TensorFlow implementation of training"),
@@ -157,7 +160,8 @@ TERMS = [
       gist="Stacks layers in a straight line — output of one layer feeds straight into the next.",
       body="<p>Covers the large majority of networks in this specialization. It cannot handle a "
            "network with more than one input, more than one output, or a layer that skips ahead — "
-           "those need the more general functional API.</p>",
+           "those need the more general functional API.</p>"
+           "<div class='gq'>Sequential([Dense(25, 'relu'), Dense(15, 'relu'), Dense(1, 'sigmoid')])</div><p>Three layers, output straight into the next. That one call replaces writing forward propagation by hand.</p>",
       ml="This one call replaces writing out forward propagation by hand, layer by layer.",
       more_href="c2/w1-09-building-a-network-sequential.html",
       more_label="C2 W1 · Building a neural network (Sequential)"),
@@ -167,7 +171,8 @@ TERMS = [
            "adjusted automatically as training goes.",
       body="<p>Short for Adaptive Moment estimation. Where plain gradient descent uses one α for "
            "every parameter, Adam speeds up parameters that keep moving the same direction and "
-           "slows down ones that are oscillating.</p>",
+           "slows down ones that are oscillating.</p>"
+           "<div class='gq'>model.compile(optimizer=Adam(learning_rate=1e-3), loss=…)</div><p>The α you pass is a starting point, not a fixed step — Adam scales it per parameter as it goes.</p>",
       ml="The default choice for training a neural network in practice — plain gradient descent "
          "is what Course 1 teaches by hand, Adam is what real code almost always uses.",
       more_href=C2 % (2, "11-advanced-optimization"),

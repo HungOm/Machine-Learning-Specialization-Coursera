@@ -7,6 +7,7 @@ Run:  python3 study/_build/build.py
 import glob
 import html
 import importlib
+import kit
 import json
 import os
 import re
@@ -321,6 +322,130 @@ leans on and what leans on it.</p>
 """
 
 
+_CHAPTERS = None
+
+
+def _chapters():
+    """Chapter openers/closers, keyed by chapter number. Data lives beside the
+    generator so it can be edited without touching build.py."""
+    global _CHAPTERS
+    if _CHAPTERS is None:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "content_chapters.json")
+        try:
+            _CHAPTERS = json.load(open(path, encoding="utf-8"))
+        except Exception:
+            _CHAPTERS = {}
+    return _CHAPTERS
+
+
+IDXPAGE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Index</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/print.css" media="print">
+<script src="assets/site.js"></script>
+<script src="assets/search.js"></script>
+<script>window.GLOSS_UP="";</script>
+<script src="assets/gloss-data.js"></script>
+<script src="assets/gloss.js"></script>
+</head>
+<body data-slug="__bookindex__">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">Index &#183; <b>every concept, and where it appears</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="runhead"><span class="part">Apparatus</span><span class="d">&#183;</span><span class="ch">Index</span><span class="right">{n} entries</span></p>
+<h1>Index</h1>
+<p class="lede">Every cross-referenced concept and the sections it turns up in, the way a book's
+back matter works. Generated from where the terms actually appear &mdash; so it records the text
+rather than a list kept by hand. The <b>bold</b> section is where the idea is taught.</p>
+<div class="bookidx">{body}</div>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+</body>
+</html>
+"""
+
+
+def build_index_terms(weeks, flat):
+    """The back-of-book index: concept -> the sections it appears in.
+
+    Generated from where the cross-reference badges actually land, so it is a
+    record of the text rather than a list someone maintained separately. A term
+    that stops being used stops being indexed.
+    """
+    file_of = {rec["file"]: rec for rec in flat}
+    labels, teaches = {}, {}
+    for mod in _refreshers() + _load_modules(API_MODULES) + _load_modules(FORMULA_PART_MODULES):
+        for t in getattr(mod, "TERMS", []):
+            labels[t["key"]] = t["label"]
+            href = (t.get("more_href") or "").split("#")[0]
+            if href in file_of:
+                teaches[t["key"]] = href
+
+    where = {}
+    for rec in flat:
+        path = os.path.join(ROOT, rec["file"])
+        if not os.path.exists(path):
+            continue
+        h = open(path, encoding="utf-8").read()
+        body = h[h.find("<main"):]
+        for key in set(re.findall(r'data-g="([a-zA-Z0-9-]+)"', body)):
+            where.setdefault(key, []).append(rec)
+
+    rows = []
+    for key, recs in where.items():
+        label = labels.get(key)
+        if not label:
+            continue
+        recs = sorted(recs, key=lambda r: r["idx"])
+        plain = re.sub(r"<[^>]+>", "", label).strip()
+        # Group A-Z, and everything else — Greek, operators, np.* — under one
+        # "Symbols" heading at the end. Python's isalpha() is True for Greek,
+        # so Σ and λ would otherwise each get a heading of their own, and
+        # symbols sorting either side of the ASCII letters produced THREE
+        # separate "Symbols" groups.
+        head = plain.lstrip("(").strip()[:1].upper()
+        is_az = "A" <= head <= "Z"
+        rows.append(((0 if is_az else 1, plain.lower()),
+                     plain, key, recs, head if is_az else "Symbols"))
+    rows.sort(key=lambda r: r[0])
+
+    parts, letter = [], None
+    for sort_key, plain, key, recs, first in rows:
+        if first != letter:
+            letter = first
+            parts.append('<div class="ixletter">%s</div>' % html.escape(letter))
+        home = teaches.get(key)
+        secs = []
+        for r in recs[:8]:
+            bold = ' class="ix-home"' if r["file"] == home else ""
+            secs.append('<a%s href="%s">%s</a>' % (bold, r["file"], r["sec"]))
+        more = " …" if len(recs) > 8 else ""
+        parts.append('<div class="ix"><span class="t">%s</span><span class="d"></span>'
+                     '<span class="p">%s%s</span></div>'
+                     % (html.escape(plain), ", ".join(secs), more))
+
+    wr(os.path.join(ROOT, "book-index.html"),
+       IDXPAGE.format(sidebar=sidebar(weeks, flat, "__bookindex__", 0),
+                      n=len(rows), body="".join(parts)))
+    return len(rows)
+
+
 def build_map(weeks, flat):
     """The concept map: which lesson leans on which.
 
@@ -469,7 +594,8 @@ def sidebar(weeks, flat, current_slug, depth):
     out.append('<a href="%sprogress.html" style="font-weight:700">▲ Progress</a>' % up)
     out.append('<a href="%sreference.html" style="font-weight:700">☰ Reference sheet</a>' % up)
     out.append('<a href="%ssymbols.html" style="font-weight:700">∑ Symbol glossary</a>' % up)
-    out.append('<a href="%smap.html" style="font-weight:700;margin-bottom:10px">◈ Concept map</a>' % up)
+    out.append('<a href="%smap.html" style="font-weight:700">◈ Concept map</a>' % up)
+    out.append('<a href="%sbook-index.html" style="font-weight:700;margin-bottom:10px">⌥ Index</a>' % up)
     for w in weeks:
         out.append('<h4>%s · W%s — %s</h4>' % (w["course"], w["week"], html.escape(w["title"])))
         for rec in flat:
@@ -2205,6 +2331,15 @@ def build():
                     '<a href="../paper.html">Why this works &#8594;</a></p>'
                     '<div class="scribble"><span class="lbl">&#9998; on paper</span>%s</div>'
                     % prompt)
+        # chapter openers and closers — the joins between chapters, which are
+        # otherwise silent because every lesson is self-contained
+        ch = _chapters().get(str(rec["chapter"]))
+        if ch:
+            if rec["n"] == 1:
+                body_html = (kit.chapter_open(ch["rests"], ch["able"], ch["leads"], ch["hook"])
+                             + body_html)
+            if rec["n"] == week_len:
+                body_html += kit.chapter_close(ch["q"])
         body_html, nq = tag_quiz(body_html, rec["slug"])
         qcount[rec["slug"]] = nq
         page = PAGE.format(
@@ -2232,6 +2367,7 @@ def build():
     build_reference(weeks, flat, cards)
     n_sym = build_symbols(weeks, flat)
     n_mn, n_me = build_map(weeks, flat)
+    n_ix = build_index_terms(weeks, flat)
     if _CODE_CACHE and not _CODE_CACHE.get("__none__"):
         print("       + %d NumPy snippets on the reference sheet (all executed)"
               % sum(1 for k in _CODE_CACHE if not k.startswith("__")))
