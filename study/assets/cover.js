@@ -86,6 +86,45 @@
 
     function loop() { paint(Date.now() - t0); raf = requestAnimationFrame(loop); }
 
+    /* ---- full screen ---- */
+    var shell = cv.closest('.cover');
+    var fsBtn = shell && shell.querySelector('[data-cover-fs]');
+    function fsOn() { return document.fullscreenElement === shell; }
+    function toggleFs() {
+      if (!shell) return;
+      try {
+        if (fsOn()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        else (shell.requestFullscreen || shell.webkitRequestFullscreen).call(shell);
+      } catch (e) { }           /* iOS Safari refuses on non-video: leave as-is */
+    }
+    if (fsBtn) {
+      /* hide the control outright where the API does not exist, rather than
+         offering a button that silently does nothing */
+      if (!(shell.requestFullscreen || shell.webkitRequestFullscreen)) fsBtn.style.display = 'none';
+      else fsBtn.addEventListener('click', toggleFs);
+    }
+    document.addEventListener('fullscreenchange', function () {
+      if (fsBtn) {
+        fsBtn.innerHTML = fsOn() ? '&#10005;' : '&#9974;';
+        fsBtn.setAttribute('aria-label', fsOn() ? 'Leave full screen' : 'Full screen');
+      }
+      size();
+    });
+
+    var nextBtn = shell && shell.querySelector('[data-cover-next]');
+    if (nextBtn) nextBtn.addEventListener('click', function () {
+      if (fsOn()) { toggleFs(); return; }
+      var after = shell.nextElementSibling;
+      if (after) after.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (e.key === 'f') { e.preventDefault(); toggleFs(); }
+    });
+
     window.addEventListener('resize', size);
     size();
     if (still) return;                                  // one frame, no loop

@@ -5,6 +5,8 @@ from kit import kid, key, warn, card, links, h2, grid2, grid3, note, table
 HERO = """
 <section class="cover">
   <canvas class="cover-cv" data-cover="1" aria-hidden="true"></canvas>
+  <button class="cover-fs" data-cover-fs type="button"
+          title="Full screen (f)" aria-label="Full screen">&#9974;</button>
   <div class="cover-in">
     <p class="cover-eyebrow">A study companion</p>
     <h1 class="cover-title">Machine<span>Learning</span></h1>
@@ -17,6 +19,8 @@ HERO = """
     </div>
     <p class="cover-by">Hung Om</p>
   </div>
+  <button class="cover-next" data-cover-next type="button">
+    <span>Begin</span><span class="chev">&#8595;</span></button>
 </section>
 <div class="hero">
 <p class="kicker">Machine Learning Specialization · DeepLearning.AI + Stanford</p>

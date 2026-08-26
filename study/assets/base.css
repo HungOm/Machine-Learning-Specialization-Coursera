@@ -1136,8 +1136,34 @@ body.rd-on .rd-zone { display: block; }
 
 /* ---- cover ---- */
 .cover { position: relative; border-radius: var(--radius); overflow: hidden;
-  min-height: min(74vh, 560px); display: flex; margin: 0 0 30px;
-  background: #14131a; }
+  display: flex; margin: 0 0 30px; background: #14131a;
+  /* page one of a book fills the page — main's own padding is subtracted so
+     the cover ends exactly at the fold, with the study plan starting below */
+  min-height: calc(100vh - 132px); }
+@media (max-width: 1000px) { .cover { min-height: calc(100vh - 118px); } }
+
+/* true full-screen, via the Fullscreen API */
+.cover:fullscreen { min-height: 100vh; border-radius: 0; margin: 0; }
+.cover:fullscreen .cover-in { padding: 4vh 5vw; }
+.cover-fs { position: absolute; top: 14px; right: 14px; z-index: 3;
+  width: 34px; height: 34px; border-radius: 50%; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,.22); background: rgba(20,19,26,.45);
+  color: #e8e4de; font-size: 14px; line-height: 1; backdrop-filter: blur(6px); }
+.cover-fs:hover { border-color: #f0894c; color: #f0894c; }
+.cover-fs:focus-visible { outline: 2px solid #f0894c; outline-offset: 2px; }
+
+/* the cue that there is a book under the cover */
+.cover-next { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  background: none; border: 0; cursor: pointer; padding: 6px 10px;
+  color: #8f8a83; font: 700 9.5px/1 var(--sans); letter-spacing: .16em;
+  text-transform: uppercase; }
+.cover-next:hover { color: #f0894c; }
+.cover-next:focus-visible { outline: 2px solid #f0894c; outline-offset: 3px; border-radius: 6px; }
+.cover-next .chev { font-size: 15px; animation: cover-bob 2.1s ease-in-out infinite; }
+@keyframes cover-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .cover-next .chev { animation: none; } }
 .cover-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .cover-in { position: relative; z-index: 2; margin: auto; text-align: center;
   padding: clamp(28px, 6vw, 60px) clamp(18px, 5vw, 40px);
@@ -1162,7 +1188,8 @@ body.rd-on .rd-zone { display: block; }
   text-transform: none; margin-bottom: 4px; }
 .cover-by { color: #8f8a83; font: 700 clamp(10px, 1.6vw, 12px)/1 var(--sans);
   letter-spacing: .14em; text-transform: uppercase; margin: clamp(18px, 3.4vh, 28px) 0 0; }
-@media print { .cover { min-height: 0; background: none; border: 1px solid var(--line); }
+@media print { .cover-fs, .cover-next { display: none !important; }
+  .cover { min-height: 0 !important; background: none; border: 1px solid var(--line); }
   .cover-cv { display: none; } .cover-title, .cover-title span { color: var(--ink); -webkit-text-fill-color: var(--ink); }
   .cover-sub, .cover-stat, .cover-by, .cover-eyebrow { color: var(--ink-soft); }
   .cover-stat b { color: var(--ink); } }
