@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 1 — Introduction, linear regression, gradient descent."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -357,6 +357,8 @@ as possible. That single sentence is what the rest of Week 1 is about.</p>""")
 </ul>
 <p>Worse line, bigger number. That is all J is doing.</p>"""
 
+        + explain("""<p>w = 0.5 and w = 1.5 both scored 0.583. <b>Why should being too shallow cost exactly as much as being equally too steep?</b></p>""",
+            """<p>Because squaring destroys the sign. The errors have opposite directions and the same size, and the cost only ever sees size. That symmetry is what makes J a bowl with one lowest point rather than a slope with a preferred side.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Forgetting to square.</b> Without the square, an error of +10 and one of −10
 cancel to zero, and a terrible line scores perfectly.</p>""")

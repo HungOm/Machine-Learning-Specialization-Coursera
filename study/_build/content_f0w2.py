@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 2 — Python, NumPy and pandas."""
 from kit import (kid, key, warn, trap, note, card, eq, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -362,6 +362,8 @@ Shape (3,4) became (3,).</li>
 <li><code>M.sum()</code> → 78. Everything collapsed to one number.</li>
 </ul>"""
 
+    + explain("""<p>You passed <code>axis=0</code> and got one number per column. <b>Why does axis 0 produce column results rather than row results?</b></p>""",
+        """<p>Because axis names the direction that gets <em>collapsed</em>, not the one that survives. Axis 0 runs down the rows, so summing along it consumes the rows and leaves one value per column. Reading it as “the axis I keep” is the source of nearly every mistake here.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fshape", "The two axes, and which one vanishes",
            "watch the output shape in each case")
@@ -517,6 +519,8 @@ lesson("07-elementwise", "Elementwise arithmetic", 7,
 <p>Every result is the <b>same length</b> as what went in. Nothing is added up or collapsed — that is the
 defining feature.</p>"""
 
+    + explain("""<p>Three numbers went in and three came out. <b>Why does elementwise multiplication not collapse to one number like a dot product does?</b></p>""",
+        """<p>Because no summing happens. Each output depends on exactly one pair of inputs and nothing else. The dot product is these same products plus one extra step — and it is that step, not the multiplication, that does the collapsing.</p>""")
     + h2("🎬", "Watch it move")
     + demo("felementwise", "Six operations, position by position",
            "notice the answer is always the same length as the input")
@@ -831,6 +835,8 @@ a whole array of <b>yes/no</b> answers, one per position.</p>
 <li><code>(x > 25).sum()</code> → 3 — because True counts as 1</li>
 </ul>"""
 
+    + explain("""<p>The comparison returned an array, not True or False. <b>Why is that the more useful answer?</b></p>""",
+        """<p>Because you asked the question of every element at once, so there is one answer per element. A single True would have to throw away which ones matched — and it is precisely which ones that lets you then select them.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fmask", "Slide the threshold and watch the mask and the filter",
            "the mask is always the same length as the data; the filtered result is not")

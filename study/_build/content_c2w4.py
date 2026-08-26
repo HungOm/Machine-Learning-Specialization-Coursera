@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 4 — Decision trees and tree ensembles."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -659,6 +659,8 @@ at the split boundaries. It cannot extrapolate beyond the range of the training 
 50 lb animal and it will confidently return the mean of the heaviest leaf it has. Neural networks and
 linear models extrapolate (often badly, but they do).</p>""", "What a regression tree can’t do")
 
+        + explain("""<p>Entropy was replaced by variance and everything else stayed. <b>Why does that one substitution convert the whole algorithm?</b></p>""",
+            """<p>Because the tree only ever asked one question of a split: are the groups more uniform afterwards? Entropy answers that for labels, variance answers it for numbers. Swap the measure of uniformity and every other part — recursion, weighting, stopping — is untouched.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Expecting smooth predictions.</b> The output is piecewise constant. If you need a
 smooth curve, a tree is the wrong shape of model — or you need an ensemble, which averages many step

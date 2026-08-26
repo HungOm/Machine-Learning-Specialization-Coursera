@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 3 — Reinforcement learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -54,6 +54,8 @@ field.</p>""")
             card("<h3>RLHF</h3><p>Aligning large language models to human preference. Quietly the most "
                  "widely deployed application of RL today.</p>"))
 
+        + explain("""<p>The successes listed are mostly simulations or tightly controlled settings. <b>Why does that pattern hold?</b></p>""",
+            """<p>Because RL learns by trying things and failing many times. A simulator makes failure free and fast; the physical world makes it slow, expensive and sometimes destructive. The bottleneck is not the algorithm but the cost of an attempt.</p>""")
         + h2("✅", "Check yourself")
         + quiz([
             ("Why can't you use supervised learning to fly a helicopter?",
@@ -182,6 +184,8 @@ demo and right becomes better: the 100 is too far away to be worth the wait.</p>
 about the future. It encodes impatience. Real systems typically use 0.9, 0.99 or 0.999; this course uses
 0.5 purely so the arithmetic stays doable in your head.</p>""")
 
+        + explain("""<p>A reward two steps away was worth 6.25 rather than 25. <b>Why discount at all, rather than counting every reward equally?</b></p>""",
+            """<p>Because a distant reward is less certain and less useful, and because without discounting an endless task has an infinite return that cannot be compared with anything. γ makes the sum finite and encodes a preference for sooner.</p>""")
         + h2("🔬", "Why discount at all?")
         + """<p>Three genuine reasons, and it is worth knowing all three:</p>
 <ol>
@@ -410,6 +414,8 @@ then 100 one step later. 0 + 0.5 × 100 = <b>50</b>. ✓</p>
 value of 20. So 0 + 0.5 × 20 = 10. Notice that computing Q for a “bad” first move still assumes good play
 afterwards.</p>"""
 
+        + explain("""<p>Q is defined as “take a, then behave optimally” — using optimal behaviour in its own definition. <b>Why is that not circular?</b></p>""",
+            """<p>Because the recursion bottoms out. Terminal states have a known value with no lookahead, and every other state is defined one step closer to them. The definition unrolls to something concrete rather than chasing itself forever.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Thinking Q(s, a) assumes you keep taking action a.</b> It does not. Only the
 <em>first</em> action is a; everything after is optimal.</p>""")
@@ -566,6 +572,8 @@ equation.</p>""")
 <p>At a terminal state there is no “next”, so the second term vanishes and Q(s, a) = R(s). That is the
 base case that stops the recursion — the same structural role as the leaf in a decision tree.</p>"""
 
+        + explain("""<p>Q(4, ←) came out as 0 + 0.5 × 25. <b>Why is the whole future compressed into that single number 25?</b></p>""",
+            """<p>Because V(3) already <em>is</em> the whole future from state 3, played optimally. The recursion means you never look further than one step: everything beyond is summarised in the value of where you land.</p>""")
         + h2("🔬", "Why this makes the circular definition work")
         + """<p>Lesson 6 defined Q in terms of “behaving optimally afterwards”, which sounds circular. The
 Bellman equation turns that circularity into something computable: it is a system of equations that Q must

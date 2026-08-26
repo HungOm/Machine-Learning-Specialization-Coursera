@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 1 — The maths you actually need."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -45,6 +45,8 @@ this in”. You tell them apart by knowing f is a function, which you only know 
              ["−2", "2(−2) + 1", "<b>−3</b>"],
              ["0.5", "2(0.5) + 1", "<b>2</b>"]])
 
+    + explain("""<p>You put 3 in and got 7 out. <b>Why can you be certain 3 will give 7 again tomorrow?</b> Say the reason, not the arithmetic.</p>""",
+        """<p>Because a function is <em>defined</em> as a fixed rule: one input, one output, no memory of what came before. If 3 could give 7 today and 8 tomorrow it would not be a function at all. The certainty is the definition, not a property of this particular rule.</p>""")
     + h2("🎬", "Watch it move")
     + demo("ffnmachine", "Drop a number in one end",
            "change x, change the machine, watch what falls out")
@@ -273,6 +275,8 @@ Identical. m and w are both the slope; c and b are both where it crosses. Only t
 <p>So every step right, the line climbs 3. Sanity check: from (1, 3), stepping one right should reach
 (2, 6). Does the line pass through there? Yes.</p>"""
 
+    + explain("""<p>Both hills rose over the same 2 steps. <b>Why does dividing rise by run tell you anything a bare rise would not?</b></p>""",
+        """<p>Because steepness is a <em>rate</em>, not an amount. A rise of 6 means nothing until you say over how far. Dividing removes the distance, leaving only how much height each step buys — which is what lets two hills of different lengths be compared.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fslope", "Drag the slope and the starting height",
            "the blue and green sides of the triangle are the run and the rise")
@@ -370,6 +374,8 @@ You need three things: a derivative is a <b>slope</b>; its <b>sign</b> says whic
     + """<p>So the slope of x² at x = 3 is <b>6</b>. And the general rule — which you can now believe
 rather than memorise — is that the derivative of x² is <b>2x</b>. At x = 3: 2(3) = 6. ✓</p>"""
 
+    + explain("""<p>You slid the second point closer and the slope settled on a number. <b>Why does it settle rather than collapse into 0 ÷ 0?</b></p>""",
+        """<p>Because both the rise and the run shrink <em>together</em>, at a fixed ratio. Their sizes vanish; their ratio does not. That is the whole trick of a limit — you never actually reach 0 ÷ 0, you watch where the ratio is heading.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fderiv", "Shrink the gap and watch the two lines merge",
            "orange is the line through two points; green dashes are the true slope at the point")
@@ -494,6 +500,8 @@ tiny amount and J moves about <b>6</b> units for every one unit w moved; nudge b
 and J only moves about <b>4</b>. This particular hillside is steeper in the w direction than in the b
 direction — and the gradient is precisely how you read that off.</p>"""
 
+    + explain("""<p>You froze b and wiggled w. <b>Why is the number you get a legitimate answer, given the height depends on both?</b></p>""",
+        """<p>Because you asked a narrower question than “how steep is it”: you asked how steep it is <em>in the w direction</em>. That is a well-defined thing, and it is exactly what gradient descent needs — it adjusts each parameter separately.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fpartial", "Freeze one, wiggle the other",
            "the left panel is the whole landscape; the right is the single slice you are walking along")
@@ -614,6 +622,8 @@ Once you can point to all three, you can unroll it — however unfamiliar what c
 <p style="text-align:center"><b>Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub>²</b> = 3² + 1² + 4² = 9 + 1 + 16 = <b>26</b></p>
 <p>Notice you square <em>each one first</em>, then add. Not add then square — that would be 8² = 64.</p>"""
 
+    + explain("""<p><b>Why does the letter under Σ matter, given the answer is just a total?</b></p>""",
+        """<p>Because it names what changes on each pass. Without it, “add up x” cannot say <em>which</em> x — the i is the counter that steps through them, and it is also what lets the expression beside Σ refer to the current one.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fsigma", "The symbol unrolling into a loop",
            "watch the running total build up one term at a time")
@@ -731,6 +741,8 @@ instead of add.</p>"""
 <p>Look at what happened. Four perfectly ordinary-looking numbers multiplied down to something under 4%.
 Numbers below 1 shrink fast when you multiply them.</p>"""
 
+    + explain("""<p>Σ starts its running total at 0; Π starts at 1. <b>Why must it, rather than being a convention someone chose?</b></p>""",
+        """<p>Because the starting value must leave the first real term unchanged. Adding 0 changes nothing; multiplying by 1 changes nothing. Starting Π at 0 would force the answer to 0 no matter what followed.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fpi", "The running product falling away",
            "four ordinary numbers becoming one small one")
@@ -812,6 +824,8 @@ triangle 3 across and 4 up:</p>
 <p style="text-align:center">‖x⃗‖ = √(3² + 4²) = √(9 + 16) = √25 = <b>5</b></p>
 <p>The same formula works with four hundred entries; you just square more things before adding them.</p>"""
 
+    + explain("""<p>[3, 7] and [7, 3] contain the same two numbers. <b>Why are they nevertheless different vectors?</b></p>""",
+        """<p>Because position carries meaning. If slot 1 is square footage and slot 2 is bedrooms, swapping them describes a different house entirely. A vector is a list <em>plus</em> the agreement about what each slot means.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fvector", "Two numbers, drawn as an arrow",
            "drag them and watch the components and the length")
@@ -911,6 +925,8 @@ a neuron uses one: many inputs arrive, and exactly one number must come out.</p>
     + """<p>Both lists must be the <b>same length</b>, or there is nothing to pair the leftovers with.
 That is not a convention — it is the reason NumPy raises an error.</p>"""
 
+    + explain("""<p>You multiplied pairs, then added. <b>Why is the adding step there — why not stop at the list of products?</b></p>""",
+        """<p>Because the question was “what is the total bill”, which is one number. Stopping early leaves you with per-item costs; summing collapses them into the single quantity you asked for. That collapse is why a neuron can take many inputs and emit one.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fdot", "Pair, multiply, add — and what the answer means geometrically",
            "drag the angle and watch the sign of the answer flip")
@@ -1007,6 +1023,8 @@ features</b>. So a (1000, 4) matrix is 1000 houses, each described by 4 numbers.
 <li>M[:, 1] = <b>[12, 22, 32]</b> — a whole column.</li>
 </ul>"""
 
+    + explain("""<p><b>Why does shape get written rows-first, rather than whichever is larger?</b></p>""",
+        """<p>Because it is a convention that has to be fixed before anything can be communicated, and every library follows it. The value is not in the choice but in everyone making the same one — <code>(100, 4)</code> then means 100 examples of 4 features to every reader and every function.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fmatrix", "Change the shape, watch the indices",
            "the highlighted cell shows its own address")
@@ -1105,6 +1123,8 @@ column 1 of B:</p>
              ["A @ A", "(3×2)(3×2)", "❌ 2 ≠ 3", "ValueError"],
              ["A @ A.T", "(3×2)(2×3)", "✅ inner 2 = 2", "(3×3)"]])
 
+    + explain("""<p>The inner dimensions had to match, and then they vanished. <b>Why do they vanish rather than appearing in the answer?</b></p>""",
+        """<p>Because that dimension is what gets summed over. Each cell is a dot product along it, and a sum collapses a list into one number. The dimension is consumed by the summing — exactly as the features dimension is consumed when a layer computes its weighted sums.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fmatmul", "The answer filling in, one cell at a time",
            "watch which row and which column feed each cell")
@@ -1194,6 +1214,8 @@ are now rows.</p>
 <p>Follow one number: the 6 was at row 1, column 2. It is now at row 2, column 1. Every entry does the
 same swap — M<sup>T</sup>[j, i] = M[i, j].</p>"""
 
+    + explain("""<p>Transposing changed no numbers. <b>Why is it worth an operation at all, then?</b></p>""",
+        """<p>Because matrix multiplication cares about orientation, not just contents. A (3×1) and a (1×3) hold identical numbers and only one of them will multiply with what you have. Transpose changes nothing about the data and everything about what is legal next.</p>""")
     + h2("🎬", "Watch it move")
     + demo("ftranspose", "The grid tipping over",
            "watch each number travel to its mirrored position")
@@ -1278,6 +1300,8 @@ matter what z is, and it <b>grows very fast</b> as z gets bigger.</p>
     + """<p>Never zero, never negative, and it climbs faster than anything polynomial. Those are the facts
 that matter.</p>"""
 
+    + explain("""<p>Ten doublings reached 1024, not 20. <b>Why does repeated multiplication run away so much faster than repeated addition?</b></p>""",
+        """<p>Because each step is applied to the result of the last, so the amount added grows with the total. Adding 2 ten times adds 2 each time; doubling ten times adds 1, then 2, then 4, then 8 — the increment itself is compounding.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fexp", "The curve, and the numbers at each point",
            "notice it never touches the bottom, however far left you go")
@@ -1371,6 +1395,8 @@ lesson("15-logarithms", "Logarithms", 8,
              ["→ 0", "→ ∞", "certain and wrong → infinite penalty"]])
     + """<p>That table <em>is</em> the logistic loss from Course 1, Week 3. Nothing else is going on.</p>"""
 
+    + explain("""<p>log turned 0.001 into about −6.9. <b>Why is that useful rather than merely different?</b></p>""",
+        """<p>Because 0.001 and 0.0001 look nearly identical and are ten times apart; −6.9 and −9.2 are visibly apart. log converts ratios into distances, which is what makes a loss function able to distinguish “wrong” from “very wrong”.</p>""")
     + h2("🎬", "Watch it move")
     + demo("flog", "Drag p towards zero and watch the penalty climb",
            "the curve is the whole of cross-entropy loss")
@@ -1469,6 +1495,8 @@ multiplying one is doing the real work in this specialization.</p>""")
 <p>Now notice the third one. Two events that each looked reasonably likely combine into something under
 10%. Multiply five such things and you are at 0.00243.</p>"""
 
+    + explain("""<p>All the outcomes had to add to 1. <b>Why exactly 1, rather than 100 or any other total?</b></p>""",
+        """<p>Because 1 means “the whole of what can happen”. Every possible outcome is somewhere in that whole, so the parts must exactly fill it — no more, since nothing else can occur, and no less, since something must.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fprob", "A bag of ten, and the four rules",
            "change how many are red and watch every number update")
@@ -1570,6 +1598,8 @@ apart.</p>
 <p>So the typical distance from the middle is 2. Sanity check against the data: most values sit within 2
 of 5, and that is exactly what you see.</p>"""
 
+    + explain("""<p>Variance squares each distance from the mean before averaging. <b>Why square rather than just take the distances?</b></p>""",
+        """<p>Two reasons, and both matter. Distances above and below the mean would cancel to zero. And squaring makes far-out values dominate, which is what you want from a measure of spread — one value far away is more informative than several close ones.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fstats", "Spread the points out and watch σ grow",
            "the shaded band is one standard deviation either side of the mean")
@@ -1765,6 +1795,8 @@ reads straightforwardly: “the action a that makes Q biggest” — the action,
 <li>min(x) = <b>7</b> · argmin(x) = <b>2</b></li>
 </ul>"""
 
+    + explain("""<p>max gave 0.7 and argmax gave position 1. <b>Why does anyone need both, when one clearly determines the other?</b></p>""",
+        """<p>Because they answer different questions and the useful one is usually argmax. Knowing the winning probability is 0.7 does not tell you which digit was recognised; knowing it was position 1 does. The value measures confidence, the position <em>is</em> the prediction.</p>""")
     + h2("🎬", "Watch it move")
     + demo("fargmax", "The four in turn",
            "watch whether the highlight lands on the value or on the index")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 3 — Advice for applying machine learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -1262,6 +1262,8 @@ Accuracy = (15 + 70) / 100 = 0.85 — which sounds better than either, and tells
 of the two numbers. Precision 1.0 with recall 0.01 gives F1 ≈ 0.02, not 0.5. It refuses to be impressed by
 a model that is excellent at one half and useless at the other.</p>"""
 
+        + explain("""<p><code>print("healthy")</code> scored 99.5%. <b>Why does accuracy fail here when it works elsewhere?</b></p>""",
+            """<p>Because accuracy rewards getting the common case right, and here the common case is 199 of every 200. The metric is dominated by the class you do not care about, so it can be nearly perfect while the model never once does the thing it exists to do.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Reporting accuracy on skewed data.</b> With 1 in 200 positives, accuracy is
 essentially a measurement of how rare the positive class is.</p>""")

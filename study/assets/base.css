@@ -1251,3 +1251,26 @@ ol.work details.wf[open] > summary { margin-bottom: 3px; }
 @media print { ol.work details.wf > summary { display: none; }
   ol.work details.wf .wa { display: block !important; }
   ol.work li.wfade { background: none; } }
+
+/* ---- self-explanation prompt at a worked example ---- */
+.explain { border: 1px solid var(--purple); border-left-width: 3px;
+  border-radius: var(--radius); background: var(--purple-soft);
+  padding: 14px 17px; margin: 16px 0; }
+.explain > .tag { display: block; font: 700 9.5px/1 var(--sans); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
+.explain p { margin: 0 0 10px; font-size: 15px; }
+.explain p:last-of-type { margin-bottom: 11px; }
+.explain details.ex { border-top: 1px dashed var(--purple); padding-top: 9px; }
+.explain details.ex > summary { cursor: pointer; list-style: none;
+  font: 700 12.5px/1.4 var(--sans); color: var(--purple);
+  display: flex; align-items: center; gap: 7px; }
+.explain details.ex > summary::-webkit-details-marker { display: none; }
+.explain details.ex > summary::before { content: "▸"; font-size: 11px; transition: transform .15s; }
+.explain details.ex[open] > summary::before { transform: rotate(90deg); }
+.explain details.ex > summary:hover { text-decoration: underline; }
+.explain details.ex:focus-within > summary { outline: 2px solid var(--purple);
+  outline-offset: 3px; border-radius: 4px; }
+.explain .ex-b { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
+.explain .ex-b p { font-size: 14px; margin: 0 0 7px; }
+.explain .ex-b p:last-child { margin: 0; }
+@media print { .explain details.ex .ex-b { display: block; } }

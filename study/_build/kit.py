@@ -37,6 +37,20 @@ def pretest(ask, watch, tag="Before you read"):
               '<div class="pt-b">%s</div></details></div>' % (ask, watch))
 
 
+def explain(ask, because, tag="Say it out loud"):
+    """A self-explanation prompt, placed at a worked example.
+
+    Chi et al. (1994): learners asked to explain a worked step back to
+    themselves outperform learners who read the same step. The effect comes
+    from asking WHY a step follows, not from asking what it says — so these
+    prompts ask for a justification, and the reveal gives the reason rather
+    than repeating the arithmetic.
+    """
+    return ('<div class="explain"><span class="tag">%s</span>%s'
+            '<details class="ex"><summary>said it &mdash; now check</summary>'
+            '<div class="ex-b">%s</div></details></div>' % (tag, ask, because))
+
+
 def card(body):
     return '<div class="card">%s</div>' % body
 

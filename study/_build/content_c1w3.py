@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 3 — Classification, logistic regression, regularisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -209,6 +209,8 @@ predicts 1. Below and to the left, it predicts 0.</p>
 <p>Now change to w₁ = 1, w₂ = 1, b = −1 with features x₁² and x₂². The boundary is x₁² + x₂² = 1 — the unit
 <b>circle</b>. Inside it the model predicts 0; outside, 1.</p>"""
 
+        + explain("""<p>f ≥ 0.5 turned out to mean z ≥ 0. <b>Why does the messy sigmoid condition simplify to a statement about z alone?</b></p>""",
+            """<p>Because the sigmoid is monotonic — it never goes back down. So “is g(z) above 0.5” is answerable from z alone, and since g(0) = 0.5 exactly, the threshold in z is exactly 0. The curve drops out entirely.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Thinking a curved boundary means the model is non-linear.</b> It is linear in z
 throughout. Only the features changed.</p>""")

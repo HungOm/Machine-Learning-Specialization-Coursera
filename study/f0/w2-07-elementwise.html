@@ -236,7 +236,7 @@
 <li><code>np.sqrt(a)</code> → [1, 1.41, 1.73, 2]</li>
 </ul>
 <p>Every result is the <b>same length</b> as what went in. Nothing is added up or collapsed — that is the
-defining feature.</p><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Six operations, position by position</span><span class="h">notice the answer is always the same length as the input</span></div><div class="demo-body" data-anim="felementwise"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+defining feature.</p><div class="explain"><span class="tag">Say it out loud</span><p>Three numbers went in and three came out. <b>Why does <span class="gterm" data-g="elementwise-f0">elementwise</span> multiplication not collapse to one number like a dot product does?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because no summing happens. Each output depends on exactly one pair of inputs and nothing else. The dot product is these same products plus one extra step — and it is that step, not the multiplication, that does the collapsing.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Six operations, position by position</span><span class="h">notice the answer is always the same length as the input</span></div><div class="demo-body" data-anim="felementwise"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 a = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">4</span>])
 b = np.array([<span class="tok-n">10</span>, <span class="tok-n">20</span>, <span class="tok-n">30</span>, <span class="tok-n">40</span>])
 
@@ -250,7 +250,7 @@ np.sqrt(a)       <span class="tok-c"># array([1.  , 1.414, 1.732, 2.  ])</span>
 <span class="tok-c"># which is why the sigmoid works on a whole matrix with no loop:</span>
 <span class="tok-k">def</span> sigmoid(Z):
     <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + np.exp(-Z))</code></pre><h2><span class="ico">🔬</span>What is actually happening</h2><p>Look at that sigmoid again. <code>Z</code> might be a (1000, 25) <span class="gterm" data-g="matrix-f0">matrix</span> — 25,000 numbers. The
-function has no loop in it at all, because every operation inside is <span class="gterm" data-g="elementwise-f0">elementwise</span>: <code>-Z</code> negates
+function has no loop in it at all, because every operation inside is elementwise: <code>-Z</code> negates
 all 25,000, <code>np.exp</code> exponentiates all 25,000, the division divides all 25,000.</p>
 <p>This is why real machine learning code is so much shorter than you would expect. The loops are still
 happening — they are just happening inside compiled C code rather than in Python.</p>

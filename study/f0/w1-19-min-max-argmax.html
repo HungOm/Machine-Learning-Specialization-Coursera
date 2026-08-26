@@ -236,7 +236,7 @@ reads straightforwardly: “the action a that makes Q biggest” — the action,
 <ul>
 <li>max(x) = <b>31</b> · argmax(x) = <b>1</b></li>
 <li>min(x) = <b>7</b> · argmin(x) = <b>2</b></li>
-</ul><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The four in turn</span><span class="h">watch whether the highlight lands on the value or on the index</span></div><div class="demo-body" data-anim="fargmax"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+</ul><div class="explain"><span class="tag">Say it out loud</span><p>max gave 0.7 and argmax gave position 1. <b>Why does anyone need both, when one clearly determines the other?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because they answer different questions and the useful one is usually argmax. Knowing the winning <span class="gterm" data-g="probability-f0">probability</span> is 0.7 does not tell you which digit was recognised; knowing it was position 1 does. The value measures confidence, the position <em>is</em> the prediction.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The four in turn</span><span class="h">watch whether the highlight lands on the value or on the index</span></div><div class="demo-body" data-anim="fargmax"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">12</span>, <span class="tok-n">31</span>, <span class="tok-n">7</span>, <span class="tok-n">24</span>, <span class="tok-n">19</span>])
 
 np.max(x)        <span class="tok-c"># 31</span>
@@ -250,7 +250,7 @@ preds = np.argmax(probs, axis=<span class="tok-n">1</span>)    <span class="tok-
 what you want. <code>axis=0</code> goes down the columns and asks a completely different, useless question.
 Getting this wrong produces an answer of the wrong length, which at least fails loudly.</p></div><h2><span class="ico">🔬</span>What is actually happening</h2><p>Where these appear in the three courses:</p>
 <ul>
-<li><b>Classification</b> (C2 W2): the network gives 10 <span class="gterm" data-g="probability-f0">probabilities</span>; <code>argmax</code> turns them into
+<li><b>Classification</b> (C2 W2): the network gives 10 probabilities; <code>argmax</code> turns them into
 a predicted digit. You want the <em>which</em>, not the score.</li>
 <li><b>K-means</b> (C3 W1): <code>argmin</code> over distances assigns each point to its nearest centroid.
 Again the index, not the distance.</li>

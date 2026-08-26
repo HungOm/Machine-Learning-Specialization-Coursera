@@ -240,7 +240,7 @@ equation.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class
 <li>So Q(4, ←) = 0 + 0.5 × 25 = <b>12.5</b>. ✓</li>
 </ul>
 <p>At a terminal state there is no “next”, so the second term vanishes and Q(s, a) = R(s). That is the
-base case that stops the recursion — the same structural role as the leaf in a decision tree.</p><h2><span class="ico">🔬</span>Why this makes the circular definition work</h2><p>Lesson 6 defined Q in terms of “behaving optimally afterwards”, which sounds circular. The
+base case that stops the recursion — the same structural role as the leaf in a decision tree.</p><div class="explain"><span class="tag">Say it out loud</span><p>Q(4, ←) came out as 0 + 0.5 × 25. <b>Why is the whole future compressed into that single number 25?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because V(3) already <em>is</em> the whole future from state 3, played optimally. The recursion means you never look further than one step: everything beyond is summarised in the value of where you land.</p></div></details></div><h2><span class="ico">🔬</span>Why this makes the circular definition work</h2><p>Lesson 6 defined Q in terms of “behaving optimally afterwards”, which sounds circular. The
 Bellman equation turns that circularity into something computable: it is a system of equations that Q must
 satisfy, and it has exactly one solution.</p>
 <p>You can find it by starting with any guess and repeatedly applying the equation as an update — each

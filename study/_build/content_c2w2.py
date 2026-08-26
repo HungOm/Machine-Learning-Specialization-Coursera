@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 2 — Training, activations, softmax, optimisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -419,6 +419,8 @@ direct = layer(x, W_combined, b_combined)  # one combined layer
 a2, direct     # (array([32.]), array([32.])) -- identical, for any x
 """)
 
+        + explain("""<p>Two linear layers collapsed to <code>6x + 2</code>. <b>Why does no amount of depth escape this?</b></p>""",
+            """<p>Because a linear function of a linear function is linear, and that argument applies again to the result. Each collapse produces something of the same form, so it can be collapsed again — a hundred times if need be. Depth adds parameters and no new expressive power.</p>""")
         + h2("🎬", "Watch it move")
         + demo("relubuild", "Straight sticks vs. bent ones",
                "drag the slider to add ReLU units — each one adds exactly one kink")
@@ -595,6 +597,8 @@ did not change. They are competing for the same 100%.</p>"""
 <var>e</var>¹. Softmax converts <em>differences</em> in scores into <em>ratios</em> in probability, which
 is exactly the behaviour you want from evidence.</p>"""
 
+        + explain("""<p>Raising one z made every other probability fall, though their own scores never changed. <b>Why?</b></p>""",
+            """<p>Because they share a denominator. Every output is divided by the same total, so growing one term grows the total and shrinks everyone else's share. The outputs are competing for a fixed 100% — which is exactly what makes them a probability distribution.</p>""")
         + h2("🔢", "And the loss that goes with it")
         + eqp([
             ('<var>L</var> <span class="op">=</span> <span class="op">−</span>log(<var>a</var><sub><var>y</var></sub>)', "logarithm-f0", "huge penalty if the true class's probability is near 0"),
@@ -1201,6 +1205,8 @@ must.</p>"""
 upstream of a. In a network with a million weights, one backward sweep gets you all million derivatives.
 Nudging each weight separately would cost a million forward passes.</p>""")
 
+        + explain("""<p>Backprop gets every derivative in roughly one backward pass, where nudging each weight would need two per weight. <b>Why is it so much cheaper?</b></p>""",
+            """<p>Because the chain rule lets each node reuse the result already computed downstream of it. Nudging recomputes the whole network from scratch for every single weight; backprop computes each shared piece once and passes it back.</p>""")
         + h2("🕳", "Traps")
         + trap("""<p><b>Forgetting you need the forward values.</b> The backward pass uses numbers computed
 during the forward pass (like x, to get ∂c/∂w). That is why training uses far more memory than inference —
