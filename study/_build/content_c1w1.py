@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 1 — Introduction, linear regression, gradient descent."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="The definition, the one big split that organises everything that follows, and why this is worth "
          "three courses of your time.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You want a program that decides whether a photo shows your grandmother. Try, right now, to write down the <b>rule</b> it should follow — in words, precisely enough that someone could code it.</p>""",
+                """<p>If you got stuck, that is the point. Watch for <b>why the stuckness matters</b>: this lesson argues the whole field exists because some rules cannot be written down, only demonstrated with examples.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Normally you tell a computer <b>exactly</b> what to do: “if the price is over £50, add a
 delivery charge.” Every rule, written out by a person.</p>
 <p>Machine learning is different. You show it <b>examples</b> — a thousand houses and what each one sold
@@ -81,7 +83,9 @@ L.append(dict(
     lede="Learning x → y from examples with the answers attached — and the one distinction that decides "
          "everything downstream: regression or classification.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Two jobs: (a) predict tomorrow's rainfall in millimetres, (b) predict whether it rains tomorrow. Same weather, same data. <b>Guess why a machine-learning person would treat these as different kinds of problem.</b></p>""",
+                """<p>Watch for the word that names the split. The difference is not the subject matter — it is what <em>shape</em> the answer takes, and that single choice decides the model, the cost function and how you score it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine learning about dogs by being shown a hundred photos, each one with someone
 saying “dog” or “not a dog”. After enough of them you can label a photo you have never seen.</p>
 <p>That is supervised learning. Every training example arrives with its right answer, and the algorithm
@@ -150,7 +154,9 @@ L.append(dict(
     slug="03-unsupervised-learning", title="Unsupervised learning", mins=8, tag="intuition",
     lede="The other half of the map. No answers, no marking, just “is there structure in here?”",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Someone hands you 10,000 news articles with no labels of any kind and asks you to “find the stories”. <b>Before reading: how would you even check whether your answer was right?</b></p>""",
+                """<p>Sit with the discomfort — there genuinely is no answer key. Watch for what replaces “correct” when there is nothing to compare against.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Someone hands you a box of mixed Lego and says nothing at all. No instructions, no
 picture on the lid.</p>
 <p>You still start sorting: reds here, wheels there, the long flat pieces in their own pile. Nobody told
@@ -211,7 +217,9 @@ L.append(dict(
     slug="04-linear-regression-model", title="The linear regression model", mins=10, tag="core",
     lede="The first algorithm, and the simplest useful one there is: draw a straight line through the data.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Dots on a graph: house size across, price up. You want to draw one straight line through them. <b>How many numbers do you need to pin down exactly which line it is?</b> Commit to a number.</p>""",
+                """<p>Watch for what each of those numbers <em>means</em> in house terms — one of them has a physical reading (dollars per square foot) and the other is famously meaningless on its own.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have dots on a graph: house size across the bottom, price up the side. Bigger houses
 cost more, roughly.</p>
 <p>Draw a straight line through the middle of the dots. Now for any size you like, look up the line and
@@ -300,7 +308,9 @@ L.append(dict(
     lede="One number that says how badly the current line fits. Everything from here is about making that "
          "number small.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model is wrong on three houses by 30, 20 and 10. A rival is wrong on one house by 30 and perfect on the rest. <b>Which model is worse — and does your answer change if you square each miss before adding?</b></p>""",
+                """<p>Do the squaring by hand before reading: 900+400+100 against 900. Watch for <em>why</em> the formula squares at all — it is a deliberate choice about which kind of wrongness to punish.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You drew a line. Is it a good line?</p>
 <p>Measure, for each dot, how far the line missed it. Then <b>square</b> each of those misses and add them
 all up.</p>
@@ -381,7 +391,9 @@ L.append(dict(
     slug="06-cost-function-intuition", title="Cost function intuition", mins=10, tag="maths",
     lede="Two graphs that are easy to confuse and essential to keep apart: the model, and the cost.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You will meet two graphs in this lesson. One has house size along the bottom; the other has <b>w</b> along the bottom. <b>Guess what a single dot on the second graph represents.</b></p>""",
+                """<p>This is the most common confusion in Course 1. Watch for the sentence that says what one point on the second graph <em>is</em> — it is not a house.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>There are two completely different pictures here and mixing them up is the single most
 common confusion in Course 1.</p>
 <p><b>Picture 1</b> is the data: dots, and a line through them. The horizontal axis is <b>x</b> (house
@@ -449,7 +461,9 @@ L.append(dict(
     lede="Put b back in and J becomes a bowl in three dimensions. Seen from above, it becomes a contour "
          "map — and that map is the background of every picture for the rest of the course.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>With one parameter the cost was a U-shaped curve. Now there are two, <b>w</b> and <b>b</b>. <b>What shape does the cost become — and how would you draw a 3-D shape on flat paper?</b></p>""",
+                """<p>Hikers and geologists solved the drawing problem centuries ago. Watch for the borrowed technique, and for what it means when the rings sit close together.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>With one parameter, J was a U-shaped curve. With two — w <em>and</em> b — it becomes a
 <b>bowl</b>: a 3-D surface, with w one way, b the other, and J as the height.</p>
 <p>A 3-D picture is awkward on a flat page. So do what map-makers do: look at it from <b>directly
@@ -510,7 +524,9 @@ L.append(dict(
     lede="The algorithm that finds the bottom of the bowl — and, with almost no changes, trains every "
          "model in this specialization including the neural networks.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You are on a hillside in fog thick enough to see one metre. You want the bottom of the valley. <b>Write down the procedure you would actually follow.</b> No map allowed.</p>""",
+                """<p>Whatever you wrote is probably the algorithm. Watch for the one thing it never needs to know — and for the catch that comes with only ever looking one metre ahead.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You are standing somewhere on a hilly landscape in thick fog. You want to get to the
 bottom of a valley, and you can see about a metre in any direction.</p>
 <p>What do you do? Spin around slowly, work out which way is <b>most steeply downhill</b>, take one small
@@ -575,7 +591,9 @@ L.append(dict(
     lede="The update rule, and the one implementation detail that is easy to get wrong and hard to notice: "
          "simultaneous update.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Two dials, w and b, both to be adjusted. You work out w's new value, set it, <b>then</b> work out b's. <b>Guess what goes wrong — and whether you would notice.</b></p>""",
+                """<p>Watch for why this bug is dangerous rather than fatal: it often still reduces the cost, which is precisely why it survives in people's code for months.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You and a friend both have to take one step, and you both have to decide based on where
 you are <b>right now</b>.</p>
 <p>If you step first and then your friend looks around, they are deciding from a different position than
@@ -659,7 +677,9 @@ L.append(dict(
     lede="Why subtracting the derivative always sends you the right way — whichever side of the minimum "
          "you start on.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The rule is <code>w = w − α × slope</code>. On the left-hand side of a valley the slope is negative. <b>Subtracting a negative number — which way does w move, and is that the right way?</b></p>""",
+                """<p>Work the sign through by hand for both sides of the valley. Watch for why the formula never needs to know which side you started on.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The derivative is just the <b>steepness</b> of the curve where you are standing, with a
 sign attached.</p>
 <ul>
@@ -726,7 +746,9 @@ L.append(dict(
     lede="The one hyperparameter in this week, and the one you will spend the most time on. Too small "
          "wastes days; too large produces NaN.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>α sets your step size. You try α = 0.0001 and it barely moves; you try α = 10 and the cost prints 12, 45, 380, <code>NaN</code>. <b>What is physically happening on the hillside at α = 10?</b></p>""",
+                """<p>Picture the stride, not the number. Watch for the one-line debugging rule this gives you — it stays true for every model in all three courses.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>α decides how big a step you take.</p>
 <ul>
 <li><b>Tiny steps.</b> You will get there. Possibly next Tuesday.</li>
@@ -801,7 +823,9 @@ L.append(dict(
     lede="Putting the two halves together — the actual derivatives, and the guarantee that makes this "
          "combination unusually well behaved.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The w-update and the b-update turn out to be almost identical, except one has an extra <b>× x⁽ⁱ⁾</b> on the end. <b>Guess which one, and why that example's own x would matter to it.</b></p>""",
+                """<p>Think about what w multiplies in the model and what b does not. Watch for the sentence that explains why big houses pull harder on w than small ones do.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a way to score a line (the cost function) and a way to walk downhill (gradient
 descent). Now bolt them together.</p>
 <p>And there is a piece of good luck here. The bowl for linear regression has <b>exactly one</b> bottom —
@@ -903,7 +927,9 @@ L.append(dict(
     lede="Watching it actually work — the path across the contour map, the falling cost curve, and what "
          "“batch” means.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Watching it train, the path takes big confident strides at first, then crawls slowly for a long time. <b>Guess what about the data — not the algorithm — causes the crawl.</b></p>""",
+                """<p>Watch for the shape of the bowl seen from above, and for which of next week's lessons is the fix.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Press go and watch three things happen at once.</p>
 <p>The line on the left swings around and settles onto the data. The dot on the right walks steadily from
 an outer ring to the bullseye. And the cost curve underneath falls and flattens.</p>

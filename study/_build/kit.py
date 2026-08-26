@@ -22,6 +22,21 @@ def trap(body, tag="Common trap"):
 def note(body, tag="Why this matters"):
     return _call("", tag, body)
 
+def pretest(ask, watch, tag="Before you read"):
+    """A question asked BEFORE the lesson explains anything.
+
+    The research point is the attempt, not the answer: trying and failing
+    before instruction improves later retention (Richland, Kornell & Kao 2009).
+    So this deliberately does NOT reveal an answer — committing to a guess
+    unlocks only what to watch for as you read. Giving the answer here would
+    turn it back into something to read rather than something to attempt.
+    """
+    return (h2("\u2753", tag)
+            + '<div class="pretest">%s'
+              '<details class="pt"><summary>I have committed to an answer</summary>'
+              '<div class="pt-b">%s</div></details></div>' % (ask, watch))
+
+
 def card(body):
     return '<div class="card">%s</div>' % body
 

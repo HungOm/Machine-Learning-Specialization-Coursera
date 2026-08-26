@@ -1210,3 +1210,25 @@ body.rd-on .rd-zone { display: block; }
 .cv-btn.primary:hover { background: rgba(240,137,76,.26); }
 @media (max-width: 520px) { .cv-btn { min-width: 0; flex: 1 1 40%; align-items: center; } }
 @media print { .cover-nav { display: none !important; } }
+
+/* ---- pretest: the question asked before the lesson explains anything ---- */
+.pretest { border: 1px solid var(--blue); border-left-width: 3px;
+  border-radius: var(--radius); background: var(--blue-soft);
+  padding: 16px 18px; margin: 0 0 20px; }
+.pretest > .tag { display: block; font: 700 9.5px/1 var(--sans); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 9px; }
+.pretest p { margin: 0 0 10px; font-size: 15.5px; }
+.pretest p:last-of-type { margin-bottom: 12px; }
+.pretest details.pt { border-top: 1px dashed var(--blue); padding-top: 10px; }
+.pretest details.pt > summary { cursor: pointer; font-size: 13px; font-weight: 700;
+  color: var(--blue); list-style: none; display: flex; align-items: center; gap: 7px; }
+.pretest details.pt > summary::-webkit-details-marker { display: none; }
+.pretest details.pt > summary::before { content: "▸"; font-size: 11px; transition: transform .16s; }
+.pretest details.pt[open] > summary::before { transform: rotate(90deg); }
+.pretest details.pt > summary:hover { text-decoration: underline; }
+.pretest details.pt:focus-within > summary { outline: 2px solid var(--blue); outline-offset: 3px;
+  border-radius: 4px; }
+.pretest .pt-b { font-size: 14px; color: var(--ink-soft); margin-top: 9px; }
+.pretest .pt-b p { font-size: 14px; margin: 0 0 7px; }
+.pretest .pt-b p:last-child { margin: 0; }
+@media print { .pretest details.pt[open] .pt-b { display: block; } }
