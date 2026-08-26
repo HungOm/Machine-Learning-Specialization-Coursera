@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 1 — Neural networks and forward propagation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -11,7 +11,9 @@ L.append(dict(
     lede="Where the name came from, why the brain analogy is much looser than the marketing suggests, "
          "and why a 1950s idea suddenly started working in 2012.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>An artificial neuron is often compared to a brain cell. <b>Guess how much of that comparison is real</b> — and what one artificial neuron actually computes, in two steps.</p>""",
+        """<p>Watch for the two steps: a weighted sum, then a squash. Watch also for how loose the biological analogy really is.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine a kid in a group project. Three friends shout opinions at her. She doesn’t
 treat them equally: she <b>trusts</b> Ana a lot, trusts Ben a little, and actively distrusts Chris.
 So she adds up their opinions with those trust levels, adds her own stubborn starting mood,
@@ -112,7 +114,9 @@ L.append(dict(
     lede="The t-shirt example. This is the lesson where “hidden layer” stops being a scary phrase and "
          "starts meaning something concrete: features the network invents for itself.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Price, shipping, marketing, material → will this T-shirt sell? <b>Guess why you would put a layer of neurons in the middle rather than going straight from the four inputs to the answer.</b></p>""",
+        """<p>Watch for what the middle layer invents. Nobody tells it to compute “affordability” — it finds something like that because it helps.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You want to guess if a t-shirt will be a hit. You could stare at the price, the postage,
 the advert budget and the fabric all at once — messy. Instead you ask three simpler questions first:</p>
 <ul><li>Can people <b>afford</b> it? (that’s mostly price + postage)</li>
@@ -213,7 +217,9 @@ L.append(dict(
     lede="What a picture looks like to a computer, and the famous result that early layers learn edges, "
          "middle layers learn parts, and late layers learn whole objects.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A photo is a million brightness numbers. <b>Guess what the first layer of a face-recognition network learns to look for</b> — and what the last one does.</p>""",
+        """<p>Watch for the staircase: edges, then parts, then whole faces. Nobody programmed that order.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>To a computer a photo is not a face. It is a huge list of brightness numbers — one per
 tiny square. A 1000×1000 photo is a list of <b>a million</b> numbers.</p>
 <p>So how do you get from a million numbers to “that’s Grandma”? In steps, like building with Lego.
@@ -293,7 +299,9 @@ L.append(dict(
     lede="The unit of construction. A layer is several neurons reading the same inputs and each producing "
          "one number — and the notation that goes with it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A layer has 3 units and receives 2 numbers. <b>How many numbers come out — and how many parameters does that layer hold?</b> Commit to both.</p>""",
+        """<p>Three out; 2×3 weights + 3 biases = 9. Watch for the rule, because you will be asked to count parameters constantly.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>One neuron gives you one opinion. A <b>layer</b> is a panel of judges: they all watch the
 same performance, but each cares about different things — one watches the footwork, one the music, one the
 smile. Each judge holds up one score card. The layer’s output is the row of score cards.</p>
@@ -372,7 +380,9 @@ L.append(dict(
     lede="Four layers instead of two, and the one piece of notation you must be able to read fluently: "
          "a-superscript-square-bracket-l-subscript-j.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>To name one specific neuron you need two labels. <b>Guess what they are</b> — and what distinguishes a<sup>[2]</sup> from a<sub>2</sub>.</p>""",
+        """<p>Watch for square brackets meaning layer and subscripts meaning unit. This notation looks frightening and is only a seat number and a row number.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>It’s the same panel-of-judges idea, but now there are four panels in a row. Panel 1
 watches the performance. Panel 2 only sees panel 1’s score cards. Panel 3 only sees panel 2’s. The last
 panel gives the final verdict.</p>
@@ -447,7 +457,9 @@ L.append(dict(
     lede="The complete prediction algorithm, start to finish. Handwritten digit recognition with a "
          "25 → 15 → 1 network — and the reason it is called “forward”.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Input → layer 1 → layer 2 → layer 3 → answer. <b>Guess why it is called “forward”</b> — what would a backward version even mean?</p>""",
+        """<p>Watch for the relay-race shape. Backward propagation exists too, and it is how the thing learns rather than predicts.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>It’s a relay race, and the baton is a list of numbers.</p>
 <p>The picture hands its 64 numbers to the first panel of judges. That panel hands 25 score cards to the
 second panel. The second hands 15 score cards to the last judge. The last judge hands you one number:
@@ -536,7 +548,9 @@ L.append(dict(
     lede="The coffee-roasting example: four lines of TensorFlow that do everything the last three lessons "
          "described by hand.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have built a network by hand. <b>Guess how many lines TensorFlow needs to do the same forward pass.</b></p>""",
+        """<p>Watch for how little code it is, and for which line does the thing you spent a whole lesson computing by hand.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You just learned to make bread by hand — grinding the flour, kneading, waiting. This
 lesson is the bread machine. Same bread. Four buttons.</p>
 <p>The catch is that a bread machine is only safe if you already know what the dough should look like.
@@ -624,7 +638,9 @@ L.append(dict(
     lede="Double brackets, single brackets, and why an afternoon of your life will otherwise be lost to "
          "shape errors.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You pass <code>[200, 17]</code> to a model and it complains about shape. <b>Guess what TensorFlow wanted instead.</b></p>""",
+        """<p>Watch for the extra pair of brackets. TensorFlow always expects a batch, even a batch of one.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Think of an egg box. A <b>matrix</b> is an egg box: it has rows and columns, and even a
 box holding one single egg still has a row and a column.</p>
 <p>A <b>1-D array</b> is eggs loose in a bag. Same eggs — but the bag doesn’t say which is a row and which
@@ -696,7 +712,9 @@ L.append(dict(
     lede="Stop calling layers by hand. Sequential wires them together, and three method calls — compile, "
          "fit, predict — do the rest.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p><code>Sequential</code> stacks layers in a line. <b>Guess what kind of network it therefore cannot build.</b></p>""",
+        """<p>Watch for what “sequential” rules out: more than one input, more than one output, or a layer that skips ahead.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Before: you carried the baton from runner to runner yourself. Now you hand the whole
 team to a coach and say “run in this order”. The coach handles the handoffs.</p>
 <p><code>Sequential</code> is that coach. You give it a list of layers, top to bottom, and it feeds each
@@ -780,7 +798,9 @@ L.append(dict(
     lede="Throw away the framework. Compute one layer with nothing but np.dot — because a black box you "
          "have opened once stops being a black box.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You implement one layer in NumPy. The weight matrix W is 2×3. <b>Guess whether one neuron is a row or a column of W.</b></p>""",
+        """<p>Commit before reading. Watch for <code>W[:, j]</code> — the slice that picks out one neuron.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a big table of trust numbers, W. Each <b>column</b> of that table belongs to one
 neuron — it is that neuron’s personal list of trust levels.</p>
 <p>So to work out neuron 2’s answer: take column 2, pair it up with the incoming numbers, multiply each
@@ -873,7 +893,9 @@ L.append(dict(
     lede="Replace the copy-pasted neurons with one loop, then stack the loops into a network. This is the "
          "code you will write in the assignment.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You wrote a function for one layer. <b>Guess what has to change to make it work for a network of any depth.</b></p>""",
+        """<p>Watch for how little does. The whole network is one function, called in a loop.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Last lesson you wrote out neuron 1, then neuron 2, then neuron 3 — three near-identical
 paragraphs. That is silly. Whenever you catch yourself copying and pasting with one number changed, that
 number wants to become a <b>loop counter</b>.</p>""")
@@ -951,7 +973,9 @@ L.append(dict(
     lede="An honest detour. The one-learning-algorithm hypothesis, the rewiring experiments behind it, "
          "and why Andrew Ng is careful not to over-promise.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Neural networks were inspired by brains and now beat humans at many tasks. <b>Does that mean general intelligence is close?</b> Commit to a view before reading.</p>""",
+        """<p>Watch for the honest assessment, including the “one learning algorithm” evidence that makes the question harder than it first looks.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Scientists once took a baby animal and plugged the wire from its <b>eye</b> into the part
 of the brain that normally handles <b>hearing</b>. That patch of brain then learned to see.</p>
 <p>Which raises a wild thought: maybe the brain isn’t a hundred different special machines. Maybe it’s a
@@ -1024,7 +1048,9 @@ L.append(dict(
     lede="Why the for-loop version is fine for learning and useless in production, and what vectorisation "
          "actually buys you.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A layer computes one dot product per neuron per example. With 1000 examples and 25 neurons that is 25,000 dot products. <b>Guess how many operations a computer should actually perform.</b></p>""",
+        """<p>Watch for how all 25,000 collapse into a single matrix multiplication.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have 100 letters to stamp. You could pick up one letter, stamp it, put it down, pick
 up the next… one hundred times. Or you could lay all 100 out on a big tray and bring down a giant stamp
 <b>once</b>.</p>
@@ -1103,7 +1129,9 @@ L.append(dict(
     lede="The dot product, slowly. Two lists in, one number out — and the reason it is exactly the "
          "operation a neuron needs.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>1 apple, 2 bananas, 3 cherries at £4, £5, £6. <b>Work out the bill</b>, then guess what changes if there are four different shops with four price lists.</p>""",
+        """<p>£32 for one shop. Watch for how a grid of such bills is exactly a matrix multiplication.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a shopping list: 1 apple, 2 bananas, 3 cherries. And a price list: apples £4,
 bananas £5, cherries £6.</p>
 <p>How much is the basket? Pair each item with its price, multiply, add it all up:
@@ -1186,7 +1214,9 @@ L.append(dict(
     lede="From one dot product to a whole grid of them. The shape rule — (m×n)(n×p) = (m×p) — and how to "
          "never get it wrong again.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A is (2×3), B is (3×4). <b>Which of A×B and B×A is legal, and what shape does the legal one give?</b></p>""",
+        """<p>Watch the inner numbers. Watch also for why order matters here when it never did for ordinary multiplication.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>One dot product = one shopping basket priced up.</p>
 <p>Now imagine <b>three</b> customers with three different baskets, and <b>four</b> shops with four
 different price lists. How much does each customer pay at each shop? That’s 3 × 4 = 12 different totals,
@@ -1280,7 +1310,9 @@ L.append(dict(
     lede="The payoff: dense() with no loop at all. Two lines of NumPy that run a whole layer over a whole "
          "dataset.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p><code>A * B</code> and <code>A @ B</code> in NumPy. <b>Guess whether they do the same thing.</b></p>""",
+        """<p>They do not, and the wrong one often runs without error. Watch for which is which.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Everything you have learned this week collapses into two lines. One line does the
 multiply-and-add for every neuron and every example at once. The other squashes the results.</p>
 <p>That’s it. That’s a layer.</p>""")

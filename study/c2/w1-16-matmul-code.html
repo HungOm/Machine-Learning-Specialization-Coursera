@@ -226,7 +226,7 @@
 <p class="lede">The payoff: dense() with no loop at all. Two lines of NumPy that run a whole layer over a whole dataset.</p>
 <div class="bookrail" title="Lesson 84 of 172 in the book"><i style="width:49%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 1 · lesson 16 of 16</span><span class="r">84 of 172 · 49% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Everything you have learned this week collapses into two lines. One line does the
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p><code>A * B</code> and <code>A @ B</code> in NumPy. <b>Guess whether they do the same thing.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>They do not, and the wrong one often runs without error. Watch for which is which.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Everything you have learned this week collapses into two lines. One line does the
 multiply-and-add for every neuron and every example at once. The other squashes the results.</p>
 <p>That’s it. That’s a layer.</p></div><h2><span class="ico">💻</span>The vectorised dense()</h2><pre><code><span class="tok-k">def</span> dense(A_in, W, B):
     Z = <span class="gterm" data-g="npdot-api">np.matmul</span>(A_in, W) + B     <span class="tok-c"># (m,n) @ (n,units) -&gt; (m,units)</span>

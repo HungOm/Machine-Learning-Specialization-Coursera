@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 2 — Training, activations, softmax, optimisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -11,7 +11,9 @@ L.append(dict(
     lede="Three lines of code, three ideas you already know from Course 1. This lesson is the map; the "
          "next one opens the box.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Course 1 took a week to build gradient descent by hand. <b>Guess how many lines TensorFlow needs to train a whole network.</b></p>""",
+        """<p>Watch for the three calls, and for which one contains everything you built by hand.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Teaching a model is like teaching a dog three things:</p>
 <ol><li><b>What tricks exist</b> — sit, roll over, play dead. (that’s the model)</li>
 <li><b>What counts as wrong</b> — “no, that was a sit, I said roll.” (that’s the loss)</li>
@@ -104,7 +106,9 @@ L.append(dict(
     lede="Opening the box: what the loss function actually is, why it is shaped the way it is, and what "
          "gradient descent does with it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Training needs three ingredients: a model, a way to score it, and a way to improve it. <b>Name the TensorFlow call for each</b> before reading.</p>""",
+        """<p>Watch for how exactly the three map onto what you already know from Course 1. Nothing new is happening — only the names.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine a game where you guess how likely something is, from 0% to 100%, and you get
 <b>penalty points</b> for being wrong.</p>
 <p>The rule is cruel but fair: the more <b>confident</b> you were, the bigger the penalty when you turn out
@@ -194,7 +198,9 @@ L.append(dict(
     slug="03-sigmoid-alternatives", title="Alternatives to the sigmoid activation", mins=10, tag="core",
     lede="ReLU, and why one strange-looking bent line replaced the elegant S-curve almost everywhere.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Sigmoid squashes everything into 0…1. <b>Guess why that is a problem for a layer in the middle of a deep network</b>, even though it is fine at the output.</p>""",
+        """<p>Watch for what happens to the slope when the input is large. No slope means no learning.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Sigmoid squashes everything into 0…1. That’s useful for a final “how likely?” answer,
 but it’s a terrible way to pass a message along a chain.</p>
 <p>Why? Because once a number is very big or very small, sigmoid flattens it completely. 100 and 1000 both
@@ -280,7 +286,9 @@ L.append(dict(
     lede="A short lesson with a genuinely useful rule: ReLU inside, and let the output layer match the "
          "shape of the question.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Hidden layers and the output layer. <b>Guess whether they should use the same activation function</b>, and what decides the output one.</p>""",
+        """<p>Watch for the rule: the output activation is decided by what you are predicting, hidden layers almost always get ReLU.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The last layer is the one that speaks to you, so it has to speak the right language.</p>
 <ul><li>If the answer is “yes or no”, it must say a chance between 0 and 1 → <b>sigmoid</b>.</li>
 <li>If the answer is a number that could be negative (a temperature change) → <b>linear</b>.</li>
@@ -350,7 +358,9 @@ L.append(dict(
     lede="The three-line proof that a network with no activation function is just a very expensive straight "
          "line — and the picture of what non-linearity buys you.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Take away the activation functions entirely — every layer is just Wx + b. <b>Guess what a 100-layer network can then compute.</b></p>""",
+        """<p>Try composing two of them algebraically before reading. Watch for what the answer says about why non-linearity is not optional.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Take a straight stick. Tape another straight stick to the end of it, perfectly in line.
 What do you have? A longer straight stick.</p>
 <p>Do it a hundred times. Still a straight stick.</p>
@@ -464,7 +474,9 @@ L.append(dict(
     lede="From “is it a 1?” to “which of the ten digits is it?” — what changes, and what stays exactly "
          "the same.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Not spam-or-not, but which of ten handwritten digits. <b>Guess what has to change about the output layer.</b></p>""",
+        """<p>Watch for how many outputs you need, and for what they must collectively add up to.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Before, you had one question with two answers: yes or no. One number told you
 everything, because “70% yes” automatically means “30% no”.</p>
 <p>Now you have <b>ten</b> possible answers — is it a 0, a 1, a 2, … a 9? One number isn’t enough any more.
@@ -530,7 +542,9 @@ L.append(dict(
     lede="The generalisation of sigmoid to N classes. Two moves — exponentiate, then divide by the total — "
          "and every property you need follows from them.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Ten raw scores, some negative, adding to nothing in particular. You need ten probabilities adding to exactly 1. <b>Guess the two moves that get you there.</b></p>""",
+        """<p>Make everything positive, then share out the total. Watch for why exponentiating is the natural way to do the first.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Ten judges each shout a score. Some scores are negative, some are huge, and they don’t
 add up to anything sensible. You need to turn them into “what fraction of the vote did each judge win?”</p>
 <p>Two moves:</p>
@@ -631,7 +645,9 @@ L.append(dict(
     lede="Bolting softmax onto the end of a network: ten output units, one shared normalisation, and the "
          "code that trains it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your network ends in 10 softmax units. <b>Guess how the loss knows which of the ten was correct</b> — and whether it scores all ten or just one.</p>""",
+        """<p>Watch for which probability the loss actually looks at. Only one term survives.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Everything before the last layer stays exactly the same. You just widen the final panel
 of judges from one seat to ten, and then make those ten share out 100% between them.</p>""")
 
@@ -711,7 +727,9 @@ L.append(dict(
     lede="Why `from_logits=True` exists. A short lesson about floating-point arithmetic that will save you "
          "from a class of bug that is invisible until it isn’t.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The obvious implementation computes the probability, then takes its log. <b>Guess what goes wrong numerically</b> when the probability is very small.</p>""",
+        """<p>Watch for <code>from_logits=True</code>, and for why rearranging the algebra avoids a rounding step that destroys the answer.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine a calculator that only keeps 7 digits. Ask it for 1/3 and it says 0.3333333 —
 close, but slightly wrong. Now multiply that by 3: you get 0.9999999, not 1.</p>
 <p>One rounding is harmless. But if you round, then round the rounded number, then round <em>that</em>, the
@@ -811,7 +829,9 @@ L.append(dict(
     lede="A short but genuinely confusable distinction: several answers can be true at once, so softmax is "
          "the wrong tool.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>One photo, three questions: is there a car? a bus? a pedestrian? <b>Is this the same as multiclass?</b> Commit before reading.</p>""",
+        """<p>Watch for what can be true simultaneously here but not in multiclass — and what that changes about the output activation.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>“Which single animal is this?” — cat, dog or horse. Exactly one is right. That’s
 <b>multi-class</b>.</p>
 <p>“Is there a car in this photo? Is there a bus? Is there a person?” — the answer could be yes, yes, yes.
@@ -883,7 +903,9 @@ L.append(dict(
     lede="Gradient descent with one fixed step size is leaving performance on the table. Adam gives every "
          "parameter its own learning rate and adjusts it as it goes.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Gradient descent uses one α for every parameter. <b>Guess why that is a compromise</b> when some parameters need big steps and others need tiny ones.</p>""",
+        """<p>Watch for what Adam keeps track of per parameter, and for why it is the default in practice.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine walking down a valley in fog, taking steps of exactly the same size every time.</p>
 <ul><li>If your steps are too small, you’ll be walking until next Tuesday.</li>
 <li>If they’re too big, you’ll stride straight over the bottom and up the other side, back and forth
@@ -975,7 +997,9 @@ L.append(dict(
     lede="Dense layers look at everything. Convolutional layers look at a small window — and that one "
          "restriction buys speed, less data, and less overfitting.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A Dense layer connects every input to every unit. For a 1000×1000 image that is a million inputs per unit. <b>Guess what a cheaper layer might do instead.</b></p>""",
+        """<p>Watch for the idea of a unit that only looks at part of the input, and why that is both faster and often better.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A dense neuron reads the whole picture at once — all million pixels. That’s like reading
 an entire book to answer “is there a comma on page 3?”</p>
 <p>A convolutional neuron only reads a small <b>window</b> — say 5 pixels — and there are lots of them, each
@@ -1058,7 +1082,9 @@ L.append(dict(
     lede="Start of the optional back-propagation section. A derivative is one honest question: if I nudge "
          "this up a hair, how much does that change?",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Nudge one weight by a tiny amount and the cost changes a little. <b>Guess what the ratio of those two changes is called</b>, and what its sign tells you.</p>""",
+        """<p>Watch for how little calculus you actually need: a number, a sign, and a size.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You’re standing on a hill. You shuffle one tiny step to the east and check: did I go up
 or down, and by how much?</p>
 <ul><li>Went up a lot → steep uphill east → the derivative is a big positive number.</li>
@@ -1134,7 +1160,9 @@ L.append(dict(
     lede="How a machine differentiates something nobody wrote a formula for: break the calculation into "
          "tiny steps, then walk backwards multiplying local slopes.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A network has a million weights. <b>Guess how many times you would have to run it forwards to measure every derivative by nudging</b> — then guess whether that is affordable.</p>""",
+        """<p>Two million forward passes. Watch for how backprop gets all of them in roughly one backward pass instead.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Suppose a chain of gears: turn gear A and it turns B, which turns C, which turns D.</p>
 <p>You want to know: if I turn A by one notch, how far does D move? You don’t need to understand the whole
 machine. You just need each pair: A→B is ×2, B→C is ×3, C→D is ×0.5. Multiply them: 2 × 3 × 0.5 = <b>3</b>.
@@ -1210,7 +1238,9 @@ L.append(dict(
     lede="Scaling the computation graph up to a real network, and the cost argument that makes training "
          "possible at all.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have seen the chain rule on a tiny graph. <b>Guess what changes when the network is large</b> — the idea, or only the bookkeeping?</p>""",
+        """<p>Watch for the answer being bookkeeping. The rule is identical; there is just more of it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Same gear-chain trick, just a much bigger machine — thousands of gears, in rows.</p>
 <p>Here’s the amazing part. You might think that to find out how each of a million gears affects the final
 one, you’d have to test each gear separately: a million experiments. You don’t. <b>One</b> careful walk

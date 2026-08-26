@@ -226,7 +226,7 @@
 <p class="lede">ReLU, and why one strange-looking bent line replaced the elegant S-curve almost everywhere.</p>
 <div class="bookrail" title="Lesson 87 of 172 in the book"><i style="width:51%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 2 · lesson 3 of 15</span><span class="r">87 of 172 · 51% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Sigmoid squashes everything into 0…1. That’s useful for a final “how likely?” answer,
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Sigmoid squashes everything into 0…1. <b>Guess why that is a problem for a layer in the middle of a deep network</b>, even though it is fine at the output.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for what happens to the slope when the input is large. No slope means no learning.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Sigmoid squashes everything into 0…1. That’s useful for a final “how likely?” answer,
 but it’s a terrible way to pass a message along a chain.</p>
 <p>Why? Because once a number is very big or very small, sigmoid flattens it completely. 100 and 1000 both
 come out as “basically 1”. The neuron has stopped being able to tell them apart — and worse, it stops being

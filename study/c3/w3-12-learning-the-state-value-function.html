@@ -226,7 +226,7 @@
 <p class="lede">The algorithm itself. Turn reinforcement learning into supervised learning by manufacturing your own training targets — from the network you are training.</p>
 <div class="bookrail" title="Lesson 168 of 172 in the book"><i style="width:98%"></i></div>
 <p class="bookrail-cap"><span>C3 · Week 3 · lesson 12 of 16</span><span class="r">168 of 172 · 98% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Here is the trick that makes the whole thing work.</p>
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You need training data for Q, but Q is what you are trying to learn. <b>Guess how you escape that circle.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for using your current guess to produce a better target — the trick at the heart of the whole method.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Here is the trick that makes the whole thing work.</p>
 <p>You want a network that predicts Q(s, a). But you have no labels — nobody knows the true Q.</p>
 <p>So you <b>invent</b> them. Fly the lander badly. Write down every moment: “I was here, I did this, I got
 this reward, I ended up there.” Then use the Bellman equation to make a target:

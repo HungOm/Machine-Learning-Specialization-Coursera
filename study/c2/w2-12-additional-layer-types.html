@@ -226,7 +226,7 @@
 <p class="lede">Dense layers look at everything. Convolutional layers look at a small window — and that one restriction buys speed, less data, and less <span class="gterm" data-g="overfitting-native">overfitting</span>.</p>
 <div class="bookrail" title="Lesson 96 of 172 in the book"><i style="width:56%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 2 · lesson 12 of 15</span><span class="r">96 of 172 · 56% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>A dense neuron reads the whole picture at once — all million pixels. That’s like reading
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>A Dense layer connects every input to every unit. For a 1000×1000 image that is a million inputs per unit. <b>Guess what a cheaper layer might do instead.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the idea of a unit that only looks at part of the input, and why that is both faster and often better.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>A dense neuron reads the whole picture at once — all million pixels. That’s like reading
 an entire book to answer “is there a comma on page 3?”</p>
 <p>A convolutional neuron only reads a small <b>window</b> — say 5 pixels — and there are lots of them, each
 looking at a different window, all using the <b>same</b> set of weights.</p>

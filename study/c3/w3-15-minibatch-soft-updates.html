@@ -226,7 +226,7 @@
 <p class="lede">Two small changes that turn “sometimes works” into “reliably works”. Both are about not moving too fast.</p>
 <div class="bookrail" title="Lesson 171 of 172 in the book"><i style="width:99%"></i></div>
 <p class="bookrail-cap"><span>C3 · Week 3 · lesson 15 of 16</span><span class="r">171 of 172 · 99% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p><b>Mini-batch:</b> you have ten thousand memories. Looking at all of them before taking
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Training on all stored experience every step is too slow, and replacing the network wholesale is unstable. <b>Guess the two refinements.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for a subset per step, and for blending rather than replacing the weights.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p><b>Mini-batch:</b> you have ten thousand memories. Looking at all of them before taking
 one small step is exhausting. Look at a random thousand instead — a slightly worse decision, made ten times
 faster. Ten fast steps beat one perfect one.</p>
 <p><b>Soft update:</b> when the new network seems better, do not throw the old one away and swap. Blend

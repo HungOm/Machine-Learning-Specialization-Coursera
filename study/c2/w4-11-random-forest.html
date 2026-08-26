@@ -226,7 +226,7 @@
 <p class="lede">Bagging, plus one extra sprinkle of randomness that stops all the trees from making the same first move.</p>
 <div class="bookrail" title="Lesson 127 of 172 in the book"><i style="width:74%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 4 · lesson 11 of 13</span><span class="r">127 of 172 · 74% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You built a hundred trees from a hundred different bags. Problem: if one feature is
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Bagging gives many trees from one dataset — but they still all pick the same obvious first split. <b>Guess the extra randomisation that fixes it.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for restricting which features each split may even consider.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You built a hundred trees from a hundred different bags. Problem: if one feature is
 clearly the best, <b>every</b> tree picks it as its first question anyway. The trees end up looking
 suspiciously similar, and a hundred near-identical judges is barely better than one.</p>
 <p>So add a rule: at every question, each tree may only choose from a <b>random handful</b> of the

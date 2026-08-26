@@ -226,7 +226,7 @@
 <p class="lede">A short lesson with a genuinely useful rule: <span class="gterm" data-g="relu-native">ReLU</span> inside, and let the output layer match the shape of the question.</p>
 <div class="bookrail" title="Lesson 88 of 172 in the book"><i style="width:51%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 2 · lesson 4 of 15</span><span class="r">88 of 172 · 51% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The last layer is the one that speaks to you, so it has to speak the right language.</p>
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Hidden layers and the output layer. <b>Guess whether they should use the same activation function</b>, and what decides the output one.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the rule: the output activation is decided by what you are predicting, hidden layers almost always get ReLU.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The last layer is the one that speaks to you, so it has to speak the right language.</p>
 <ul><li>If the answer is “yes or no”, it must say a chance between 0 and 1 → <b>sigmoid</b>.</li>
 <li>If the answer is a number that could be negative (a temperature change) → <b>linear</b>.</li>
 <li>If the answer is a number that can’t be negative (a price) → <b>ReLU</b>.</li>

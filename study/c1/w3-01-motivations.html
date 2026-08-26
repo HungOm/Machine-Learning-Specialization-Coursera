@@ -226,7 +226,7 @@
 <p class="lede">A reasonable-looking idea that fails for two specific reasons — and seeing exactly how it fails is the best possible motivation for what replaces it.</p>
 <div class="bookrail" title="Lesson 58 of 172 in the book"><i style="width:34%"></i></div>
 <p class="bookrail-cap"><span>C1 · Week 3 · lesson 1 of 11</span><span class="r">58 of 172 · 34% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You want to predict whether a tumour is malignant. Answer: yes or no. Write yes as 1 and
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Tumour size in, benign-or-malignant out. You fit a straight line and threshold at 0.5. <b>Guess what one far-away data point does to that boundary.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the two separate problems this creates. One is about outliers; the other is that the output can exceed 1, which is meaningless for a yes/no answer.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You want to predict whether a tumour is malignant. Answer: yes or no. Write yes as 1 and
 no as 0, fit a straight line through the data, and call anything above 0.5 a yes.</p>
 <p>It looks like it works. Then you add <b>one</b> more patient with a very large tumour — obviously
 malignant, nothing surprising about it — and the line tilts, the 0.5 crossing point slides right, and

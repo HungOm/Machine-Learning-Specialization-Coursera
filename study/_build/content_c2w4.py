@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 4 — Decision trees and tree ensembles."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -24,7 +24,9 @@ L.append(dict(
     lede="A completely different kind of model: no weights, no gradient descent, no calculus. Just a "
          "flowchart of yes/no questions — and on spreadsheet data it often wins.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Is it a cat? You may ask about ear shape, face shape and whiskers. <b>Write down the questions you would ask, in order</b> — and notice you just built the model.</p>""",
+        """<p>Watch for the vocabulary: root, node, leaf. You already understand the structure; this is naming it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You know that game where you guess an animal by asking questions? “Does it have pointy
 ears?” Yes → “Is its face round?” Yes → “It’s a cat!”</p>
 <p>That’s the entire model. A list of questions arranged in a tree, where the answer to each question tells
@@ -96,7 +98,9 @@ L.append(dict(
     slug="02-learning-process", title="The learning process", mins=9, tag="core",
     lede="Two decisions define the entire algorithm: which feature to split on, and when to stop.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Building a tree means choosing which question to ask first. <b>Guess what makes one question better than another.</b></p>""",
+        """<p>Watch for the goal: after the split, each group should be more <em>uniform</em> than before. The next lesson makes that measurable.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Building the tree is like sorting a messy box of Lego. You pick a rule — “red on the
 left, everything else on the right” — and the box splits into two smaller, tidier boxes. Then you do the
 same thing to each smaller box.</p>
@@ -162,7 +166,9 @@ L.append(dict(
     lede="Turning “how mixed up is this group?” into a single number between 0 and 1. The one genuinely "
          "new piece of maths this week.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A bag of 6 cats and 0 dogs versus 3 cats and 3 dogs. <b>Which is messier — and can you put a number on the mess?</b></p>""",
+        """<p>Watch for the number being 0 and 1 at the two extremes, and for why all-dogs is just as tidy as all-cats.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A bag of 6 cats and 0 dogs: reach in, and you already know what you’ll get. Zero
 surprise. Zero mess. Call it <b>0</b>.</p>
 <p>A bag of 3 cats and 3 dogs: you have no idea what’s coming out. Maximum surprise. Maximum mess.
@@ -243,7 +249,9 @@ L.append(dict(
     lede="How much mess did this question remove? Compute it for every feature, take the biggest. That is "
          "the whole learning algorithm.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A split leaves one branch with 9 examples and another with 1. <b>Guess why you cannot simply average the two branches' messiness.</b></p>""",
+        """<p>Watch for the weighting by branch size. Dropping it makes a tiny pure branch look wonderful, and the tree chases it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a messy bag: 5 cats, 5 dogs. Mess level 1.0 — as bad as it gets.</p>
 <p>You ask “pointy ears?” and now you have two bags: one with 4 cats and 1 dog (fairly tidy), one with
 1 cat and 4 dogs (also fairly tidy). Total mess is now about 0.72.</p>
@@ -347,7 +355,9 @@ L.append(dict(
     slug="05-putting-it-together", title="Putting it together", mins=9, tag="core",
     lede="The full algorithm, which turns out to be four lines — because it calls itself.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You can pick the best split. <b>Guess how the whole tree gets built from that</b> — and what tells you to stop.</p>""",
+        """<p>Watch for the word recursion, and for the stopping rules that keep the tree from memorising.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You split the messy box into two tidier boxes. Now here’s the trick: <b>each of those
 boxes is just a smaller version of the same problem.</b> So you run exactly the same procedure on it.</p>
 <p>That’s recursion — a set of instructions that includes “now do these instructions again, on a smaller
@@ -433,7 +443,9 @@ L.append(dict(
     lede="What to do when a feature has three values instead of two — and why this trick matters for "
          "neural networks too.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Ear shape is pointy, floppy or oval. You encode them as 1, 2, 3. <b>Guess what you have accidentally told the model.</b></p>""",
+        """<p>Watch for the false ordering, and for the encoding that avoids it by using three columns instead of one.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>So far every question had two answers: pointy or floppy. Easy — two branches.</p>
 <p>But what if ears can be pointy, floppy <b>or</b> oval? You could make three branches. Or you can play a
 trick: replace the one question with <b>three yes/no questions</b>.</p>
@@ -509,7 +521,9 @@ L.append(dict(
     lede="Weight in pounds is not a category. The fix: turn “which value?” into “is it above a threshold?” "
          "and try every threshold.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Weight is a number, not a category — there are infinitely many possible splits. <b>Guess how the algorithm picks one.</b></p>""",
+        """<p>Watch for how few candidate thresholds actually need testing.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Weight isn’t pointy-or-floppy. It’s 7.2, or 8.4, or 20 — endless possibilities.</p>
 <p>So you don’t ask “what does it weigh?”. You ask “<b>does it weigh less than 10 pounds?</b>” — which is
 back to yes/no.</p>
@@ -579,7 +593,9 @@ L.append(dict(
     lede="Predicting a number instead of a class. One substitution — variance for entropy — and everything "
          "else is unchanged.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Instead of “is it a cat?”, predict how much it weighs. <b>Guess what a leaf should predict, and what replaces “are these the same class?” when choosing splits.</b></p>""",
+        """<p>Watch for the mean at the leaves and variance as the impurity measure. One substitution converts the whole algorithm.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Same tree, different question. Instead of “is it a cat?”, you want “how much does it
 weigh?”.</p>
 <p>Two changes. At the bottom, instead of naming a class, you say the <b>average weight</b> of everything
@@ -679,7 +695,9 @@ L.append(dict(
     lede="A single tree is fragile: change one example and the whole thing can rearrange. The fix is not a "
          "better tree — it is more trees.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Change one training example and a decision tree can come out completely different. <b>Guess how you would turn that fragility into an advantage.</b></p>""",
+        """<p>Watch for the idea of a vote, and for why many unstable trees beat one careful one.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>One judge can have a bad day. Ask three judges and take the majority, and one bad day
 doesn’t decide the contest.</p>
 <p>Decision trees have a lot of bad days. Swap a single animal in the training set and the root question
@@ -734,7 +752,9 @@ L.append(dict(
     slug="10-sampling-with-replacement", title="Sampling with replacement", mins=8, tag="maths",
     lede="The trick that manufactures many different training sets out of the one you have.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have 10 examples and want many different training sets from them. <b>Guess how, without collecting more data.</b></p>""",
+        """<p>Watch for putting each drawn example back. Watch also for roughly what fraction of the originals each new bag ends up containing.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Put ten marbles in a bag. Pull one out, write down its colour, and <b>put it back</b>.
 Do that ten times.</p>
 <p>You now have a list of ten marbles — but not the same ten. Some appear twice or three times. Some never
@@ -814,7 +834,9 @@ L.append(dict(
     lede="Bagging, plus one extra sprinkle of randomness that stops all the trees from making the same "
          "first move.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Bagging gives many trees from one dataset — but they still all pick the same obvious first split. <b>Guess the extra randomisation that fixes it.</b></p>""",
+        """<p>Watch for restricting which features each split may even consider.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You built a hundred trees from a hundred different bags. Problem: if one feature is
 clearly the best, <b>every</b> tree picks it as its first question anyway. The trees end up looking
 suspiciously similar, and a hundred near-identical judges is barely better than one.</p>
@@ -905,7 +927,9 @@ L.append(dict(
     lede="Instead of making every tree from a random sample, make each new tree focus on what the previous "
          "ones got wrong. This is the algorithm that wins competitions.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Random forest builds trees independently. <b>Guess what you could do instead if each new tree were allowed to see where the previous ones went wrong.</b></p>""",
+        """<p>Watch for boosting, and for why it dominates competitions on tabular data.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Random forest is a hundred students each revising from a random chunk of the textbook.</p>
 <p>Boosting is <b>one</b> student who takes a practice test, marks it, and then revises <b>only the
 questions they got wrong</b>. Then tests again. Then revises the ones still wrong.</p>
@@ -1005,7 +1029,9 @@ L.append(dict(
     lede="The practical decision rule, and the end of Course 2. Spreadsheet? Try trees first. Pixels, "
          "sound or words? Neural network.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Both work. <b>Guess which you would choose for a spreadsheet of house prices, and which for photographs</b> — and what the deciding factor is.</p>""",
+        """<p>Watch for the data-type rule, and for the one property neural networks have that trees do not: they compose.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A hammer and a screwdriver are both good tools. You just need to know which is holding
 your thing together.</p>
 <p><b>Neat rows and columns</b> — ages, prices, categories, counts — that’s tree country. Fast, accurate,

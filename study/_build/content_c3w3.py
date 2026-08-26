@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 3 — Reinforcement learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="The third kind of learning. Nobody tells you the right answer — you find out afterwards whether "
          "things went well.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>No right answers, only rewards that arrive late. <b>Guess why you cannot just use supervised learning</b> with the reward as the label.</p>""",
+        """<p>Watch for the credit-assignment problem: which of the last fifty actions earned the reward?</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>How do you train a dog? You do not show it a thousand photos labelled “correct sitting
 posture”. You say “sit”, and when something roughly sit-shaped happens, it gets a treat.</p>
 <p>The dog never receives the right answer. It receives <b>consequences</b>, and works backwards from
@@ -83,7 +85,9 @@ L.append(dict(
     lede="Six squares, two actions, two rewards. Small enough to compute by hand, and every concept in the "
          "week fits inside it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Six positions, rewards at both ends, and you may step left or right. <b>Guess what makes this a good teaching example</b> despite being tiny.</p>""",
+        """<p>Watch for the vocabulary being introduced on something you can hold in your head: state, action, reward, next state.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A little rover sits on one of six squares. It can drive <b>left</b> or <b>right</b>.</p>
 <p>Square 1 has a really interesting rock — worth 100 points. Square 6 has a duller rock — worth 40.
 Everything in between is worth nothing.</p>
@@ -141,7 +145,9 @@ L.append(dict(
     slug="03-the-return", title="The Return in reinforcement learning", mins=11, tag="maths",
     lede="How to compare “a lot, later” against “a little, sooner”. One Greek letter does all the work.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A reward of 100 now versus 100 in ten steps. <b>Should they count equally?</b> Commit, then guess how you would express your answer as a formula.</p>""",
+        """<p>Watch for γ, and for what γ near 1 versus γ near 0 does to how patient the agent becomes.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>£100 today or £100 next year? Today, obviously.</p>
 <p>£100 today or £110 next year? Now it depends on how patient you are.</p>
 <p>Reinforcement learning uses a number called <b>γ</b> (gamma) to settle this. Every step you wait, the
@@ -226,7 +232,9 @@ L.append(dict(
     slug="04-policies", title="Making decisions: policies", mins=8, tag="core",
     lede="A policy is a lookup table: state in, action out. Finding the best one is the entire problem.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You want a rule that says what to do in every state. <b>Guess what that object is called</b>, and what makes one such rule better than another.</p>""",
+        """<p>Watch for π, which here has nothing to do with 3.14159.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A policy is your plan for every situation, written down in advance.</p>
 <p>“On square 2, go left. On square 3, go left. On square 4, go left. On square 5, go right.”</p>
 <p>That is it. That is a policy. It is not a sequence of moves — it is a rule that tells you what to do
@@ -289,7 +297,9 @@ L.append(dict(
     lede="The five pieces have a collective name — Markov Decision Process — and one assumption hiding "
          "inside it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>State, action, reward, discount, return, policy. <b>Say what each one is, out loud, before reading.</b> Note which one you fumble.</p>""",
+        """<p>Watch for the formalism these six pieces add up to, and for the name it carries.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Everything so far has been five pieces: where you are, what you can do, what you
 get for doing it, how much you care about later, and where you end up. Those five together have a
 name &mdash; a <b>Markov Decision Process</b>.</p>
@@ -353,7 +363,9 @@ L.append(dict(
     lede="Q(s, a) — the single most important object in the week. Once you have it, the optimal policy is "
          "free.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You want one number that says how good it is to take action <b>a</b> from state <b>s</b>. <b>Guess what it must account for</b> beyond the immediate reward.</p>""",
+        """<p>Watch for the circular-looking definition — “then behave optimally” — and for why that is not a problem.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Q(s, a) answers a very specific question:</p>
 <p><b>“If I am here, and I do this one thing, and after that I play perfectly forever — how much do I get
 in total?”</b></p>
@@ -433,7 +445,9 @@ L.append(dict(
     lede="Change the rewards. Change γ. Watch the optimal policy flip. This is the lesson where the "
          "numbers stop being abstract.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Change the terminal reward from 40 to 400. <b>Guess what happens to the policy</b> in the states far from it.</p>""",
+        """<p>Watch for how far the influence reaches, and how γ controls that reach.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>This is the lesson where you get to break things and watch what happens.</p>
 <p>Move the reward at the far end up and down. Turn the patience dial &gamma; towards 0 and towards
 1. Every time you do, the little arrows showing the best move can flip &mdash; sometimes all of them
@@ -506,7 +520,9 @@ L.append(dict(
     lede="One line that defines Q in terms of itself. Every reinforcement learning algorithm ever written "
          "is built on it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Any long journey splits into “this step” plus “the rest”. <b>Guess how that idea becomes an equation for Q.</b></p>""",
+        """<p>Watch for the two halves: what you get now, plus the discounted best you can do next.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>How much is today worth?</p>
 <p><b>What you get today</b>, plus <b>how good tomorrow will be</b> — slightly discounted, because
 tomorrow is not today.</p>
@@ -601,7 +617,9 @@ L.append(dict(
     slug="09-stochastic-environments", title="Random (stochastic) environments", mins=9, tag="optional",
     lede="What if the rover slips? One word — expected — and the whole framework survives intact.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You command “left” and the rover goes right 10% of the time. <b>Guess what has to change in the Bellman equation.</b></p>""",
+        """<p>Watch for expected value replacing a single certain outcome, and for why an unreliable world is worth less to be in.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You tell the rover to go left. But the ground is icy, and 10% of the time it slides
 right instead.</p>
 <p>Now you cannot say “if I go left I will definitely reach state 3”. You can only say “probably state 3,
@@ -673,7 +691,9 @@ L.append(dict(
     lede="Six squares was a teaching example. Real problems have states made of real numbers — and a "
          "lookup table stops being possible.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The rover had six states. A lunar lander has position, velocity, angle and spin — all continuous. <b>Guess why a table of Q values stops working.</b></p>""",
+        """<p>Watch for what replaces the table, and why that is where neural networks enter.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The rover had six possible positions. You could write all six on a piece of paper, with
 two Q values each — twelve numbers, done.</p>
 <p>A truck is at position 12.34 metres, heading 0.7 radians, moving 8.2 metres per second. How many
@@ -732,7 +752,9 @@ L.append(dict(
     lede="The assignment problem, stated fully. Eight state numbers, four actions, and a reward function "
          "that is doing more work than it looks.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Eight numbers in, four possible actions. <b>Guess how you would design the reward</b> so the lander learns to land rather than to hover forever.</p>""",
+        """<p>Watch for how much of RL is reward design, and how easily a plausible reward produces absurd behaviour.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Land a little spaceship gently on a landing pad. You have three thrusters: one pointing
 down, one pointing left, one pointing right. You can also do nothing and just fall.</p>
 <p>Land softly on the pad: big prize. Crash: big penalty. Every puff of the engine costs a tiny bit,
@@ -813,7 +835,9 @@ L.append(dict(
     lede="The algorithm itself. Turn reinforcement learning into supervised learning by manufacturing your "
          "own training targets — from the network you are training.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You need training data for Q, but Q is what you are trying to learn. <b>Guess how you escape that circle.</b></p>""",
+        """<p>Watch for using your current guess to produce a better target — the trick at the heart of the whole method.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Here is the trick that makes the whole thing work.</p>
 <p>You want a network that predicts Q(s, a). But you have no labels — nobody knows the true Q.</p>
 <p>So you <b>invent</b> them. Fly the lander badly. Write down every moment: “I was here, I did this, I got
@@ -902,7 +926,9 @@ L.append(dict(
     mins=8, tag="core",
     lede="Move the actions from the input side to the output side. Four times less compute, for free.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The first architecture outputs Q for one action, so four actions need four forward passes. <b>Guess the fix.</b></p>""",
+        """<p>Watch for moving the actions to the output layer. One pass instead of four, millions of times per run.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The obvious design: tell the network where you are <b>and</b> what you are thinking of
 doing, and it gives you one number. But then, to choose between four actions, you have to ask it four
 separate times.</p>
@@ -968,7 +994,9 @@ L.append(dict(
     slug="14-epsilon-greedy", title="Algorithm refinement: ε-greedy policy", mins=10, tag="core",
     lede="If you only ever do what you currently believe is best, you never discover that you were wrong.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Always take the action your current Q says is best. <b>Guess what you might never discover</b> — and what small change fixes it.</p>""",
+        """<p>Watch for the explore/exploit tension, and for what ε is doing about it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You always order the same thing at the restaurant because you know it is good. But there
 are forty other dishes and one of them might be better — you will never find out.</p>
 <p>So make a rule: <b>most of the time, order your favourite. Occasionally, order something random.</b></p>
@@ -1045,7 +1073,9 @@ L.append(dict(
     lede="Two small changes that turn “sometimes works” into “reliably works”. Both are about not moving "
          "too fast.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Training on all stored experience every step is too slow, and replacing the network wholesale is unstable. <b>Guess the two refinements.</b></p>""",
+        """<p>Watch for a subset per step, and for blending rather than replacing the weights.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p><b>Mini-batch:</b> you have ten thousand memories. Looking at all of them before taking
 one small step is exhausting. Look at a random thousand instead — a slightly worse decision, made ten times
 faster. Ten fast steps beat one perfect one.</p>
@@ -1123,7 +1153,9 @@ L.append(dict(
     slug="16-state-of-rl", title="The state of reinforcement learning", mins=8, tag="core",
     lede="An honest closing assessment — and the end of the specialization.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>RL produces spectacular demos. <b>Guess how much of deployed machine learning actually uses it</b>, and why.</p>""",
+        """<p>Watch for the honest assessment: the gap between simulation and the physical world is the recurring obstacle.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Reinforcement learning is genuinely exciting, and it is also the most over-hyped part of
 machine learning right now.</p>
 <p>In a video game or a simulator, it is astonishing — it can beat the best humans in the world. In the

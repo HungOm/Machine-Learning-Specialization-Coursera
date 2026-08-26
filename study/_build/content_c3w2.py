@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 2 — Recommender systems and PCA."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="Probably the most commercially valuable algorithm in this specialization, and it starts with a "
          "table full of question marks.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>1000 users, 10000 films, and most of the grid is blank. <b>Guess what you are actually trying to predict</b> — and why the blanks are the whole problem.</p>""",
+        """<p>Watch for the notation for “did this user rate this film”, separate from what the rating was.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Four friends, five films. Some of them have given star ratings. Most of the squares are
 empty, because nobody watches everything.</p>
 <p>Your job: <b>fill in an empty square.</b> Would Bob like “Romance Forever”? If you can guess that well,
@@ -77,7 +79,9 @@ L.append(dict(
     lede="If somebody has already labelled every film as romantic or action-y, recommendation collapses "
          "into linear regression — one per user.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You know each film's romance and action scores. <b>Guess how you would learn one person's taste</b> — and what familiar algorithm that turns out to be.</p>""",
+        """<p>Watch for it being ordinary linear regression, run once per user.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Suppose someone has gone through and scored every film: how romantic is it (0 to 1), and
 how much action does it have (0 to 1).</p>
 <p>Now look at Alice’s ratings. She gave 5 stars to the romantic films and 0 to the action ones. So Alice’s
@@ -149,7 +153,9 @@ L.append(dict(
     lede="The central idea of the week: if you do not have features, learn them. From the ratings. At the "
          "same time as everything else.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Last lesson assumed you know what each film is like. <b>You do not. Guess how you could learn the films' features and everyone's taste at the same time</b>, from ratings alone.</p>""",
+        """<p>Watch for the bootstrap: each side helps pin down the other. That mutual help is why it is called collaborative.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Last lesson: “if I know what the films are like, I can work out what each person likes.”</p>
 <p>Turn it round: “if I know what each person likes, I can work out what the films are like.” Alice loves
 this film and hates that one, and Alice is a romance person — so this film is probably romantic.</p>
@@ -254,7 +260,9 @@ L.append(dict(
     lede="Almost nobody gives star ratings. Everybody clicks. The same algorithm, with the linear-to-"
          "logistic swap you already know.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Instead of 1–5 stars you only have clicked / did not click. <b>Guess which Course 1 idea you would borrow</b> to handle a 0-or-1 label.</p>""",
+        """<p>Watch for the sigmoid and the log loss reappearing, unchanged, in a completely different setting.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Real apps rarely ask you to rate things out of five. They just watch what you do.
 Did you click it? Did you watch past 30 seconds? Did you buy it?</p>
 <p>So the table stops holding 0–5 and starts holding 1 (yes) and 0 (no). Everything else works the same —
@@ -315,7 +323,9 @@ L.append(dict(
     lede="A brand-new user with zero ratings gets zero for everything — which is both useless and slightly "
          "insulting. One subtraction fixes it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A brand-new user has rated nothing. <b>Guess what the algorithm predicts for them</b>, and why that is unhelpful.</p>""",
+        """<p>Watch for what subtracting each film's average rating fixes, and what the new user gets predicted instead.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Eve just signed up. She has rated nothing.</p>
 <p>The maths says: keep her formula small, so w = 0. Which means every prediction for Eve is exactly 0.
 Zero stars for everything. We would either recommend her nothing, or recommend the films the algorithm
@@ -386,7 +396,9 @@ L.append(dict(
     lede="Why you write the training loop by hand here, and how GradientTape does the calculus for a cost "
          "function Keras has never heard of.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>This cost function has no standard layer type. <b>Guess how you would still use TensorFlow to minimise it.</b></p>""",
+        """<p>Watch for auto-differentiation as a general tool, not a neural-network feature — you write the cost, it finds the gradient.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Usually you hand TensorFlow a stack of layers and say “train it”. But collaborative
 filtering isn’t a stack of layers — it’s a strange sum over a sparse set of (user, movie) pairs.</p>
 <p>So you write the loop yourself. The good news: you still don’t have to do any calculus. TensorFlow
@@ -466,7 +478,9 @@ L.append(dict(
     slug="07-finding-related-items", title="Finding related items", mins=8, tag="core",
     lede="“Because you watched X…” — and it is one line of maths on features nobody ever labelled.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The learned features have no names — nobody knows what x₃ means. <b>Guess how you would still find films similar to a given one.</b></p>""",
+        """<p>Watch for distance doing the work without interpretation. You never need to know what the numbers mean.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Every film ended up with a little list of numbers. You have no idea what the numbers
 mean — but films that got <b>similar</b> numbers turn out to be similar films.</p>
 <p>So to find films like this one: measure the distance between number lists and pick the closest few.
@@ -534,7 +548,9 @@ L.append(dict(
     lede="Two philosophies. One learns from who else liked it; the other learns from what it is. Real "
          "systems use both.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Collaborative filtering uses only who-rated-what. <b>Guess what it cannot do</b> that a method using actual user and item attributes could.</p>""",
+        """<p>Watch for the cold-start problem, and for what each approach is genuinely better at.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p><b>Collaborative:</b> “people who liked what you liked also liked this.” It knows
 nothing about the film itself — only about the pattern of who rated what.</p>
 <p><b>Content-based:</b> “you are 27, you like sci-fi, and this is a 2019 sci-fi film with actors you have
@@ -601,7 +617,9 @@ L.append(dict(
     lede="Two neural networks, two very different inputs, one shared output space — and a dot product at "
          "the end. This is the architecture behind modern recommenders and modern search alike.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Users have attributes; films have different attributes; the two lists are not even the same length. <b>Guess how you would still compare them.</b></p>""",
+        """<p>Watch for two networks meeting at a dot product, and for the single constraint on their output layers.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You know a lot about the person: age, country, what genres they usually like. You know a
 lot about the film: year, genre, cast. These are completely different kinds of information, so you cannot
 compare them directly.</p>
@@ -694,7 +712,9 @@ L.append(dict(
     lede="You cannot run a neural network on ten million items while somebody waits for a page to load. "
          "The answer is two stages: cheap and rough, then slow and accurate.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>10 million films and a user waiting. You cannot score them all. <b>Guess the two-stage shape of a practical answer.</b></p>""",
+        """<p>Watch for retrieval then ranking — cheap and rough first, expensive and careful on the survivors.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You are picking a birthday present from a shop with ten million things in it. You do not
 examine all ten million.</p>
 <p>First you grab a trolley-full of <b>plausible</b> things — quickly, roughly, using easy rules like “toys,
@@ -769,7 +789,9 @@ L.append(dict(
     lede="A recommender changes the data it will later be trained on. That single property is what makes "
          "this the most consequential ethics lesson in the specialization.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A recommender maximising watch time will find <em>something</em> that works. <b>Guess what it might land on that you would not want it to.</b></p>""",
+        """<p>Watch for the gap between the metric you optimise and the outcome you actually want.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine you told a robot: “make people watch as long as possible.” Not “make people
 happy”. Not “show people useful things”. Just: <b>keep them watching</b>.</p>
 <p>The robot will work out — correctly, and without any malice — that angry, shocking and frightening
@@ -844,7 +866,9 @@ L.append(dict(
     mins=9, tag="code",
     lede="The two-tower model in about eight lines of Keras — plus the one line most people leave out.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Two towers, one dot product. <b>Guess how you would express that in Keras</b> when it is not a simple stack of layers.</p>""",
+        """<p>Watch for why <code>Sequential</code> cannot do it, and what replaces it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Two separate machines. One reads everything you know about a <b>person</b>
 &mdash; age bracket, what they have watched, how they tend to rate things &mdash; and boils it down
 to a short list of numbers. The other reads everything you know about a <b>film</b> and boils that
@@ -939,7 +963,9 @@ L.append(dict(
     lede="Start of the optional PCA section. Squash many features into two or three so a human can plot "
          "them and actually look.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Fifty features, and you want to plot the data. <b>Guess how you would get from 50 dimensions to 2</b> without simply throwing 48 away.</p>""",
+        """<p>Watch for the idea of a new axis that is a blend of old ones, chosen to keep as much spread as possible.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You measured every car’s length in centimetres <b>and</b> in inches. Two columns — but
 really one fact. If you know one, you know the other.</p>
 <p>Now a subtler one: length and width. Not identical, but they move together — big cars are big in both
@@ -1000,7 +1026,9 @@ L.append(dict(
     lede="Pick the axis that keeps the most spread. That single sentence defines it — and it is not the "
          "same thing as linear regression.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You may rotate the axis to any angle. <b>Guess what makes one angle better than another</b>, if the goal is to lose as little information as possible.</p>""",
+        """<p>Watch for spread meaning information, and for why PCA is not the same as linear regression.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Shine a torch at a crowd of people and look at their shadows on the wall.</p>
 <p>From one angle, everyone’s shadow lands on top of everyone else’s — you have lost all the information
 about who is where.</p>
@@ -1082,7 +1110,9 @@ L.append(dict(
     slug="15-pca-in-code", title="PCA in code", mins=8, tag="optional",
     lede="Four lines of scikit-learn — plus the honest modern assessment of when PCA is worth using at all.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>scikit-learn does PCA in three lines. <b>Guess what you must do to the data first</b>, and why skipping it silently ruins the result.</p>""",
+        """<p>Watch for the mandatory centring step, and for what the explained-variance ratio tells you.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Four lines. One to say how many directions you want to keep, one to look at the
 data and find them, one to squash the data down onto them, and one to ask how much you lost.</p>
 <p>The interesting part of this lesson is not the code &mdash; it is the last section, which argues

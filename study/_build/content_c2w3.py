@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 3 — Advice for applying machine learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -11,7 +11,9 @@ L.append(dict(
     lede="The most valuable week of the course starts with an uncomfortable fact: most ML time is wasted "
          "on the wrong fix.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model's predictions are bad. You could get more data, add features, remove features, change λ, or make the network bigger. <b>How would you decide which — without trying all five?</b></p>""",
+        """<p>Watch for why guessing costs months. This whole chapter is about replacing the guess with a diagnosis.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Your bike won’t go. You could pump the tyres, oil the chain, tighten the brakes,
 straighten the wheel, or buy a whole new bike. Each takes an afternoon.</p>
 <p>A bad mechanic tries them in order until something works — five wasted afternoons.</p>
@@ -76,7 +78,9 @@ L.append(dict(
     lede="You cannot fix what you cannot measure. Split the data, and measure the error on the part the "
          "model has never seen.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model scores brilliantly on the data it learned from. <b>Guess why that number is nearly worthless</b> — and what you would have to hold back to get an honest one.</p>""",
+        """<p>Watch for the split, and for the one term that belongs in training but must never appear in the score you report.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine studying for a test by memorising the answers to last year’s paper. Then you
 mark yourself using last year’s paper. Amazing — 100%!</p>
 <p>You have learned nothing about whether you can do <b>this</b> year’s paper.</p>
@@ -160,7 +164,9 @@ L.append(dict(
     lede="Why two sets are not enough, and the discipline of keeping one set genuinely untouched until "
          "the very end.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You try ten polynomial degrees and pick the one with the best test error. <b>Guess what is now wrong with that test error as an estimate of real performance.</b></p>""",
+        """<p>Subtle and important. Watch for why choosing <em>using</em> a set spoils it, and for the third split that fixes it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You hid some questions to test yourself. Good. But then you tried <b>ten</b> different
 study methods and picked whichever scored best on the hidden questions.</p>
 <p>Now those hidden questions aren’t hidden any more — you used them to make a choice. Your score on them
@@ -249,7 +255,9 @@ L.append(dict(
     lede="The central diagnostic of the whole course. Two numbers, three possible verdicts, and a decision "
          "you no longer have to guess.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Model A: 12% training error, 13% test. Model B: 0.5% training, 12% test. <b>Both are bad — but for opposite reasons. Name them.</b></p>""",
+        """<p>Watch for the two labels, and for why the training error alone tells you which one you have.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Two ways to be a bad student.</p>
 <p><b>Too simple (high bias):</b> you only ever learned “the answer is always 4”. You get last year’s paper
 wrong <em>and</em> this year’s wrong. You’re not confused — you’re under-prepared.</p>
@@ -331,7 +339,9 @@ L.append(dict(
     lede="λ is the same dial as model complexity, turned the other way. Choose it exactly the way you "
          "chose the degree.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>λ = 0 and λ = enormous both give a bad model. <b>Guess which extreme gives which failure mode.</b></p>""",
+        """<p>Watch for the U-shaped curve of cross-validation error against λ, and where the useful values live.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>λ is a stiffness dial on the model.</p>
 <ul><li><b>λ = 0</b> — completely floppy. It will bend to touch every single training point, including
 the wrong ones. Overfitting.</li>
@@ -422,7 +432,9 @@ L.append(dict(
     slug="06-baseline-performance", title="Establishing a baseline level of performance", mins=9, tag="core",
     lede="“High” compared to what? Without a reference point, J_train is a number with no meaning.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your speech recogniser has 10.6% error. <b>Is that good?</b> Commit to yes or no before reading.</p>""",
+        """<p>You cannot answer it yet — and that is the point. Watch for what you must compare against before 10.6% means anything.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You got 89% on a test. Is that good?</p>
 <p>You can’t possibly know yet. If everyone else got 98%, it’s bad. If the class average was 45%, it’s
 brilliant. If the test contains three questions that are literally unanswerable, then 89% might be a
@@ -491,7 +503,9 @@ L.append(dict(
     lede="Plot error against training-set size and you get the definitive answer to the most expensive "
          "question in ML: will more data help?",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You plot error against training-set size. <b>Guess what the two curves do as data grows</b>, and whether they meet.</p>""",
+        """<p>Watch for the gap between them, and for the case where adding data provably cannot help.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Fitting three points perfectly is easy. Fitting a thousand points perfectly is
 impossible. So as you add examples, your score on the stuff you studied gets <b>worse</b>, and your score
 on new stuff gets <b>better</b>. The two lines move towards each other.</p>
@@ -576,7 +590,9 @@ L.append(dict(
     slug="08-what-to-try-revisited", title="Deciding what to try next, revisited", mins=8, tag="core",
     lede="Back to the six options from Lesson 1 — but now you know which half of the list to read.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You now know whether you have high bias or high variance. <b>Sort these into two piles: more data, more features, fewer features, bigger network, larger λ, smaller λ.</b></p>""",
+        """<p>Watch for how cleanly the six split. Getting the diagnosis right makes the fix obvious.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Remember the bike that wouldn’t go? You’ve now learned to spin the wheel and listen.
 Here is the repair table that tells you what to do with what you heard.</p>""")
 
@@ -641,7 +657,9 @@ L.append(dict(
     lede="The classical trade-off says you must choose. Large neural networks plus regularisation mostly "
          "let you refuse to.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Classically, bigger models overfit. <b>Guess why modern practice often says “make it bigger” anyway.</b></p>""",
+        """<p>Watch for the recipe, and for what regularisation lets you get away with.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The old rule said: a simple model underfits, a complex model overfits, so hunt for the
 perfect middle size. A tightrope.</p>
 <p>Big neural networks changed the game. If your model is too simple — make it bigger. If it starts
@@ -722,7 +740,9 @@ L.append(dict(
     lede="Nobody gets it right on the first pass. The skill is making each pass short and each decision "
          "informed.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You will not get an ML system right first time. <b>Guess the loop</b> — what are the repeating steps, and which one do people skip?</p>""",
+        """<p>Watch for the step most teams skip, and for how much time skipping it costs.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Building a model is like making soup. You don’t compute the perfect recipe in advance —
 you throw things in, <b>taste it</b>, and adjust. Then taste again.</p>
 <p>The whole skill is in the tasting: knowing what to taste for, and how to change one thing at a time so
@@ -779,7 +799,9 @@ L.append(dict(
     lede="The second great diagnostic, and it needs no maths at all: read the mistakes, by hand, and count "
          "the categories.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your spam filter misclassifies 500 emails. <b>Guess what you would actually do with them</b> to decide what to fix next.</p>""",
+        """<p>Watch for how manual and unglamorous the answer is — and how much better it works than intuition.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Your spam filter got 100 emails wrong. Instead of guessing why, <b>read them</b>. Put
 them in piles: “these are all about pills”, “these are fake bank emails”, “these are weirdly spelled”.</p>
 <p>Then count the piles. 21 pills, 18 fake banks, 3 weird spellings. Now you know exactly what to build
@@ -852,7 +874,9 @@ L.append(dict(
     lede="When you do need more data, you rarely need more of everything. Targeted collection, "
          "augmentation, and synthesis — cheapest first.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You need more data and labelling is expensive. <b>Guess two ways to get more without collecting any.</b></p>""",
+        """<p>Watch for augmentation and synthesis, and for the rule about what a useful distortion looks like.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You need more practice questions. Three ways to get them:</p>
 <ol><li><b>Buy more</b> — but only of the type you keep getting wrong. (targeted collection)</li>
 <li><b>Bend the ones you have</b> — turn the page sideways, photocopy it badly, read it in dim light.
@@ -929,7 +953,9 @@ L.append(dict(
     lede="Borrow someone else’s trained network, replace its last layer, and train on your fifty examples. "
          "It works absurdly well.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have 50 images of your product. A network trained on a million photos of other things exists. <b>Guess how the second helps with the first.</b></p>""",
+        """<p>Watch for which layers you keep and which you replace, and for why early layers transfer at all.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Somebody spent a fortune teaching a computer to recognise a thousand everyday things:
 cats, cars, chairs, coffee cups. Along the way it had to learn what an <b>edge</b> is, what a
 <b>corner</b> is, what a <b>texture</b> is.</p>
@@ -1029,7 +1055,9 @@ L.append(dict(
     lede="Modelling is maybe 20% of the work. Here is the other 80%, including the parts that only bite "
          "after launch.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The model works in your notebook. <b>List everything still standing between that and users relying on it.</b></p>""",
+        """<p>Watch for how much of the work sits after the modelling — and for the part that never ends.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Baking a cake isn’t just mixing. It’s deciding what cake to make, buying ingredients,
 mixing, baking, <b>and</b> checking it hasn’t gone stale a week later.</p>
 <p>Machine learning projects have the same shape, and the last part — the “is it still good?” part —
@@ -1103,7 +1131,9 @@ L.append(dict(
     lede="A model trained on the past will reproduce the past. This lesson is short, non-technical, and "
          "the one most likely to matter to somebody's life.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model is accurate overall. <b>Guess how it could still be doing serious harm</b> — accuracy and fairness are not the same measurement.</p>""",
+        """<p>Watch for who the average hides. Watch also for the concrete process suggested rather than good intentions.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>If you teach a computer by showing it what people did before, it learns to do what
 people did before — including the unfair bits. It has no way to know which parts of history were a mistake.</p>
 <p>And it will do it faster, cheaper and at bigger scale than any person could, while sounding perfectly
@@ -1183,7 +1213,9 @@ L.append(dict(
     lede="When 99.5% of your labels are the same value, accuracy becomes a liar. Precision and recall are "
          "the replacement.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A disease affects 1 in 200. Here is my diagnostic program: <code>print("healthy")</code>. <b>What is its accuracy — and what is wrong with that number?</b></p>""",
+        """<p>99.5%. Watch for the two questions that replace accuracy when one class is rare.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A rare disease affects 1 in 200 people. I have written a diagnostic program. Here it
 is, in full:</p>
 <p style="text-align:center"><code>print("healthy")</code></p>
@@ -1271,7 +1303,9 @@ L.append(dict(
     lede="You cannot have both. The threshold is the dial, and where you set it is a decision about "
          "consequences, not about statistics.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Raise the threshold for calling something positive. <b>Guess what happens to precision, and what happens to recall.</b> They do not move together.</p>""",
+        """<p>Watch for why you cannot maximise both, and for how to pick a point on the trade-off deliberately.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You’re a lifeguard deciding when to blow the whistle.</p>
 <ul><li><b>Only whistle when you’re certain someone is drowning.</b> You’ll almost never be wrong — but
 you’ll miss the quiet ones. High precision, low recall.</li>

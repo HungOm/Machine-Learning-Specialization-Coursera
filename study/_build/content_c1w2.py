@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 2 — Regression with multiple input variables."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="Houses have more than a size. Four features instead of one, and the notation that keeps track "
          "of which is which.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Last week: price from size alone. Now you also know bedrooms, floors and age. <b>Guess how the formula changes — and how many numbers the model now has to learn.</b></p>""",
+        """<p>Watch for the subscript that appears, and for the rule about which superscript means “which example” versus “which feature”.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Last week you guessed the price of a house from one thing: how big it is. But you know
 more than that — how many bedrooms, how many floors, how old it is.</p>
 <p>So give each one its own dial. Turn up the bedroom dial if bedrooms matter a lot; turn the age dial
@@ -87,7 +89,9 @@ L.append(dict(
     lede="Replace a loop with one function call. Shorter to write, faster to run, and the standard way "
          "every real ML codebase is written.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You could add up 100,000 products with a Python <code>for</code> loop, or one NumPy call. <b>Guess how much faster the second is — and why, given both do the same multiplications.</b></p>""",
+        """<p>Watch for where the speed actually comes from. It is not that NumPy loops faster; it is that it does not loop in Python at all.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have to multiply 100 pairs of numbers and add up the results.</p>
 <p>You could do it one pair at a time, writing each answer down. Or you could hand the whole list to a
 machine built for exactly this job and get the total back in one go.</p>
@@ -162,7 +166,9 @@ L.append(dict(
     lede="Not because NumPy is clever maths. Because it hands the whole array to hardware that can do "
          "many multiplications at the same instant.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Both versions do exactly the same arithmetic. <b>So where could the time possibly be going in the slow one?</b></p>""",
+        """<p>Watch for what the hardware can do with many numbers at once, and for what Python costs you on every single step of a loop.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A for loop is one person doing sums on a piece of paper: first pair, write it down,
 second pair, write it down.</p>
 <p><code>np.dot</code> is handing the whole sheet to a room of a hundred people who all do their sum at
@@ -233,7 +239,9 @@ L.append(dict(
     lede="The same update rule, once per parameter — plus the one alternative method that exists only for "
          "linear regression.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Two parameters needed two update lines. Now there are twelve features. <b>Guess how many update lines you need — and what must be true about when they happen.</b></p>""",
+        """<p>Watch for the simultaneity rule you met last week, and for why it now matters across thirteen values instead of two.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You had two dials to tune. Now you have five. Nothing else changes: work out which way
 each dial should move, then move them all at the same moment.</p>""")
 
@@ -329,7 +337,9 @@ L.append(dict(
     lede="A feature ranging 300–2000 next to one ranging 0–5 turns the cost bowl into a canyon. One "
          "division fixes it, and it is the highest-value line in this week.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Size runs 300–2000. Bedrooms run 1–5. Both get a weight. <b>Guess what that 400× difference in range does to gradient descent.</b></p>""",
+        """<p>Picture the bowl from Week 1, stretched long and thin. Watch for why the path zig-zags, and how one rescaling fixes it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine a see-saw where one child weighs 2000 kg and the other weighs 5 kg. Every tiny
 movement by the heavy child sends the light one flying, and the light child can barely move the see-saw at
 all.</p>
@@ -421,7 +431,9 @@ L.append(dict(
     slug="06-checking-convergence", title="Checking gradient descent for convergence", mins=8, tag="core",
     lede="One plot, three lines of code, and it tells you whether your model is training, stuck, or broken.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model has been training for ten minutes. <b>How would you know whether to stop, keep going, or that something is broken?</b></p>""",
+        """<p>Watch for the one plot that answers all three questions at once, and costs three lines to make.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>How do you know when to stop? Draw a graph of “how wrong am I?” against “how many steps
 have I taken”.</p>
 <p>If the line is falling, keep going. If it has gone flat, you are done. If it is going <b>up</b>,
@@ -492,7 +504,9 @@ L.append(dict(
     lede="Try a ladder of values, plot each one, keep the largest that still behaves. That is the whole "
          "method, and it is genuinely how people do it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You must pick α with no formula to tell you the right value. <b>Guess a systematic way to search</b> — better than trying random numbers.</p>""",
+        """<p>Watch for the ladder, and for the rule about what J doing anything other than falling tells you immediately.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>There is no formula for α. You try a few and look.</p>
 <p>The values people try go up by roughly ×3 each time — 0.001, 0.003, 0.01, 0.03, 0.1 — because α acts
 multiplicatively, so equal <em>ratios</em> matter rather than equal differences. Trying 0.1, 0.2, 0.3
@@ -556,7 +570,9 @@ L.append(dict(
     lede="The model can only combine features the way its formula allows. Anything else you want it to "
          "use, you have to hand it directly — and that is where domain knowledge enters.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have a plot's frontage and its depth. The price really depends on <b>area</b>. <b>Can a linear model work that out for itself?</b> Commit to yes or no.</p>""",
+        """<p>Watch for why the answer is no, and for what one extra column fixes. This is the lesson that makes linear models far more powerful than they look.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You are predicting the price of a plot of land. You have the frontage (how wide it is)
 and the depth (how far back it goes).</p>
 <p>But what actually matters is the <b>area</b> — width × depth. And your model can only add things
@@ -633,7 +649,9 @@ L.append(dict(
     lede="Feature engineering’s most useful special case: hand the model x², x³ or √x and a straight-line "
          "algorithm starts drawing curves.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your data curves. Your model draws straight lines. <b>Guess how you could fit a curve without abandoning linear regression.</b></p>""",
+        """<p>Watch for what stays linear even when the curve does not. The trick is in what you feed it, not what it is.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Your data curves, and a straight line cannot follow a curve. So bend the line.</p>
 <p>Except you do not bend the line — you cannot, the model only adds things up. Instead you hand it
 <b>x squared</b> as an extra feature. Now “add up weighted features” includes an x² term, and the result

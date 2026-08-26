@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 2 — Python, NumPy and pandas."""
 from kit import (kid, key, warn, trap, note, card, eq, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -12,7 +12,9 @@ def lesson(slug, title, mins, lede, body):
 # ============================================================ 1
 lesson("01-jupyter", "Jupyter notebooks", 6,
     "Every lab in this specialization is a notebook. Five minutes here and they stop being intimidating.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You will spend the whole specialization in Jupyter notebooks. <b>Guess what a notebook lets you do that a plain <code>.py</code> file does not</b> — and why that matters when you are learning rather than shipping.</p>""",
+    """<p>Watch for the idea of a cell you can re-run without restarting everything. It is the whole reason data work happens here.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A notebook is a stack of little boxes called <b>cells</b>. You type code in a box, press a
 key, and the answer appears underneath it.</p>
 <p>Each box remembers what the boxes before it did. So you build things up gradually instead of writing a
@@ -90,7 +92,9 @@ built on stale values. Restart &amp; Run All before believing anything.</p>""")
 lesson("02-types", "Values and types", 6,
     "Six kinds of thing, and why mixing two of them up produces an error message that looks nothing like "
     "the actual problem.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Python says <code>3</code> and <code>3.0</code> are different things, and <code>"3"</code> is different again. <b>Guess which of the three you can do arithmetic with, and what the third one would do instead.</b></p>""",
+    """<p>Watch for what type errors look like. Nearly every confusing traceback in this course is really a type surprise.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Every value in Python is a <b>kind</b> of thing, and the kind decides what you can do
 with it.</p>
 <p>The number 5 and the text "5" look identical on screen. Add 5 + 5 and you get 10. Add "5" + "5" and you
@@ -164,7 +168,9 @@ gives <code>NameError</code>.</p>""")
 lesson("03-lists-vs-arrays", "Lists vs NumPy arrays", 8,
     "They look identical and behave nothing alike. This one distinction causes more beginner confusion "
     "than anything else in scientific Python.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p><code>[1, 2] + [3, 4]</code>. <b>Commit to an answer.</b> Then guess whether NumPy would agree with you.</p>""",
+    """<p>Python lists give <code>[1,2,3,4]</code>; NumPy gives <code>[4,6]</code>. Watch for why that difference is the reason arrays exist at all.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A <b>list</b> is a general container. It can hold anything — numbers, text, other lists.
 Because it might hold text, <code>+</code> means “join these together”.</p>
 <p>A NumPy <b>array</b> is a maths object. Everything in it is the same kind of number, so <code>+</code>
@@ -245,7 +251,9 @@ copies the whole thing each time, which is very slow. Build a list, then convert
 lesson("04-indexing-slicing", "Indexing and slicing", 9,
     "How to grab one thing, or a run of things. The colon, and the off-by-one rule that catches "
     "absolutely everybody.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p><code>x = [10, 20, 30, 40]</code>. <b>What is <code>x[1:3]</code>?</b> Guess how many items come back before you count.</p>""",
+    """<p>It is two items, not three. Watch for where counting starts and which end is excluded — both trip everyone at least once.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Numbers in an array have addresses, and <b>the first one lives at 0</b>, not 1. That feels
 wrong for about a week and then becomes invisible.</p>
 <p>Square brackets are how you ask for an address. <code>x[0]</code> is the first, <code>x[2]</code> is the
@@ -325,7 +333,9 @@ x[1:5].</p>""")
 # ============================================================ 5
 lesson("05-shape-and-axis", "Shape and axis", 9,
     "Most NumPy confusion is shape confusion. And `axis` has one rule that makes it click permanently.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>An array reports its shape as <code>(100, 4)</code>. You call <code>.sum(axis=0)</code>. <b>Guess how many numbers come back — 100, or 4?</b></p>""",
+    """<p>Commit before reading. Watch for what <em>axis</em> actually names: the direction that gets collapsed, not the one that survives.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p><b>Shape</b> says how the numbers are arranged: (3, 4) means 3 rows and 4 columns.</p>
 <p><b>Axis</b> says which direction to work in. Axis 0 goes <b>down</b> the rows; axis 1 goes
 <b>across</b> the columns.</p>
@@ -414,7 +424,9 @@ takes two seconds and is always right.</p>""")
 lesson("06-creating-arrays", "Creating arrays", 7,
     "Six ways to conjure numbers out of nothing, and the two whose end-points differ in a way nobody "
     "ever remembers.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You need a array of 100 zeros to fill in a loop. <b>Guess why you would build it up-front rather than growing it as you go.</b></p>""",
+    """<p>Watch for the shape argument, and for the habit of pre-allocating — it is how nearly every function in the labs starts.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Sometimes you need an array before you have any data — an empty box to fill in, or a row of
 evenly spaced numbers to draw a graph with.</p>""")
 
@@ -487,7 +499,9 @@ linspace avoids that.</p>""")
 lesson("07-elementwise", "Elementwise arithmetic", 7,
     "Do a sum to every number at once, with no loop. This is the habit that makes machine learning code "
     "short.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p><code>w * x</code> where both are arrays of length 3. <b>Does one number come out, or three?</b></p>""",
+    """<p>Watch for the distinction from the dot product, which does the same multiplications and then adds. One extra step, completely different answer.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Write <code>a + b</code> with two arrays and NumPy lines them up and adds each pair. Write
 <code>a ** 2</code> and it squares every single one.</p>
 <p>No loop. You write the sum once and it happens everywhere.</p>""")
@@ -564,7 +578,9 @@ multiply. Runs happily, gives wrong numbers.</p>""")
 lesson("08-broadcasting", "Broadcasting", 9,
     "How NumPy adds a (1,3) to a (2,3) without complaining. Enormously useful, and the source of some "
     "very quiet bugs.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You subtract a 4-number array from a (100, 4) matrix. Shapes clearly do not match. <b>Guess whether NumPy errors — and whether it should.</b></p>""",
+    """<p>It quietly works. Watch for the rule that decides when, and for why silent success is more dangerous than an error.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You have a table with 2 rows, and a single row of numbers you want to add to <b>both</b>
 rows.</p>
 <p>Strictly the shapes do not match. NumPy does it anyway — it quietly <b>stretches</b> the single row
@@ -648,7 +664,9 @@ most common quiet bug in NumPy.</p>""")
 lesson("09-dot-in-code", "np.dot, matmul and @", 8,
     "Four ways to multiply arrays, two of which collapse and two of which do not. Choosing wrong is a "
     "silent bug.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Three ways to write the same thing: <code>np.dot(a,b)</code>, <code>np.matmul(a,b)</code>, <code>a @ b</code>. <b>Guess whether they always agree.</b></p>""",
+    """<p>Watch for where they diverge. For everything in this course they agree — but knowing why there are three names stops the confusion later.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>There are two completely different things called “multiply” here.</p>
 <p><code>*</code> pairs the numbers up and multiplies them, keeping them separate. You get a list back.</p>
 <p><code>@</code> pairs them up, multiplies, <b>and adds everything together</b>. You get one number back.</p>
@@ -721,7 +739,9 @@ different answers. This is the expensive one.</p>""")
 # ============================================================ 10
 lesson("10-aggregations", "sum, mean, max — along an axis", 7,
     "Collapsing a lot of numbers into fewer. The same axis rule from lesson 5, now doing real work.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A (100, 4) matrix of houses. You want the average of <em>each feature</em>. <b>Should the answer have 100 numbers or 4 — and which axis gives you that?</b></p>""",
+    """<p>Four. Watch for how to get the axis right first time rather than by trial and error.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You have a table of numbers and want a summary. Total? Average? Biggest?</p>
 <p>The only question is <b>which direction</b> to summarise in — down the columns, across the rows, or
 everything at once.</p>""")
@@ -796,7 +816,9 @@ the choice.</p>""")
 lesson("11-boolean-masks", "Boolean masks", 8,
     "Comparing an array gives you an array of True/False — and putting that in brackets filters your data. "
     "One of the most useful things in NumPy.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You want only the houses over 1500 sq ft. <b>Guess how you would say that in NumPy without writing a loop or an <code>if</code>.</b></p>""",
+    """<p>Watch for what a comparison on an array returns — it is not True or False, it is a whole array of them.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Ask a question of a whole array — “which of these are bigger than 25?” — and you get back
 a whole array of <b>yes/no</b> answers, one per position.</p>
 <p>Then put that yes/no array inside the square brackets, and you keep only the yesses.</p>""")
@@ -876,7 +898,9 @@ with more than one element is ambiguous” — a confusing message for a simple 
 lesson("12-reshape", "reshape, flatten and T", 7,
     "Rearranging the same numbers into a different grid — and the difference from transpose, which is not "
     "the same thing.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A 2×3 array reshaped to 3×2. <b>Six numbers in, six out — but are they in the same order, and does the data change?</b></p>""",
+    """<p>Watch for <code>-1</code>, the shorthand for “work it out for me”. It appears constantly in the labs.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You have twelve numbers in a row. You can arrange them as 3 rows of 4, or 4 rows of 3, or
 2 rows of 6.</p>
 <p>The numbers do not change and never move. Only how you <b>read</b> them changes.</p>""")
@@ -948,7 +972,9 @@ swap. Use <code>reshape(-1, 1)</code> to get a column.</p>""")
 lesson("13-pandas-dataframes", "pandas DataFrames", 9,
     "A spreadsheet with column names. This is how data gets into your notebook, and five methods cover "
     "nearly everything.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A CSV of houses arrives with named columns. <b>Guess why you would use pandas to read it, then convert to NumPy before doing any maths.</b></p>""",
+    """<p>Watch for what each tool is for: pandas for reading and inspecting by name, NumPy for the arithmetic.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>NumPy knows about <b>positions</b>: column 2, row 7. pandas knows about <b>names</b>: the
 “price” column, the row with index 7.</p>
 <p>That is the whole difference. pandas is for loading messy real files and tidying them up. NumPy is for
@@ -1041,7 +1067,9 @@ than the original. Use <code>.loc</code> for assignments and it goes away.</p>""
 # ============================================================ 14
 lesson("14-pandas-to-numpy", "From pandas to NumPy", 6,
     "The one line that crosses from “loading data” to “doing maths” — and the shape trap waiting there.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Your DataFrame has columns <code>size</code>, <code>beds</code>, <code>price</code>. <b>Which become X and which becomes y — and what shape should each end up?</b></p>""",
+    """<p>Watch for the conversion line. Nearly every lab begins with exactly this step.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You loaded a file with pandas and tidied it up. Now you want to do maths, which means
 NumPy.</p>
 <p>One method crosses over. You lose the column names — so pick your columns <b>before</b> you cross, not
@@ -1120,7 +1148,9 @@ If you already have a (m,1), fix it with <code>y.ravel()</code>.</p>""")
 lesson("15-reading-errors", "Reading an error message", 8,
     "Tracebacks look terrifying and are mostly noise. Read the last line, and know the five errors you "
     "will actually hit.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A traceback is twenty lines long. <b>Guess which line actually tells you what went wrong</b> — the first, the last, or somewhere in the middle.</p>""",
+    """<p>Watch for where to look first, and for the two or three error types that account for almost everything you will hit.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>When Python fails it prints a wall of red text. Almost none of it matters.</p>
 <p><b>Read the last line.</b> It is a plain English sentence that names the actual problem. The lines above
 it just show how the code got there.</p>""")
@@ -1196,7 +1226,9 @@ strip out your own file paths and variable names.</p>""")
 lesson("16-functions", "Writing and reading functions", 8,
     "Every graded exercise in this specialization is “fill in the body of this function”. So it is worth "
     "being able to read one at a glance.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You write <code>def f(x):</code> and the lab says “return the value, do not print it”. <b>Guess why that distinction matters to the grader.</b></p>""",
+    """<p>Watch for the difference between showing a value and handing it back. Printing is for you; returning is for the code that called you.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A function is a recipe with a name. You give it ingredients, it does some steps, and it
 hands you back a result.</p>
 <p>Writing one means saying: what it is called, what it needs, and what it gives back.</p>""")

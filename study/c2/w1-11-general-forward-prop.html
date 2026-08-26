@@ -226,7 +226,7 @@
 <p class="lede">Replace the copy-pasted neurons with one loop, then stack the loops into a network. This is the code you will write in the assignment.</p>
 <div class="bookrail" title="Lesson 79 of 172 in the book"><i style="width:46%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 1 · lesson 11 of 16</span><span class="r">79 of 172 · 46% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Last lesson you wrote out neuron 1, then neuron 2, then neuron 3 — three near-identical
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You wrote a function for one layer. <b>Guess what has to change to make it work for a network of any depth.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for how little does. The whole network is one function, called in a loop.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Last lesson you wrote out neuron 1, then neuron 2, then neuron 3 — three near-identical
 paragraphs. That is silly. Whenever you catch yourself copying and pasting with one number changed, that
 number wants to become a <b>loop counter</b>.</p></div><h2><span class="ico">💻</span>The dense() function</h2><pre><code><span class="tok-k">def</span> dense(a_in, W, b):
     units = W.shape[<span class="tok-n">1</span>]            <span class="tok-c"># number of columns = number of neurons</span>

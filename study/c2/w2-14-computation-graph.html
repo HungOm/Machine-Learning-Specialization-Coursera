@@ -226,7 +226,7 @@
 <p class="lede">How a machine differentiates something nobody wrote a formula for: break the calculation into tiny steps, then walk backwards multiplying local slopes.</p>
 <div class="bookrail" title="Lesson 98 of 172 in the book"><i style="width:57%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 2 · lesson 14 of 15</span><span class="r">98 of 172 · 57% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Suppose a chain of gears: turn gear A and it turns B, which turns C, which turns D.</p>
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>A network has a million weights. <b>Guess how many times you would have to run it forwards to measure every derivative by nudging</b> — then guess whether that is affordable.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Two million forward passes. Watch for how backprop gets all of them in roughly one backward pass instead.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Suppose a chain of gears: turn gear A and it turns B, which turns C, which turns D.</p>
 <p>You want to know: if I turn A by one notch, how far does D move? You don’t need to understand the whole
 machine. You just need each pair: A→B is ×2, B→C is ×3, C→D is ×0.5. Multiply them: 2 × 3 × 0.5 = <b>3</b>.
 Turn A one notch, D moves three.</p>

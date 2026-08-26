@@ -226,7 +226,7 @@
 <p class="lede">Move the actions from the input side to the output side. Four times less compute, for free.</p>
 <div class="bookrail" title="Lesson 169 of 172 in the book"><i style="width:98%"></i></div>
 <p class="bookrail-cap"><span>C3 · Week 3 · lesson 13 of 16</span><span class="r">169 of 172 · 98% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The obvious design: tell the network where you are <b>and</b> what you are thinking of
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>The first architecture outputs Q for one action, so four actions need four forward passes. <b>Guess the fix.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for moving the actions to the output layer. One pass instead of four, millions of times per run.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The obvious design: tell the network where you are <b>and</b> what you are thinking of
 doing, and it gives you one number. But then, to choose between four actions, you have to ask it four
 separate times.</p>
 <p>Better design: tell it only where you are, and let it give you <b>four numbers at once</b> — one per

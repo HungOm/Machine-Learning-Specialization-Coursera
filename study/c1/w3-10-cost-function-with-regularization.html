@@ -226,7 +226,7 @@
 <p class="lede">Add one term that punishes large weights. λ decides how much it matters, and that single dial spans the whole range from overfit to underfit.</p>
 <div class="bookrail" title="Lesson 67 of 172 in the book"><i style="width:39%"></i></div>
 <p class="bookrail-cap"><span>C1 · Week 3 · lesson 10 of 11</span><span class="r">67 of 172 · 39% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have been telling the model one thing: “fit the data.” So it does, extravagantly.</p>
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You want the model to fit the data <em>and</em> keep its weights small. <b>Guess how you would tell it to care about both, using one number.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the extra term added to the cost, and for what λ = 0 and λ = enormous each do to the fit.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have been telling the model one thing: “fit the data.” So it does, extravagantly.</p>
 <p>Now tell it two things: “fit the data, <b>and</b> keep your numbers small.” It has to balance them,
 which means it will only use a big weight when a big weight really earns its keep.</p>
 <p>λ decides how loudly you say the second thing. Say it quietly and nothing changes. Shout it and the

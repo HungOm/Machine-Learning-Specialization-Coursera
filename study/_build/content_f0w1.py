@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 1 — The maths you actually need."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 L = []
 
@@ -13,7 +13,9 @@ def lesson(slug, title, mins, lede, body):
 lesson("01-what-is-a-function", "What a function is", 8,
     "The single most important idea in the whole specialization, and the one nobody stops to explain. "
     "A machine: number in, number out.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A machine takes a number, doubles it, and adds one. You feed in <b>3</b> and get <b>7</b>. You feed in 3 again tomorrow. <b>What comes out — and how sure are you?</b></p>""",
+        """<p>Your certainty is the whole idea. Watch for the word that names “same input, same output, always” — it is the property everything else in this course is built on.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A vending machine. You put a coin in one slot, and a chocolate bar comes out the other.
 Same coin, same chocolate bar, every time.</p>
 <p>A function is exactly that, with numbers. Put 3 in, get 7 out. Put 3 in again, get 7 again — always.</p>
@@ -102,7 +104,9 @@ Check what has just been defined.</p>""")
 lesson("02-reading-a-graph", "Reading a graph", 7,
     "A graph is a picture of a function. Learning to read one — across, then up, then across — makes "
     "every diagram in the specialization legible.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Someone says “the line goes up steeply from left to right”. <b>Without any formula: what two things must you know about the picture before that sentence means anything at all?</b></p>""",
+        """<p>Watch for the two labels that turn a squiggle into information. Most confusion later is not about maths — it is about not checking these first.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A graph is a map of a function. Every dot on the line is one question and its answer,
 side by side.</p>
 <p>To use it: go <b>across</b> the bottom to your question, then <b>up</b> until you hit the line, then
@@ -172,7 +176,9 @@ glance at the numbers on the axes before believing a shape.</p>""")
 # ============================================================ 3
 lesson("03-greek-letters", "Greek letters and other symbols", 7,
     "Not maths — vocabulary. A page you can come back to whenever a formula throws a symbol at you.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You meet <b>α</b>, <b>Σ</b> and <b>μ</b> in a formula. <b>Guess whether these are three quantities you must calculate, or something else entirely.</b></p>""",
+        """<p>Watch for what a symbol actually <em>is</em>. They are not maths — they are vocabulary, and the only hard part is that nobody says them out loud for you.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Maths ran out of letters. So it borrowed the Greek alphabet.</p>
 <p>There is nothing clever going on: α is just a letter, like calling a variable <code>a</code>. The only
 reason symbols feel hard is that nobody ever says them out loud, so you cannot hold them in your head.</p>
@@ -235,7 +241,9 @@ defined. Authors redefine freely.</p>""")
 lesson("04-slope", "Slope — rise over run", 8,
     "The steepness of a line, as a single number. Get this and gradient descent stops being mysterious, "
     "because gradient descent is entirely about slopes.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Two hills. On the first you walk 2 steps forward and rise 6. On the second, 2 steps forward and rise 2. <b>How many times steeper is the first — and what single number would you use to say so?</b></p>""",
+        """<p>Do 6÷2 and 2÷2 before reading. Watch for the name of that division, and for what a <em>negative</em> answer would mean.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Slope answers one question: <b>if I take one step to the right, how far up do I go?</b></p>
 <p>A gentle ramp has a small slope. A steep hill has a big one. Walking downhill gives a negative one.
 Flat ground gives zero.</p><p>Two hikers climb for 2 steps. One rises 6 inches; the other rises only 2. The first hill is steeper — three times as steep, in fact, since 6 ÷ 2 is three times 2 ÷ 2. That ratio, rise divided by run, is the whole of slope.</p>""")
@@ -324,7 +332,9 @@ y₂ − y₁, then run must be x₂ − x₁. Mixing the order flips the sign.<
 lesson("05-derivatives", "What a derivative actually is", 10,
     "The slope of a curve at one exact point. This is the single piece of calculus the whole "
     "specialization runs on — and you need the meaning, not the rules.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Slope needs two points. A curve's steepness changes everywhere, and you only have <b>one</b> point. <b>How would you cheat?</b></p>""",
+        """<p>Whatever trick you invented is probably the real one. Watch for what happens as the second point slides closer and closer — and for the word that names where it settles.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A straight line has one slope everywhere. A curve is steeper in some places than others —
 so “the slope of a curve” only makes sense if you say <b>where</b>.</p>
 <p>But slope needs <em>two</em> points, and you only have one. So cheat: take a second point very close by,
@@ -432,7 +442,9 @@ on the curve x², the height is 0 and the slope is also 0 — coincidence, not a
 lesson("06-partial-derivatives", "Partial derivatives", 10,
     "What to do when a function has several inputs. Freeze all but one, and you are back to an ordinary "
     "slope.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You are standing on a hillside with <b>two</b> dials, and the height depends on both. <b>How could you talk about “the steepness” at all, when steepness depends on which way you walk?</b></p>""",
+        """<p>Watch for the trick: freeze one dial, wiggle the other. The curly ∂ is just notation for “I froze the rest”.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Picture a landscape with two directions you can walk: call one <b>w</b> (east–west) and
 the other <b>b</b> (north–south). At every spot (w, b) the ground has a height, and that height is
 <b>J</b>. So J is a machine that takes a spot and hands back a height:</p>
@@ -564,7 +576,9 @@ purely a notice to the reader.</p>""")
 lesson("07-sigma-notation", "Σ — summation notation", 9,
     "The scariest-looking symbol in the course, and it is a for loop. Once you can read it, half the "
     "formulas in the specialization become ordinary.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A formula says <b>Σ</b> with <b>i=1</b> underneath and <b>m</b> on top. <b>Guess what it is telling a computer to do</b> — you have almost certainly written this in code without knowing the symbol.</p>""",
+        """<p>Watch for the three questions every Σ answers: where to start, where to stop, and what to do each time. It is a <code>for</code> loop wearing a hat.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You want to say “add up all of these”. Writing x₁ + x₂ + x₃ + … + x₁₀₀₀ is silly.</p>
 <p>So maths has a shorthand: a big Σ, with “where to start” underneath, “where to stop” on top, and “the
 thing to add up” beside it.</p>
@@ -690,7 +704,9 @@ then adds. (Σx)² adds first then squares. For [1, 2] those are 5 and 9.</p>"""
 # ============================================================ 8
 lesson("08-pi-notation", "Π — multiplying them all", 6,
     "Sigma's sibling. Same shape, one different instruction — and it explains why anomaly detection works.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Σ adds things up. <b>Π</b> does the same thing with a different operation. <b>Guess which — and what its running total must start at</b> (Σ starts at 0; starting Π at 0 would be a disaster).</p>""",
+        """<p>Ask yourself what ×0 does to any total. Watch for why five mild oddities multiply into one very unlikely event — that is anomaly detection, three courses away.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Σ says “add them all up”. Π says “<b>multiply</b> them all together”.</p>
 <p>That is the entire difference. Same layout, same counter, same start and stop.</p>
 <p>Same robot as Σ, but this one’s instruction card says <b>multiply</b> instead of add — and it starts its running total at <b>1</b>, not 0, because multiplying anything by 0 would wipe the whole calculation out before it began.</p>""")
@@ -770,7 +786,9 @@ reinforcement learning). Three different meanings, one alphabet.</p>""")
 # ============================================================ 9
 lesson("09-vectors", "Vectors", 8,
     "A list of numbers. That is it — and almost every object in machine learning is one.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A house: 1400 sq ft, 3 beds, 2 floors, 18 years old. <b>Is [1400, 3, 2, 18] the same thing as [18, 2, 3, 1400]?</b> Commit to yes or no, and why.</p>""",
+        """<p>Watch for the word “ordered”. It sounds trivial and it is the entire difference between a vector and a bag of numbers.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A vector is a list of numbers kept in order. [3, 2] is a vector. So is [2104, 5, 1, 45] —
 the size, bedrooms, floors and age of a house.</p>
 <p>With two numbers you can draw it as an arrow: 3 across, 2 up. With four hundred numbers you cannot draw
@@ -859,7 +877,9 @@ double bars is the length of a vector.</p>""")
 lesson("10-dot-product", "The dot product", 9,
     "Two lists in, one number out. It is what a neuron computes, what a recommender uses to match you to "
     "a film, and what matrix multiplication is made of.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Shopping list: 1 apple, 2 bananas, 3 cherries. Prices: £4, £5, £6. <b>Work out the bill.</b> Then: how many separate <em>kinds</em> of operation did you just perform?</p>""",
+        """<p>You should get £32. Watch for why maths bothers to give that two-step pattern a single name — it turns out to be what every neuron in Course 2 computes.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A shopping list: 1 apple, 2 bananas, 3 cherries. A price list: apples £4, bananas £5,
 cherries £6.</p>
 <p>The total bill? Pair each item with its price, multiply, add it all up:
@@ -958,7 +978,9 @@ keep <code>np.dot</code> for vectors.</p>""")
 lesson("11-matrices", "Matrices and shapes", 8,
     "A grid of numbers — and the shape tuple that causes more beginner errors than anything else in "
     "machine learning.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You have 100 houses, each with 4 measurements. <b>Someone says “the shape is (100, 4)”. Which number is which — and how would you know if you had it backwards?</b></p>""",
+        """<p>Watch for the convention: rows first, always. Getting this backwards is the single most common source of errors in the labs.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A matrix is a spreadsheet. Rows going across, columns going down, numbers in the boxes.</p>
 <p>Its <b>shape</b> is how many rows and how many columns — written (rows, columns), in that order,
 always.</p>
@@ -1045,7 +1067,9 @@ and wide, not tall and thin.</p>""")
 lesson("12-matrix-multiplication", "Matrix multiplication", 10,
     "A whole grid of dot products, computed at once. And the shape rule that tells you instantly whether "
     "two matrices can meet.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>You multiply a (2×3) by a (3×4). <b>Guess the shape of the answer — and guess what happens if you try (2×3) times (2×3).</b></p>""",
+        """<p>Watch the two inner numbers. Watch for what they do — they must match, and then they vanish.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>One dot product prices up one shopping basket.</p>
 <p>Now imagine <b>three</b> customers with three baskets, and <b>four</b> shops with four price lists.
 How much does each customer pay at each shop? That is 3 × 4 = 12 totals, and you can lay them out in a
@@ -1148,7 +1172,9 @@ check what your rows and columns are supposed to <em>mean</em> first.</p>""")
 lesson("13-transpose", "Transpose", 6,
     "Tipping a matrix on its side. Not a deep idea — but you will reach for it constantly, and knowing "
     "why saves a lot of confusion.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A table has students down the side and exams across the top. Your code needs it the other way round. <b>Has any information changed?</b></p>""",
+        """<p>Watch for how little is really happening. It is shape plumbing, not mathematics — but you will type <code>.T</code> constantly, so it is worth being bored by it now.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Take your spreadsheet and tip it over. What were rows are now columns; what were columns
 are now rows.</p>
 <p>The numbers do not change. Nothing is calculated. Only where each number <em>sits</em> changes.</p>
@@ -1225,7 +1251,9 @@ a (3,) has no second dimension to swap with. You need <code>.reshape(-1, 1)</cod
 lesson("14-exponentials", "Exponentials and e", 8,
     "Why a number beginning 2.718 turns up in the sigmoid, in softmax, and in every probability formula "
     "in the specialization.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A rumour doubles every hour. After 10 hours, <b>roughly how many people know it if one person started?</b> Guess before calculating — most people guess far too low.</p>""",
+        """<p>The answer is 1024. Watch for the shape of the curve that produces it, and for why this specific behaviour is what the sigmoid is built from.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>e is just a number, like π. It is about <b>2.718</b>. Nobody is asking you to work it out.</p>
 <p>“e to the power of z”, written e<sup>z</sup>, does two useful things: it is <b>always positive</b>, no
 matter what z is, and it <b>grows very fast</b> as z gets bigger.</p>
@@ -1312,7 +1340,9 @@ about 88 in float32. Real libraries subtract the maximum first to avoid it.</p>"
 lesson("15-logarithms", "Logarithms", 8,
     "The undo button for exponentials — and the reason a confidently wrong prediction costs a model so "
     "much.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Exponentials ask “what does this power give me?”. <b>Guess the opposite question</b> — and what it would be useful for if a probability came out as 0.001.</p>""",
+        """<p>log(0.001) is about −6.9. Watch for why turning a tiny fiddly number into a comfortable large one is exactly what a loss function needs.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Exponentials ask: “I have e, raised to the power 3 — what number is that?”</p>
 <p>Logarithms ask the <b>opposite</b>: “I have the number 20 — what power did I raise e to, to get it?”</p>
 <p>They undo each other, the way ÷2 undoes ×2.</p><p>Say a rumour doubles the number of people who have heard it every hour. Ask “how many people have heard it now” and exponentials answer that. Ask the opposite — “it has reached this many people, so how many hours has it been spreading?” — and you need the undo-button question a logarithm asks: doubling this many times gets me to that number; how many times was it?</p>""")
@@ -1407,7 +1437,9 @@ something like [1e−15, 1 − 1e−15] first.</p>""")
 lesson("16-probability", "Probability basics", 8,
     "Four rules. They cover every probability statement in the specialization, including the one that "
     "makes anomaly detection work.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>A model outputs <b>0.7</b> for “this email is spam”. <b>What must the other possibility be — and what does that tell you about how all the outputs relate?</b></p>""",
+        """<p>Watch for the rule about what everything must add to. It is one sentence and it constrains every classifier you will build.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>A probability is a number between <b>0</b> (never happens) and <b>1</b> (always happens).
 0.5 means a coin flip.</p>
 <p>Three balls out of ten are red, so the chance of pulling a red one is 3/10 = 0.3. That is the whole
@@ -1499,7 +1531,9 @@ about <em>this</em> example given its features, not about a population.</p>""")
 lesson("17-mean-variance", "Mean, variance and standard deviation", 9,
     "Where the middle is, and how spread out things are. Five steps, in order — and the reason step three "
     "squares everything.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Two classrooms both average 10 out of 20. In one, everyone scored 10. In the other, scores ran 0 to 20. <b>The average cannot tell them apart — what second number would?</b></p>""",
+        """<p>Watch for the name of that second number, and for why it squares the distances rather than just adding them up.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Two questions you can ask about any pile of numbers.</p>
 <p><b>Where is the middle?</b> Add them all up, divide by how many. That is the mean.</p>
 <p><b>How spread out are they?</b> Measure how far each one sits from the middle, and take a typical
@@ -1603,7 +1637,9 @@ says “σ = 2”, the variance is 4.</p>""")
 lesson("18-normal-distribution", "The normal distribution", 8,
     "The bell curve. Two numbers describe it completely — and it is the entire model behind anomaly "
     "detection.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Measure a thousand adults' heights and draw a bar per height. <b>Sketch the shape you expect</b>, then guess how many numbers it would take to describe that shape exactly.</p>""",
+        """<p>Watch for the answer being <em>two</em>. Watch also for why this particular hill shape turns up in so many unrelated places.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>Measure a thousand people's heights and draw a bar for each. You get a hill: lots of people
 near the middle, fewer as you go out, almost nobody at the extremes.</p>
 <p>That hill shape turns up everywhere in nature. And it takes exactly <b>two</b> numbers to describe:
@@ -1701,7 +1737,9 @@ does not mean 400%.</p>""")
 lesson("19-min-max-argmax", "min, max, argmin and argmax", 6,
     "Four words that appear in almost every algorithm in the specialization. The “arg” prefix is the "
     "only thing to learn.",
-    h2("🎈", "The idea, in plain words")
+    pretest("""<p>Scores [0.1, 0.7, 0.2]. One question asks “how good was the best?”, another asks “which one was best?”. <b>Give both answers</b> — they are different numbers.</p>""",
+        """<p>0.7 and position 1. Watch for the two names, and for which one turns a neural network's output into an actual prediction.</p>""")
+    + h2("🎈", "The idea, in plain words")
     + kid("""<p>You have a row of scores: 12, 31, 7, 24, 19.</p>
 <p><b>max</b> asks “what is the biggest score?” — the answer is 31.</p>
 <p><b>argmax</b> asks “<b>where</b> is the biggest score?” — the answer is position 1.</p>

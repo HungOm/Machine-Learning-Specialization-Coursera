@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 3 — Classification, logistic regression, regularisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="A reasonable-looking idea that fails for two specific reasons — and seeing exactly how it fails "
          "is the best possible motivation for what replaces it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Tumour size in, benign-or-malignant out. You fit a straight line and threshold at 0.5. <b>Guess what one far-away data point does to that boundary.</b></p>""",
+        """<p>Watch for the two separate problems this creates. One is about outliers; the other is that the output can exceed 1, which is meaningless for a yes/no answer.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You want to predict whether a tumour is malignant. Answer: yes or no. Write yes as 1 and
 no as 0, fit a straight line through the data, and call anything above 0.5 a yes.</p>
 <p>It looks like it works. Then you add <b>one</b> more patient with a very large tumour — obviously
@@ -73,7 +75,9 @@ L.append(dict(
     lede="Take the same wx + b and squash it through the sigmoid. The output becomes a probability, and "
          "both problems from the last lesson disappear.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You need any number, however large, squashed into the range 0 to 1. <b>Sketch the shape a function would need to do that</b> — what must it do at very large positive and very large negative inputs?</p>""",
+        """<p>Watch for g(0) = 0.5 exactly, and for why the curve flattening at the extremes is a feature rather than a flaw.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The straight line was fine — it just went off to infinity in both directions.</p>
 <p>So put it through a squasher. Whatever number comes out of wx + b, no matter how enormous, the squasher
 turns it into something between 0 and 1. Very negative becomes almost 0. Very positive becomes almost 1.
@@ -165,7 +169,9 @@ L.append(dict(
     lede="Where the model changes its mind. It is always the line z = 0 — but what that looks like in your "
          "data depends entirely on which features you supplied.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The model outputs 0.5. <b>What does that say about the input — and what is special about the set of all inputs that produce exactly 0.5?</b></p>""",
+        """<p>Watch for the chain: f ≥ 0.5 means g(z) ≥ 0.5 means z ≥ 0. The boundary is where z is exactly zero.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>The model gives you a probability. At some point you have to actually decide.</p>
 <p>The usual rule: if the chance is 0.5 or more, say yes. Below that, say no.</p>
 <p>Now here is the neat bit. The sigmoid is exactly 0.5 when z = 0. So the place where the model changes
@@ -240,7 +246,9 @@ L.append(dict(
     lede="Squared error worked beautifully in Week 1 and fails here. Understanding why is the point of this "
          "lesson.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Squared error worked fine for regression. <b>Guess why it is a bad choice once the model output goes through a sigmoid.</b></p>""",
+        """<p>Watch for the word “convex”, and for what a bumpy cost surface does to the guarantee you had in Week 1.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a way to score a line: measure how far off each point is and square it. It
 worked perfectly for house prices.</p>
 <p>Try it here and you get a landscape full of bumps and dips instead of one clean bowl. Gradient descent
@@ -314,7 +322,9 @@ L.append(dict(
     lede="Two curves that between them encode a strong opinion: being confident and wrong should cost you "
          "enormously.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The true answer is 1 and your model says 0.01 — confidently wrong. <b>How much should that cost, compared with saying 0.5 and admitting you do not know?</b></p>""",
+        """<p>−log(0.01) is about 4.6; −log(0.5) is about 0.69. Watch for why the penalty must grow without limit as confidence in the wrong answer rises.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>A game where you announce how sure you are, and get penalty points for being wrong.</p>
 <p>The rule is harsh but fair. Say “99% sure it’s malignant” about a benign tumour and you pay a fortune.
 Say “55% sure” about the same tumour and you pay very little.</p>
@@ -386,7 +396,9 @@ L.append(dict(
     slug="06-simplified-cost-function", title="The simplified cost function", mins=8, tag="maths",
     lede="Two cases collapse into one line, using nothing more than the fact that y is always 0 or 1.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Two formulas, one for y = 1 and one for y = 0. <b>Guess how you would collapse them into a single line with no <code>if</code></b>, given y is only ever 0 or 1.</p>""",
+        """<p>Try multiplying one by y and the other by (1 − y). Watch which term vanishes in each case.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have two rules: one for when the answer is yes, one for when it is no. Awkward to
 write, awkward to code, awkward to differentiate.</p>
 <p>Trick: multiply the first rule by y and the second by (1 − y). Since y is only ever 0 or 1, one of those
@@ -468,7 +480,9 @@ L.append(dict(
     lede="The update rule is character-for-character identical to linear regression. Only the meaning of f "
          "has changed — and that is genuinely all.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>New model, new cost function. <b>Guess how much the gradient descent update rule has to change.</b></p>""",
+        """<p>The answer surprises people. Watch for what stays character-for-character identical, and for the one definition that quietly changed underneath it.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You changed the model. You changed the cost. And when you work out the derivative, you
 get… exactly the same formula as before.</p>
 <p>It looks like a mistake. It is not. The sigmoid and the log loss are built to fit together, and when you
@@ -551,7 +565,9 @@ L.append(dict(
     lede="The most important concept in applied machine learning, and the first place you meet it. A model "
          "that is perfect on your data and useless on anything else.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A model scores 100% on the data it trained on. <b>Is that good news?</b> Commit before reading.</p>""",
+        """<p>Watch for the difference between fitting and learning, and for the two named failure modes at either extreme.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Two ways to be a bad student.</p>
 <p><b>Too simple:</b> you only ever learned “the answer is always 4”. You get the homework wrong and the
 exam wrong. You are not confused — you are under-prepared. That is <b>underfitting</b>.</p>
@@ -624,7 +640,9 @@ L.append(dict(
     slug="09-addressing-overfitting", title="Addressing overfitting", mins=8, tag="core",
     lede="Three options, and a clear reason why the third one is usually where you start.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Your model is overfitting. <b>List every fix you can think of before reading</b> — there are three main ones and most people get two.</p>""",
+        """<p>Watch for which fix is usually the most effective and least available, and which one this week is really about.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Your model memorised. Three ways to stop it:</p>
 <ol>
 <li><b>Show it more examples.</b> Memorise ten photos, easy. Memorise ten million, impossible — you have to
@@ -694,7 +712,9 @@ L.append(dict(
     lede="Add one term that punishes large weights. λ decides how much it matters, and that single dial "
          "spans the whole range from overfit to underfit.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You want the model to fit the data <em>and</em> keep its weights small. <b>Guess how you would tell it to care about both, using one number.</b></p>""",
+        """<p>Watch for the extra term added to the cost, and for what λ = 0 and λ = enormous each do to the fit.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have been telling the model one thing: “fit the data.” So it does, extravagantly.</p>
 <p>Now tell it two things: “fit the data, <b>and</b> keep your numbers small.” It has to balance them,
 which means it will only use a big weight when a big weight really earns its keep.</p>
@@ -786,7 +806,9 @@ L.append(dict(
     lede="One extra term in the update rule, which rearranges into something with a memorable name: weight "
          "decay. And it is the same for both algorithms.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>The cost gained an extra term. <b>Guess what that does to the update rule</b> — and what it means for a weight that the data is not actively pushing up.</p>""",
+        """<p>Watch for the rearrangement into “shrink, then step”. It is why this is also called weight decay.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Before each step downhill, shrink every weight a tiny bit — multiply it by something
 like 0.9998.</p>
 <p>Then take the ordinary step.</p>

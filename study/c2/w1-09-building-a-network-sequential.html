@@ -226,9 +226,9 @@
 <p class="lede">Stop calling layers by hand. Sequential wires them together, and three method calls — compile, fit, predict — do the rest.</p>
 <div class="bookrail" title="Lesson 77 of 172 in the book"><i style="width:45%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 1 · lesson 9 of 16</span><span class="r">77 of 172 · 45% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Before: you carried the baton from runner to runner yourself. Now you hand the whole
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p><code><span class="gterm" data-g="sequential-api">Sequential</span></code> stacks layers in a line. <b>Guess what kind of network it therefore cannot build.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for what “sequential” rules out: more than one input, more than one output, or a layer that skips ahead.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Before: you carried the baton from runner to runner yourself. Now you hand the whole
 team to a coach and say “run in this order”. The coach handles the handoffs.</p>
-<p><code><span class="gterm" data-g="sequential-api">Sequential</span></code> is that coach. You give it a list of layers, top to bottom, and it feeds each
+<p><code>Sequential</code> is that coach. You give it a list of layers, top to bottom, and it feeds each
 one’s output into the next automatically.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">from</span> tensorflow.keras <span class="tok-k">import</span> Sequential
 <span class="tok-k">from</span> tensorflow.keras.layers <span class="tok-k">import</span> <span class="gterm" data-g="dense-api">Dense</span>
 

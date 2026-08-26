@@ -226,7 +226,7 @@
 <p class="lede">Why `from_logits=True` exists. A short lesson about floating-point arithmetic that will save you from a class of bug that is invisible until it isn’t.</p>
 <div class="bookrail" title="Lesson 93 of 172 in the book"><i style="width:54%"></i></div>
 <p class="bookrail-cap"><span>C2 · Week 2 · lesson 9 of 15</span><span class="r">93 of 172 · 54% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Imagine a calculator that only keeps 7 digits. Ask it for 1/3 and it says 0.3333333 —
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>The obvious implementation computes the probability, then takes its log. <b>Guess what goes wrong numerically</b> when the probability is very small.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for <code>from_logits=True</code>, and for why rearranging the algebra avoids a rounding step that destroys the answer.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Imagine a calculator that only keeps 7 digits. Ask it for 1/3 and it says 0.3333333 —
 close, but slightly wrong. Now multiply that by 3: you get 0.9999999, not 1.</p>
 <p>One rounding is harmless. But if you round, then round the rounded number, then round <em>that</em>, the
 errors pile up. Sometimes they pile up so badly that the answer is 0 when it should be 0.0000001 — and then

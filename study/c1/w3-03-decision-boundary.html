@@ -226,7 +226,7 @@
 <p class="lede">Where the model changes its mind. It is always the line z = 0 — but what that looks like in your data depends entirely on which features you supplied.</p>
 <div class="bookrail" title="Lesson 60 of 172 in the book"><i style="width:35%"></i></div>
 <p class="bookrail-cap"><span>C1 · Week 3 · lesson 3 of 11</span><span class="r">60 of 172 · 35% of the book</span></p>
-<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The model gives you a probability. At some point you have to actually decide.</p>
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>The model outputs 0.5. <b>What does that say about the input — and what is special about the set of all inputs that produce exactly 0.5?</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the chain: f ≥ 0.5 means g(z) ≥ 0.5 means z ≥ 0. The boundary is where z is exactly zero.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The model gives you a probability. At some point you have to actually decide.</p>
 <p>The usual rule: if the chance is 0.5 or more, say yes. Below that, say no.</p>
 <p>Now here is the neat bit. The sigmoid is exactly 0.5 when z = 0. So the place where the model changes
 its mind is simply <b>wherever z = 0</b> — and z is just the old straight-line formula. The boundary is a

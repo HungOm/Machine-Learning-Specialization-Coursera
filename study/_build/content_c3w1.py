@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 1 — Clustering and anomaly detection."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3)
+                 quiz, links, code, h2, grid2, grid3, pretest)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -12,7 +12,9 @@ L.append(dict(
     lede="The first algorithm in this specialization with no y at all. Nobody tells it the answer, and "
          "nobody can mark it right or wrong.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Supervised learning had x and y. <b>Guess what you can still do with only x</b> — and how you would know your answer was any good.</p>""",
+        """<p>Watch for what replaces “correct” when there is no answer key. Two different clusterings can both be defensible.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Tip a big box of Lego onto the floor. Nobody tells you what the piles should be. But you
 start making them anyway — the reds here, the blues there, the wheels in their own corner.</p>
 <p>You weren’t given the answer. You just noticed that some pieces belong together.</p>
@@ -88,7 +90,9 @@ L.append(dict(
     slug="02-kmeans-intuition", title="K-means intuition", mins=9, tag="core",
     lede="Two steps, repeated until nothing changes. That really is the entire algorithm.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Scatter 100 points and 3 flags on a playground. <b>Describe the two-step dance that would sort everyone into three sensible groups.</b></p>""",
+        """<p>Whatever you described is probably the algorithm. Watch for which step moves the people and which moves the flags.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You want to split the class into 3 groups for a game. Here is how:</p>
 <ol><li>Drop 3 flags randomly on the playground.</li>
 <li><b>Everyone run to your nearest flag.</b> Now you have three groups.</li>
@@ -146,7 +150,9 @@ L.append(dict(
     lede="The same two steps, written as maths and as code — with the notation that shows up in the "
          "assignment.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>K-means alternates two steps until nothing changes. <b>Guess whether it is guaranteed to stop</b> — and whether stopping means it found the best answer.</p>""",
+        """<p>Watch for the difference between converging and converging to the <em>right</em> place.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have a pile of dots and you want to sort them into two groups, but nobody
 has told you what the groups are.</p>
 <p>So you guess. Drop two pins on the page at random. Every dot joins whichever pin it is nearer
@@ -237,7 +243,9 @@ L.append(dict(
     lede="K-means is not a heuristic that happens to work. It is gradient-free minimisation of one specific "
          "cost, and both steps provably reduce it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>K-means looks like a heuristic that happens to work. <b>Guess what single quantity both of its steps are secretly reducing.</b></p>""",
+        """<p>Watch for the elastic-band picture, and for why the cost can never increase — which makes it a debugging test.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Imagine every person is tied to their flag with an elastic band. The further away, the
 more it stretches, and stretched elastic is uncomfortable.</p>
 <p>The total discomfort in the whole playground is what K-means is trying to make as small as possible.
@@ -308,7 +316,9 @@ L.append(dict(
     lede="Where you drop the flags decides where you end up. The fix costs one for-loop and is worth "
          "every cycle.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Where you put the flags initially changes the answer. <b>Guess the cheap fix</b> — you are allowed to run the whole thing more than once.</p>""",
+        """<p>Watch for how you would choose between the runs, given there is no y to score against.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Roll a ball down a bumpy hill. It stops in a dip — but which dip depends entirely on
 where you let go. Some dips are deeper than others.</p>
 <p>K-means is exactly like this. Start the flags in a bad place and it settles into a bad answer, quite
@@ -385,7 +395,9 @@ L.append(dict(
     lede="There is no correct K, and the popular method is worse than its reputation. The useful answer is "
          "less mathematical and more honest.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You must pick the number of clusters. If you set k equal to the number of points, <b>what is the cost?</b> Commit before reading.</p>""",
+        """<p>Zero — every point is its own cluster. Watch for why the cost curve alone therefore cannot choose k for you.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>How many groups should the class split into? Two? Five? Twenty?</p>
 <p>There isn’t a right answer hiding in the children. It depends on <b>what the groups are for</b>. Two
 teams for a football match. Five for a quiz. Twenty if everyone is doing their own project.</p>
@@ -453,7 +465,9 @@ L.append(dict(
     lede="The second unsupervised algorithm. Learn what normal looks like from normal examples only, then "
          "flag anything improbable.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Aircraft engines, mostly fine, occasionally faulty — and you have almost no examples of faulty. <b>Guess why a classifier is the wrong tool.</b></p>""",
+        """<p>Watch for the shift: instead of learning what broken looks like, learn what normal looks like and flag departures.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You have tested ten thousand aircraft engines. Every single one was fine — you have
 never actually seen a broken one.</p>
 <p>A new engine arrives. You cannot ask “does this look like a broken engine?”, because you have no idea
@@ -520,7 +534,9 @@ L.append(dict(
     lede="The bell curve, and the two numbers that define it completely. This is the only new maths in the "
          "anomaly-detection half of the week.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A thousand adult heights, one bar per height. <b>Sketch the shape, then guess how many numbers you need to describe it exactly.</b></p>""",
+        """<p>Two. Watch for what each controls, and for how you would estimate both from data.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Measure the height of a thousand adults and draw a bar for each height. You get a
 hill: lots of people near the middle, fewer as you go out, almost none at the extremes.</p>
 <p>That hill shape turns up everywhere, and it takes exactly <b>two numbers</b> to describe:</p>
@@ -607,7 +623,9 @@ L.append(dict(
     lede="One Gaussian per feature, multiplied together. Four steps, and the multiplication is where the "
          "power comes from.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>Each feature alone looks unremarkable — 1.5σ off, nothing dramatic. <b>Guess what happens when a point is 1.5σ off on six features at once.</b></p>""",
+        """<p>Watch for the multiplication. Six mild oddities combine into something astronomically unlikely, and that is the whole trick.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You check each thing separately. Is the temperature odd? A bit. Is the vibration odd?
 A bit. Is the noise odd? A bit.</p>
 <p>Now here is the trick: you <b>multiply</b> the “not odd” chances together. Being slightly unusual in
@@ -705,7 +723,9 @@ L.append(dict(
     lede="How to tune ε when you have almost no labelled anomalies — and why this half-supervised setup is "
          "not cheating.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have almost no labelled anomalies. <b>Guess how to tune the threshold ε anyway</b>, and where your few precious anomalies should go.</p>""",
+        """<p>Watch for which split gets the labelled anomalies, and why the training set deliberately does not.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>You built the weird-detector. Now: is it any good?</p>
 <p>You do actually have a few known-broken engines — say twenty, collected over the years. Not enough to
 learn from, but enough to <b>test</b> with.</p>
@@ -796,7 +816,9 @@ L.append(dict(
     lede="You have a few labelled positives. Should you build a classifier or a detector? One question "
          "decides it.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>You have 20 positive examples. <b>Guess what decides between anomaly detection and a supervised classifier</b> — it is not only the number.</p>""",
+        """<p>Watch for the question about future anomalies looking like past ones. That is the real deciding factor.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>Two different jobs that look identical from the outside.</p>
 <p><b>Spam</b>: you have seen a million spam emails. New spam looks a lot like old spam. So <em>learn what
 spam looks like</em> — supervised.</p>
@@ -862,7 +884,9 @@ L.append(dict(
     lede="Feature choice matters far more here than in supervised learning — because there is no label to "
          "tell the algorithm which features to ignore.",
     body=(
-        h2("🎈", "The idea, in plain words")
+        pretest("""<p>A feature's histogram is heavily lopsided, not a bell at all. <b>Guess what you would do before feeding it to a Gaussian model.</b></p>""",
+        """<p>Watch for the transformations, and for the error-analysis loop that tells you which new feature to invent.</p>""")
+        + h2("🎈", "The idea, in plain words")
         + kid("""<p>In supervised learning, a useless feature is mostly harmless — the model just learns to
 give it a weight near zero, because the answers tell it to.</p>
 <p>Anomaly detection has no answers. So it takes <b>every</b> feature equally seriously. Feed it a useless
