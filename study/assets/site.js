@@ -1,0 +1,93 @@
+/* Site chrome: theme, progress tracking, sidebar, keyboard paging */
+(function () {
+  'use strict';
+  var KEY = 'mls-study-progress-v1', TKEY = 'mls-study-theme-v1';
+
+  function read() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function write(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
+
+  /* ---- theme ---- */
+  function applyTheme(v) {
+    if (v === 'light' || v === 'dark') document.documentElement.setAttribute('data-theme', v);
+    else document.documentElement.removeAttribute('data-theme');
+    var b = document.getElementById('theme-btn');
+    if (b) b.textContent = v === 'dark' ? '☾' : v === 'light' ? '☀' : '◐';
+    window.dispatchEvent(new Event('themechange'));
+  }
+  var theme = 'auto';
+  try { theme = localStorage.getItem(TKEY) || 'auto'; } catch (e) { }
+  applyTheme(theme);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var tb = document.getElementById('theme-btn');
+    if (tb) tb.addEventListener('click', function () {
+      theme = theme === 'auto' ? 'light' : theme === 'light' ? 'dark' : 'auto';
+      try { localStorage.setItem(TKEY, theme); } catch (e) { }
+      applyTheme(theme);
+    });
+
+    /* ---- sidebar (mobile) ---- */
+    var mt = document.getElementById('menu-toggle');
+    if (mt) mt.addEventListener('click', function () { document.body.classList.toggle('nav-open'); });
+    document.querySelectorAll('.sidebar a').forEach(function (a) {
+      a.addEventListener('click', function () { document.body.classList.remove('nav-open'); });
+    });
+
+    /* ---- progress ---- */
+    var done = read();
+    var slug = document.body.dataset.slug;
+    document.querySelectorAll('[data-slug-link]').forEach(function (a) {
+      if (done[a.dataset.slugLink]) a.classList.add('seen');
+    });
+    var btn = document.getElementById('done-btn');
+    function syncBtn() {
+      if (!btn) return;
+      var on = !!done[slug];
+      btn.classList.toggle('done', on);
+      btn.textContent = on ? '✓ done' : 'mark done';
+    }
+    if (btn && slug) {
+      syncBtn();
+      btn.addEventListener('click', function () {
+        done = read();
+        if (done[slug]) delete done[slug]; else done[slug] = Date.now();
+        write(done); syncBtn();
+        document.querySelectorAll('[data-slug-link="' + slug + '"]').forEach(function (a) {
+          a.classList.toggle('seen', !!done[slug]);
+        });
+      });
+    }
+    /* index page totals */
+    var pb = document.getElementById('pbar');
+    if (pb) {
+      var total = +pb.dataset.total, n = 0;
+      Object.keys(done).forEach(function (k) { n++; });
+      pb.querySelector('i').style.width = (100 * n / total) + '%';
+      var lbl = document.getElementById('pcount');
+      if (lbl) lbl.textContent = n + ' / ' + total;
+    }
+    var reset = document.getElementById('reset-btn');
+    if (reset) reset.addEventListener('click', function () {
+      if (confirm('Clear all lesson progress?')) { write({}); location.reload(); }
+    });
+
+    /* ---- keyboard paging ---- */
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      var p = document.querySelector('.pager a.prev'), n = document.querySelector('.pager a.next');
+      if (e.key === 'ArrowLeft' && p) location.href = p.href;
+      if (e.key === 'ArrowRight' && n) location.href = n.href;
+    });
+
+    /* scroll the sidebar so the current lesson is visible */
+    var here = document.querySelector('.sidebar a.here');
+    if (here) {
+      var sb = document.querySelector('.sidebar');
+      if (sb && here.offsetTop > sb.clientHeight - 80) sb.scrollTop = here.offsetTop - sb.clientHeight / 2;
+    }
+  });
+})();

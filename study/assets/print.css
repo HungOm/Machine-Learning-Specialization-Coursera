@@ -1,0 +1,174 @@
+/* ============================================================
+   Print / PDF stylesheet
+   Two modes, chosen by the print bar:
+     html[data-print="mono"]  — clean: no fills, no colour, ink-saving
+     html[data-print="color"] — colour: keeps accents and tinted panels
+   Anything hidden on screen (a filtered-out symbol row) stays hidden,
+   so you can filter first and print only what you filtered to.
+   ============================================================ */
+
+@page { size: A4 portrait; margin: 14mm 13mm 16mm; }
+@page :first { margin-top: 11mm; }
+
+@media print {
+
+  /* ---------- reset the app chrome away ---------- */
+  .topbar, .sidebar, .pager, .printbar, #menu-toggle, #theme-btn, #done-btn,
+  .srs-bar, .srs-controls, .sym-filter, .modebar, .gpop, .no-print { display: none !important; }
+
+  /* a badge is a screen affordance; on paper it is noise */
+  .gterm { border-bottom: 0 !important; }
+  .gterm::after { display: none !important; }
+
+  /* the sheets and scribble prompts are the point of printing this */
+  .sheet, .scribble { break-inside: avoid; page-break-inside: avoid; }
+  .scribble { border-left: 2pt solid #000 !important; background: none !important; }
+  .sh-draw, .sh-test { border-left: 1.5pt solid #000 !important; background: none !important; }
+
+  /* the bonus panel is genuinely worth printing — keep it whole */
+  .bonus { break-inside: avoid; page-break-inside: avoid; border: 1pt solid #000 !important; }
+  .bonus > header { background: none !important; border-bottom: .8pt solid #000 !important; }
+  .bonus-badge { border: .6pt solid #000 !important; background: none !important; color: #000 !important; }
+  .bonus-grid, .bonus-cols { break-inside: avoid; }
+  .gsvg { max-width: 190px; }
+
+  html, body {
+    background: #fff !important;
+    font-size: 10.2pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .layout { display: block !important; }
+  main {
+    max-width: none !important; width: auto !important;
+    margin: 0 !important; padding: 0 !important;
+  }
+  a { text-decoration: none !important; }
+  a[href^="http"]::after { content: ""; }          /* no URL spew */
+
+  /* ---------- paper typography ---------- */
+  body { font-family: var(--serif); color: #000; line-height: 1.42; }
+  h1 { font-size: 21pt; margin: 0 0 3mm; letter-spacing: -.01em; }
+  h2 { font-size: 13pt; margin: 6mm 0 2mm; break-after: avoid; page-break-after: avoid; }
+  h3 { font-size: 11pt; break-after: avoid; page-break-after: avoid; }
+  h2 .ico { display: none; }
+  .kicker { font-size: 8pt; letter-spacing: .1em; text-transform: uppercase; color: #555; margin: 0 0 1mm; }
+  .lede { font-size: 10.6pt; color: #222; margin: 0 0 5mm; }
+  p, li { orphans: 3; widows: 3; }
+  code, pre, .v, var { font-family: var(--mono); font-size: 8.8pt; }
+  .eq { font-family: var(--serif); font-size: 11pt; }
+
+  /* ---------- print-only running head ---------- */
+  .print-head { display: block !important; border-bottom: 1.2pt solid #000;
+    padding-bottom: 1.5mm; margin-bottom: 5mm; font-family: var(--sans);
+    font-size: 8pt; letter-spacing: .08em; text-transform: uppercase; color: #000; }
+  .print-head b { float: right; font-weight: 600; letter-spacing: 0; text-transform: none; color: #444; }
+
+  /* ---------- keep blocks whole ---------- */
+  .ref-item, .callout, .card, .eq, .decode, table.symtab tr, .demo, pre {
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .ref-week, .plan-week { break-inside: auto; }
+  .ref-week > header { break-after: avoid; page-break-after: avoid; }
+
+  /* ---------- reference sheet ---------- */
+  .ref-week { margin: 0 0 6mm; border: 0 !important; box-shadow: none !important; background: none !important; }
+  .ref-week > header { display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: .8pt solid #000; padding: 0 0 1.2mm; margin: 0 0 3mm; background: none !important; }
+  .ref-week > header h3 { font-size: 11.5pt; margin: 0; }
+  .ref-week > header .n { font-size: 8pt; color: #555; }
+  .ref-item { border: 0 !important; border-left: 1.6pt solid #000 !important;
+    padding: 0 0 0 3.5mm !important; margin: 0 0 3.6mm !important;
+    background: none !important; box-shadow: none !important; }
+  .ref-item .q { font-weight: 700; font-size: 10.4pt; margin: 0 0 1mm; display: block; }
+  .ref-item .a { font-size: 9.6pt; }
+  .srs-kind { border: .6pt solid #666 !important; background: none !important;
+    font-size: 6.6pt !important; padding: .3mm 1.2mm !important; margin-right: 1.6mm;
+    text-transform: uppercase; letter-spacing: .06em; vertical-align: 1.2pt; }
+  .srs-lesson { display: none !important; }
+
+  /* ---------- symbol glossary ---------- */
+  table.symtab { font-size: 9pt; width: 100%; }
+  table.symtab thead { display: table-header-group; }   /* repeat header each page */
+  table.symtab th { position: static !important; background: none !important;
+    border-bottom: .8pt solid #000 !important; color: #000 !important; font-size: 7pt; padding: 1.2mm 2mm; }
+  table.symtab td { padding: 1.4mm 2mm; border-bottom: .4pt solid #bbb !important; }
+  table.symtab td.sy { font-size: 11pt; width: 20mm; }
+  table.symtab td.sa { width: 34mm; }
+  table.symtab td.wh { width: 26mm; font-size: 7.4pt; }
+  table.symtab td code { font-size: 8pt; }
+
+  /* ---------- decode tables inside answers ---------- */
+  table.decode, table.cdec, table.data { font-size: 8.6pt; width: 100%; }
+  table.decode th, table.cdec th, table.data th {
+    background: none !important; border-bottom: .6pt solid #000 !important; color: #000 !important; }
+  table.decode td, table.cdec td, table.data td { border-bottom: .3pt solid #ccc !important; }
+
+  /* ---------- lesson-page extras ---------- */
+  .demo { border: .6pt dashed #999 !important; background: none !important; }
+  .demo-head .h { display: none; }
+  .quiz details { break-inside: avoid; }
+  .quiz details > summary { font-weight: 600; }
+  .quiz details:not([open]) .a { display: none; }
+  .links .kind { border: .5pt solid #666 !important; background: none !important; color: #000 !important; }
+}
+
+/* ============================================================
+   CLEAN (mono) — everything reads as black ink on white paper
+   ============================================================ */
+@media print {
+  html[data-print="mono"] * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  html[data-print="mono"] .callout {
+    border: 0 !important; border-left: 1.6pt solid #000 !important;
+    padding: 1.5mm 0 1.5mm 3.5mm !important; border-radius: 0 !important;
+  }
+  html[data-print="mono"] .callout .tag {
+    color: #000 !important; font-weight: 700; font-size: 7.2pt;
+    letter-spacing: .07em; text-transform: uppercase; }
+  html[data-print="mono"] .callout.trap, html[data-print="mono"] .callout.warn {
+    border-left-style: dashed !important; }
+  html[data-print="mono"] .card { border: .5pt solid #999 !important; border-radius: 0 !important; }
+  html[data-print="mono"] .hl-a, html[data-print="mono"] .hl-b, html[data-print="mono"] .hl-g,
+  html[data-print="mono"] .hl-p, html[data-print="mono"] .hl-r {
+    font-weight: 700 !important; border-bottom: .5pt solid #000; }
+  html[data-print="mono"] pre { border: .4pt solid #aaa !important; }
+  html[data-print="mono"] .tok-k, html[data-print="mono"] .tok-s,
+  html[data-print="mono"] .tok-n, html[data-print="mono"] .tok-c { color: #000 !important; }
+  html[data-print="mono"] .tok-k { font-weight: 700 !important; }
+  html[data-print="mono"] .tok-c { font-style: italic !important; color: #555 !important; }
+  html[data-print="mono"] canvas { filter: grayscale(1) contrast(1.25); }
+  html[data-print="mono"] .srs-plain-wrap {
+    border: 0 !important; border-left: .8pt dotted #000 !important; border-radius: 0 !important; }
+}
+
+/* ============================================================
+   COLOUR — keep the accents, force the light palette
+   (never print the dark theme: it burns a whole cartridge)
+   ============================================================ */
+@media print {
+  html[data-print="color"] {
+    --bg: #fff; --bg-panel: #fff; --bg-sunk: #f4f1ec;
+    --ink: #16150f; --ink-soft: #4a463f; --ink-faint: #6f6960;
+    --line: #cdc6ba; --line-soft: #e2ddd4;
+    --accent: #a1451a; --accent-soft: #f8ece2;
+    --blue: #23538f; --blue-soft: #e6eefa;
+    --green: #266b43; --green-soft: #e4f2ea;
+    --purple: #5d3a99; --purple-soft: #efe8fa;
+    --amber: #855a0c; --amber-soft: #fbf2dc;
+    --red: #972924; --red-soft: #fae6e4;
+  }
+  html[data-print="color"] body { color: var(--ink); }
+  html[data-print="color"] .callout { border-radius: 4pt !important; }
+  html[data-print="color"] .card { border: .5pt solid var(--line) !important; }
+  html[data-print="color"] .ref-item { border-left-color: var(--accent) !important; }
+  html[data-print="color"] .srs-kind { border-color: currentColor !important; }
+  html[data-print="color"] table.symtab td.sy { color: var(--accent) !important; }
+}
+
+/* the running head only exists on paper */
+.print-head { display: none; }

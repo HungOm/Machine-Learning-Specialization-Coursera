@@ -1,0 +1,1096 @@
+# -*- coding: utf-8 -*-
+"""C2 · Week 4 — Decision trees and tree ensembles."""
+from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
+                 quiz, links, code, h2, grid2, grid3)
+
+L = []
+
+CAT_TABLE = table(
+    ["#", "Ear shape", "Face shape", "Whiskers", "Cat?"],
+    [["1", "pointy", "round", "present", "<b>yes</b>"],
+     ["2", "pointy", "round", "present", "<b>yes</b>"],
+     ["3", "pointy", "round", "absent", "<b>yes</b>"],
+     ["4", "pointy", "round", "absent", "<b>yes</b>"],
+     ["5", "pointy", "not round", "present", "no"],
+     ["6", "floppy", "not round", "present", "<b>yes</b>"],
+     ["7", "floppy", "round", "absent", "no"],
+     ["8", "floppy", "round", "absent", "no"],
+     ["9", "floppy", "round", "absent", "no"],
+     ["10", "floppy", "not round", "absent", "no"]])
+
+# ============================================================ 1
+L.append(dict(
+    slug="01-decision-tree-model", title="Decision tree model", mins=9, tag="intuition",
+    lede="A completely different kind of model: no weights, no gradient descent, no calculus. Just a "
+         "flowchart of yes/no questions — and on spreadsheet data it often wins.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>You know that game where you guess an animal by asking questions? “Does it have pointy
+ears?” Yes → “Is its face round?” Yes → “It’s a cat!”</p>
+<p>That’s the entire model. A list of questions arranged in a tree, where the answer to each question tells
+you which question to ask next, until you reach the bottom and give your answer.</p>
+<p>No maths at all when you <em>use</em> it. All the cleverness is in choosing which questions to ask —
+which is the next few lessons.</p>""")
+
+        + h2("🐱", "The data")
+        + """<p>Ten animals, three features, one label. This is the running example for the whole week and
+it is worth glancing back at.</p>"""
+        + CAT_TABLE
+        + """<p>Every feature here takes one of two values, which keeps the arithmetic clean. Lessons 6 and
+7 remove that restriction.</p>"""
+
+        + h2("🎬", "Watch it move")
+        + demo("treeplay", "Toggle the features and watch the path light up",
+               "the orange path is the only part of the tree that gets used")
+
+        + h2("🔢", "The vocabulary")
+        + decode([
+            ("root node", "“the top”", "The first question, asked of every example. Drawn at the top; trees in ML grow downwards."),
+            ("decision node", "“an internal question”", "Any node that asks about a feature and branches. Also called a split."),
+            ("leaf node", "“the answer”", "A node with no children. It makes the prediction — no more questions asked."),
+            ("branch", "“an answer arrow”", "The path taken for one value of the feature."),
+            ("depth", "“how many questions deep”", "The number of decisions from root to leaf. The main knob for controlling overfitting."),
+        ], head=("Term", "Say it out loud", "What it is"))
+        + key("""<p>There are <b>many</b> possible trees for the same data. The learning algorithm’s job is
+to pick one that is accurate on the training set <em>and</em> small enough to generalise. Small matters:
+a tree deep enough to give every example its own leaf is a perfect memoriser.</p>""")
+
+        + h2("🔬", "How this differs from everything so far")
+        + table(["", "Neural network", "Decision tree"],
+                [["Parameters", "weights and biases — millions", "the questions and the tree shape"],
+                 ["Trained by", "gradient descent", "greedy search over splits"],
+                 ["Needs calculus", "yes", "<b>no</b>"],
+                 ["Needs feature scaling", "yes", "<b>no</b> — only order matters"],
+                 ["Handles categories", "needs one-hot", "natively"],
+                 ["Readable by a human", "essentially no", "<b>yes</b>, if it is small"]])
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Thinking every feature is used for every prediction.</b> Only the features on the
+path are consulted. If the ears are pointy, this tree never looks at the whiskers at all.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A floppy-eared animal with whiskers. What does the tree in the demo say, and which features did it use?",
+             "<p><b>Cat.</b> It used ear shape and whiskers. Face shape was never examined.</p>"),
+            ("Why is a very deep tree a bad idea even though it fits the training data perfectly?",
+             "<p>Because it can give every training example its own leaf — pure memorisation, and no "
+             "generalisation. Depth is the tree’s equivalent of polynomial degree.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/tree.html",
+             "scikit-learn — Decision Trees",
+             "Including <code>plot_tree()</code>, which draws the real thing for you."),
+            ("paper", "https://link.springer.com/article/10.1007/BF00116251",
+             "Quinlan (1986) — Induction of Decision Trees",
+             "The ID3 algorithm — this exact entropy-based procedure, from the paper that started it."),
+            ("lab", "../../C2%20-%20Advanced%20Learning%20Algorithms/week4/optional%20labs/C2_W4_Lab_01_Decision_Trees.ipynb",
+             "Optional lab: Decision Trees",
+             "In this repo. Builds the cat tree by hand, split by split."),
+        ])
+    )))
+
+# ============================================================ 2
+L.append(dict(
+    slug="02-learning-process", title="The learning process", mins=9, tag="core",
+    lede="Two decisions define the entire algorithm: which feature to split on, and when to stop.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>Building the tree is like sorting a messy box of Lego. You pick a rule — “red on the
+left, everything else on the right” — and the box splits into two smaller, tidier boxes. Then you do the
+same thing to each smaller box.</p>
+<p>Two questions come up every time. <b>Which rule do I use?</b> (the one that tidies the most) and
+<b>when do I stop?</b> (when a box is already all one colour, or when it’s too small to bother with).</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("treeprocess", "The two decisions, and the four ways to stop",
+               "decision 1 is lessons 3–4; decision 2 is where overfitting is controlled")
+
+        + h2("🔢", "Decision 1 — which feature?")
+        + """<p>Try every feature. For each one, ask: how <b>pure</b> are the two groups it creates? Keep
+the feature that produces the purest split. “Pure” means “as close as possible to all-one-class”, and
+Lesson 3 makes it a number.</p>
+<p>This is a <b>greedy</b> algorithm: it takes the best split available <em>right now</em>, without
+checking whether a slightly worse split now would allow a much better one later. Finding the globally
+optimal tree is NP-hard, so every practical implementation is greedy.</p>"""
+
+        + h2("🔢", "Decision 2 — when to stop?")
+        + table(["Stop when…", "Why", "Typical setting"],
+                [["a node is 100% one class", "there is nothing left to separate", "always"],
+                 ["splitting would exceed max depth", "smaller trees generalise better", "depth 3–10"],
+                 ["the information gain is below a threshold", "not worth the complexity", "problem-specific"],
+                 ["a node has too few examples", "a split decided by 2 examples is noise", "5–20 examples"]])
+        + key("""<p>Every stopping rule exists for the same reason: <b>keeping the tree small</b>. A deeper
+tree always fits the training data better and generalises worse. This is exactly the bias/variance dial
+from Week 3, wearing a different hat.</p>""")
+        + note("""<p>The alternative to stopping early is <b>pruning</b>: grow the tree fully, then cut
+branches back that do not help on a validation set. It often works better than early stopping, because a
+split that looks useless can enable a great one below it. scikit-learn offers it as
+<code>ccp_alpha</code>.</p>""", "The other approach: prune afterwards")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Assuming the greedy tree is the best tree.</b> It usually isn’t. It is a good tree
+found quickly, and that trade is why the algorithm is practical.</p>""")
+        + trap("""<p><b>Leaving max_depth unset.</b> scikit-learn will happily grow until every leaf is
+pure — a perfectly overfit tree. Always set <code>max_depth</code> or <code>min_samples_leaf</code>.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("Why is choosing the best split greedy rather than exhaustive?",
+             "<p>Because the number of possible trees is astronomical — finding the optimal one is NP-hard. "
+             "Greedy is fast and works well in practice.</p>"),
+            ("A node has 3 examples: 2 cats, 1 not. Should you split it?",
+             "<p>Probably not. A rule learned from 3 examples is almost certainly noise. Make it a leaf "
+             "predicting “cat”, and accept the one error.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/tree.html#tree-algorithms-id3-c4-5-c5-0-and-cart",
+             "scikit-learn — ID3, C4.5, CART compared",
+             "The families of tree algorithms and how they differ. CART is what sklearn implements."),
+            ("docs", "https://scikit-learn.org/stable/auto_examples/tree/plot_cost_complexity_pruning.html",
+             "scikit-learn — cost-complexity pruning",
+             "The grow-then-prune alternative, with the validation curve."),
+        ])
+    )))
+
+# ============================================================ 3
+L.append(dict(
+    slug="03-measuring-purity", title="Measuring purity (entropy)", mins=11, tag="maths",
+    lede="Turning “how mixed up is this group?” into a single number between 0 and 1. The one genuinely "
+         "new piece of maths this week.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>A bag of 6 cats and 0 dogs: reach in, and you already know what you’ll get. Zero
+surprise. Zero mess. Call it <b>0</b>.</p>
+<p>A bag of 3 cats and 3 dogs: you have no idea what’s coming out. Maximum surprise. Maximum mess.
+Call it <b>1</b>.</p>
+<p>Entropy is the number that measures exactly this: <b>how surprised will I be by the next thing I pull
+out?</b> And notice it is symmetric — all cats and all dogs are both perfectly tidy.</p>""")
+
+        + h2("🔢", "The maths, decoded")
+        + eqp([
+            '<var>H</var>(<var>p</var>) <span class="op">=</span> ',
+            ('<span class="op">−</span><var>p</var> log<sub>2</sub>(<var>p</var>)', "logarithm-f0", "log, base 2 → bits"),
+            ' <span class="op">−</span> ',
+            ('(1 <span class="op">−</span> <var>p</var>) log<sub>2</sub>(1 <span class="op">−</span> <var>p</var>)', "logarithm-f0", "the other class, same idea"),
+        ], "entropy — impurity of a group — click a part")
+        + decode([
+            ("<var>p</var>", "“p one”", "The fraction of the group that is the positive class. 4 cats out of 5 → p = 0.8."),
+            ("log<sub>2</sub>", "“log base two”", "Base 2 makes H come out in <b>bits</b>, so a 50/50 group is exactly 1 — one coin flip of uncertainty."),
+            ("the minus signs", "“flip it positive”", "log of a number below 1 is negative. The minus makes H positive, so bigger = messier."),
+            ("H = 0", "“pure”", "Everything is the same class. Happens at p = 0 and at p = 1."),
+            ("H = 1", "“total mess”", "Exactly half and half. p = 0.5."),
+            ("0 log 0", "“defined as 0”", "Mathematically it is a limit; in code you must special-case it or you get NaN."),
+        ])
+
+        + h2("🎬", "Watch it move")
+        + demo("entropy", "A bag of twelve animals",
+               "drag the mix and watch the curve — it peaks at 50/50 and is symmetric")
+
+        + h2("🧮", "Values worth memorising")
+        + table(["Mix", "p", "H(p)", "Read as"],
+                [["5/5 cats", "1.00", "<b>0.00</b>", "perfectly pure"],
+                 ["4/5 cats", "0.80", "<b>0.72</b>", "mostly cats"],
+                 ["3/5 cats", "0.60", "<b>0.97</b>", "nearly a mess"],
+                 ["1/2 cats", "0.50", "<b>1.00</b>", "maximum mess"],
+                 ["1/5 cats", "0.20", "<b>0.72</b>", "mostly not cats — same as 4/5!"],
+                 ["0/5 cats", "0.00", "<b>0.00</b>", "perfectly pure"]])
+        + """<p>The symmetry is worth pausing on: H(0.8) = H(0.2). Entropy does not care <em>which</em>
+class dominates, only how lopsided the mix is. That is exactly what you want from a purity measure.</p>"""
+        + note("""<p>Many libraries default to the <b>Gini impurity</b>, 2p(1−p), instead. It is cheaper to
+compute (no logarithm), has almost the same shape, and gives nearly identical trees. Entropy is taught
+because it has a clean information-theoretic meaning; Gini is used because it is fast.</p>""",
+               "Gini vs entropy")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>log(0) in code.</b> <code>0 * log(0)</code> is mathematically 0 but numerically NaN.
+Guard it: <code>if p == 0 or p == 1: return 0</code>.</p>""")
+        + trap("""<p><b>Using the wrong log base.</b> Base 2 gives bits and a maximum of 1. Natural log gives
+nats and a maximum of 0.693. Splits come out identical either way — only the numbers on the page change.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A node has 6 cats and 2 not-cats. What is p, and roughly what is H?",
+             "<p>p = 6/8 = 0.75. H(0.75) = −0.75log₂0.75 − 0.25log₂0.25 ≈ <b>0.811</b>.</p>"),
+            ("Why is H(0.8) equal to H(0.2)?",
+             "<p>Because the formula is symmetric about p = 0.5. Impurity depends on how lopsided the "
+             "mix is, not which class is on top.</p>"),
+            ("Group A: 100 examples, all cats. Group B: 2 examples, both cats. Same entropy?",
+             "<p>Yes — both are <b>0</b>. Entropy measures purity, not size. That is why information gain "
+             "weights each branch by how many examples it holds.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://ieeexplore.ieee.org/document/6773024",
+             "Shannon (1948) — A Mathematical Theory of Communication",
+             "Where entropy comes from. One of the great scientific papers of the 20th century, and surprisingly readable."),
+            ("video", "https://www.youtube.com/watch?v=YtebGVx-Fxw",
+             "StatQuest — Entropy (for data science), clearly explained",
+             "Entropy as “expected number of yes/no questions to identify the answer”, which is the deepest intuition for it."),
+            ("docs", "https://scikit-learn.org/stable/modules/tree.html#mathematical-formulation",
+             "scikit-learn — impurity criteria",
+             "Gini, entropy and log-loss, side by side with the formulas."),
+        ])
+    )))
+
+# ============================================================ 4
+L.append(dict(
+    slug="04-information-gain", title="Choosing a split: information gain", mins=12, tag="maths",
+    lede="How much mess did this question remove? Compute it for every feature, take the biggest. That is "
+         "the whole learning algorithm.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>You have a messy bag: 5 cats, 5 dogs. Mess level 1.0 — as bad as it gets.</p>
+<p>You ask “pointy ears?” and now you have two bags: one with 4 cats and 1 dog (fairly tidy), one with
+1 cat and 4 dogs (also fairly tidy). Total mess is now about 0.72.</p>
+<p>You removed <b>0.28</b> of mess. That’s the information gain. Try all three questions, and keep whichever
+removed the most.</p>
+<p>One subtlety: a bag of 1 that’s perfectly tidy isn’t worth as much as a bag of 9 that’s perfectly tidy.
+So you weight each bag by how many animals are in it.</p>""")
+
+        + h2("🔢", "The maths, decoded")
+        + eqp([
+            'gain <span class="op">=</span> <var>H</var>(<var>p</var><sub>root</sub>) <span class="op">−</span> ',
+            ('<span class="paren">(</span> <var class="hl-b">w</var><sup>left</sup><var>H</var>(<var>p</var><sup>left</sup>) <span class="op">+</span> <var class="hl-b">w</var><sup>right</sup><var>H</var>(<var>p</var><sup>right</sup>) <span class="paren">)</span>',
+             "weighted-mean", "sized by how many examples went each way"),
+        ], "mess before, minus weighted mess after — click it")
+        + decode([
+            ("<var>H</var>(<var>p</var><sub>root</sub>)", "“mess before”", "Entropy of the node you are about to split."),
+            ("<var class='hl-b'>w</var><sup>left</sup>", "“the weight of the left branch”", "Fraction of the examples that go left. 4 of 10 → 0.4. <b>This is the bit people forget.</b>"),
+            ("the bracket", "“weighted mess after”", "The average entropy of the two children, weighted by size."),
+            ("gain", "“mess removed”", "Always ≥ 0. Bigger is better. Measured in bits."),
+        ])
+        + key("""<p>Without the size weighting, splitting off a single example into its own perfectly pure
+branch would look like a fantastic idea every time. The weights are what stop the tree from doing exactly
+that.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("infogain", "All three candidate splits, scored",
+               "each one is computed in full, then the winner is chosen")
+
+        + h2("🧮", "The full calculation for ear shape")
+        + """<p>Root: 5 cats, 5 not. p = 0.5, so H = <b>1.00</b>.</p>
+<p>Split on ear shape:</p>
+<ul>
+<li><b>pointy</b>: 5 examples, 4 cats. p = 0.8, H = 0.7219. Weight = 5/10 = 0.5.</li>
+<li><b>floppy</b>: 5 examples, 1 cat. p = 0.2, H = 0.7219. Weight = 5/10 = 0.5.</li>
+</ul>
+<p>Weighted entropy after = 0.5(0.7219) + 0.5(0.7219) = 0.7219.<br>
+Gain = 1.00 − 0.7219 = <b>0.2781</b>.</p>"""
+        + table(["Split on", "Left branch", "Right branch", "Weighted H", "Gain"],
+                [["<b>ear shape</b>", "pointy: 4/5 cats", "floppy: 1/5 cats", "0.7219", "<b>0.28</b> ← winner"],
+                 ["face shape", "round: 4/7 cats", "not round: 1/3 cats", "0.9651", "0.03"],
+                 ["whiskers", "present: 3/4 cats", "absent: 2/6 cats", "0.8755", "0.12"]])
+
+        + h2("💻", "In code")
+        + code("""
+import numpy as np
+
+def entropy(y):
+    if len(y) == 0:
+        return 0.0
+    p = np.mean(y)
+    if p == 0 or p == 1:
+        return 0.0                       # log(0) guard
+    return -p * np.log2(p) - (1 - p) * np.log2(1 - p)
+
+def information_gain(X, y, feature):
+    left  = y[X[:, feature] == 1]
+    right = y[X[:, feature] == 0]
+    w_left  = len(left) / len(y)
+    w_right = len(right) / len(y)
+    return entropy(y) - (w_left * entropy(left) + w_right * entropy(right))
+
+best = max(range(X.shape[1]), key=lambda f: information_gain(X, y, f))
+""")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Forgetting the weights.</b> Averaging the two entropies unweighted makes tiny pure
+branches look wonderful. This is the single most common implementation bug in the assignment.</p>""")
+        + trap("""<p><b>Bias towards many-valued features.</b> A feature with a unique value per example
+(an ID column!) gives perfect purity and enormous gain, while being completely useless. C4.5 fixes this
+with <em>gain ratio</em>; the practical fix is: never feed an ID column to a tree.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A split gives left: 2 cats 0 not (weight 0.2), right: 3 cats 5 not (weight 0.8). Gain from H_root = 0.954?",
+             "<p>H(left) = 0. H(right) = H(3/8) = 0.954. Weighted = 0.2(0) + 0.8(0.954) = 0.763. "
+             "Gain = 0.954 − 0.763 = <b>0.191</b>.</p>"),
+            ("Can information gain be negative?",
+             "<p>No. Splitting can never increase weighted entropy — at worst the gain is 0, when the "
+             "split separates nothing.</p>"),
+            ("Why would a customer-ID feature score a perfect gain and still be useless?",
+             "<p>Every leaf would hold one example and be perfectly pure, so the gain is maximal. But the "
+             "rule “if ID = 4471 then cat” tells you nothing about a new customer. Pure memorisation.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://link.springer.com/article/10.1007/BF00116251",
+             "Quinlan (1986) — Induction of Decision Trees",
+             "ID3 in the original. The information-gain criterion, exactly as taught here."),
+            ("book", "https://hastie.su.domains/ElemStatLearn/",
+             "Elements of Statistical Learning, chapter 9",
+             "The rigorous treatment of CART, including why the greedy criterion works as well as it does."),
+            ("lab", "../../C2%20-%20Advanced%20Learning%20Algorithms/week4/C2W4A1/C2_W4_Decision_Tree_with_Markdown.ipynb",
+             "Week 4 assignment",
+             "In this repo. You implement entropy, split, and information gain from scratch."),
+        ])
+    )))
+
+# ============================================================ 5
+L.append(dict(
+    slug="05-putting-it-together", title="Putting it together", mins=9, tag="core",
+    lede="The full algorithm, which turns out to be four lines — because it calls itself.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>You split the messy box into two tidier boxes. Now here’s the trick: <b>each of those
+boxes is just a smaller version of the same problem.</b> So you run exactly the same procedure on it.</p>
+<p>That’s recursion — a set of instructions that includes “now do these instructions again, on a smaller
+pile”. It stops when a pile is already tidy, or too small to be worth splitting.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("treebuild", "The tree building itself, one level at a time",
+               "the root split, then each branch treated as a brand-new problem")
+
+        + h2("💻", "The algorithm")
+        + code("""
+def build_tree(examples, depth):
+    # --- stopping criteria ---
+    if all_same_class(examples):          return Leaf(examples[0].label)
+    if depth >= MAX_DEPTH:                return Leaf(majority_class(examples))
+    if len(examples) < MIN_SAMPLES:       return Leaf(majority_class(examples))
+
+    # --- decision 1: which feature? ---
+    feature = argmax(information_gain(examples, f) for f in features)
+    if information_gain(examples, feature) < MIN_GAIN:
+        return Leaf(majority_class(examples))
+
+    # --- split and recurse ---
+    left, right = split_on(examples, feature)
+    return Node(feature,
+                build_tree(left,  depth + 1),      # <- itself
+                build_tree(right, depth + 1))      # <- itself
+""")
+        + decode([
+            ("<code>build_tree</code> calling itself", "“recursion”", "The procedure for a branch is the same procedure as for the whole tree, on fewer examples."),
+            ("<code>depth + 1</code>", "“one level deeper”", "How the recursion knows when to give up. Without it, it might never stop."),
+            ("<code>Leaf(...)</code>", "“the base case”", "Every recursion needs a way to end. These three checks are it."),
+            ("<code>majority_class</code>", "“best guess”", "When you stop early, predict whichever class is more common in the node."),
+        ], head=("Piece", "Say it out loud", "What it does"))
+        + key("""<p>Recursion is the natural shape here because a decision tree <b>is</b> recursive: every
+subtree is itself a complete decision tree over a subset of the data.</p>""")
+
+        + h2("🧮", "Following our example through")
+        + """<ol>
+<li>All 10 examples: 5 cats, 5 not. Best split = ear shape (gain 0.28).</li>
+<li><b>Pointy</b> (5 examples, 4 cats). Best split = face shape → round: 4 cats, 0 not — <b>pure, leaf</b>;
+not round: 0 cats, 1 not — <b>pure, leaf</b>.</li>
+<li><b>Floppy</b> (5 examples, 1 cat). Best split = whiskers → present: 1 cat, 0 not — <b>pure, leaf</b>;
+absent: 0 cats, 4 not — <b>pure, leaf</b>.</li>
+<li>Every branch is pure. Done. Depth 2.</li>
+</ol>
+<p>On this toy dataset every leaf comes out pure, which is tidy but unusual. On real data you will hit a
+depth or purity limit long before that.</p>"""
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Recursing on the wrong subset.</b> The left branch must recurse on the left
+examples only. Passing the full set is an easy typo and produces infinite recursion.</p>""")
+        + trap("""<p><b>No depth limit.</b> Guaranteed overfitting, and on adversarial data, a stack
+overflow.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("Why is the algorithm naturally recursive?",
+             "<p>Because each branch is a smaller instance of the identical problem: a set of examples "
+             "needing a tree.</p>"),
+            ("A node has 4 cats and 4 not, and every possible split gives gain 0. What now?",
+             "<p>Make it a leaf. No split separates anything, so predict the majority — here a tie, so "
+             "either class, and accept 50% error on that node.</p>"),
+            ("With max_depth = 1, what can the tree learn?",
+             "<p>A single question. That is a “decision stump” — high bias, but it is exactly what "
+             "boosting uses as its building block.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html",
+             "sklearn.tree.DecisionTreeClassifier",
+             "The production version. Read <code>max_depth</code>, <code>min_samples_leaf</code>, <code>criterion</code>."),
+            ("lab", "../../C2%20-%20Advanced%20Learning%20Algorithms/week4/C2W4A1/C2_W4_Decision_Tree_with_Markdown.ipynb",
+             "Week 4 assignment",
+             "You write build_tree yourself, recursion and all."),
+        ])
+    )))
+
+# ============================================================ 6
+L.append(dict(
+    slug="06-one-hot-encoding", title="Using one-hot encoding of categorical features", mins=8, tag="core",
+    lede="What to do when a feature has three values instead of two — and why this trick matters for "
+         "neural networks too.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>So far every question had two answers: pointy or floppy. Easy — two branches.</p>
+<p>But what if ears can be pointy, floppy <b>or</b> oval? You could make three branches. Or you can play a
+trick: replace the one question with <b>three yes/no questions</b>.</p>
+<p>“Pointy? yes/no.” “Floppy? yes/no.” “Oval? yes/no.” Exactly one of them is yes for every animal. Now
+everything is back to two branches and nothing else has to change.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("onehot", "One column with three values becomes three columns of 0/1",
+               "exactly one column is “hot” in every row")
+
+        + h2("🔢", "The maths, decoded")
+        + decode([
+            ("one-hot", "“exactly one is on”", "A vector of k values where one entry is 1 and the rest are 0. “Hot” means on, as in electronics."),
+            ("k values → k columns", "“one column per category”", "Three ear shapes become three binary features."),
+            ("why not just 0, 1, 2?", "“ordinal encoding”", "Because that tells the model oval (2) is “more” than pointy (0), and twice floppy (1). For unordered categories that is a lie."),
+            ("dummy variables", "“the statistics name”", "The same thing. Statisticians often drop one column (k−1) to avoid collinearity; for trees and networks, keep all k."),
+        ])
+        + key("""<p>One-hot encoding is not a tree technique — it is how you feed <b>any</b> categorical
+feature into <b>any</b> algorithm that expects numbers. You will use it for neural networks constantly.</p>""")
+
+        + h2("💻", "In code")
+        + code("""
+import pandas as pd
+
+df = pd.DataFrame({'ear': ['pointy', 'floppy', 'oval', 'pointy']})
+pd.get_dummies(df, columns=['ear'], dtype=int)
+#    ear_floppy  ear_oval  ear_pointy
+# 0           0         0           1
+# 1           1         0           0
+# 2           0         1           0
+# 3           0         0           1
+""")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Ordinal encoding unordered categories.</b> Mapping {red, green, blue} → {0,1,2}
+tells the model blue is bigger than red. For genuinely ordered categories (small &lt; medium &lt; large)
+ordinal encoding is correct and better.</p>""")
+        + trap("""<p><b>High-cardinality explosion.</b> A postcode feature with 10,000 values becomes
+10,000 columns. Use target encoding, hashing, or embeddings instead.</p>""")
+        + trap("""<p><b>Fitting the encoder on train and test together.</b> If a category appears only in
+test, your encoder must already know how to handle it (<code>handle_unknown='ignore'</code>).</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A colour feature with 4 values. How many columns after one-hot?",
+             "<p><b>4</b> columns, exactly one of which is 1 per row. (Statisticians often use 3 to avoid "
+             "perfect collinearity; for trees and neural networks, 4 is standard.)</p>"),
+            ("Why is one-hot needed for neural networks and not just trees?",
+             "<p>Because a network computes w·x + b — it must have numbers, and it would treat an ordinal "
+             "code as a quantity with an order and a magnitude.</p>"),
+            ("T-shirt sizes S, M, L. One-hot or ordinal?",
+             "<p><b>Ordinal</b> (1, 2, 3) is fine and often better here — the order is real and "
+             "meaningful. One-hot throws that information away.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html",
+             "sklearn.preprocessing.OneHotEncoder",
+             "The production tool. Note <code>handle_unknown</code> and <code>drop</code>."),
+            ("docs", "https://pandas.pydata.org/docs/reference/api/pandas.get_dummies.html",
+             "pandas.get_dummies",
+             "The quick version for exploration."),
+            ("docs", "https://scikit-learn.org/stable/modules/preprocessing.html#encoding-categorical-features",
+             "scikit-learn — encoding categorical features",
+             "Including ordinal and target encoding, and when each is right."),
+        ])
+    )))
+
+# ============================================================ 7
+L.append(dict(
+    slug="07-continuous-features", title="Continuous valued features", mins=9, tag="core",
+    lede="Weight in pounds is not a category. The fix: turn “which value?” into “is it above a threshold?” "
+         "and try every threshold.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>Weight isn’t pointy-or-floppy. It’s 7.2, or 8.4, or 20 — endless possibilities.</p>
+<p>So you don’t ask “what does it weigh?”. You ask “<b>does it weigh less than 10 pounds?</b>” — which is
+back to yes/no.</p>
+<p>But where do you put the line? You try every sensible place, score each one with information gain, and
+keep the best. The computer doesn’t mind; there are only a handful of places worth trying.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("contsplit", "Slide the threshold and watch the information gain",
+               "the curve underneath is the gain at every possible threshold")
+
+        + h2("🔢", "The maths, decoded")
+        + eq("""split condition: <var>x</var><sub>weight</sub> <span class="op">≤</span> <var class="hl-a">t</var>""",
+             "one threshold turns a number into a yes/no question", small=True)
+        + decode([
+            ("<var class='hl-a'>t</var>", "“the threshold”", "The cut point. Chosen by the algorithm, not by you."),
+            ("m − 1 candidates", "“the thresholds worth trying”", "Sort the values; the only useful cut points are midway between consecutive distinct values. 10 examples → at most 9 candidates."),
+            ("re-used features", "“a feature can appear twice”", "Unlike a binary feature, weight can be split at 10 lb near the top and again at 15 lb further down."),
+            ("no scaling needed", "“only the order matters”", "Trees compare values; they never add them. Converting pounds to kilograms changes nothing about the tree."),
+        ])
+        + key("""<p>This is why trees need <b>no feature scaling at all</b> — a genuine practical advantage
+over neural networks, and one of the reasons they are so easy to use on messy real-world tables.</p>""")
+
+        + h2("🧮", "The procedure")
+        + """<ol>
+<li>Sort the examples by that feature.</li>
+<li>Consider each midpoint between consecutive distinct values as a candidate threshold.</li>
+<li>For each candidate, split and compute the information gain, exactly as before.</li>
+<li>Keep the best threshold, and its gain, as this feature’s score.</li>
+<li>Then compare that score against every other feature, as usual.</li>
+</ol>
+<p>A continuous feature therefore costs more to evaluate (m−1 gain calculations instead of 1) but is
+otherwise treated identically. Nothing about the rest of the algorithm changes.</p>"""
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Trying every real number.</b> Pointless — the gain only changes when the threshold
+crosses a data point. Sorting and using midpoints reduces infinity to m−1 candidates.</p>""")
+        + trap("""<p><b>Assuming a single threshold captures the feature.</b> If cats are <em>medium</em>
+weight — heavier than kittens, lighter than dogs — one cut cannot express that. Two splits at different
+depths can.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("You have 100 examples with 100 distinct weights. How many thresholds are worth testing?",
+             "<p><b>99</b> — one between each pair of consecutive sorted values.</p>"),
+            ("Why do trees not need feature scaling?",
+             "<p>Because they only ever <em>compare</em> feature values against a threshold. Scaling "
+             "preserves order, so it preserves every split the tree could make.</p>"),
+            ("Cats weigh 8–12 lb; everything else is under 6 or over 15. Can one threshold separate them?",
+             "<p>No. You need two: “> 6 lb?” and then “≤ 12 lb?”. Trees express intervals by stacking "
+             "splits on the same feature at different depths.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/tree.html#mathematical-formulation",
+             "scikit-learn — how splits are chosen",
+             "The exact candidate-threshold procedure, in the docs."),
+            ("paper", "https://arxiv.org/abs/cs/9603103",
+             "Quinlan (1996) — Improved Use of Continuous Attributes in C4.5",
+             "The refinement that made continuous features work well in practice."),
+        ])
+    )))
+
+# ============================================================ 8
+L.append(dict(
+    slug="08-regression-trees", title="Regression trees", mins=10, tag="core",
+    lede="Predicting a number instead of a class. One substitution — variance for entropy — and everything "
+         "else is unchanged.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>Same tree, different question. Instead of “is it a cat?”, you want “how much does it
+weigh?”.</p>
+<p>Two changes. At the bottom, instead of naming a class, you say the <b>average weight</b> of everything
+that landed there. And when choosing a split, instead of asking “are these all the same class?” you ask
+“are these weights all <b>close to each other</b>?”.</p>
+<p>“All close together” has a name: low variance. That’s the only new word.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("regtree", "Predicting weight — click the three candidate splits",
+               "variance reduction replaces information gain, and leaves predict the mean")
+
+        + h2("🔢", "The maths, decoded")
+        + eqp([
+            ('variance <span class="op">=</span> <span class="frac"><span>1</span><span><var>m</var></span></span> <span class="big">Σ</span> ( <var>y</var><sup>(<var>i</var>)</sup> <span class="op">−</span> <var>ȳ</var> )<sup>2</sup>',
+             "variance-f0", "average squared distance from the mean"),
+        ], "how spread out the numbers in this node are — click it", small=True)
+        + eqp([
+            'reduction <span class="op">=</span> var(root) <span class="op">−</span> ',
+            ('<span class="paren">(</span> <var>w</var><sup>left</sup>var(left) <span class="op">+</span> <var>w</var><sup>right</sup>var(right) <span class="paren">)</span>',
+             "weighted-mean", "sized by how many examples went each way"),
+        ], "exactly the information-gain formula, with variance swapped in — click it")
+        + decode([
+            ("<var>ȳ</var>", "“y bar”", "The mean of all the y-values in this node — plain average, the bar just marks “the average of”."),
+            ("(<var>y</var><sup>(i)</sup> − <var>ȳ</var>)²", "“squared distance from the mean”", "Same shape as the cost function from Course 1: how far each value sits from the average, squared so far-out values count more."),
+            ("<var>w</var><sup>left</sup>, <var>w</var><sup>right</sup>", "“the fraction of examples on each side”", "Not the model's weights — just what share of the node's examples went left vs. right. Same w<sup>left</sup>/w<sup>right</sup> weighting used for entropy two lessons ago."),
+        ])
+        + table(["", "Classification tree", "Regression tree"],
+                [["Label is", "a class (cat / not cat)", "a number (weight)"],
+                 ["Impurity measure", "entropy H(p)", "<b>variance</b>"],
+                 ["Split criterion", "information gain", "<b>variance reduction</b>"],
+                 ["Leaf predicts", "the majority class", "<b>the mean</b> of the examples there"],
+                 ["Everything else", "recursion, stopping, one-hot, thresholds", "identical"]])
+        + key("""<p>Entropy measures “are these all the same <em>label</em>?”. Variance measures “are these
+all the same <em>number</em>?”. Same job, different data type — and that single substitution converts the
+whole algorithm.</p>""")
+
+        + h2("🧮", "Worked, on the ten animals")
+        + """<p>All ten weights: mean 11.54 lb, variance 18.46.</p>
+<ul>
+<li><b>Split on ear shape</b> → pointy {7.2, 8.8, 9.2, 8.4, 7.6} mean 8.24, variance 0.55; floppy
+{10.2, 15, 18, 11, 20} mean 14.84, variance 14.58.<br>
+Weighted variance = 0.5(0.55) + 0.5(14.58) = 7.57. Reduction = 18.46 − 7.57 = <b>10.89</b>.</li>
+</ul>
+<p>The demo computes the other two features live. Ear shape wins here as well — the light animals really
+do have pointy ears in this toy dataset.</p>"""
+        + code("""
+weights = np.array([7.2, 8.8, 9.2, 8.4, 7.6, 10.2, 15, 18, 11, 20])
+pointy  = np.array([7.2, 8.8, 9.2, 8.4, 7.6])
+floppy  = np.array([10.2, 15, 18, 11, 20])
+
+def variance(y):
+    return np.sum((y - np.mean(y))**2) / len(y)
+
+root = variance(weights)
+split = (len(pointy)/len(weights)) * variance(pointy) + (len(floppy)/len(weights)) * variance(floppy)
+reduction = root - split
+np.round([root, split, reduction], 2)   # [18.46, 7.57, 10.89] -- matches the hand-worked numbers above
+""")
+        + note("""<p>A regression tree predicts a <b>step function</b>: constant within each leaf, jumping
+at the split boundaries. It cannot extrapolate beyond the range of the training data — ask it about a
+50 lb animal and it will confidently return the mean of the heaviest leaf it has. Neural networks and
+linear models extrapolate (often badly, but they do).</p>""", "What a regression tree can’t do")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Expecting smooth predictions.</b> The output is piecewise constant. If you need a
+smooth curve, a tree is the wrong shape of model — or you need an ensemble, which averages many step
+functions into something much smoother.</p>""")
+        + trap("""<p><b>Extrapolating.</b> Outside the training range, a tree returns a constant. This
+matters for time-series and price prediction, where tomorrow is often outside yesterday’s range.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A leaf holds weights [10, 12, 14]. What does it predict, and what is its variance?",
+             "<p>Predicts the mean, <b>12</b>. Variance = ((−2)² + 0² + 2²)/3 = <b>2.67</b>.</p>"),
+            ("Why variance rather than entropy for regression?",
+             "<p>Entropy needs discrete classes to count. Variance measures the spread of continuous "
+             "values — the natural analogue of “how mixed up is this group?”.</p>"),
+            ("Your regression tree predicts the same number for every input in a wide range. Bug?",
+             "<p>No — that is exactly how a tree behaves. It is a step function, constant within each "
+             "leaf. If the steps are too coarse, allow more depth or use an ensemble.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("docs", "https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html",
+             "sklearn.tree.DecisionTreeRegressor",
+             "Note <code>criterion='squared_error'</code> — that is variance reduction under another name."),
+            ("docs", "https://scikit-learn.org/stable/auto_examples/tree/plot_tree_regression.html",
+             "scikit-learn — decision tree regression, plotted",
+             "The step-function shape, drawn. One picture and the whole lesson lands."),
+        ])
+    )))
+
+# ============================================================ 9
+L.append(dict(
+    slug="09-using-multiple-trees", title="Using multiple decision trees", mins=8, tag="intuition",
+    lede="A single tree is fragile: change one example and the whole thing can rearrange. The fix is not a "
+         "better tree — it is more trees.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>One judge can have a bad day. Ask three judges and take the majority, and one bad day
+doesn’t decide the contest.</p>
+<p>Decision trees have a lot of bad days. Swap a single animal in the training set and the root question
+can change from “pointy ears?” to “whiskers?” — and because every question below the root depends on the
+root, the whole tree rearranges.</p>
+<p>So: build lots of trees, all slightly different, and let them vote.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("ensemble", "Three trees, one vote",
+               "press the button: one changed example flips a whole tree, and the ensemble shrugs")
+
+        + h2("🔢", "Why trees are high variance")
+        + """<p>The root split is chosen by a single argmax over information gains. If two features score
+0.281 and 0.278, a tiny change in the data flips which one wins — and everything below the root is then
+built on a different foundation.</p>
+<p>In Week 3’s vocabulary: a deep decision tree is a <b>low bias, high variance</b> model. It can fit
+almost anything, and it is unstable. Week 3 also told you what fixes variance: more data, or averaging.
+Ensembles are averaging.</p>"""
+        + decode([
+            ("ensemble", "“a committee”", "Several models whose predictions are combined."),
+            ("majority vote", "“most trees win”", "For classification. For regression, take the average of the predictions."),
+            ("variance reduction", "“errors cancel”", "If trees make <em>independent</em> errors, averaging B of them cuts the error variance by roughly a factor of B."),
+            ("independence", "“the catch”", "Trees trained on the same data are highly correlated. Lessons 10–11 are entirely about forcing them to differ."),
+        ])
+        + key("""<p>Averaging only helps if the models make <b>different</b> mistakes. Three identical trees
+vote identically and you have gained nothing. That is why the next two lessons are about deliberately
+injecting randomness.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("Why is one deep decision tree high variance?",
+             "<p>Because every split depends on the ones above it, so a small change near the root "
+             "cascades through the whole tree.</p>"),
+            ("You train 100 trees on identical data with an identical algorithm. How much does the ensemble help?",
+             "<p><b>Not at all.</b> They are identical, so they vote identically. You need a source of "
+             "difference — which is the next lesson.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://link.springer.com/article/10.1007/BF00058655",
+             "Breiman (1996) — Bagging Predictors",
+             "The paper that introduced the whole idea. Short, clear, and the experiments are convincing."),
+            ("docs", "https://scikit-learn.org/stable/modules/ensemble.html",
+             "scikit-learn — ensemble methods",
+             "The full map: bagging, forests, boosting, stacking, voting."),
+        ])
+    )))
+
+# ============================================================ 10
+L.append(dict(
+    slug="10-sampling-with-replacement", title="Sampling with replacement", mins=8, tag="maths",
+    lede="The trick that manufactures many different training sets out of the one you have.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>Put ten marbles in a bag. Pull one out, write down its colour, and <b>put it back</b>.
+Do that ten times.</p>
+<p>You now have a list of ten marbles — but not the same ten. Some appear twice or three times. Some never
+came out at all. It’s the same bag, and it is a genuinely different list.</p>
+<p>Do the whole thing again and you get another different list. That is how you turn one training set into
+a hundred slightly different training sets — without collecting any new data.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("bagging", "Draw a new bag, and see who got duplicated and who got left out",
+               "press the button a few times — the composition changes every time")
+
+        + h2("🔢", "The maths, decoded")
+        + eqp([
+            ('P(a given example is never picked)', "probability-f0", "a number from 0 to 1"),
+            ' <span class="op">=</span> <span class="paren">(</span>1 <span class="op">−</span> <span class="frac"><span>1</span><span><var>m</var></span></span><span class="paren">)</span><sup><var>m</var></sup> <span class="op">→</span> ',
+            ('<span class="frac"><span>1</span><span><var>e</var></span></span>', "exponential-f0", "the limit, as m grows"),
+            ' <span class="op">≈</span> 0.368',
+        ], "as m grows, about 37% of examples are left out of each bag — click a part")
+        + decode([
+            ("with replacement", "“put it back”", "The example can be drawn again. Without replacement you would just get a shuffle of the same set — useless here."),
+            ("bootstrap sample", "“one new bag”", "A sample of size m drawn with replacement from a dataset of size m. Always the same size as the original."),
+            ("~63%", "“distinct examples per bag”", "1 − 1/e ≈ 0.632. Each bag contains about 63% of the distinct originals, with the rest duplicated."),
+            ("out-of-bag", "“the ~37% left out”", "A free validation set for that tree — you can score it on the examples it never saw, with no separate split."),
+            ("bagging", "“bootstrap aggregating”", "Bootstrap sample + aggregate the predictions. That is the whole method."),
+        ])
+        + key("""<p>Sampling <b>with</b> replacement is what makes each bag genuinely different. Without
+replacement you would draw all m examples every time and get the identical dataset back, in a different
+order — and identical trees.</p>""")
+
+        + h2("💻", "In code")
+        + code("""
+import numpy as np
+
+def bootstrap(X, y):
+    m = len(y)
+    idx = np.random.choice(m, size=m, replace=True)    # <- replace=True is the whole trick
+    return X[idx], y[idx]
+
+trees = []
+for b in range(100):
+    Xb, yb = bootstrap(X, y)
+    trees.append(train_tree(Xb, yb))
+""")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b><code>replace=False</code>.</b> You get a permutation of the original data, every
+tree is identical, and the ensemble does nothing.</p>""")
+        + trap("""<p><b>Sampling fewer than m.</b> Allowed (“subagging”), and it changes the bias/variance
+balance. The standard method draws exactly m.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("You bootstrap from 1000 examples. Roughly how many distinct examples are in one bag?",
+             "<p>About <b>632</b> — 63.2%. The other ~368 are duplicates of those already drawn.</p>"),
+            ("What are out-of-bag examples good for?",
+             "<p>Free validation. Each tree can be scored on the examples it never saw, giving an "
+             "out-of-bag error estimate with no held-out set at all.</p>"),
+            ("Why must the bag be the same size as the original?",
+             "<p>So each tree sees a comparable amount of data. Smaller bags mean weaker trees; the "
+             "standard bootstrap keeps size m and gets its variety purely from the duplication.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://projecteuclid.org/journals/annals-of-statistics/volume-7/issue-1/Bootstrap-Methods-Another-Look-at-the-Jackknife/10.1214/aos/1176344552.full",
+             "Efron (1979) — Bootstrap Methods: Another Look at the Jackknife",
+             "The original bootstrap paper. A statistical idea that predates its use in ML by seventeen years."),
+            ("docs", "https://scikit-learn.org/stable/modules/ensemble.html#bagging",
+             "scikit-learn — Bagging meta-estimator",
+             "<code>BaggingClassifier</code> wraps <em>any</em> model, not just trees."),
+        ])
+    )))
+
+# ============================================================ 11
+L.append(dict(
+    slug="11-random-forest", title="Random forest algorithm", mins=9, tag="core",
+    lede="Bagging, plus one extra sprinkle of randomness that stops all the trees from making the same "
+         "first move.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>You built a hundred trees from a hundred different bags. Problem: if one feature is
+clearly the best, <b>every</b> tree picks it as its first question anyway. The trees end up looking
+suspiciously similar, and a hundred near-identical judges is barely better than one.</p>
+<p>So add a rule: at every question, each tree may only choose from a <b>random handful</b> of the
+features. Sometimes the star feature isn’t even on the menu, and the tree is forced to find a different
+route.</p>
+<p>Forcing disagreement makes the vote worth taking.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("forest", "B trees, each voting",
+               "drag the number of trees and watch the vote stabilise")
+
+        + h2("🔢", "The algorithm, in full")
+        + """<ol>
+<li>For b = 1 to B:
+  <ul><li>Draw a bootstrap sample of size m (Lesson 10).</li>
+  <li>Train a decision tree on it — but at <b>every node</b>, choose the split from a random subset of
+  k features rather than all n.</li></ul></li>
+<li>To predict: <b>majority vote</b> (classification) or <b>average</b> (regression) over all B trees.</li>
+</ol>"""
+        + decode([
+            ("B", "“the number of trees”", "64, 100, 128 are typical. More never hurts accuracy — only compute. Past ~100 the gains flatten."),
+            ("k", "“features per split”", "Usually k = √n for classification, n/3 for regression. This is the one genuinely new hyperparameter."),
+            ("feature bagging", "“the extra randomness”", "The difference between bagged trees and a random forest. Bagging randomises the rows; the forest also randomises the columns."),
+            ("out-of-bag score", "“free validation”", "<code>oob_score=True</code> gives you a validation estimate without holding anything out."),
+        ])
+        + key("""<p>Random forests are <b>hard to break</b>. They need almost no tuning, do not need feature
+scaling, handle mixed data types, tolerate missing values reasonably, and rarely overfit badly. That is why
+they are the standard first thing to try on a table of data.</p>""")
+
+        + h2("💻", "In code")
+        + code("""
+from sklearn.ensemble import RandomForestClassifier
+
+clf = RandomForestClassifier(
+    n_estimators=100,      # B — number of trees
+    max_features='sqrt',   # k — features considered per split
+    oob_score=True,        # free validation from the left-out examples
+    random_state=1,
+)
+clf.fit(X_train, y_train)
+print('out-of-bag accuracy:', clf.oob_score_)
+print('feature importances:', clf.feature_importances_)
+""")
+        + note("""<p><code>feature_importances_</code> is a genuinely useful by-product: how much each
+feature reduced impurity across the whole forest. Treat it as a hint rather than a truth — it is biased
+towards high-cardinality features. <b>Permutation importance</b> is the more trustworthy version.</p>""",
+               "A useful side effect")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Setting <code>max_features</code> to all features.</b> Then it is plain bagging, the
+trees correlate, and you lose most of the benefit.</p>""")
+        + trap("""<p><b>Too few trees.</b> With B = 5 the vote is noisy. Use at least 50; 100 is a fine
+default and the cost is linear.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("You have 16 features. What is a typical k for classification?",
+             "<p>√16 = <b>4</b> features considered at each split.</p>"),
+            ("Why sample features as well as rows?",
+             "<p>Because bootstrap sampling alone leaves the trees highly correlated — a dominant feature "
+             "wins the root in nearly every bag. Feature sampling forces genuine diversity.</p>"),
+            ("Does raising B from 100 to 1000 risk overfitting?",
+             "<p>Essentially no. More trees reduce variance and converge; they do not add capacity. You "
+             "pay in compute, not in generalisation.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://link.springer.com/article/10.1023/A:1010933404324",
+             "Breiman (2001) — Random Forests",
+             "The paper. Includes the out-of-bag idea and the proof that the error converges as B grows."),
+            ("docs", "https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html",
+             "sklearn.ensemble.RandomForestClassifier",
+             "Every argument, with sensible defaults already set."),
+            ("docs", "https://scikit-learn.org/stable/modules/permutation_importance.html",
+             "scikit-learn — permutation importance",
+             "The more trustworthy way to ask which features matter."),
+            ("lab", "../../C2%20-%20Advanced%20Learning%20Algorithms/week4/optional%20labs/C2_W4_Lab_02_Tree_Ensemble.ipynb",
+             "Optional lab: Tree Ensembles",
+             "In this repo. Random forest and XGBoost on the heart-disease dataset."),
+        ])
+    )))
+
+# ============================================================ 12
+L.append(dict(
+    slug="12-xgboost", title="XGBoost", mins=10, tag="core",
+    lede="Instead of making every tree from a random sample, make each new tree focus on what the previous "
+         "ones got wrong. This is the algorithm that wins competitions.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>Random forest is a hundred students each revising from a random chunk of the textbook.</p>
+<p>Boosting is <b>one</b> student who takes a practice test, marks it, and then revises <b>only the
+questions they got wrong</b>. Then tests again. Then revises the ones still wrong.</p>
+<p>It’s a much more efficient use of effort — and it is why boosted trees usually beat random forests on
+the same data.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("boosting", "Four rounds, each focusing on the remaining mistakes",
+               "the misclassified animals grow — that is their weight increasing")
+
+        + h2("🔢", "The idea, decoded")
+        + """<p>The version Andrew describes: like bagging, but when drawing the sample for tree b, make
+examples that the previous b−1 trees got <b>wrong</b> more likely to be picked. Each new tree therefore
+specialises in the hard cases.</p>"""
+        + decode([
+            ("boosting", "“focus on the hard ones”", "Trees are built <b>sequentially</b>, each one correcting the ensemble so far."),
+            ("deliberate sampling", "“the opposite of random”", "Random forest samples uniformly. Boosting samples the current mistakes preferentially."),
+            ("gradient boosting", "“the real formulation”", "Each tree is fitted to the <em>residual errors</em> — the gradient of the loss — rather than to a re-weighted sample. Same intuition, cleaner maths."),
+            ("XGBoost", "“eXtreme Gradient Boosting”", "A specific, very fast implementation with built-in regularisation, clever split-finding, missing-value handling and parallelism."),
+        ])
+        + warn("""<p>The one real downside: because trees are built <b>in sequence</b>, boosting cannot
+parallelise across trees the way a random forest can. XGBoost gets its speed from parallelising <em>inside</em>
+each tree instead.</p>""")
+
+        + h2("💻", "In code — it really is this short")
+        + code("""
+from xgboost import XGBClassifier
+
+model = XGBClassifier(
+    n_estimators=100,        # number of boosting rounds
+    learning_rate=0.1,       # how much each tree is allowed to contribute
+    max_depth=4,             # boosted trees are SHALLOW on purpose
+    early_stopping_rounds=10,
+)
+model.fit(X_train, y_train, eval_set=[(X_cv, y_cv)])
+y_pred = model.predict(X_test)
+
+# regression is the same object with a different name:
+# from xgboost import XGBRegressor
+""")
+        + """<p><code>max_depth=4</code> is not a typo. Boosting deliberately uses <b>weak</b> trees — often
+depth 3 to 6 — because the ensemble supplies the power and shallow trees keep each correction small and
+safe. A boosted forest of depth-20 trees usually overfits badly.</p>"""
+
+        + h2("⚖️", "Random forest vs boosting")
+        + table(["", "Random forest", "Boosting / XGBoost"],
+                [["Trees built", "independently, in parallel", "sequentially, each fixing the last"],
+                 ["Sampling", "uniformly random", "focused on current errors"],
+                 ["Tree depth", "deep, fully grown", "<b>shallow</b> (3–6)"],
+                 ["Overfits?", "rarely", "<b>yes, if you let it</b> — needs early stopping"],
+                 ["Tuning needed", "almost none", "some — learning rate matters"],
+                 ["Typical accuracy", "very good", "<b>usually better</b>"]])
+        + key("""<p>On a table of numbers and categories, gradient-boosted trees are still the thing to
+beat. They win the large majority of tabular competitions on Kaggle, and neural networks have repeatedly
+failed to displace them on structured data.</p>""")
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>No early stopping.</b> Unlike a random forest, more boosting rounds <em>can</em>
+overfit. <code>early_stopping_rounds</code> with a validation set is not optional.</p>""")
+        + trap("""<p><b>Learning rate and n_estimators tuned separately.</b> They trade off directly: halve
+the learning rate, roughly double the trees. Tune them together, or fix the rate at 0.05–0.1 and let early
+stopping choose the count.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("Why are boosted trees kept shallow?",
+             "<p>Each tree only needs to make a small correction. Deep trees would overfit their "
+             "residuals, and the sequential process would amplify that.</p>"),
+            ("Can boosting be parallelised across trees like a random forest?",
+             "<p>No — tree b needs the errors of trees 1…b−1. XGBoost parallelises the split-finding "
+             "<em>within</em> each tree instead.</p>"),
+            ("Random forest with 1000 trees does not overfit. Boosting with 1000 rounds might. Why?",
+             "<p>Forest trees are independent, so averaging only reduces variance. Boosting rounds are "
+             "cumulative — each adds capacity aimed at the remaining errors, including noise.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://arxiv.org/abs/1603.02754",
+             "Chen & Guestrin (2016) — XGBoost: A Scalable Tree Boosting System",
+             "The paper. Sections 2–3 explain the regularised objective and the split-finding algorithm."),
+            ("paper", "https://projecteuclid.org/journals/annals-of-statistics/volume-29/issue-5/Greedy-function-approximation-A-gradient-boosting-machine/10.1214/aos/1013203451.full",
+             "Friedman (2001) — Greedy Function Approximation: A Gradient Boosting Machine",
+             "Where gradient boosting comes from. Dense, and the source of the whole family."),
+            ("docs", "https://xgboost.readthedocs.io/en/stable/tutorials/model.html",
+             "XGBoost — “Introduction to Boosted Trees”",
+             "The official tutorial. Genuinely one of the better pieces of ML documentation."),
+            ("paper", "https://arxiv.org/abs/2207.08815",
+             "Grinsztajn et al. (2022) — Why do tree-based models still outperform deep learning on tabular data?",
+             "A careful benchmark. The answer to “should I use a neural network on my spreadsheet?”"),
+        ])
+    )))
+
+# ============================================================ 13
+L.append(dict(
+    slug="13-trees-vs-neural-networks", title="When to use decision trees", mins=9, tag="core",
+    lede="The practical decision rule, and the end of Course 2. Spreadsheet? Try trees first. Pixels, "
+         "sound or words? Neural network.",
+    body=(
+        h2("🎈", "The idea, in plain words")
+        + kid("""<p>A hammer and a screwdriver are both good tools. You just need to know which is holding
+your thing together.</p>
+<p><b>Neat rows and columns</b> — ages, prices, categories, counts — that’s tree country. Fast, accurate,
+and you can read the answer.</p>
+<p><b>Pictures, sound, or words</b> — that’s neural network country, and it isn’t close.</p>""")
+
+        + h2("🎬", "Watch it move")
+        + demo("treevsnn", "The comparison, line by line",
+               "each row highlights which side wins and why")
+
+        + h2("🔢", "The scorecard")
+        + grid2(
+            card("<h3>🌳 Decision trees & ensembles</h3><ul>"
+                 "<li>Excellent on <b>tabular / structured</b> data.</li>"
+                 "<li><b>Fast</b> to train — often seconds to minutes.</li>"
+                 "<li>Handle categorical features natively; <b>no scaling needed</b>.</li>"
+                 "<li>A small tree is <b>human-readable</b>.</li>"
+                 "<li>✗ Not for images, audio or text.</li>"
+                 "<li>✗ No transfer learning; cannot be chained into a bigger differentiable system.</li></ul>"),
+            card("<h3>🧠 Neural networks</h3><ul>"
+                 "<li>Work on <b>everything</b> — tabular, images, audio, text, video.</li>"
+                 "<li><b>Transfer learning</b>: start from someone else’s pre-trained model.</li>"
+                 "<li>Multiple networks can be <b>chained and trained together</b> end to end.</li>"
+                 "<li>✗ Slower to train.</li>"
+                 "<li>✗ Need scaling, tuning, and more care.</li>"
+                 "<li>✗ Much harder to interpret.</li></ul>"))
+        + key("""<p>The decisive advantage of neural networks is <b>composability</b>: because everything is
+differentiable, you can bolt several networks together and train the whole stack with one gradient. You
+cannot do that with trees — and that single property is why deep learning scaled.</p>""")
+
+        + h2("🎓", "You have finished Course 2")
+        + """<p>Look back at what you can now do:</p>
+<ul>
+<li><b>Week 1</b> — build a neural network and run it forwards, in TensorFlow, in NumPy loops, and
+vectorised with matrix multiplication.</li>
+<li><b>Week 2</b> — train one: cross-entropy loss, ReLU, softmax, numerically stable implementations,
+Adam, and what backpropagation actually computes.</li>
+<li><b>Week 3</b> — diagnose one: train/cv/test, bias vs variance, learning curves, error analysis,
+precision and recall.</li>
+<li><b>Week 4</b> — a completely different model family: trees, entropy, information gain, random forests
+and XGBoost.</li>
+</ul>
+<p>Course 3 goes to unsupervised learning (clustering, anomaly detection), recommender systems, and
+reinforcement learning. The habits from Week 3 carry into all of it.</p>"""
+
+        + h2("🕳", "Traps")
+        + trap("""<p><b>Reaching for a neural network on a 5,000-row spreadsheet.</b> XGBoost will very
+likely beat it, train in seconds and need no tuning. Try the cheap thing first.</p>""")
+        + trap("""<p><b>Reaching for a tree on raw pixels.</b> A tree has no notion of “nearby pixels”, so
+it must learn every position independently. It will not work.</p>""")
+
+        + h2("✅", "Check yourself")
+        + quiz([
+            ("A 50,000-row spreadsheet of customer data, predicting churn. What first?",
+             "<p><b>XGBoost.</b> Tabular, moderate size, mixed types, and you get feature importances for "
+             "free. Try a network afterwards if you want, but expect it to lose.</p>"),
+            ("Classifying skin lesions from photographs. What first?",
+             "<p><b>A pre-trained convolutional neural network</b>, fine-tuned (Week 3, Lesson 13). "
+             "Trees cannot use pixel structure.</p>"),
+            ("Why can several neural networks be trained together but not several trees?",
+             "<p>Because networks are differentiable end to end — one gradient flows through the whole "
+             "stack. Tree splits are discrete decisions with no useful derivative.</p>"),
+        ])
+
+        + h2("🔗", "Go deeper")
+        + links([
+            ("paper", "https://arxiv.org/abs/2207.08815",
+             "Grinsztajn et al. (2022) — Why do tree-based models still outperform deep learning on tabular data?",
+             "A careful, honest benchmark. The best available answer to this lesson’s question."),
+            ("paper", "https://arxiv.org/abs/2106.11959",
+             "Gorishniy et al. (2021) — Revisiting Deep Learning Models for Tabular Data",
+             "The other side of the argument, with strong neural baselines. Read both."),
+            ("lab", "../../C2%20-%20Advanced%20Learning%20Algorithms/week4/optional%20labs/C2_W4_Lab_02_Tree_Ensemble.ipynb",
+             "Optional lab: Tree Ensembles",
+             "In this repo. Compare a single tree, a random forest and XGBoost on the same data."),
+            ("docs", "https://www.coursera.org/learn/unsupervised-learning-recommenders-reinforcement-learning",
+             "Course 3 — Unsupervised Learning, Recommenders, Reinforcement Learning",
+             "Where to go next. The C3 folder in this repository has the labs waiting."),
+        ])
+    )))
+
+WEEK = dict(
+    course="C2", week=4, title="Decision Trees",
+    time="~5–7 h with labs",
+    goal="Build decision trees from entropy and information gain, extend them to categorical, continuous "
+         "and regression targets, and combine them into random forests and XGBoost.",
+    lessons=L,
+)

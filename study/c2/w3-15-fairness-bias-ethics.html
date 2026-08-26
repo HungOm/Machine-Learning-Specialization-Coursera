@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairness, bias, and ethics · C2 W3</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+</head>
+<body data-slug="c23-15-fairness-bias-ethics">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">☰</button>
+  <a class="brand" href="../index.html">ML<span>·</span>notes</a>
+  <span class="crumb">C2 · Week 3 · <b>Fairness, bias, and ethics</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="done-btn">mark done</button>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">◐</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<a href="../index.html" style="font-weight:700">← Study plan</a>
+<a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
+<a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
+<a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../paper.html" style="font-weight:700">✐ On paper</a>
+<a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
+<a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
+<a href="../progress.html" style="font-weight:700">▲ Progress</a>
+<a href="../reference.html" style="font-weight:700">☰ Reference sheet</a>
+<a href="../symbols.html" style="font-weight:700;margin-bottom:10px">∑ Symbol glossary</a>
+<h4>F0 · W1 — The Maths You Actually Need</h4>
+<a class="" data-slug-link="f01-01-what-is-a-function" href="../f0/w1-01-what-is-a-function.html"><span class="n">01</span>What a function is</a>
+<a class="" data-slug-link="f01-02-reading-a-graph" href="../f0/w1-02-reading-a-graph.html"><span class="n">02</span>Reading a graph</a>
+<a class="" data-slug-link="f01-03-greek-letters" href="../f0/w1-03-greek-letters.html"><span class="n">03</span>Greek letters and other symbols</a>
+<a class="" data-slug-link="f01-04-slope" href="../f0/w1-04-slope.html"><span class="n">04</span>Slope — rise over run</a>
+<a class="" data-slug-link="f01-05-derivatives" href="../f0/w1-05-derivatives.html"><span class="n">05</span>What a derivative actually is</a>
+<a class="" data-slug-link="f01-06-partial-derivatives" href="../f0/w1-06-partial-derivatives.html"><span class="n">06</span>Partial derivatives</a>
+<a class="" data-slug-link="f01-07-sigma-notation" href="../f0/w1-07-sigma-notation.html"><span class="n">07</span>Σ — summation notation</a>
+<a class="" data-slug-link="f01-08-pi-notation" href="../f0/w1-08-pi-notation.html"><span class="n">08</span>Π — multiplying them all</a>
+<a class="" data-slug-link="f01-09-vectors" href="../f0/w1-09-vectors.html"><span class="n">09</span>Vectors</a>
+<a class="" data-slug-link="f01-10-dot-product" href="../f0/w1-10-dot-product.html"><span class="n">10</span>The dot product</a>
+<a class="" data-slug-link="f01-11-matrices" href="../f0/w1-11-matrices.html"><span class="n">11</span>Matrices and shapes</a>
+<a class="" data-slug-link="f01-12-matrix-multiplication" href="../f0/w1-12-matrix-multiplication.html"><span class="n">12</span>Matrix multiplication</a>
+<a class="" data-slug-link="f01-13-transpose" href="../f0/w1-13-transpose.html"><span class="n">13</span>Transpose</a>
+<a class="" data-slug-link="f01-14-exponentials" href="../f0/w1-14-exponentials.html"><span class="n">14</span>Exponentials and e</a>
+<a class="" data-slug-link="f01-15-logarithms" href="../f0/w1-15-logarithms.html"><span class="n">15</span>Logarithms</a>
+<a class="" data-slug-link="f01-16-probability" href="../f0/w1-16-probability.html"><span class="n">16</span>Probability basics</a>
+<a class="" data-slug-link="f01-17-mean-variance" href="../f0/w1-17-mean-variance.html"><span class="n">17</span>Mean, variance and standard deviation</a>
+<a class="" data-slug-link="f01-18-normal-distribution" href="../f0/w1-18-normal-distribution.html"><span class="n">18</span>The normal distribution</a>
+<a class="" data-slug-link="f01-19-min-max-argmax" href="../f0/w1-19-min-max-argmax.html"><span class="n">19</span>min, max, argmin and argmax</a>
+<h4>F0 · W2 — Python, NumPy and pandas</h4>
+<a class="" data-slug-link="f02-01-jupyter" href="../f0/w2-01-jupyter.html"><span class="n">01</span>Jupyter notebooks</a>
+<a class="" data-slug-link="f02-02-types" href="../f0/w2-02-types.html"><span class="n">02</span>Values and types</a>
+<a class="" data-slug-link="f02-03-lists-vs-arrays" href="../f0/w2-03-lists-vs-arrays.html"><span class="n">03</span>Lists vs NumPy arrays</a>
+<a class="" data-slug-link="f02-04-indexing-slicing" href="../f0/w2-04-indexing-slicing.html"><span class="n">04</span>Indexing and slicing</a>
+<a class="" data-slug-link="f02-05-shape-and-axis" href="../f0/w2-05-shape-and-axis.html"><span class="n">05</span>Shape and axis</a>
+<a class="" data-slug-link="f02-06-creating-arrays" href="../f0/w2-06-creating-arrays.html"><span class="n">06</span>Creating arrays</a>
+<a class="" data-slug-link="f02-07-elementwise" href="../f0/w2-07-elementwise.html"><span class="n">07</span>Elementwise arithmetic</a>
+<a class="" data-slug-link="f02-08-broadcasting" href="../f0/w2-08-broadcasting.html"><span class="n">08</span>Broadcasting</a>
+<a class="" data-slug-link="f02-09-dot-in-code" href="../f0/w2-09-dot-in-code.html"><span class="n">09</span>np.dot, matmul and @</a>
+<a class="" data-slug-link="f02-10-aggregations" href="../f0/w2-10-aggregations.html"><span class="n">10</span>sum, mean, max — along an axis</a>
+<a class="" data-slug-link="f02-11-boolean-masks" href="../f0/w2-11-boolean-masks.html"><span class="n">11</span>Boolean masks</a>
+<a class="" data-slug-link="f02-12-reshape" href="../f0/w2-12-reshape.html"><span class="n">12</span>reshape, flatten and T</a>
+<a class="" data-slug-link="f02-13-pandas-dataframes" href="../f0/w2-13-pandas-dataframes.html"><span class="n">13</span>pandas DataFrames</a>
+<a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
+<a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
+<a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>C1 · W1 — Introduction to Machine Learning</h4>
+<a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
+<a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
+<a class="" data-slug-link="c11-03-unsupervised-learning" href="../c1/w1-03-unsupervised-learning.html"><span class="n">03</span>Unsupervised learning</a>
+<a class="" data-slug-link="c11-04-linear-regression-model" href="../c1/w1-04-linear-regression-model.html"><span class="n">04</span>The linear regression model</a>
+<a class="" data-slug-link="c11-05-cost-function-formula" href="../c1/w1-05-cost-function-formula.html"><span class="n">05</span>The cost function formula</a>
+<a class="" data-slug-link="c11-06-cost-function-intuition" href="../c1/w1-06-cost-function-intuition.html"><span class="n">06</span>Cost function intuition</a>
+<a class="" data-slug-link="c11-07-visualizing-the-cost-function" href="../c1/w1-07-visualizing-the-cost-function.html"><span class="n">07</span>Visualizing the cost function</a>
+<a class="" data-slug-link="c11-08-gradient-descent" href="../c1/w1-08-gradient-descent.html"><span class="n">08</span>Gradient descent</a>
+<a class="" data-slug-link="c11-09-implementing-gradient-descent" href="../c1/w1-09-implementing-gradient-descent.html"><span class="n">09</span>Implementing gradient descent</a>
+<a class="" data-slug-link="c11-10-gradient-descent-intuition" href="../c1/w1-10-gradient-descent-intuition.html"><span class="n">10</span>Gradient descent intuition</a>
+<a class="" data-slug-link="c11-11-learning-rate" href="../c1/w1-11-learning-rate.html"><span class="n">11</span>The learning rate</a>
+<a class="" data-slug-link="c11-12-gradient-descent-for-linear-regression" href="../c1/w1-12-gradient-descent-for-linear-regression.html"><span class="n">12</span>Gradient descent for linear regression</a>
+<a class="" data-slug-link="c11-13-running-gradient-descent" href="../c1/w1-13-running-gradient-descent.html"><span class="n">13</span>Running gradient descent</a>
+<h4>C1 · W2 — Regression with Multiple Variables</h4>
+<a class="" data-slug-link="c12-01-multiple-features" href="../c1/w2-01-multiple-features.html"><span class="n">01</span>Multiple features</a>
+<a class="" data-slug-link="c12-02-vectorization" href="../c1/w2-02-vectorization.html"><span class="n">02</span>Vectorization</a>
+<a class="" data-slug-link="c12-03-why-vectorization-is-fast" href="../c1/w2-03-why-vectorization-is-fast.html"><span class="n">03</span>Why vectorization is fast</a>
+<a class="" data-slug-link="c12-04-gradient-descent-multiple-features" href="../c1/w2-04-gradient-descent-multiple-features.html"><span class="n">04</span>Gradient descent for multiple linear regression</a>
+<a class="" data-slug-link="c12-05-feature-scaling" href="../c1/w2-05-feature-scaling.html"><span class="n">05</span>Feature scaling</a>
+<a class="" data-slug-link="c12-06-checking-convergence" href="../c1/w2-06-checking-convergence.html"><span class="n">06</span>Checking gradient descent for convergence</a>
+<a class="" data-slug-link="c12-07-choosing-the-learning-rate" href="../c1/w2-07-choosing-the-learning-rate.html"><span class="n">07</span>Choosing the learning rate</a>
+<a class="" data-slug-link="c12-08-feature-engineering" href="../c1/w2-08-feature-engineering.html"><span class="n">08</span>Feature engineering</a>
+<a class="" data-slug-link="c12-09-polynomial-regression" href="../c1/w2-09-polynomial-regression.html"><span class="n">09</span>Polynomial regression</a>
+<h4>C1 · W3 — Classification</h4>
+<a class="" data-slug-link="c13-01-motivations" href="../c1/w3-01-motivations.html"><span class="n">01</span>Motivations: why not linear regression?</a>
+<a class="" data-slug-link="c13-02-logistic-regression" href="../c1/w3-02-logistic-regression.html"><span class="n">02</span>Logistic regression</a>
+<a class="" data-slug-link="c13-03-decision-boundary" href="../c1/w3-03-decision-boundary.html"><span class="n">03</span>The decision boundary</a>
+<a class="" data-slug-link="c13-04-cost-function-for-logistic-regression" href="../c1/w3-04-cost-function-for-logistic-regression.html"><span class="n">04</span>Cost function for logistic regression</a>
+<a class="" data-slug-link="c13-05-logistic-loss" href="../c1/w3-05-logistic-loss.html"><span class="n">05</span>The logistic loss, in detail</a>
+<a class="" data-slug-link="c13-06-simplified-cost-function" href="../c1/w3-06-simplified-cost-function.html"><span class="n">06</span>The simplified cost function</a>
+<a class="" data-slug-link="c13-07-gradient-descent-logistic" href="../c1/w3-07-gradient-descent-logistic.html"><span class="n">07</span>Gradient descent for logistic regression</a>
+<a class="" data-slug-link="c13-08-the-problem-of-overfitting" href="../c1/w3-08-the-problem-of-overfitting.html"><span class="n">08</span>The problem of overfitting</a>
+<a class="" data-slug-link="c13-09-addressing-overfitting" href="../c1/w3-09-addressing-overfitting.html"><span class="n">09</span>Addressing overfitting</a>
+<a class="" data-slug-link="c13-10-cost-function-with-regularization" href="../c1/w3-10-cost-function-with-regularization.html"><span class="n">10</span>The cost function with regularization</a>
+<a class="" data-slug-link="c13-11-regularized-gradient-descent" href="../c1/w3-11-regularized-gradient-descent.html"><span class="n">11</span>Regularized linear and logistic regression</a>
+<h4>C2 · W1 — Neural Networks</h4>
+<a class="" data-slug-link="c21-01-neurons-and-the-brain" href="../c2/w1-01-neurons-and-the-brain.html"><span class="n">01</span>Neurons and the brain</a>
+<a class="" data-slug-link="c21-02-demand-prediction" href="../c2/w1-02-demand-prediction.html"><span class="n">02</span>Demand prediction</a>
+<a class="" data-slug-link="c21-03-recognizing-images" href="../c2/w1-03-recognizing-images.html"><span class="n">03</span>Example: recognizing images</a>
+<a class="" data-slug-link="c21-04-neural-network-layer" href="../c2/w1-04-neural-network-layer.html"><span class="n">04</span>Neural network layer</a>
+<a class="" data-slug-link="c21-05-more-complex-networks" href="../c2/w1-05-more-complex-networks.html"><span class="n">05</span>More complex neural networks</a>
+<a class="" data-slug-link="c21-06-forward-propagation" href="../c2/w1-06-forward-propagation.html"><span class="n">06</span>Inference: making predictions (forward propagation)</a>
+<a class="" data-slug-link="c21-07-tensorflow-inference-code" href="../c2/w1-07-tensorflow-inference-code.html"><span class="n">07</span>Inference in code (TensorFlow)</a>
+<a class="" data-slug-link="c21-08-data-in-tensorflow" href="../c2/w1-08-data-in-tensorflow.html"><span class="n">08</span>Data in TensorFlow</a>
+<a class="" data-slug-link="c21-09-building-a-network-sequential" href="../c2/w1-09-building-a-network-sequential.html"><span class="n">09</span>Building a neural network (Sequential)</a>
+<a class="" data-slug-link="c21-10-forward-prop-single-layer" href="../c2/w1-10-forward-prop-single-layer.html"><span class="n">10</span>Forward prop in a single layer (NumPy)</a>
+<a class="" data-slug-link="c21-11-general-forward-prop" href="../c2/w1-11-general-forward-prop.html"><span class="n">11</span>General implementation of forward propagation</a>
+<a class="" data-slug-link="c21-12-path-to-agi" href="../c2/w1-12-path-to-agi.html"><span class="n">12</span>Is there a path to AGI?</a>
+<a class="" data-slug-link="c21-13-vectorization" href="../c2/w1-13-vectorization.html"><span class="n">13</span>How neural networks are implemented efficiently</a>
+<a class="" data-slug-link="c21-14-matrix-multiplication" href="../c2/w1-14-matrix-multiplication.html"><span class="n">14</span>Matrix multiplication</a>
+<a class="" data-slug-link="c21-15-matmul-rules" href="../c2/w1-15-matmul-rules.html"><span class="n">15</span>Matrix multiplication rules</a>
+<a class="" data-slug-link="c21-16-matmul-code" href="../c2/w1-16-matmul-code.html"><span class="n">16</span>Matrix multiplication code</a>
+<h4>C2 · W2 — Neural Network Training</h4>
+<a class="" data-slug-link="c22-01-tensorflow-training" href="../c2/w2-01-tensorflow-training.html"><span class="n">01</span>TensorFlow implementation of training</a>
+<a class="" data-slug-link="c22-02-training-details" href="../c2/w2-02-training-details.html"><span class="n">02</span>Training details</a>
+<a class="" data-slug-link="c22-03-sigmoid-alternatives" href="../c2/w2-03-sigmoid-alternatives.html"><span class="n">03</span>Alternatives to the sigmoid activation</a>
+<a class="" data-slug-link="c22-04-choosing-activations" href="../c2/w2-04-choosing-activations.html"><span class="n">04</span>Choosing activation functions</a>
+<a class="" data-slug-link="c22-05-why-activations" href="../c2/w2-05-why-activations.html"><span class="n">05</span>Why do we need activation functions?</a>
+<a class="" data-slug-link="c22-06-multiclass" href="../c2/w2-06-multiclass.html"><span class="n">06</span>Multiclass classification</a>
+<a class="" data-slug-link="c22-07-softmax" href="../c2/w2-07-softmax.html"><span class="n">07</span>Softmax</a>
+<a class="" data-slug-link="c22-08-softmax-output-layer" href="../c2/w2-08-softmax-output-layer.html"><span class="n">08</span>Neural network with Softmax output</a>
+<a class="" data-slug-link="c22-09-improved-softmax" href="../c2/w2-09-improved-softmax.html"><span class="n">09</span>Improved implementation of softmax</a>
+<a class="" data-slug-link="c22-10-multi-label" href="../c2/w2-10-multi-label.html"><span class="n">10</span>Classification with multiple outputs (multi-label)</a>
+<a class="" data-slug-link="c22-11-advanced-optimization" href="../c2/w2-11-advanced-optimization.html"><span class="n">11</span>Advanced optimization (Adam)</a>
+<a class="" data-slug-link="c22-12-additional-layer-types" href="../c2/w2-12-additional-layer-types.html"><span class="n">12</span>Additional layer types (convolutional)</a>
+<a class="" data-slug-link="c22-13-what-is-a-derivative" href="../c2/w2-13-what-is-a-derivative.html"><span class="n">13</span>What is a derivative? (optional)</a>
+<a class="" data-slug-link="c22-14-computation-graph" href="../c2/w2-14-computation-graph.html"><span class="n">14</span>Computation graph (optional)</a>
+<a class="" data-slug-link="c22-15-larger-network-example" href="../c2/w2-15-larger-network-example.html"><span class="n">15</span>Larger neural network example (optional)</a>
+<h4>C2 · W3 — Advice for Applying ML</h4>
+<a class="" data-slug-link="c23-01-deciding-what-to-try-next" href="../c2/w3-01-deciding-what-to-try-next.html"><span class="n">01</span>Deciding what to try next</a>
+<a class="" data-slug-link="c23-02-evaluating-a-model" href="../c2/w3-02-evaluating-a-model.html"><span class="n">02</span>Evaluating a model</a>
+<a class="" data-slug-link="c23-03-model-selection" href="../c2/w3-03-model-selection.html"><span class="n">03</span>Model selection and train / cross-validation / test</a>
+<a class="" data-slug-link="c23-04-bias-and-variance" href="../c2/w3-04-bias-and-variance.html"><span class="n">04</span>Diagnosing bias and variance</a>
+<a class="" data-slug-link="c23-05-regularization-bias-variance" href="../c2/w3-05-regularization-bias-variance.html"><span class="n">05</span>Regularization and bias/variance</a>
+<a class="" data-slug-link="c23-06-baseline-performance" href="../c2/w3-06-baseline-performance.html"><span class="n">06</span>Establishing a baseline level of performance</a>
+<a class="" data-slug-link="c23-07-learning-curves" href="../c2/w3-07-learning-curves.html"><span class="n">07</span>Learning curves</a>
+<a class="" data-slug-link="c23-08-what-to-try-revisited" href="../c2/w3-08-what-to-try-revisited.html"><span class="n">08</span>Deciding what to try next, revisited</a>
+<a class="" data-slug-link="c23-09-bias-variance-neural-networks" href="../c2/w3-09-bias-variance-neural-networks.html"><span class="n">09</span>Bias / variance and neural networks</a>
+<a class="" data-slug-link="c23-10-iterative-loop" href="../c2/w3-10-iterative-loop.html"><span class="n">10</span>The iterative loop of ML development</a>
+<a class="" data-slug-link="c23-11-error-analysis" href="../c2/w3-11-error-analysis.html"><span class="n">11</span>Error analysis</a>
+<a class="" data-slug-link="c23-12-adding-data" href="../c2/w3-12-adding-data.html"><span class="n">12</span>Adding data</a>
+<a class="" data-slug-link="c23-13-transfer-learning" href="../c2/w3-13-transfer-learning.html"><span class="n">13</span>Transfer learning</a>
+<a class="" data-slug-link="c23-14-full-cycle" href="../c2/w3-14-full-cycle.html"><span class="n">14</span>The full cycle of a machine learning project</a>
+<a class="here" data-slug-link="c23-15-fairness-bias-ethics" href="../c2/w3-15-fairness-bias-ethics.html"><span class="n">15</span>Fairness, bias, and ethics</a>
+<a class="" data-slug-link="c23-16-skewed-datasets" href="../c2/w3-16-skewed-datasets.html"><span class="n">16</span>Error metrics for skewed datasets</a>
+<a class="" data-slug-link="c23-17-precision-recall-tradeoff" href="../c2/w3-17-precision-recall-tradeoff.html"><span class="n">17</span>Trading off precision and recall</a>
+<h4>C2 · W4 — Decision Trees</h4>
+<a class="" data-slug-link="c24-01-decision-tree-model" href="../c2/w4-01-decision-tree-model.html"><span class="n">01</span>Decision tree model</a>
+<a class="" data-slug-link="c24-02-learning-process" href="../c2/w4-02-learning-process.html"><span class="n">02</span>The learning process</a>
+<a class="" data-slug-link="c24-03-measuring-purity" href="../c2/w4-03-measuring-purity.html"><span class="n">03</span>Measuring purity (entropy)</a>
+<a class="" data-slug-link="c24-04-information-gain" href="../c2/w4-04-information-gain.html"><span class="n">04</span>Choosing a split: information gain</a>
+<a class="" data-slug-link="c24-05-putting-it-together" href="../c2/w4-05-putting-it-together.html"><span class="n">05</span>Putting it together</a>
+<a class="" data-slug-link="c24-06-one-hot-encoding" href="../c2/w4-06-one-hot-encoding.html"><span class="n">06</span>Using one-hot encoding of categorical features</a>
+<a class="" data-slug-link="c24-07-continuous-features" href="../c2/w4-07-continuous-features.html"><span class="n">07</span>Continuous valued features</a>
+<a class="" data-slug-link="c24-08-regression-trees" href="../c2/w4-08-regression-trees.html"><span class="n">08</span>Regression trees</a>
+<a class="" data-slug-link="c24-09-using-multiple-trees" href="../c2/w4-09-using-multiple-trees.html"><span class="n">09</span>Using multiple decision trees</a>
+<a class="" data-slug-link="c24-10-sampling-with-replacement" href="../c2/w4-10-sampling-with-replacement.html"><span class="n">10</span>Sampling with replacement</a>
+<a class="" data-slug-link="c24-11-random-forest" href="../c2/w4-11-random-forest.html"><span class="n">11</span>Random forest algorithm</a>
+<a class="" data-slug-link="c24-12-xgboost" href="../c2/w4-12-xgboost.html"><span class="n">12</span>XGBoost</a>
+<a class="" data-slug-link="c24-13-trees-vs-neural-networks" href="../c2/w4-13-trees-vs-neural-networks.html"><span class="n">13</span>When to use decision trees</a>
+<h4>C3 · W1 — Unsupervised Learning</h4>
+<a class="" data-slug-link="c31-01-what-is-clustering" href="../c3/w1-01-what-is-clustering.html"><span class="n">01</span>What is clustering?</a>
+<a class="" data-slug-link="c31-02-kmeans-intuition" href="../c3/w1-02-kmeans-intuition.html"><span class="n">02</span>K-means intuition</a>
+<a class="" data-slug-link="c31-03-kmeans-algorithm" href="../c3/w1-03-kmeans-algorithm.html"><span class="n">03</span>The K-means algorithm</a>
+<a class="" data-slug-link="c31-04-kmeans-cost" href="../c3/w1-04-kmeans-cost.html"><span class="n">04</span>The optimization objective</a>
+<a class="" data-slug-link="c31-05-initializing-kmeans" href="../c3/w1-05-initializing-kmeans.html"><span class="n">05</span>Initializing K-means</a>
+<a class="" data-slug-link="c31-06-choosing-k" href="../c3/w1-06-choosing-k.html"><span class="n">06</span>Choosing the number of clusters</a>
+<a class="" data-slug-link="c31-07-finding-unusual-events" href="../c3/w1-07-finding-unusual-events.html"><span class="n">07</span>Finding unusual events</a>
+<a class="" data-slug-link="c31-08-gaussian-distribution" href="../c3/w1-08-gaussian-distribution.html"><span class="n">08</span>The Gaussian (normal) distribution</a>
+<a class="" data-slug-link="c31-09-anomaly-detection-algorithm" href="../c3/w1-09-anomaly-detection-algorithm.html"><span class="n">09</span>The anomaly detection algorithm</a>
+<a class="" data-slug-link="c31-10-developing-anomaly-detection" href="../c3/w1-10-developing-anomaly-detection.html"><span class="n">10</span>Developing and evaluating an anomaly detection system</a>
+<a class="" data-slug-link="c31-11-anomaly-vs-supervised" href="../c3/w1-11-anomaly-vs-supervised.html"><span class="n">11</span>Anomaly detection vs. supervised learning</a>
+<a class="" data-slug-link="c31-12-choosing-features" href="../c3/w1-12-choosing-features.html"><span class="n">12</span>Choosing what features to use</a>
+<h4>C3 · W2 — Recommender Systems</h4>
+<a class="" data-slug-link="c32-01-making-recommendations" href="../c3/w2-01-making-recommendations.html"><span class="n">01</span>Making recommendations</a>
+<a class="" data-slug-link="c32-02-per-item-features" href="../c3/w2-02-per-item-features.html"><span class="n">02</span>Using per-item features</a>
+<a class="" data-slug-link="c32-03-collaborative-filtering" href="../c3/w2-03-collaborative-filtering.html"><span class="n">03</span>The collaborative filtering algorithm</a>
+<a class="" data-slug-link="c32-04-binary-labels" href="../c3/w2-04-binary-labels.html"><span class="n">04</span>Binary labels: favs, likes and clicks</a>
+<a class="" data-slug-link="c32-05-mean-normalization" href="../c3/w2-05-mean-normalization.html"><span class="n">05</span>Mean normalization</a>
+<a class="" data-slug-link="c32-06-tensorflow-collaborative" href="../c3/w2-06-tensorflow-collaborative.html"><span class="n">06</span>TensorFlow implementation of collaborative filtering</a>
+<a class="" data-slug-link="c32-07-finding-related-items" href="../c3/w2-07-finding-related-items.html"><span class="n">07</span>Finding related items</a>
+<a class="" data-slug-link="c32-08-collaborative-vs-content" href="../c3/w2-08-collaborative-vs-content.html"><span class="n">08</span>Collaborative filtering vs content-based filtering</a>
+<a class="" data-slug-link="c32-09-deep-content-based" href="../c3/w2-09-deep-content-based.html"><span class="n">09</span>Deep learning for content-based filtering</a>
+<a class="" data-slug-link="c32-10-large-catalogues" href="../c3/w2-10-large-catalogues.html"><span class="n">10</span>Recommending from a large catalogue</a>
+<a class="" data-slug-link="c32-11-ethics-recommenders" href="../c3/w2-11-ethics-recommenders.html"><span class="n">11</span>Ethical use of recommender systems</a>
+<a class="" data-slug-link="c32-12-tensorflow-content-based" href="../c3/w2-12-tensorflow-content-based.html"><span class="n">12</span>TensorFlow implementation of content-based filtering</a>
+<a class="" data-slug-link="c32-13-reducing-features-pca" href="../c3/w2-13-reducing-features-pca.html"><span class="n">13</span>Reducing the number of features (PCA)</a>
+<a class="" data-slug-link="c32-14-pca-algorithm" href="../c3/w2-14-pca-algorithm.html"><span class="n">14</span>The PCA algorithm</a>
+<a class="" data-slug-link="c32-15-pca-in-code" href="../c3/w2-15-pca-in-code.html"><span class="n">15</span>PCA in code</a>
+<h4>C3 · W3 — Reinforcement Learning</h4>
+<a class="" data-slug-link="c33-01-what-is-rl" href="../c3/w3-01-what-is-rl.html"><span class="n">01</span>What is reinforcement learning?</a>
+<a class="" data-slug-link="c33-02-mars-rover" href="../c3/w3-02-mars-rover.html"><span class="n">02</span>The Mars rover example</a>
+<a class="" data-slug-link="c33-03-the-return" href="../c3/w3-03-the-return.html"><span class="n">03</span>The Return in reinforcement learning</a>
+<a class="" data-slug-link="c33-04-policies" href="../c3/w3-04-policies.html"><span class="n">04</span>Making decisions: policies</a>
+<a class="" data-slug-link="c33-05-review-of-key-concepts" href="../c3/w3-05-review-of-key-concepts.html"><span class="n">05</span>Review of key concepts</a>
+<a class="" data-slug-link="c33-06-state-action-value-function" href="../c3/w3-06-state-action-value-function.html"><span class="n">06</span>State-action value function</a>
+<a class="" data-slug-link="c33-07-state-action-value-example" href="../c3/w3-07-state-action-value-example.html"><span class="n">07</span>State-action value function example</a>
+<a class="" data-slug-link="c33-08-bellman-equation" href="../c3/w3-08-bellman-equation.html"><span class="n">08</span>The Bellman equation</a>
+<a class="" data-slug-link="c33-09-stochastic-environments" href="../c3/w3-09-stochastic-environments.html"><span class="n">09</span>Random (stochastic) environments</a>
+<a class="" data-slug-link="c33-10-continuous-state-spaces" href="../c3/w3-10-continuous-state-spaces.html"><span class="n">10</span>Continuous state spaces</a>
+<a class="" data-slug-link="c33-11-lunar-lander" href="../c3/w3-11-lunar-lander.html"><span class="n">11</span>The lunar lander</a>
+<a class="" data-slug-link="c33-12-learning-the-state-value-function" href="../c3/w3-12-learning-the-state-value-function.html"><span class="n">12</span>Learning the state-value function</a>
+<a class="" data-slug-link="c33-13-improved-architecture" href="../c3/w3-13-improved-architecture.html"><span class="n">13</span>Algorithm refinement: improved neural network architecture</a>
+<a class="" data-slug-link="c33-14-epsilon-greedy" href="../c3/w3-14-epsilon-greedy.html"><span class="n">14</span>Algorithm refinement: ε-greedy policy</a>
+<a class="" data-slug-link="c33-15-minibatch-soft-updates" href="../c3/w3-15-minibatch-soft-updates.html"><span class="n">15</span>Algorithm refinement: mini-batch and soft updates</a>
+<a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
+</aside>
+<main>
+<p class="kicker">C2 · Week 3 · Lesson 15 of 17 · 9 min read</p>
+<h1>Fairness, bias, and ethics</h1>
+<p class="lede">A model trained on the past will reproduce the past. This lesson is short, non-technical, and the one most likely to matter to somebody's life.</p>
+<h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>If you teach a computer by showing it what people did before, it learns to do what
+people did before — including the unfair bits. It has no way to know which parts of history were a mistake.</p>
+<p>And it will do it faster, cheaper and at bigger scale than any person could, while sounding perfectly
+objective because it is “just maths”.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ One accuracy number, four very different experiences</span><span class="h">press the button to break the average down by group</span></div><div class="demo-body" data-anim="fairness"></div></div><h2><span class="ico">📋</span>Documented cases worth knowing</h2><ul>
+<li><b>Hiring.</b> A recruiting tool trained on ten years of past hires learned to down-rank CVs
+containing the word “women’s”, because the historical hires it learned from were overwhelmingly male. The
+project was scrapped.</li>
+<li><b>Face recognition.</b> Buolamwini & Gebru measured commercial systems with error rates under 1% for
+lighter-skinned men and over 30% for darker-skinned women — a 30× gap invisible in the headline accuracy.</li>
+<li><b>Criminal risk scores.</b> ProPublica’s analysis of the COMPAS tool found different false-positive
+rates across racial groups. The subsequent statistical debate is genuinely worth reading: several
+reasonable definitions of “fair” are <em>mathematically incompatible</em>, so you must choose which one
+you mean.</li>
+<li><b>Medical devices.</b> Pulse oximeters and some diagnostic models perform measurably worse on darker
+skin, because of who was in the calibration data.</li>
+</ul><div class="callout key"><span class="tag">The one thing to remember</span><p>Aggregate accuracy hides subgroup failure by construction. If a group is 6% of your
+data, you can serve them terribly and still post a 92% headline number. <b>Always evaluate per
+subgroup.</b></p></div><h2><span class="ico">🛠</span>What to actually do</h2><div class="grid2"><div class="card"><h3>Before you build</h3><ul><li>Ask who could be harmed if it is wrong, and how badly.</li><li>Get a diverse team — homogeneous teams miss homogeneous blind spots.</li><li>Look for prior harms in your domain; someone has usually been here before.</li></ul></div><div class="card"><h3>Before you ship</h3><ul><li>Measure performance <b>per subgroup</b>, not just overall.</li><li>Run an adversarial review: how would a bad actor use this?</li><li>Have a rollback plan and a way for users to appeal a decision.</li><li>Write a model card: intended use, known limits, evaluation by group.</li></ul></div></div><div class="callout warn"><span class="tag">Watch out</span><p>Removing the sensitive attribute from your features does <b>not</b> make a model fair.
+Postcode, name, school and shopping history are all proxies. The model rediscovers the attribute; you just
+lose the ability to measure the disparity.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c23-15-fairness-bias-ethics#1"><summary>Your loan model is 94% accurate overall. What is the next thing to measure?</summary><div class="a"><p>Accuracy — and false-positive and false-negative rates — <b>per subgroup</b>. The average cannot tell you whether one group is being systematically refused.</p></div></details><details class="q" data-qid="c23-15-fairness-bias-ethics#2"><summary>Does deleting the race field from your dataset make the model race-blind?</summary><div class="a"><p><b>No.</b> Correlated features act as proxies. You lose the ability to audit for disparity without removing the disparity.</p></div></details><details class="q" data-qid="c23-15-fairness-bias-ethics#3"><summary>Why is “high accuracy” an insufficient standard for a medical model?</summary><div class="a"><p>Because errors are not symmetric and not evenly distributed. A missed diagnosis costs far more than a false alarm, and a model can be accurate on average while failing an entire patient group.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://proceedings.mlr.press/v81/buolamwini18a.html" target="_blank" rel="noopener">Buolamwini & Gebru (2018) — Gender Shades</a><span class="d">The face-recognition audit. Careful, devastating, and the model for how to do this work.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://arxiv.org/abs/1810.03993" target="_blank" rel="noopener">Mitchell et al. (2018) — Model Cards for Model Reporting</a><span class="d">A practical template for documenting intended use, limits and per-group evaluation.</span></span></li><li><span class="kind book">book</span><span><a href="https://fairmlbook.org/" target="_blank" rel="noopener">Barocas, Hardt & Narayanan — Fairness and Machine Learning</a><span class="d">Free textbook. Chapter 2 explains why several definitions of fairness cannot all hold at once.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing" target="_blank" rel="noopener">ProPublica — Machine Bias</a><span class="d">The COMPAS investigation. Read the rebuttals too — the disagreement is the education.</span></span></li></ul>
+<nav class="pager">
+<a class="prev" href="../c2/w3-14-full-cycle.html"><span class="dir">‹ previous</span><span class="ttl">The full cycle of a machine learning project</span></a>
+<a class="next" href="../c2/w3-16-skewed-datasets.html"><span class="dir">next ›</span><span class="ttl">Error metrics for skewed datasets</span></a>
+</nav>
+</main>
+</div>
+<script src="../assets/meta.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/anim.js"></script>
+<script src="../assets/w-c2w3.js"></script>
+</body>
+</html>
