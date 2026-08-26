@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c32-06-tensorflow-collaborative">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C3 · Week 2 · Lesson 6 of 15 · 10 min read</p>
-<h1>TensorFlow implementation of collaborative filtering</h1>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.6 · 10 min read</span></p>
+<h1><span class="secno">11.6</span>TensorFlow implementation of collaborative filtering</h1>
 <p class="lede">Why you write the training loop by hand here, and how GradientTape does the calculus for a cost function Keras has never heard of.</p>
+<div class="bookrail" title="Lesson 147 of 172 in the book"><i style="width:85%"></i></div>
+<p class="bookrail-cap"><span>C3 · Week 2 · lesson 6 of 15</span><span class="r">147 of 172 · 85% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Usually you hand TensorFlow a stack of layers and say “train it”. But collaborative
 filtering isn’t a stack of layers — it’s a strange sum over a sparse set of (user, movie) pairs.</p>
 <p>So you write the loop yourself. The good news: you still don’t have to do any calculus. TensorFlow

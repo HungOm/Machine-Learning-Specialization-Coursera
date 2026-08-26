@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="f01-04-slope">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">F0 · Week 1 · Lesson 4 of 19 · 8 min read</p>
-<h1>Slope — rise over run</h1>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.4 · 8 min read</span></p>
+<h1><span class="secno">1.4</span>Slope — rise over run</h1>
 <p class="lede">The steepness of a line, as a single number. Get this and gradient descent stops being mysterious, because gradient descent is entirely about slopes.</p>
+<div class="bookrail" title="Lesson 4 of 172 in the book"><i style="width:2%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 1 · lesson 4 of 19</span><span class="r">4 of 172 · 2% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Slope answers one question: <b>if I take one step to the right, how far up do I go?</b></p>
 <p>A gentle ramp has a small slope. A steep hill has a big one. Walking downhill gives a negative one.
 Flat ground gives zero.</p><p>Two hikers climb for 2 steps. One rises 6 inches; the other rises only 2. The first hill is steeper — three times as steep, in fact, since 6 ÷ 2 is three times 2 ÷ 2. That ratio, rise divided by run, is the whole of slope.</p></div><h2><span class="ico">🔤</span>The symbol, and how to say it</h2><div class="fanat-eq"><span class="lbl">“rise over run” — click it</span><div class="fanat-row"><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="slope-f0">slope <span class="op">=</span> <span class="frac"><span>rise</span><span>run</span></span></span></span><span class="tick"></span><span class="tag">rise over run</span></span><span class="fanat-part plain"><span class="term"> <span class="op">=</span> <span class="frac"><span>how far UP</span><span>how far ACROSS</span></span></span></span></div></div><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>rise</td><td>“the rise”</td><td>the change in y — how much it went up. Negative if it went down.</td></tr><tr><td>run</td><td>“the run”</td><td>the change in x — how far you moved across.</td></tr><tr><td><var>m</var></td><td>“em”</td><td>the usual letter for slope in school maths.</td></tr><tr><td><var>w</var></td><td>“double-you”</td><td>the <b>same thing</b>, in machine learning. A weight <em>is</em> a slope.</td></tr><tr><td>Δ</td><td>“delta”</td><td>“the change in”. Δy / Δx is another way of writing rise over run.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>School writes a line as <b>y = mx + c</b>. This course writes it as <b>f(x) = wx + b</b>.

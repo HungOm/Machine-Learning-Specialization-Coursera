@@ -3,6 +3,21 @@
 from kit import kid, key, warn, card, links, h2, grid2, grid3, note, table
 
 HERO = """
+<section class="cover">
+  <canvas class="cover-cv" data-cover="1" aria-hidden="true"></canvas>
+  <div class="cover-in">
+    <p class="cover-eyebrow">A study companion</p>
+    <h1 class="cover-title">Machine<span>Learning</span></h1>
+    <div class="cover-rule"></div>
+    <p class="cover-sub">The maths you actually need, then the whole specialization &mdash;
+      one page per idea, with everything that connects them.</p>
+    <div class="cover-stat">
+      <div><b>4</b>parts</div><div><b>12</b>chapters</div>
+      <div><b>{total}</b>lessons</div><div><b>156</b>problems</div>
+    </div>
+    <p class="cover-by">Hung Om</p>
+  </div>
+</section>
 <div class="hero">
 <p class="kicker">Machine Learning Specialization · DeepLearning.AI + Stanford</p>
 <h1>Every lesson, one page, with the maths pulled apart and animated.</h1>

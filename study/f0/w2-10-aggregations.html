@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="f02-10-aggregations">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">F0 · Week 2 · Lesson 10 of 16 · 7 min read</p>
-<h1>sum, mean, max — along an axis</h1>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.10 · 7 min read</span></p>
+<h1><span class="secno">2.10</span>sum, mean, max — along an axis</h1>
 <p class="lede">Collapsing a lot of numbers into fewer. The same axis rule from lesson 5, now doing real work.</p>
+<div class="bookrail" title="Lesson 29 of 172 in the book"><i style="width:17%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 2 · lesson 10 of 16</span><span class="r">29 of 172 · 17% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have a table of numbers and want a summary. Total? Average? Biggest?</p>
 <p>The only question is <b>which direction</b> to summarise in — down the columns, across the rows, or
 everything at once.</p></div><h2><span class="ico">🔤</span>The family</h2><table class="decode"><thead><tr><th>Method</th><th>Say it</th><th>What it does</th></tr></thead><tbody><tr><td><code>.sum()</code></td><td>“sum”</td><td>add them up.</td></tr><tr><td><code>.mean()</code></td><td>“mean”</td><td>the average.</td></tr><tr><td><code>.std()</code></td><td>“<span class="gterm" data-g="variance-f0">standard deviation</span>”</td><td>the spread.</td></tr><tr><td><code>.max()</code> / <code>.min()</code></td><td>—</td><td>biggest / smallest value.</td></tr><tr><td><code>.argmax()</code></td><td>“arg max”</td><td>the <b>position</b> of the biggest.</td></tr><tr><td><code>axis=0</code></td><td>—</td><td>collapse the rows → one answer per <b>column</b>.</td></tr><tr><td><code>axis=1</code></td><td>—</td><td>collapse the columns → one answer per <b>row</b>.</td></tr><tr><td>no axis</td><td>—</td><td>collapse everything → a single number.</td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Pick a function and an axis</span><span class="h">watch the shape of the answer change</span></div><div class="demo-body" data-anim="faxis"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np

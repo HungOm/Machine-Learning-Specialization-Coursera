@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c12-09-polynomial-regression">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C1 · Week 2 · Lesson 9 of 9 · 9 min read</p>
-<h1>Polynomial regression</h1>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.9 · 9 min read</span></p>
+<h1><span class="secno">4.9</span>Polynomial regression</h1>
 <p class="lede">Feature engineering’s most useful special case: hand the model x², x³ or √x and a straight-line algorithm starts drawing curves.</p>
+<div class="bookrail" title="Lesson 57 of 172 in the book"><i style="width:33%"></i></div>
+<p class="bookrail-cap"><span>C1 · Week 2 · lesson 9 of 9</span><span class="r">57 of 172 · 33% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Your data curves, and a straight line cannot follow a curve. So bend the line.</p>
 <p>Except you do not bend the line — you cannot, the model only adds things up. Instead you hand it
 <b>x squared</b> as an extra feature. Now “add up weighted features” includes an x² term, and the result

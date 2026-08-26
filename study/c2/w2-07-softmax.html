@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c22-07-softmax">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C2 · Week 2 · Lesson 7 of 15 · 12 min read</p>
-<h1>Softmax</h1>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.7 · 12 min read</span></p>
+<h1><span class="secno">7.7</span>Softmax</h1>
 <p class="lede">The generalisation of sigmoid to N classes. Two moves — exponentiate, then divide by the total — and every property you need follows from them.</p>
+<div class="bookrail" title="Lesson 91 of 172 in the book"><i style="width:53%"></i></div>
+<p class="bookrail-cap"><span>C2 · Week 2 · lesson 7 of 15</span><span class="r">91 of 172 · 53% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Ten judges each shout a score. Some scores are negative, some are huge, and they don’t
 add up to anything sensible. You need to turn them into “what fraction of the vote did each judge win?”</p>
 <p>Two moves:</p>

@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c13-03-decision-boundary">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C1 · Week 3 · Lesson 3 of 11 · 10 min read</p>
-<h1>The decision boundary</h1>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Classification</span><span class="right">§&nbsp;5.3 · 10 min read</span></p>
+<h1><span class="secno">5.3</span>The decision boundary</h1>
 <p class="lede">Where the model changes its mind. It is always the line z = 0 — but what that looks like in your data depends entirely on which features you supplied.</p>
+<div class="bookrail" title="Lesson 60 of 172 in the book"><i style="width:35%"></i></div>
+<p class="bookrail-cap"><span>C1 · Week 3 · lesson 3 of 11</span><span class="r">60 of 172 · 35% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>The model gives you a probability. At some point you have to actually decide.</p>
 <p>The usual rule: if the chance is 0.5 or more, say yes. Below that, say no.</p>
 <p>Now here is the neat bit. The sigmoid is exactly 0.5 when z = 0. So the place where the model changes

@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="f02-15-reading-errors">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">F0 · Week 2 · Lesson 15 of 16 · 8 min read</p>
-<h1>Reading an error message</h1>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.15 · 8 min read</span></p>
+<h1><span class="secno">2.15</span>Reading an error message</h1>
 <p class="lede">Tracebacks look terrifying and are mostly noise. Read the last line, and know the five errors you will actually hit.</p>
+<div class="bookrail" title="Lesson 34 of 172 in the book"><i style="width:20%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 2 · lesson 15 of 16</span><span class="r">34 of 172 · 20% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>When Python fails it prints a wall of red text. Almost none of it matters.</p>
 <p><b>Read the last line.</b> It is a plain English sentence that names the actual problem. The lines above
 it just show how the code got there.</p></div><h2><span class="ico">🔤</span>The five you will meet</h2><table class="data"><thead><tr><th>Error</th><th>What it means</th><th>What to do</th></tr></thead><tbody><tr><td><code>ValueError: shapes not aligned</code></td><td>a matmul whose inner numbers do not match</td><td>print both <code>.shape</code>s; <span class="gterm" data-g="transpose-f0">transpose</span> one</td></tr><tr><td><code>IndexError: out of bounds</code></td><td>you asked for a position that does not exist</td><td>counting starts at 0; the last is <code>x[-1]</code></td></tr><tr><td><code>TypeError: can only concatenate list</code></td><td>you did maths on a list, not an array</td><td><code><span class="gterm" data-g="nparray-api">np.array</span>(my_list)</code></td></tr><tr><td><code>NameError: not defined</code></td><td>a typo, or you never ran the import cell</td><td>check spelling, then run the imports</td></tr><tr><td><code>KeyError: 'Price'</code></td><td>that column name is not in the DataFrame</td><td><code>print(df.columns)</code></td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ A real traceback, annotated</span><span class="h">click each error type for what it means and what to do</span></div><div class="demo-body" data-anim="ftraceback"></div></div><h2><span class="ico">💻</span>The two habits that fix most of them</h2><pre><code><span class="tok-c"># 1. print shapes -- solves nearly every ValueError</span>

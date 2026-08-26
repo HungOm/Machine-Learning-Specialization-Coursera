@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c23-08-what-to-try-revisited">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C2 · Week 3 · Lesson 8 of 17 · 8 min read</p>
-<h1>Deciding what to try next, revisited</h1>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 8 — Advice for Applying ML</span><span class="right">§&nbsp;8.8 · 8 min read</span></p>
+<h1><span class="secno">8.8</span>Deciding what to try next, revisited</h1>
 <p class="lede">Back to the six options from Lesson 1 — but now you know which half of the list to read.</p>
+<div class="bookrail" title="Lesson 107 of 172 in the book"><i style="width:62%"></i></div>
+<p class="bookrail-cap"><span>C2 · Week 3 · lesson 8 of 17</span><span class="r">107 of 172 · 62% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Remember the bike that wouldn’t go? You’ve now learned to spin the wheel and listen.
 Here is the repair table that tells you what to do with what you heard.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Symptom on the left, fix on the right</span><span class="h">the same six options from Lesson 1, now sorted</span></div><div class="demo-body" data-anim="fixtable"></div></div><h2><span class="ico">🔢</span>The table to memorise</h2><table class="data"><thead><tr><th>If you have…</th><th>…try</th><th>Because</th></tr></thead><tbody><tr><td><b><span class="gterm" data-g="bias-variance-native">high variance</span></b></td><td>get more <span class="gterm" data-g="trainingexample-native">training examples</span></td><td>more data makes memorising harder</td></tr><tr><td><b>high variance</b></td><td>try a smaller set of features</td><td>fewer knobs to <span class="gterm" data-g="overfitting-native">overfit</span> with</td></tr><tr><td><b>high variance</b></td><td>try increasing λ</td><td>stiffer model, less wiggle</td></tr><tr><td><b>high bias</b></td><td>try getting additional features</td><td>give it more information to work with</td></tr><tr><td><b>high bias</b></td><td>try adding polynomial features</td><td>let it bend</td></tr><tr><td><b>high bias</b></td><td>try decreasing λ</td><td>loosen the stiffness</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Every high-<span class="gterm" data-g="variance-f0">variance</span> fix makes the model <b>less</b> flexible. Every high-bias fix makes
 it <b>more</b> flexible. That is the entire logic of the table, and you can regenerate it from that

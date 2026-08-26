@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c22-09-improved-softmax">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C2 · Week 2 · Lesson 9 of 15 · 11 min read</p>
-<h1>Improved implementation of softmax</h1>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.9 · 11 min read</span></p>
+<h1><span class="secno">7.9</span>Improved implementation of softmax</h1>
 <p class="lede">Why `from_logits=True` exists. A short lesson about floating-point arithmetic that will save you from a class of bug that is invisible until it isn’t.</p>
+<div class="bookrail" title="Lesson 93 of 172 in the book"><i style="width:54%"></i></div>
+<p class="bookrail-cap"><span>C2 · Week 2 · lesson 9 of 15</span><span class="r">93 of 172 · 54% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Imagine a calculator that only keeps 7 digits. Ask it for 1/3 and it says 0.3333333 —
 close, but slightly wrong. Now multiply that by 3: you get 0.9999999, not 1.</p>
 <p>One rounding is harmless. But if you round, then round the rounded number, then round <em>that</em>, the

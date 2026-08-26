@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="f02-12-reshape">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">F0 · Week 2 · Lesson 12 of 16 · 7 min read</p>
-<h1>reshape, flatten and T</h1>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.12 · 7 min read</span></p>
+<h1><span class="secno">2.12</span>reshape, flatten and T</h1>
 <p class="lede">Rearranging the same numbers into a different grid — and the difference from <span class="gterm" data-g="transpose-f0">transpose</span>, which is not the same thing.</p>
+<div class="bookrail" title="Lesson 31 of 172 in the book"><i style="width:18%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 2 · lesson 12 of 16</span><span class="r">31 of 172 · 18% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have twelve numbers in a row. You can arrange them as 3 rows of 4, or 4 rows of 3, or
 2 rows of 6.</p>
 <p>The numbers do not change and never move. Only how you <b>read</b> them changes.</p></div><h2><span class="ico">🔤</span>The syntax</h2><table class="decode"><thead><tr><th>Written</th><th>Say it</th><th>What it does</th></tr></thead><tbody><tr><td><code>x.reshape(3, 4)</code></td><td>“reshape three by four”</td><td>re-cut into 3 rows of 4. Must total 12.</td></tr><tr><td><code>x.reshape(-1, 4)</code></td><td>“minus one”</td><td>“4 columns, and work out the rows for me”.</td></tr><tr><td><code>x.reshape(1, -1)</code></td><td>—</td><td>make it one row. <b>The fix for “Keras wants 2-D”.</b></td></tr><tr><td><code>x.flatten()</code></td><td>“flatten”</td><td>squash everything back to 1-D.</td></tr><tr><td><code>x.T</code></td><td>“transpose”</td><td><b>a different thing</b> — mirror rows and columns.</td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The same twelve numbers, several ways</span><span class="h">read the numbers in order — they never change position in the sequence</span></div><div class="demo-body" data-anim="freshape"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np

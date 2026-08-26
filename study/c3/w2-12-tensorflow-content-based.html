@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c32-12-tensorflow-content-based">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C3 · Week 2 · Lesson 12 of 15 · 9 min read</p>
-<h1>TensorFlow implementation of content-based filtering</h1>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.12 · 9 min read</span></p>
+<h1><span class="secno">11.12</span>TensorFlow implementation of content-based filtering</h1>
 <p class="lede">The two-tower model in about eight lines of Keras — plus the one line most people leave out.</p>
+<div class="bookrail" title="Lesson 153 of 172 in the book"><i style="width:89%"></i></div>
+<p class="bookrail-cap"><span>C3 · Week 2 · lesson 12 of 15</span><span class="r">153 of 172 · 89% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Two separate machines. One reads everything you know about a <b>person</b>
 &mdash; age bracket, what they have watched, how they tend to rate things &mdash; and boils it down
 to a short list of numbers. The other reads everything you know about a <b>film</b> and boils that

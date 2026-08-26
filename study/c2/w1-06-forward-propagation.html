@@ -11,6 +11,7 @@
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
 </head>
 <body data-slug="c21-06-forward-propagation">
 <header class="topbar">
@@ -220,9 +221,11 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">C2 · Week 1 · Lesson 6 of 16 · 11 min read</p>
-<h1>Inference: making predictions (forward propagation)</h1>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 6 — Neural Networks</span><span class="right">§&nbsp;6.6 · 11 min read</span></p>
+<h1><span class="secno">6.6</span>Inference: making predictions (forward propagation)</h1>
 <p class="lede">The complete prediction algorithm, start to finish. Handwritten digit recognition with a 25 → 15 → 1 network — and the reason it is called “forward”.</p>
+<div class="bookrail" title="Lesson 74 of 172 in the book"><i style="width:43%"></i></div>
+<p class="bookrail-cap"><span>C2 · Week 1 · lesson 6 of 16</span><span class="r">74 of 172 · 43% of the book</span></p>
 <h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>It’s a relay race, and the baton is a list of numbers.</p>
 <p>The picture hands its 64 numbers to the first panel of judges. That panel hands 25 score cards to the
 second panel. The second hands 15 score cards to the last judge. The last judge hands you one number:

@@ -281,10 +281,27 @@ def load_weeks():
     return weeks
 
 
+# ---------------------------------------------------------------- the book
+# The book structure was always latent in the content — one part per course,
+# one chapter per week, one numbered section per lesson. Naming it gives every
+# lesson a stable address (§ 8.4) and a position in the whole (97 of 172),
+# which a per-week "Lesson 4 of 17" cannot express.
+PARTS = [
+    ("F0", "I",   "Foundations"),
+    ("C1", "II",  "Supervised Learning"),
+    ("C2", "III", "Neural Networks & Practice"),
+    ("C3", "IV",  "Unsupervised, Recommenders, RL"),
+]
+PART_OF = {c: (roman, title) for c, roman, title in PARTS}
+
+
 def flatten(weeks):
-    """Return a flat, ordered list of lesson records."""
+    """Return a flat, ordered list of lesson records, numbered as a book."""
     flat = []
+    chapter = 0
     for w in weeks:
+        chapter += 1
+        roman, part_title = PART_OF.get(w["course"], ("", ""))
         for i, L in enumerate(w["lessons"]):
             slug = "%s%s-%s" % (w["course"].lower(), w["week"], L["slug"])
             flat.append({
@@ -293,7 +310,15 @@ def flatten(weeks):
                 "n": i + 1,
                 "week": w,
                 "L": L,
+                # book coordinates
+                "part": roman,
+                "part_title": part_title,
+                "chapter": chapter,
+                "sec": "%d.%d" % (chapter, i + 1),
             })
+    for k, rec in enumerate(flat):          # position in the whole book
+        rec["idx"] = k + 1
+        rec["of"] = len(flat)
     return flat
 
 
@@ -336,6 +361,7 @@ PAGE = """<!doctype html>
 <script>window.GLOSS_UP="{up}";</script>
 <script src="{up}assets/gloss-data.js"></script>
 <script src="{up}assets/gloss.js"></script>
+<script src="{up}assets/reader.js"></script>
 </head>
 <body data-slug="{slug}">
 <header class="topbar">
@@ -352,9 +378,11 @@ PAGE = """<!doctype html>
 {sidebar}
 </aside>
 <main>
-<p class="kicker">{course} · Week {week} · Lesson {n} of {of}{mins}</p>
-<h1>{title}</h1>
+<p class="runhead"><span class="part">Part {part}</span><span class="d">·</span><span class="ch">Chapter {chapter} — {week_title}</span><span class="right">§&nbsp;{sec}{mins}</span></p>
+<h1><span class="secno">{sec}</span>{title}</h1>
 <p class="lede">{lede}</p>
+<div class="bookrail" title="Lesson {idx} of {of_book} in the book"><i style="width:{pct}%"></i></div>
+<p class="bookrail-cap"><span>{course} · Week {week} · lesson {n} of {of}</span><span class="r">{idx} of {of_book} · {pct}% of the book</span></p>
 {body}
 <nav class="pager">
 {prev}
@@ -404,6 +432,7 @@ INDEX = """<!doctype html>
 </main>
 </div>
 <script src="assets/anim.js"></script>
+<script src="assets/cover.js"></script>
 </body>
 </html>
 """
@@ -2048,6 +2077,10 @@ def build():
             nav_title=html.escape(L["title"]),
             course=w["course"], week=w["week"], slug=rec["slug"],
             n=rec["n"], of=week_len, mins=mins,
+            part=rec["part"], chapter=rec["chapter"], sec=rec["sec"],
+            week_title=html.escape(w["title"]),
+            idx=rec["idx"], of_book=rec["of"],
+            pct=round(rec["idx"] / rec["of"] * 100),
             lede=L["lede"], body=body_html,
             sidebar=sidebar(weeks, flat, rec["slug"], depth),
             prev=pager_link(prev, depth, "prev"),
