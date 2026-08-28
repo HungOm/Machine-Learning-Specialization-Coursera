@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From scratch &#183; An agent loop, and how it breaks</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+</head>
+<body data-slug="scratch-13-agent-loop" data-printable="From scratch &#183; An agent loop, and how it breaks|10 steps">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">From scratch &#183; <b>An agent loop, and how it breaks</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="done-btn">mark done</button>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<a href="../index.html" style="font-weight:700">← Study plan</a>
+<a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
+<a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
+<a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../paper.html" style="font-weight:700">✐ On paper</a>
+<a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
+<a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
+<a href="../progress.html" style="font-weight:700">▲ Progress</a>
+<a href="../reference.html" style="font-weight:700">☰ Reference sheet</a>
+<a href="../symbols.html" style="font-weight:700">∑ Symbol glossary</a>
+<a href="../map.html" style="font-weight:700">◈ Concept map</a>
+<a href="../book-index.html" style="font-weight:700;margin-bottom:10px">⌥ Index</a>
+<h4>F0 · W1 — The Maths You Actually Need</h4>
+<a class="" data-slug-link="f01-01-what-is-a-function" href="../f0/w1-01-what-is-a-function.html"><span class="n">01</span>What a function is</a>
+<a class="" data-slug-link="f01-02-reading-a-graph" href="../f0/w1-02-reading-a-graph.html"><span class="n">02</span>Reading a graph</a>
+<a class="" data-slug-link="f01-03-greek-letters" href="../f0/w1-03-greek-letters.html"><span class="n">03</span>Greek letters and other symbols</a>
+<a class="" data-slug-link="f01-04-slope" href="../f0/w1-04-slope.html"><span class="n">04</span>Slope — rise over run</a>
+<a class="" data-slug-link="f01-05-derivatives" href="../f0/w1-05-derivatives.html"><span class="n">05</span>What a derivative actually is</a>
+<a class="" data-slug-link="f01-06-partial-derivatives" href="../f0/w1-06-partial-derivatives.html"><span class="n">06</span>Partial derivatives</a>
+<a class="" data-slug-link="f01-07-sigma-notation" href="../f0/w1-07-sigma-notation.html"><span class="n">07</span>Σ — summation notation</a>
+<a class="" data-slug-link="f01-08-pi-notation" href="../f0/w1-08-pi-notation.html"><span class="n">08</span>Π — multiplying them all</a>
+<a class="" data-slug-link="f01-09-vectors" href="../f0/w1-09-vectors.html"><span class="n">09</span>Vectors</a>
+<a class="" data-slug-link="f01-10-dot-product" href="../f0/w1-10-dot-product.html"><span class="n">10</span>The dot product</a>
+<a class="" data-slug-link="f01-11-matrices" href="../f0/w1-11-matrices.html"><span class="n">11</span>Matrices and shapes</a>
+<a class="" data-slug-link="f01-12-matrix-multiplication" href="../f0/w1-12-matrix-multiplication.html"><span class="n">12</span>Matrix multiplication</a>
+<a class="" data-slug-link="f01-13-transpose" href="../f0/w1-13-transpose.html"><span class="n">13</span>Transpose</a>
+<a class="" data-slug-link="f01-14-exponentials" href="../f0/w1-14-exponentials.html"><span class="n">14</span>Exponentials and e</a>
+<a class="" data-slug-link="f01-15-logarithms" href="../f0/w1-15-logarithms.html"><span class="n">15</span>Logarithms</a>
+<a class="" data-slug-link="f01-16-probability" href="../f0/w1-16-probability.html"><span class="n">16</span>Probability basics</a>
+<a class="" data-slug-link="f01-17-mean-variance" href="../f0/w1-17-mean-variance.html"><span class="n">17</span>Mean, variance and standard deviation</a>
+<a class="" data-slug-link="f01-18-normal-distribution" href="../f0/w1-18-normal-distribution.html"><span class="n">18</span>The normal distribution</a>
+<a class="" data-slug-link="f01-19-min-max-argmax" href="../f0/w1-19-min-max-argmax.html"><span class="n">19</span>min, max, argmin and argmax</a>
+<h4>F0 · W2 — Python, NumPy and pandas</h4>
+<a class="" data-slug-link="f02-01-jupyter" href="../f0/w2-01-jupyter.html"><span class="n">01</span>Jupyter notebooks</a>
+<a class="" data-slug-link="f02-02-types" href="../f0/w2-02-types.html"><span class="n">02</span>Values and types</a>
+<a class="" data-slug-link="f02-03-lists-vs-arrays" href="../f0/w2-03-lists-vs-arrays.html"><span class="n">03</span>Lists vs NumPy arrays</a>
+<a class="" data-slug-link="f02-04-indexing-slicing" href="../f0/w2-04-indexing-slicing.html"><span class="n">04</span>Indexing and slicing</a>
+<a class="" data-slug-link="f02-05-shape-and-axis" href="../f0/w2-05-shape-and-axis.html"><span class="n">05</span>Shape and axis</a>
+<a class="" data-slug-link="f02-06-creating-arrays" href="../f0/w2-06-creating-arrays.html"><span class="n">06</span>Creating arrays</a>
+<a class="" data-slug-link="f02-07-elementwise" href="../f0/w2-07-elementwise.html"><span class="n">07</span>Elementwise arithmetic</a>
+<a class="" data-slug-link="f02-08-broadcasting" href="../f0/w2-08-broadcasting.html"><span class="n">08</span>Broadcasting</a>
+<a class="" data-slug-link="f02-09-dot-in-code" href="../f0/w2-09-dot-in-code.html"><span class="n">09</span>np.dot, matmul and @</a>
+<a class="" data-slug-link="f02-10-aggregations" href="../f0/w2-10-aggregations.html"><span class="n">10</span>sum, mean, max — along an axis</a>
+<a class="" data-slug-link="f02-11-boolean-masks" href="../f0/w2-11-boolean-masks.html"><span class="n">11</span>Boolean masks</a>
+<a class="" data-slug-link="f02-12-reshape" href="../f0/w2-12-reshape.html"><span class="n">12</span>reshape, flatten and T</a>
+<a class="" data-slug-link="f02-13-pandas-dataframes" href="../f0/w2-13-pandas-dataframes.html"><span class="n">13</span>pandas DataFrames</a>
+<a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
+<a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
+<a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
+<h4>C1 · W1 — Introduction to Machine Learning</h4>
+<a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
+<a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
+<a class="" data-slug-link="c11-03-unsupervised-learning" href="../c1/w1-03-unsupervised-learning.html"><span class="n">03</span>Unsupervised learning</a>
+<a class="" data-slug-link="c11-04-linear-regression-model" href="../c1/w1-04-linear-regression-model.html"><span class="n">04</span>The linear regression model</a>
+<a class="" data-slug-link="c11-05-cost-function-formula" href="../c1/w1-05-cost-function-formula.html"><span class="n">05</span>The cost function formula</a>
+<a class="" data-slug-link="c11-06-cost-function-intuition" href="../c1/w1-06-cost-function-intuition.html"><span class="n">06</span>Cost function intuition</a>
+<a class="" data-slug-link="c11-07-visualizing-the-cost-function" href="../c1/w1-07-visualizing-the-cost-function.html"><span class="n">07</span>Visualizing the cost function</a>
+<a class="" data-slug-link="c11-08-gradient-descent" href="../c1/w1-08-gradient-descent.html"><span class="n">08</span>Gradient descent</a>
+<a class="" data-slug-link="c11-09-implementing-gradient-descent" href="../c1/w1-09-implementing-gradient-descent.html"><span class="n">09</span>Implementing gradient descent</a>
+<a class="" data-slug-link="c11-10-gradient-descent-intuition" href="../c1/w1-10-gradient-descent-intuition.html"><span class="n">10</span>Gradient descent intuition</a>
+<a class="" data-slug-link="c11-11-learning-rate" href="../c1/w1-11-learning-rate.html"><span class="n">11</span>The learning rate</a>
+<a class="" data-slug-link="c11-12-gradient-descent-for-linear-regression" href="../c1/w1-12-gradient-descent-for-linear-regression.html"><span class="n">12</span>Gradient descent for linear regression</a>
+<a class="" data-slug-link="c11-13-running-gradient-descent" href="../c1/w1-13-running-gradient-descent.html"><span class="n">13</span>Running gradient descent</a>
+<h4>C1 · W2 — Regression with Multiple Variables</h4>
+<a class="" data-slug-link="c12-01-multiple-features" href="../c1/w2-01-multiple-features.html"><span class="n">01</span>Multiple features</a>
+<a class="" data-slug-link="c12-02-vectorization" href="../c1/w2-02-vectorization.html"><span class="n">02</span>Vectorization</a>
+<a class="" data-slug-link="c12-03-why-vectorization-is-fast" href="../c1/w2-03-why-vectorization-is-fast.html"><span class="n">03</span>Why vectorization is fast</a>
+<a class="" data-slug-link="c12-04-gradient-descent-multiple-features" href="../c1/w2-04-gradient-descent-multiple-features.html"><span class="n">04</span>Gradient descent for multiple linear regression</a>
+<a class="" data-slug-link="c12-05-feature-scaling" href="../c1/w2-05-feature-scaling.html"><span class="n">05</span>Feature scaling</a>
+<a class="" data-slug-link="c12-06-checking-convergence" href="../c1/w2-06-checking-convergence.html"><span class="n">06</span>Checking gradient descent for convergence</a>
+<a class="" data-slug-link="c12-07-choosing-the-learning-rate" href="../c1/w2-07-choosing-the-learning-rate.html"><span class="n">07</span>Choosing the learning rate</a>
+<a class="" data-slug-link="c12-08-feature-engineering" href="../c1/w2-08-feature-engineering.html"><span class="n">08</span>Feature engineering</a>
+<a class="" data-slug-link="c12-09-polynomial-regression" href="../c1/w2-09-polynomial-regression.html"><span class="n">09</span>Polynomial regression</a>
+<h4>C1 · W3 — Classification</h4>
+<a class="" data-slug-link="c13-01-motivations" href="../c1/w3-01-motivations.html"><span class="n">01</span>Motivations: why not linear regression?</a>
+<a class="" data-slug-link="c13-02-logistic-regression" href="../c1/w3-02-logistic-regression.html"><span class="n">02</span>Logistic regression</a>
+<a class="" data-slug-link="c13-03-decision-boundary" href="../c1/w3-03-decision-boundary.html"><span class="n">03</span>The decision boundary</a>
+<a class="" data-slug-link="c13-04-cost-function-for-logistic-regression" href="../c1/w3-04-cost-function-for-logistic-regression.html"><span class="n">04</span>Cost function for logistic regression</a>
+<a class="" data-slug-link="c13-05-logistic-loss" href="../c1/w3-05-logistic-loss.html"><span class="n">05</span>The logistic loss, in detail</a>
+<a class="" data-slug-link="c13-06-simplified-cost-function" href="../c1/w3-06-simplified-cost-function.html"><span class="n">06</span>The simplified cost function</a>
+<a class="" data-slug-link="c13-07-gradient-descent-logistic" href="../c1/w3-07-gradient-descent-logistic.html"><span class="n">07</span>Gradient descent for logistic regression</a>
+<a class="" data-slug-link="c13-08-the-problem-of-overfitting" href="../c1/w3-08-the-problem-of-overfitting.html"><span class="n">08</span>The problem of overfitting</a>
+<a class="" data-slug-link="c13-09-addressing-overfitting" href="../c1/w3-09-addressing-overfitting.html"><span class="n">09</span>Addressing overfitting</a>
+<a class="" data-slug-link="c13-10-cost-function-with-regularization" href="../c1/w3-10-cost-function-with-regularization.html"><span class="n">10</span>The cost function with regularization</a>
+<a class="" data-slug-link="c13-11-regularized-gradient-descent" href="../c1/w3-11-regularized-gradient-descent.html"><span class="n">11</span>Regularized linear and logistic regression</a>
+<h4>C2 · W1 — Neural Networks</h4>
+<a class="" data-slug-link="c21-01-neurons-and-the-brain" href="../c2/w1-01-neurons-and-the-brain.html"><span class="n">01</span>Neurons and the brain</a>
+<a class="" data-slug-link="c21-02-demand-prediction" href="../c2/w1-02-demand-prediction.html"><span class="n">02</span>Demand prediction</a>
+<a class="" data-slug-link="c21-03-recognizing-images" href="../c2/w1-03-recognizing-images.html"><span class="n">03</span>Example: recognizing images</a>
+<a class="" data-slug-link="c21-04-neural-network-layer" href="../c2/w1-04-neural-network-layer.html"><span class="n">04</span>Neural network layer</a>
+<a class="" data-slug-link="c21-05-more-complex-networks" href="../c2/w1-05-more-complex-networks.html"><span class="n">05</span>More complex neural networks</a>
+<a class="" data-slug-link="c21-06-forward-propagation" href="../c2/w1-06-forward-propagation.html"><span class="n">06</span>Inference: making predictions (forward propagation)</a>
+<a class="" data-slug-link="c21-07-tensorflow-inference-code" href="../c2/w1-07-tensorflow-inference-code.html"><span class="n">07</span>Inference in code (TensorFlow)</a>
+<a class="" data-slug-link="c21-08-data-in-tensorflow" href="../c2/w1-08-data-in-tensorflow.html"><span class="n">08</span>Data in TensorFlow</a>
+<a class="" data-slug-link="c21-09-building-a-network-sequential" href="../c2/w1-09-building-a-network-sequential.html"><span class="n">09</span>Building a neural network (Sequential)</a>
+<a class="" data-slug-link="c21-10-forward-prop-single-layer" href="../c2/w1-10-forward-prop-single-layer.html"><span class="n">10</span>Forward prop in a single layer (NumPy)</a>
+<a class="" data-slug-link="c21-11-general-forward-prop" href="../c2/w1-11-general-forward-prop.html"><span class="n">11</span>General implementation of forward propagation</a>
+<a class="" data-slug-link="c21-12-path-to-agi" href="../c2/w1-12-path-to-agi.html"><span class="n">12</span>Is there a path to AGI?</a>
+<a class="" data-slug-link="c21-13-vectorization" href="../c2/w1-13-vectorization.html"><span class="n">13</span>How neural networks are implemented efficiently</a>
+<a class="" data-slug-link="c21-14-matrix-multiplication" href="../c2/w1-14-matrix-multiplication.html"><span class="n">14</span>Matrix multiplication</a>
+<a class="" data-slug-link="c21-15-matmul-rules" href="../c2/w1-15-matmul-rules.html"><span class="n">15</span>Matrix multiplication rules</a>
+<a class="" data-slug-link="c21-16-matmul-code" href="../c2/w1-16-matmul-code.html"><span class="n">16</span>Matrix multiplication code</a>
+<h4>C2 · W2 — Neural Network Training</h4>
+<a class="" data-slug-link="c22-01-tensorflow-training" href="../c2/w2-01-tensorflow-training.html"><span class="n">01</span>TensorFlow implementation of training</a>
+<a class="" data-slug-link="c22-02-training-details" href="../c2/w2-02-training-details.html"><span class="n">02</span>Training details</a>
+<a class="" data-slug-link="c22-03-sigmoid-alternatives" href="../c2/w2-03-sigmoid-alternatives.html"><span class="n">03</span>Alternatives to the sigmoid activation</a>
+<a class="" data-slug-link="c22-04-choosing-activations" href="../c2/w2-04-choosing-activations.html"><span class="n">04</span>Choosing activation functions</a>
+<a class="" data-slug-link="c22-05-why-activations" href="../c2/w2-05-why-activations.html"><span class="n">05</span>Why do we need activation functions?</a>
+<a class="" data-slug-link="c22-06-multiclass" href="../c2/w2-06-multiclass.html"><span class="n">06</span>Multiclass classification</a>
+<a class="" data-slug-link="c22-07-softmax" href="../c2/w2-07-softmax.html"><span class="n">07</span>Softmax</a>
+<a class="" data-slug-link="c22-08-softmax-output-layer" href="../c2/w2-08-softmax-output-layer.html"><span class="n">08</span>Neural network with Softmax output</a>
+<a class="" data-slug-link="c22-09-improved-softmax" href="../c2/w2-09-improved-softmax.html"><span class="n">09</span>Improved implementation of softmax</a>
+<a class="" data-slug-link="c22-10-multi-label" href="../c2/w2-10-multi-label.html"><span class="n">10</span>Classification with multiple outputs (multi-label)</a>
+<a class="" data-slug-link="c22-11-advanced-optimization" href="../c2/w2-11-advanced-optimization.html"><span class="n">11</span>Advanced optimization (Adam)</a>
+<a class="" data-slug-link="c22-12-additional-layer-types" href="../c2/w2-12-additional-layer-types.html"><span class="n">12</span>Additional layer types (convolutional)</a>
+<a class="" data-slug-link="c22-13-what-is-a-derivative" href="../c2/w2-13-what-is-a-derivative.html"><span class="n">13</span>What is a derivative? (optional)</a>
+<a class="" data-slug-link="c22-14-computation-graph" href="../c2/w2-14-computation-graph.html"><span class="n">14</span>Computation graph (optional)</a>
+<a class="" data-slug-link="c22-15-larger-network-example" href="../c2/w2-15-larger-network-example.html"><span class="n">15</span>Larger neural network example (optional)</a>
+<h4>C2 · W3 — Advice for Applying ML</h4>
+<a class="" data-slug-link="c23-01-deciding-what-to-try-next" href="../c2/w3-01-deciding-what-to-try-next.html"><span class="n">01</span>Deciding what to try next</a>
+<a class="" data-slug-link="c23-02-evaluating-a-model" href="../c2/w3-02-evaluating-a-model.html"><span class="n">02</span>Evaluating a model</a>
+<a class="" data-slug-link="c23-03-model-selection" href="../c2/w3-03-model-selection.html"><span class="n">03</span>Model selection and train / cross-validation / test</a>
+<a class="" data-slug-link="c23-04-bias-and-variance" href="../c2/w3-04-bias-and-variance.html"><span class="n">04</span>Diagnosing bias and variance</a>
+<a class="" data-slug-link="c23-05-regularization-bias-variance" href="../c2/w3-05-regularization-bias-variance.html"><span class="n">05</span>Regularization and bias/variance</a>
+<a class="" data-slug-link="c23-06-baseline-performance" href="../c2/w3-06-baseline-performance.html"><span class="n">06</span>Establishing a baseline level of performance</a>
+<a class="" data-slug-link="c23-07-learning-curves" href="../c2/w3-07-learning-curves.html"><span class="n">07</span>Learning curves</a>
+<a class="" data-slug-link="c23-08-what-to-try-revisited" href="../c2/w3-08-what-to-try-revisited.html"><span class="n">08</span>Deciding what to try next, revisited</a>
+<a class="" data-slug-link="c23-09-bias-variance-neural-networks" href="../c2/w3-09-bias-variance-neural-networks.html"><span class="n">09</span>Bias / variance and neural networks</a>
+<a class="" data-slug-link="c23-10-iterative-loop" href="../c2/w3-10-iterative-loop.html"><span class="n">10</span>The iterative loop of ML development</a>
+<a class="" data-slug-link="c23-11-error-analysis" href="../c2/w3-11-error-analysis.html"><span class="n">11</span>Error analysis</a>
+<a class="" data-slug-link="c23-12-adding-data" href="../c2/w3-12-adding-data.html"><span class="n">12</span>Adding data</a>
+<a class="" data-slug-link="c23-13-transfer-learning" href="../c2/w3-13-transfer-learning.html"><span class="n">13</span>Transfer learning</a>
+<a class="" data-slug-link="c23-14-full-cycle" href="../c2/w3-14-full-cycle.html"><span class="n">14</span>The full cycle of a machine learning project</a>
+<a class="" data-slug-link="c23-15-fairness-bias-ethics" href="../c2/w3-15-fairness-bias-ethics.html"><span class="n">15</span>Fairness, bias, and ethics</a>
+<a class="" data-slug-link="c23-16-skewed-datasets" href="../c2/w3-16-skewed-datasets.html"><span class="n">16</span>Error metrics for skewed datasets</a>
+<a class="" data-slug-link="c23-17-precision-recall-tradeoff" href="../c2/w3-17-precision-recall-tradeoff.html"><span class="n">17</span>Trading off precision and recall</a>
+<h4>C2 · W4 — Decision Trees</h4>
+<a class="" data-slug-link="c24-01-decision-tree-model" href="../c2/w4-01-decision-tree-model.html"><span class="n">01</span>Decision tree model</a>
+<a class="" data-slug-link="c24-02-learning-process" href="../c2/w4-02-learning-process.html"><span class="n">02</span>The learning process</a>
+<a class="" data-slug-link="c24-03-measuring-purity" href="../c2/w4-03-measuring-purity.html"><span class="n">03</span>Measuring purity (entropy)</a>
+<a class="" data-slug-link="c24-04-information-gain" href="../c2/w4-04-information-gain.html"><span class="n">04</span>Choosing a split: information gain</a>
+<a class="" data-slug-link="c24-05-putting-it-together" href="../c2/w4-05-putting-it-together.html"><span class="n">05</span>Putting it together</a>
+<a class="" data-slug-link="c24-06-one-hot-encoding" href="../c2/w4-06-one-hot-encoding.html"><span class="n">06</span>Using one-hot encoding of categorical features</a>
+<a class="" data-slug-link="c24-07-continuous-features" href="../c2/w4-07-continuous-features.html"><span class="n">07</span>Continuous valued features</a>
+<a class="" data-slug-link="c24-08-regression-trees" href="../c2/w4-08-regression-trees.html"><span class="n">08</span>Regression trees</a>
+<a class="" data-slug-link="c24-09-using-multiple-trees" href="../c2/w4-09-using-multiple-trees.html"><span class="n">09</span>Using multiple decision trees</a>
+<a class="" data-slug-link="c24-10-sampling-with-replacement" href="../c2/w4-10-sampling-with-replacement.html"><span class="n">10</span>Sampling with replacement</a>
+<a class="" data-slug-link="c24-11-random-forest" href="../c2/w4-11-random-forest.html"><span class="n">11</span>Random forest algorithm</a>
+<a class="" data-slug-link="c24-12-xgboost" href="../c2/w4-12-xgboost.html"><span class="n">12</span>XGBoost</a>
+<a class="" data-slug-link="c24-13-trees-vs-neural-networks" href="../c2/w4-13-trees-vs-neural-networks.html"><span class="n">13</span>When to use decision trees</a>
+<h4>C3 · W1 — Unsupervised Learning</h4>
+<a class="" data-slug-link="c31-01-what-is-clustering" href="../c3/w1-01-what-is-clustering.html"><span class="n">01</span>What is clustering?</a>
+<a class="" data-slug-link="c31-02-kmeans-intuition" href="../c3/w1-02-kmeans-intuition.html"><span class="n">02</span>K-means intuition</a>
+<a class="" data-slug-link="c31-03-kmeans-algorithm" href="../c3/w1-03-kmeans-algorithm.html"><span class="n">03</span>The K-means algorithm</a>
+<a class="" data-slug-link="c31-04-kmeans-cost" href="../c3/w1-04-kmeans-cost.html"><span class="n">04</span>The optimization objective</a>
+<a class="" data-slug-link="c31-05-initializing-kmeans" href="../c3/w1-05-initializing-kmeans.html"><span class="n">05</span>Initializing K-means</a>
+<a class="" data-slug-link="c31-06-choosing-k" href="../c3/w1-06-choosing-k.html"><span class="n">06</span>Choosing the number of clusters</a>
+<a class="" data-slug-link="c31-07-finding-unusual-events" href="../c3/w1-07-finding-unusual-events.html"><span class="n">07</span>Finding unusual events</a>
+<a class="" data-slug-link="c31-08-gaussian-distribution" href="../c3/w1-08-gaussian-distribution.html"><span class="n">08</span>The Gaussian (normal) distribution</a>
+<a class="" data-slug-link="c31-09-anomaly-detection-algorithm" href="../c3/w1-09-anomaly-detection-algorithm.html"><span class="n">09</span>The anomaly detection algorithm</a>
+<a class="" data-slug-link="c31-10-developing-anomaly-detection" href="../c3/w1-10-developing-anomaly-detection.html"><span class="n">10</span>Developing and evaluating an anomaly detection system</a>
+<a class="" data-slug-link="c31-11-anomaly-vs-supervised" href="../c3/w1-11-anomaly-vs-supervised.html"><span class="n">11</span>Anomaly detection vs. supervised learning</a>
+<a class="" data-slug-link="c31-12-choosing-features" href="../c3/w1-12-choosing-features.html"><span class="n">12</span>Choosing what features to use</a>
+<h4>C3 · W2 — Recommender Systems</h4>
+<a class="" data-slug-link="c32-01-making-recommendations" href="../c3/w2-01-making-recommendations.html"><span class="n">01</span>Making recommendations</a>
+<a class="" data-slug-link="c32-02-per-item-features" href="../c3/w2-02-per-item-features.html"><span class="n">02</span>Using per-item features</a>
+<a class="" data-slug-link="c32-03-collaborative-filtering" href="../c3/w2-03-collaborative-filtering.html"><span class="n">03</span>The collaborative filtering algorithm</a>
+<a class="" data-slug-link="c32-04-binary-labels" href="../c3/w2-04-binary-labels.html"><span class="n">04</span>Binary labels: favs, likes and clicks</a>
+<a class="" data-slug-link="c32-05-mean-normalization" href="../c3/w2-05-mean-normalization.html"><span class="n">05</span>Mean normalization</a>
+<a class="" data-slug-link="c32-06-tensorflow-collaborative" href="../c3/w2-06-tensorflow-collaborative.html"><span class="n">06</span>TensorFlow implementation of collaborative filtering</a>
+<a class="" data-slug-link="c32-07-finding-related-items" href="../c3/w2-07-finding-related-items.html"><span class="n">07</span>Finding related items</a>
+<a class="" data-slug-link="c32-08-collaborative-vs-content" href="../c3/w2-08-collaborative-vs-content.html"><span class="n">08</span>Collaborative filtering vs content-based filtering</a>
+<a class="" data-slug-link="c32-09-deep-content-based" href="../c3/w2-09-deep-content-based.html"><span class="n">09</span>Deep learning for content-based filtering</a>
+<a class="" data-slug-link="c32-10-large-catalogues" href="../c3/w2-10-large-catalogues.html"><span class="n">10</span>Recommending from a large catalogue</a>
+<a class="" data-slug-link="c32-11-ethics-recommenders" href="../c3/w2-11-ethics-recommenders.html"><span class="n">11</span>Ethical use of recommender systems</a>
+<a class="" data-slug-link="c32-12-tensorflow-content-based" href="../c3/w2-12-tensorflow-content-based.html"><span class="n">12</span>TensorFlow implementation of content-based filtering</a>
+<a class="" data-slug-link="c32-13-reducing-features-pca" href="../c3/w2-13-reducing-features-pca.html"><span class="n">13</span>Reducing the number of features (PCA)</a>
+<a class="" data-slug-link="c32-14-pca-algorithm" href="../c3/w2-14-pca-algorithm.html"><span class="n">14</span>The PCA algorithm</a>
+<a class="" data-slug-link="c32-15-pca-in-code" href="../c3/w2-15-pca-in-code.html"><span class="n">15</span>PCA in code</a>
+<h4>C3 · W3 — Reinforcement Learning</h4>
+<a class="" data-slug-link="c33-01-what-is-rl" href="../c3/w3-01-what-is-rl.html"><span class="n">01</span>What is reinforcement learning?</a>
+<a class="" data-slug-link="c33-02-mars-rover" href="../c3/w3-02-mars-rover.html"><span class="n">02</span>The Mars rover example</a>
+<a class="" data-slug-link="c33-03-the-return" href="../c3/w3-03-the-return.html"><span class="n">03</span>The Return in reinforcement learning</a>
+<a class="" data-slug-link="c33-04-policies" href="../c3/w3-04-policies.html"><span class="n">04</span>Making decisions: policies</a>
+<a class="" data-slug-link="c33-05-review-of-key-concepts" href="../c3/w3-05-review-of-key-concepts.html"><span class="n">05</span>Review of key concepts</a>
+<a class="" data-slug-link="c33-06-state-action-value-function" href="../c3/w3-06-state-action-value-function.html"><span class="n">06</span>State-action value function</a>
+<a class="" data-slug-link="c33-07-state-action-value-example" href="../c3/w3-07-state-action-value-example.html"><span class="n">07</span>State-action value function example</a>
+<a class="" data-slug-link="c33-08-bellman-equation" href="../c3/w3-08-bellman-equation.html"><span class="n">08</span>The Bellman equation</a>
+<a class="" data-slug-link="c33-09-stochastic-environments" href="../c3/w3-09-stochastic-environments.html"><span class="n">09</span>Random (stochastic) environments</a>
+<a class="" data-slug-link="c33-10-continuous-state-spaces" href="../c3/w3-10-continuous-state-spaces.html"><span class="n">10</span>Continuous state spaces</a>
+<a class="" data-slug-link="c33-11-lunar-lander" href="../c3/w3-11-lunar-lander.html"><span class="n">11</span>The lunar lander</a>
+<a class="" data-slug-link="c33-12-learning-the-state-value-function" href="../c3/w3-12-learning-the-state-value-function.html"><span class="n">12</span>Learning the state-value function</a>
+<a class="" data-slug-link="c33-13-improved-architecture" href="../c3/w3-13-improved-architecture.html"><span class="n">13</span>Algorithm refinement: improved neural network architecture</a>
+<a class="" data-slug-link="c33-14-epsilon-greedy" href="../c3/w3-14-epsilon-greedy.html"><span class="n">14</span>Algorithm refinement: ε-greedy policy</a>
+<a class="" data-slug-link="c33-15-minibatch-soft-updates" href="../c3/w3-15-minibatch-soft-updates.html"><span class="n">15</span>Algorithm refinement: mini-batch and soft updates</a>
+<a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
+<h4>C4 · W1 — Sequences, Embeddings and the Old Answers</h4>
+<a class="" data-slug-link="c41-01-why-order-matters" href="../c4/w1-01-why-order-matters.html"><span class="n">01</span>Why order matters</a>
+<a class="" data-slug-link="c41-02-tokens" href="../c4/w1-02-tokens.html"><span class="n">02</span>Tokens — what a model actually reads</a>
+<a class="" data-slug-link="c41-03-one-hot-and-why-it-fails" href="../c4/w1-03-one-hot-and-why-it-fails.html"><span class="n">03</span>One-hot vectors, and why they fail here</a>
+<a class="" data-slug-link="c41-04-embeddings" href="../c4/w1-04-embeddings.html"><span class="n">04</span>Embeddings — a learned lookup table</a>
+<a class="" data-slug-link="c41-05-rnn-idea" href="../c4/w1-05-rnn-idea.html"><span class="n">05</span>What RNNs tried</a>
+<a class="" data-slug-link="c41-06-why-rnns-failed" href="../c4/w1-06-why-rnns-failed.html"><span class="n">06</span>Why RNNs failed — the two limits</a>
+<a class="" data-slug-link="c41-07-the-bottleneck" href="../c4/w1-07-the-bottleneck.html"><span class="n">07</span>The bottleneck, and the first attention</a>
+<a class="" data-slug-link="c41-08-week-1-review" href="../c4/w1-08-week-1-review.html"><span class="n">08</span>Where this leaves us</a>
+<h4>C4 · W2 — Attention</h4>
+<a class="" data-slug-link="c42-01-the-idea" href="../c4/w2-01-the-idea.html"><span class="n">01</span>Attention, in one sentence</a>
+<a class="" data-slug-link="c42-02-query-key-value" href="../c4/w2-02-query-key-value.html"><span class="n">02</span>Query, key, value — three roles, one input</a>
+<a class="" data-slug-link="c42-03-attention-by-hand" href="../c4/w2-03-attention-by-hand.html"><span class="n">03</span>Attention, computed by hand</a>
+<a class="" data-slug-link="c42-04-self-attention" href="../c4/w2-04-self-attention.html"><span class="n">04</span>Self-attention — a sentence reading itself</a>
+<a class="" data-slug-link="c42-05-why-scale" href="../c4/w2-05-why-scale.html"><span class="n">05</span>Why divide by √d</a>
+<a class="" data-slug-link="c42-06-multi-head" href="../c4/w2-06-multi-head.html"><span class="n">06</span>Multi-head attention</a>
+<a class="" data-slug-link="c42-07-masking" href="../c4/w2-07-masking.html"><span class="n">07</span>Masking — stopping a model reading ahead</a>
+<a class="" data-slug-link="c42-08-the-cost" href="../c4/w2-08-the-cost.html"><span class="n">08</span>What attention costs</a>
+<h4>C4 · W3 — The Transformer Block</h4>
+<a class="" data-slug-link="c43-01-positional-encoding" href="../c4/w3-01-positional-encoding.html"><span class="n">01</span>Positional encoding — putting order back</a>
+<a class="" data-slug-link="c43-02-residuals" href="../c4/w3-02-residuals.html"><span class="n">02</span>Residual connections</a>
+<a class="" data-slug-link="c43-03-layer-norm" href="../c4/w3-03-layer-norm.html"><span class="n">03</span>Layer normalization</a>
+<a class="" data-slug-link="c43-04-feed-forward" href="../c4/w3-04-feed-forward.html"><span class="n">04</span>The feed-forward layer</a>
+<a class="" data-slug-link="c43-05-the-block" href="../c4/w3-05-the-block.html"><span class="n">05</span>The block, assembled</a>
+<a class="" data-slug-link="c43-06-stacking" href="../c4/w3-06-stacking.html"><span class="n">06</span>Stacking blocks — what depth buys</a>
+<a class="" data-slug-link="c43-07-gpt-vs-bert" href="../c4/w3-07-gpt-vs-bert.html"><span class="n">07</span>Two shapes: GPT and BERT</a>
+<a class="" data-slug-link="c43-08-counting-a-real-model" href="../c4/w3-08-counting-a-real-model.html"><span class="n">08</span>Counting a real model</a>
+<h4>C4 · W4 — From Transformer to Language Model</h4>
+<a class="" data-slug-link="c44-01-next-token" href="../c4/w4-01-next-token.html"><span class="n">01</span>The one job: predict the next token</a>
+<a class="" data-slug-link="c44-02-generation" href="../c4/w4-02-generation.html"><span class="n">02</span>How text actually comes out</a>
+<a class="" data-slug-link="c44-03-scale" href="../c4/w4-03-scale.html"><span class="n">03</span>What scale actually did</a>
+<a class="" data-slug-link="c44-04-rlhf" href="../c4/w4-04-rlhf.html"><span class="n">04</span>RLHF — from text predictor to assistant</a>
+<a class="" data-slug-link="c44-05-context-and-cost" href="../c4/w4-05-context-and-cost.html"><span class="n">05</span>Context windows and what they cost</a>
+<a class="" data-slug-link="c44-06-what-it-cannot-do" href="../c4/w4-06-what-it-cannot-do.html"><span class="n">06</span>What these models cannot reliably do</a>
+<a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
+</aside>
+<main>
+<p class="kicker">From scratch &#183; file 13 of 14 &#183; 315 lines of NumPy</p>
+<h1>An agent loop, and how it breaks</h1>
+<p class="lede">Tools, schemas, a strict parser, three guard rails and a budget — with a deterministic stub where the model goes, so that what is left on the page is exactly the part you have to get right yourself.</p>
+
+<div class="runbox">
+  <div class="rb-l">Run it yourself</div>
+  <pre><code>cd study/scratch/code
+python3 13_agent_loop.py</code></pre>
+  <p>Pure NumPy &#8212; no scikit-learn, no TensorFlow. <b>Every code block below is read
+  straight out of that file, and the output under it is what that exact block printed
+  when this page was built.</b> They cannot drift apart.</p>
+  <p class="rb-b">By the end you will have built a safe arithmetic tool, argument validation, a tool runner that never raises, an action parser, the think-act-observe loop, a repeat guard, token accounting, and an evaluation suite with deliberate failures in it.</p>
+</div>
+
+<section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;An agent loop from scratch -- tools, parsing, and the ways it goes wrong.
+
+Run me:  python3 13_agent_loop.py
+
+An &quot;agent&quot; is a loop. A model proposes an action, something runs it, the result
+goes back into the prompt, repeat until done. That is the whole architecture,
+and it is worth building once because almost everything that goes wrong lives
+in the plumbing rather than in the model.
+
+There is NO language model here. The planner in this file is a deterministic
+stub so the file runs anywhere and gives the same answer twice. Every line
+around it -- the tool schemas, the validation, the parser, the loop guards, the
+budget -- is exactly what you would keep when you swapped the stub for a real
+model. That plumbing is the part you have to get right.
+&quot;&quot;&quot;</span>
+<span class="tok-k">import</span> ast
+<span class="tok-k">import</span> re</code></pre></div></section>
+<section class="sx" id="sx-tools"><div class="sx-prose"><p>A tool is a name, a declared argument shape, and a function. The declared shape is not paperwork — it is the only thing between a wrong guess and a stack trace in production. Note that <code>calc</code> parses to a syntax tree and refuses anything not on a list; never hand a string from a model straight to <code>eval</code>.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A tool is three things: a name, a declared shape for its arguments, and a</span>
+<span class="tok-c"># function. The declared shape is not paperwork -- it is the only thing</span>
+<span class="tok-c"># standing between a wrong guess and a stack trace in production.</span>
+SAFE_NODES = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant,
+              ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.Mod,
+              ast.USub, ast.UAdd)
+
+<span class="tok-k">def</span> calc(expr):
+    <span class="tok-d">&quot;&quot;&quot;Arithmetic only. Parse to a syntax tree and refuse any node not on the
+    list -- never hand a string from a model straight to eval().&quot;&quot;&quot;</span>
+    tree = ast.parse(expr, mode=<span class="tok-s">&quot;eval&quot;</span>)
+    <span class="tok-k">for</span> node <span class="tok-k">in</span> ast.walk(tree):
+        <span class="tok-k">if</span> <span class="tok-k">not</span> isinstance(node, SAFE_NODES):
+            <span class="tok-k">raise</span> ValueError(<span class="tok-s">&quot;not allowed in an expression: %s&quot;</span> % type(node).__name__)
+        <span class="tok-k">if</span> isinstance(node, ast.Constant) <span class="tok-k">and</span> <span class="tok-k">not</span> isinstance(node.value, (int, float)):
+            <span class="tok-k">raise</span> ValueError(<span class="tok-s">&quot;only numbers&quot;</span>)
+    <span class="tok-k">return</span> eval(compile(tree, &quot;&lt;calc&gt;<span class="tok-s">&quot;, &quot;</span>eval<span class="tok-s">&quot;), {&quot;</span>__builtins__&quot;: {}}, {})
+
+UNITS = {(<span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;m&quot;</span>): <span class="tok-n">1000.0</span>, (<span class="tok-s">&quot;m&quot;</span>, <span class="tok-s">&quot;cm&quot;</span>): <span class="tok-n">100.0</span>, (<span class="tok-s">&quot;hour&quot;</span>, <span class="tok-s">&quot;minute&quot;</span>): <span class="tok-n">60.0</span>,
+         (<span class="tok-s">&quot;day&quot;</span>, <span class="tok-s">&quot;hour&quot;</span>): <span class="tok-n">24.0</span>, (<span class="tok-s">&quot;kg&quot;</span>, <span class="tok-s">&quot;g&quot;</span>): <span class="tok-n">1000.0</span>}
+
+<span class="tok-k">def</span> convert(value, frm, to):
+    <span class="tok-d">&quot;&quot;&quot;One hop only, on purpose: a tool that quietly chains conversions is a
+    tool whose errors are impossible to attribute.&quot;&quot;&quot;</span>
+    <span class="tok-k">if</span> (frm, to) <span class="tok-k">in</span> UNITS:
+        <span class="tok-k">return</span> value * UNITS[(frm, to)]
+    <span class="tok-k">if</span> (to, frm) <span class="tok-k">in</span> UNITS:
+        <span class="tok-k">return</span> value / UNITS[(to, frm)]
+    <span class="tok-k">raise</span> ValueError(<span class="tok-s">&quot;no conversion from %s to %s&quot;</span> % (frm, to))
+
+FACTS = {
+    <span class="tok-s">&quot;entropy&quot;</span>: <span class="tok-s">&quot;a measure of impurity; 0 when a node is pure, highest when classes are even&quot;</span>,
+    <span class="tok-s">&quot;learning rate&quot;</span>: <span class="tok-s">&quot;the size of each gradient descent step; too large and the cost diverges&quot;</span>,
+    <span class="tok-s">&quot;regularisation&quot;</span>: <span class="tok-s">&quot;a penalty on large weights that trades training fit for generalisation&quot;</span>,
+    <span class="tok-s">&quot;attention&quot;</span>: <span class="tok-s">&quot;a weighted average of value vectors, weighted by query-key similarity&quot;</span>,
+}
+
+<span class="tok-k">def</span> lookup(topic):
+    key = topic.lower().strip()
+    <span class="tok-k">for</span> k <span class="tok-k">in</span> FACTS:
+        <span class="tok-k">if</span> k <span class="tok-k">in</span> key <span class="tok-k">or</span> key <span class="tok-k">in</span> k:
+            <span class="tok-k">return</span> FACTS[k]
+    <span class="tok-k">raise</span> KeyError(<span class="tok-s">&quot;nothing on file about %r&quot;</span> % topic)
+
+TOOLS = {
+    <span class="tok-s">&quot;calc&quot;</span>:    {<span class="tok-s">&quot;fn&quot;</span>: calc,    <span class="tok-s">&quot;args&quot;</span>: {<span class="tok-s">&quot;expr&quot;</span>: str},
+                <span class="tok-s">&quot;help&quot;</span>: &quot;evaluate an arithmetic expression, e.g. calc(expr=<span class="tok-s">&#x27;3*(4+5)&#x27;</span>)&quot;},
+    <span class="tok-s">&quot;convert&quot;</span>: {<span class="tok-s">&quot;fn&quot;</span>: convert, <span class="tok-s">&quot;args&quot;</span>: {<span class="tok-s">&quot;value&quot;</span>: float, <span class="tok-s">&quot;frm&quot;</span>: str, <span class="tok-s">&quot;to&quot;</span>: str},
+                <span class="tok-s">&quot;help&quot;</span>: &quot;convert one unit to another, e.g. convert(value=<span class="tok-n">2</span>, frm=<span class="tok-s">&#x27;km&#x27;</span>, to=<span class="tok-s">&#x27;m&#x27;</span>)&quot;},
+    <span class="tok-s">&quot;lookup&quot;</span>:  {<span class="tok-s">&quot;fn&quot;</span>: lookup,  <span class="tok-s">&quot;args&quot;</span>: {<span class="tok-s">&quot;topic&quot;</span>: str},
+                <span class="tok-s">&quot;help&quot;</span>: &quot;look a term up <span class="tok-k">in</span> the notes, e.g. lookup(topic=<span class="tok-s">&#x27;entropy&#x27;</span>)&quot;},
+}
+<span class="tok-k">for</span> name, t <span class="tok-k">in</span> TOOLS.items():
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;%-8s %-38s args %s&quot;</span> % (name, t[<span class="tok-s">&quot;help&quot;</span>][:<span class="tok-n">38</span>], list(t[<span class="tok-s">&quot;args&quot;</span>])))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     evaluate an arithmetic expression, e.g args [&#x27;expr&#x27;]
+convert  convert one unit to another, e.g. conv args [&#x27;value&#x27;, &#x27;frm&#x27;, &#x27;to&#x27;]
+lookup   look a term up in the notes, e.g. look args [&#x27;topic&#x27;]</pre></div></section>
+<section class="sx" id="sx-validate"><div class="sx-prose"><p>Check before running, and return something the caller can act on. <i>unknown argument radius</i> is repairable. A traceback is not.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> validate(name, kwargs):
+    <span class="tok-d">&quot;&quot;&quot;Check the call BEFORE running it, and return a message a model can act on.
+
+    &#x27;unknown argument radius&#x27; is a repairable error. A traceback is not.
+    &quot;&quot;&quot;</span>
+    <span class="tok-k">if</span> name <span class="tok-k">not</span> <span class="tok-k">in</span> TOOLS:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;no such tool %r; available: %s&quot;</span> % (name, <span class="tok-s">&quot;, &quot;</span>.join(TOOLS))
+    spec = TOOLS[name][<span class="tok-s">&quot;args&quot;</span>]
+    missing = [k <span class="tok-k">for</span> k <span class="tok-k">in</span> spec <span class="tok-k">if</span> k <span class="tok-k">not</span> <span class="tok-k">in</span> kwargs]
+    extra = [k <span class="tok-k">for</span> k <span class="tok-k">in</span> kwargs <span class="tok-k">if</span> k <span class="tok-k">not</span> <span class="tok-k">in</span> spec]
+    <span class="tok-k">if</span> missing:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;%s is missing argument(s): %s&quot;</span> % (name, <span class="tok-s">&quot;, &quot;</span>.join(missing))
+    <span class="tok-k">if</span> extra:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;%s got unexpected argument(s): %s&quot;</span> % (name, <span class="tok-s">&quot;, &quot;</span>.join(extra))
+    <span class="tok-k">for</span> k, want <span class="tok-k">in</span> spec.items():
+        <span class="tok-k">try</span>:
+            kwargs[k] = want(kwargs[k])
+        <span class="tok-k">except</span> (TypeError, ValueError):
+            <span class="tok-k">return</span> <span class="tok-s">&quot;%s: argument %s should be %s, got %r&quot;</span> % (name, k, want.__name__, kwargs[k])
+    <span class="tok-k">return</span> <span class="tok-k">None</span>
+
+<span class="tok-k">for</span> name, kw <span class="tok-k">in</span> [(<span class="tok-s">&quot;calc&quot;</span>, {<span class="tok-s">&quot;expr&quot;</span>: <span class="tok-s">&quot;2+2&quot;</span>}), (<span class="tok-s">&quot;calc&quot;</span>, {}),
+                 (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-s">&quot;two&quot;</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;m&quot;</span>}),
+                 (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;entropy&quot;</span>, <span class="tok-s">&quot;depth&quot;</span>: <span class="tok-n">3</span>}),
+                 (<span class="tok-s">&quot;browse&quot;</span>, {<span class="tok-s">&quot;url&quot;</span>: <span class="tok-s">&quot;x&quot;</span>})]:
+    <span class="tok-k">print</span>(&quot;%-8s %-42s -&gt; %s<span class="tok-s">&quot; % (name, str(kw), validate(name, dict(kw)) or &quot;</span>ok&quot;))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;2+2&#x27;}                            -&gt; ok
+calc     {}                                         -&gt; calc is missing argument(s): expr
+convert  {&#x27;value&#x27;: &#x27;two&#x27;, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;: &#x27;m&#x27;}   -&gt; convert: argument value should be float, got &#x27;two&#x27;
+lookup   {&#x27;topic&#x27;: &#x27;entropy&#x27;, &#x27;depth&#x27;: 3}           -&gt; lookup got unexpected argument(s): depth
+browse   {&#x27;url&#x27;: &#x27;x&#x27;}                               -&gt; no such tool &#x27;browse&#x27;; available: calc, convert, lookup</pre></div></section>
+<section class="sx" id="sx-run_tool"><div class="sx-prose"><p>Every failure comes back as a string. An agent that crashes on a bad call has one bad step; an agent that is told what went wrong has a chance to fix it on the next one.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> run_tool(name, kwargs):
+    <span class="tok-d">&quot;&quot;&quot;Every failure comes back as a STRING, never as an exception.
+
+    An agent that crashes on a bad tool call has one bad step. An agent that is
+    told what went wrong has a chance to fix it on the next one.
+    &quot;&quot;&quot;</span>
+    kwargs = dict(kwargs)
+    problem = validate(name, kwargs)
+    <span class="tok-k">if</span> problem:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;ERROR: &quot;</span> + problem
+    <span class="tok-k">try</span>:
+        <span class="tok-k">return</span> str(TOOLS[name][<span class="tok-s">&quot;fn&quot;</span>](**kwargs))
+    <span class="tok-k">except</span> Exception <span class="tok-k">as</span> e:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;ERROR: %s: %s&quot;</span> % (type(e).__name__, e)
+
+<span class="tok-k">for</span> name, kw <span class="tok-k">in</span> [(<span class="tok-s">&quot;calc&quot;</span>, {<span class="tok-s">&quot;expr&quot;</span>: <span class="tok-s">&quot;3*(4+5)&quot;</span>}), (<span class="tok-s">&quot;calc&quot;</span>, {<span class="tok-s">&quot;expr&quot;</span>: &quot;__import__(<span class="tok-s">&#x27;os&#x27;</span>)&quot;}),
+                 (<span class="tok-s">&quot;calc&quot;</span>, {<span class="tok-s">&quot;expr&quot;</span>: <span class="tok-s">&quot;1/0&quot;</span>}), (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-n">2.5</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;m&quot;</span>}),
+                 (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-n">1</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;kg&quot;</span>}),
+                 (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;entropy&quot;</span>}), (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;the offside rule&quot;</span>})]:
+    <span class="tok-k">print</span>(&quot;%-8s %-34s -&gt; %s&quot; % (name, str(kw)[:<span class="tok-n">34</span>], run_tool(name, kw)[:<span class="tok-n">64</span>]))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;}                -&gt; 27
+calc     {&#x27;expr&#x27;: &quot;__import__(&#x27;os&#x27;)&quot;}       -&gt; ERROR: ValueError: not allowed in an expression: Call
+calc     {&#x27;expr&#x27;: &#x27;1/0&#x27;}                    -&gt; ERROR: ZeroDivisionError: division by zero
+convert  {&#x27;value&#x27;: 2.5, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;:  -&gt; 2500.0
+convert  {&#x27;value&#x27;: 1, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;: &#x27;k -&gt; ERROR: ValueError: no conversion from km to kg
+lookup   {&#x27;topic&#x27;: &#x27;entropy&#x27;}               -&gt; a measure of impurity; 0 when a node is pure, highest when class
+lookup   {&#x27;topic&#x27;: &#x27;the offside rule&#x27;}      -&gt; ERROR: KeyError: &quot;nothing on file about &#x27;the offside rule&#x27;&quot;</pre></div></section>
+<section class="sx" id="sx-parse"><div class="sx-prose"><p>The fragile joint. A real model returns prose with a call somewhere inside, and the format is a request rather than a guarantee. Three of the five examples fail, and failing loudly is the correct behaviour — guessing at a malformed call is how agents take actions nobody asked for.</p></div><div class="sx-code"><pre><code>ACTION = re.compile(r<span class="tok-s">&quot;^Action:\s*(\w+)\((.*)\)\s*$&quot;</span>, re.M)
+KWARG = re.compile(r&quot;(\w+)\s*=\s*(?:<span class="tok-s">&#x27;([^&#x27;</span>]*)&<span class="tok-c">#x27;|\&quot;([^\&quot;]*)\&quot;|([^,]+))&quot;)</span>
+
+<span class="tok-k">def</span> parse_action(text):
+    <span class="tok-d">&quot;&quot;&quot;Pull a tool call out of free text. This is the fragile joint.
+
+    A real model returns prose with a call somewhere inside it, and the format
+    is a request, not a guarantee. Parse strictly and report the failure --
+    guessing at a malformed call is how agents take actions nobody asked for.
+    &quot;&quot;&quot;</span>
+    m = ACTION.search(text)
+    <span class="tok-k">if</span> <span class="tok-k">not</span> m:
+        <span class="tok-k">return</span> <span class="tok-k">None</span>, <span class="tok-s">&quot;no Action: line found&quot;</span>
+    name, argstr = m.group(<span class="tok-n">1</span>), m.group(<span class="tok-n">2</span>)
+    kwargs = {}
+    <span class="tok-k">for</span> km <span class="tok-k">in</span> KWARG.finditer(argstr):
+        val = next(v <span class="tok-k">for</span> v <span class="tok-k">in</span> km.groups()[<span class="tok-n">1</span>:] <span class="tok-k">if</span> v <span class="tok-k">is</span> <span class="tok-k">not</span> <span class="tok-k">None</span>)
+        kwargs[km.group(<span class="tok-n">1</span>)] = val.strip()
+    <span class="tok-k">if</span> argstr.strip() <span class="tok-k">and</span> <span class="tok-k">not</span> kwargs:
+        <span class="tok-k">return</span> <span class="tok-k">None</span>, <span class="tok-s">&quot;could not read the arguments: %r&quot;</span> % argstr
+    <span class="tok-k">return</span> (name, kwargs), <span class="tok-k">None</span>
+
+<span class="tok-k">for</span> text <span class="tok-k">in</span> [&quot;Thought: I should multiply.\nAction: calc(expr=<span class="tok-s">&#x27;3*(4+5)&#x27;</span>)&quot;,
+             &quot;Action: convert(value=<span class="tok-n">2.5</span>, frm=<span class="tok-s">&#x27;km&#x27;</span>, to=<span class="tok-s">&#x27;m&#x27;</span>)&quot;,
+             <span class="tok-s">&quot;I think the answer is 27.&quot;</span>,
+             <span class="tok-s">&quot;Action: calc(3*(4+5))&quot;</span>,
+             &quot;Action: calc(expr=<span class="tok-s">&#x27;3*(4+5)&#x27;</span>&quot;]:
+    got, err = parse_action(text)
+    <span class="tok-k">print</span>(&quot;%-46s -&gt; %s<span class="tok-s">&quot; % (repr(text.replace(&quot;</span>\n<span class="tok-s">&quot;, &quot;</span> | <span class="tok-s">&quot;))[:46], got or &quot;</span>FAILED: &quot; + err))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>&quot;Thought: I should multiply. | Action: calc(ex -&gt; (&#x27;calc&#x27;, {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;})
+&quot;Action: convert(value=2.5, frm=&#x27;km&#x27;, to=&#x27;m&#x27;)&quot; -&gt; (&#x27;convert&#x27;, {&#x27;value&#x27;: &#x27;2.5&#x27;, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;: &#x27;m&#x27;})
+&#x27;I think the answer is 27.&#x27;                    -&gt; FAILED: no Action: line found
+&#x27;Action: calc(3*(4+5))&#x27;                        -&gt; FAILED: could not read the arguments: &#x27;3*(4+5)&#x27;
+&quot;Action: calc(expr=&#x27;3*(4+5)&#x27;&quot;                  -&gt; FAILED: no Action: line found</pre></div></section>
+<section class="sx" id="sx-policy"><div class="sx-prose"><p>The stand-in for the model: deterministic, so this file gives the same answer twice and needs nothing installed. Look at the <code>\b</code> boundaries in the regex. Without them the alternation matches the <i>m</i> at the start of <i>minute</i> and converts km to metres instead — a wrong answer, silently, from a parser that looked fine.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The stand-in for the model. Deterministic, and it can only see the task text</span>
+<span class="tok-c"># and the observations so far -- exactly what a real model would see.</span>
+NUM = r<span class="tok-s">&quot;[-+]?\d*\.?\d+&quot;</span>
+
+<span class="tok-k">def</span> policy(task, observations):
+    <span class="tok-d">&quot;&quot;&quot;Return the next line the &#x27;model&#x27; would emit.&quot;&quot;&quot;</span>
+    t = task.lower()
+    <span class="tok-k">if</span> <span class="tok-s">&quot;in words&quot;</span> <span class="tok-k">in</span> t <span class="tok-k">or</span> <span class="tok-s">&quot;what does&quot;</span> <span class="tok-k">in</span> t <span class="tok-k">or</span> <span class="tok-s">&quot;what is the meaning&quot;</span> <span class="tok-k">in</span> t:
+        <span class="tok-k">if</span> <span class="tok-k">not</span> observations:
+            term = t.split(<span class="tok-s">&quot;does&quot;</span>)[-<span class="tok-n">1</span>].split(<span class="tok-s">&quot;mean&quot;</span>)[<span class="tok-n">0</span>].strip(<span class="tok-s">&quot; ?&quot;</span>) <span class="tok-k">if</span> <span class="tok-s">&quot;does&quot;</span> <span class="tok-k">in</span> t <span class="tok-k">else</span> t
+            <span class="tok-k">return</span> &quot;Thought: this <span class="tok-k">is</span> a definition.\nAction: lookup(topic=<span class="tok-s">&#x27;%s&#x27;</span>)&quot; % term
+        <span class="tok-k">return</span> <span class="tok-s">&quot;Final: %s&quot;</span> % observations[-<span class="tok-n">1</span>]
+    <span class="tok-c"># The \b at each end is not decoration. Without it the alternation matches</span>
+    <span class="tok-c"># the &quot;m&quot; at the start of &quot;minute&quot; and cheerfully converts km to m -- a</span>
+    <span class="tok-c"># wrong answer, silently, from a parser that looked fine in testing.</span>
+    m = re.search(r<span class="tok-s">&quot;(%s)\s*\b(km|m|kg|day|hour)\b\s+(?:in|to|into)\s+&quot;</span>
+                  r<span class="tok-s">&quot;\b(m|cm|g|hour|minute)\b&quot;</span> % NUM, t)
+    <span class="tok-k">if</span> m <span class="tok-k">and</span> <span class="tok-k">not</span> observations:
+        <span class="tok-k">return</span> (<span class="tok-s">&quot;Thought: convert first.\n&quot;</span>
+                &quot;Action: convert(value=%s, frm=<span class="tok-s">&#x27;%s&#x27;</span>, to=<span class="tok-s">&#x27;%s&#x27;</span>)&quot; % m.groups())
+    <span class="tok-k">if</span> m <span class="tok-k">and</span> observations <span class="tok-k">and</span> <span class="tok-s">&quot;then&quot;</span> <span class="tok-k">not</span> <span class="tok-k">in</span> t:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;Final: %s&quot;</span> % observations[-<span class="tok-n">1</span>]
+    <span class="tok-k">if</span> m <span class="tok-k">and</span> observations <span class="tok-k">and</span> <span class="tok-s">&quot;then&quot;</span> <span class="tok-k">in</span> t:
+        tail = t.split(<span class="tok-s">&quot;then&quot;</span>)[-<span class="tok-n">1</span>]
+        op = re.search(r<span class="tok-s">&quot;(times|divided by|plus|minus)\s+(%s)&quot;</span> % NUM, tail)
+        <span class="tok-k">if</span> op <span class="tok-k">and</span> len(observations) == <span class="tok-n">1</span>:
+            sym = {<span class="tok-s">&quot;times&quot;</span>: <span class="tok-s">&quot;*&quot;</span>, <span class="tok-s">&quot;divided by&quot;</span>: <span class="tok-s">&quot;/&quot;</span>, <span class="tok-s">&quot;plus&quot;</span>: <span class="tok-s">&quot;+&quot;</span>, <span class="tok-s">&quot;minus&quot;</span>: <span class="tok-s">&quot;-&quot;</span>}[op.group(<span class="tok-n">1</span>)]
+            <span class="tok-k">return</span> (<span class="tok-s">&quot;Thought: now use the conversion result.\n&quot;</span>
+                    &quot;Action: calc(expr=<span class="tok-s">&#x27;%s %s %s&#x27;</span>)&quot; % (observations[-<span class="tok-n">1</span>], sym, op.group(<span class="tok-n">2</span>)))
+        <span class="tok-k">return</span> <span class="tok-s">&quot;Final: %s&quot;</span> % observations[-<span class="tok-n">1</span>]
+    <span class="tok-k">if</span> re.search(r<span class="tok-s">&quot;[-+*/()]&quot;</span>, t) <span class="tok-k">and</span> <span class="tok-k">not</span> observations:
+        expr = re.search(r<span class="tok-s">&quot;([-+*/()\d\s.]{3,})&quot;</span>, task)
+        <span class="tok-k">if</span> expr:
+            <span class="tok-k">return</span> &quot;Thought: arithmetic.\nAction: calc(expr=<span class="tok-s">&#x27;%s&#x27;</span>)&quot; % expr.group(<span class="tok-n">1</span>).strip()
+    <span class="tok-k">if</span> observations:
+        <span class="tok-k">return</span> <span class="tok-s">&quot;Final: %s&quot;</span> % observations[-<span class="tok-n">1</span>]
+    <span class="tok-k">return</span> <span class="tok-s">&quot;Final: I do not know.&quot;</span></code></pre></div></section>
+<section class="sx" id="sx-loop"><div class="sx-prose"><p>Think, act, observe, repeat. Four tasks, and the third one needs two tools where the second feeds the first. That is the whole architecture; everything else on this page is a guard rail.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> agent(task, max_steps=<span class="tok-n">4</span>, feed_observations=<span class="tok-k">True</span>, verbose=<span class="tok-k">False</span>):
+    <span class="tok-d">&quot;&quot;&quot;think -&gt; act -&gt; observe -&gt; repeat. Everything else is a guard rail.&quot;&quot;&quot;</span>
+    observations, transcript, seen = [], [], []
+    <span class="tok-k">for</span> step <span class="tok-k">in</span> range(max_steps):
+        msg = policy(task, observations <span class="tok-k">if</span> feed_observations <span class="tok-k">else</span> [])
+        transcript.append(msg)
+        <span class="tok-k">if</span> verbose:
+            <span class="tok-k">print</span>(<span class="tok-s">&quot;   step %d: %s&quot;</span> % (step + <span class="tok-n">1</span>, msg.replace(<span class="tok-s">&quot;\n&quot;</span>, <span class="tok-s">&quot; | &quot;</span>)))
+        <span class="tok-k">if</span> msg.startswith(<span class="tok-s">&quot;Final:&quot;</span>):
+            <span class="tok-k">return</span> msg[<span class="tok-n">6</span>:].strip(), transcript, <span class="tok-s">&quot;finished&quot;</span>
+        action, err = parse_action(msg)
+        <span class="tok-k">if</span> err:
+            observations.append(<span class="tok-s">&quot;ERROR: &quot;</span> + err)
+            <span class="tok-k">continue</span>
+        <span class="tok-k">if</span> action <span class="tok-k">in</span> seen:                      <span class="tok-c"># the no-progress guard</span>
+            <span class="tok-k">return</span> <span class="tok-k">None</span>, transcript, <span class="tok-s">&quot;looped: repeated %s&quot;</span> % action[<span class="tok-n">0</span>]
+        seen.append(action)
+        obs = run_tool(*action)
+        observations.append(obs)
+        <span class="tok-k">if</span> verbose:
+            <span class="tok-k">print</span>(<span class="tok-s">&quot;      observation: %s&quot;</span> % obs[:<span class="tok-n">70</span>])
+    <span class="tok-k">return</span> <span class="tok-k">None</span>, transcript, <span class="tok-s">&quot;out of steps&quot;</span>
+
+<span class="tok-k">for</span> task <span class="tok-k">in</span> [<span class="tok-s">&quot;what is 3*(4+5)&quot;</span>, <span class="tok-s">&quot;convert 2.5 km in m&quot;</span>,
+             <span class="tok-s">&quot;convert 3 day in hour then divided by 4&quot;</span>, <span class="tok-s">&quot;what does entropy mean&quot;</span>]:
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntask:&quot;</span>, task)
+    answer, tr, why = agent(task, verbose=<span class="tok-k">True</span>)
+    <span class="tok-k">print</span>(&quot;   -&gt; %s   (%s, %d steps)&quot; % (answer, why, len(tr)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+task: what is 3*(4+5)
+   step 1: Thought: arithmetic. | Action: calc(expr=&#x27;3*(4+5)&#x27;)
+      observation: 27
+   step 2: Final: 27
+   -&gt; 27   (finished, 2 steps)
+
+task: convert 2.5 km in m
+   step 1: Thought: convert first. | Action: convert(value=2.5, frm=&#x27;km&#x27;, to=&#x27;m&#x27;)
+      observation: 2500.0
+   step 2: Final: 2500.0
+   -&gt; 2500.0   (finished, 2 steps)
+
+task: convert 3 day in hour then divided by 4
+   step 1: Thought: convert first. | Action: convert(value=3, frm=&#x27;day&#x27;, to=&#x27;hour&#x27;)
+      observation: 72.0
+   step 2: Thought: now use the conversion result. | Action: calc(expr=&#x27;72.0 / 4&#x27;)
+      observation: 18.0
+   step 3: Final: 18.0
+   -&gt; 18.0   (finished, 3 steps)
+
+task: what does entropy mean
+   step 1: Thought: this is a definition. | Action: lookup(topic=&#x27;entropy&#x27;)
+      observation: a measure of impurity; 0 when a node is pure, highest when classes are
+   step 2: Final: a measure of impurity; 0 when a node is pure, highest when classes are even
+   -&gt; a measure of impurity; 0 when a node is pure, highest when classes are even   (finished, 2 steps)</pre></div></section>
+<section class="sx" id="sx-guards"><div class="sx-prose"><p>Three failures, three different guards. The third is the classic runaway agent — a planner that keeps choosing the same action, each step costing a full model call — stopped after 2 steps instead of 20.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Three failures, each caught by a different guard.</span>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;1. a tool that errors -- the error is an observation, not a crash&quot;</span>)
+ans, tr, why = agent(<span class="tok-s">&quot;convert 1 km in minute&quot;</span>, verbose=<span class="tok-k">True</span>)
+<span class="tok-k">print</span>(&quot;    -&gt; %r  (%s)&quot; % (ans, why))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;2. a task the planner cannot make progress on&quot;</span>)
+ans, tr, why = agent(<span class="tok-s">&quot;write me a poem about eigenvalues&quot;</span>)
+<span class="tok-k">print</span>(&quot;    -&gt; %r  (%s)&quot; % (ans, why))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;3. a planner that repeats itself -- caught before it burns the budget&quot;</span>)
+
+<span class="tok-k">def</span> stuck_policy(task, obs):
+    <span class="tok-k">return</span> &quot;Action: lookup(topic=<span class="tok-s">&#x27;entropy&#x27;</span>)&quot;
+
+_real = policy
+policy = stuck_policy
+ans, tr, why = agent(<span class="tok-s">&quot;anything&quot;</span>, max_steps=<span class="tok-n">20</span>)
+policy = _real
+<span class="tok-k">print</span>(&quot;    -&gt; %r  (%s after %d steps, <span class="tok-k">not</span> <span class="tok-n">20</span>)&quot; % (ans, why, len(tr)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Without that guard this is the classic runaway agent: a model that keeps&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;choosing the same action, each step costing a full call.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>1. a tool that errors -- the error is an observation, not a crash
+   step 1: Thought: convert first. | Action: convert(value=1, frm=&#x27;km&#x27;, to=&#x27;minute&#x27;)
+      observation: ERROR: ValueError: no conversion from km to minute
+   step 2: Final: ERROR: ValueError: no conversion from km to minute
+    -&gt; &#x27;ERROR: ValueError: no conversion from km to minute&#x27;  (finished)
+2. a task the planner cannot make progress on
+    -&gt; &#x27;I do not know.&#x27;  (finished)
+3. a planner that repeats itself -- caught before it burns the budget
+    -&gt; None  (looped: repeated lookup after 2 steps, not 20)
+Without that guard this is the classic runaway agent: a model that keeps
+choosing the same action, each step costing a full call.</pre></div></section>
+<section class="sx" id="sx-budget"><div class="sx-prose"><p>The loop re-sends the whole transcript every step, so cost grows with the <b>square</b> of the step count, not linearly. This is why <i>let it keep trying</i> is an expensive default.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> agent_costed(task, max_steps=<span class="tok-n">4</span>, price_per_1k=<span class="tok-n">0.003</span>):
+    <span class="tok-d">&quot;&quot;&quot;Rough token accounting. The loop re-sends the whole transcript every
+    step, so cost grows with the SQUARE of the number of steps, not linearly.
+    This surprises people the first time the bill arrives.&quot;&quot;&quot;</span>
+    observations, tokens, sent = [], <span class="tok-n">0</span>, <span class="tok-n">0</span>
+    <span class="tok-k">for</span> step <span class="tok-k">in</span> range(max_steps):
+        prompt = task + <span class="tok-s">&quot; &quot;</span>.join(observations)
+        sent += len(prompt.split())
+        msg = policy(task, observations)
+        tokens += len(msg.split())
+        <span class="tok-k">if</span> msg.startswith(<span class="tok-s">&quot;Final:&quot;</span>):
+            <span class="tok-k">break</span>
+        action, err = parse_action(msg)
+        <span class="tok-k">if</span> err:
+            observations.append(<span class="tok-s">&quot;ERROR: &quot;</span> + err)
+            <span class="tok-k">continue</span>
+        observations.append(run_tool(*action))
+    total = sent + tokens
+    <span class="tok-k">return</span> step + <span class="tok-n">1</span>, total, total / <span class="tok-n">1000.0</span> * price_per_1k
+
+<span class="tok-k">for</span> task <span class="tok-k">in</span> [<span class="tok-s">&quot;what is 3*(4+5)&quot;</span>, <span class="tok-s">&quot;convert 3 day in hour then divided by 4&quot;</span>]:
+    steps, tok, cost = agent_costed(task)
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;%-42s %d steps, ~%d tokens, ~$%.5f&quot;</span> % (task, steps, tok, cost))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Now imagine 30 steps and a 4000-token system prompt resent every time.&quot;</span>)
+<span class="tok-k">print</span>(&quot;Step count <span class="tok-k">is</span> the cost driver, which <span class="tok-k">is</span> why <span class="tok-s">&#x27;let it keep trying&#x27;</span> <span class="tok-k">is</span> an&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;expensive default.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>what is 3*(4+5)                            2 steps, ~12 tokens, ~$0.00004
+convert 3 day in hour then divided by 4    3 steps, ~47 tokens, ~$0.00014
+Now imagine 30 steps and a 4000-token system prompt resent every time.
+Step count is the cost driver, which is why &#x27;let it keep trying&#x27; is an
+expensive default.</pre></div></section>
+<section class="sx" id="sx-evaluate"><div class="sx-prose"><p>Two deliberate failures in the suite, because a suite containing only what you know works measures nothing. Then the ablation: stop feeding observations back and the score goes to 1 of 12, and the one survivor <i>succeeds</i> by declining. Both missing tasks are phrasings, not new capabilities — which is precisely what a real model buys you, and the only thing it buys. Every tool, guard and validator above stays as written.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The last two are in here on purpose: the stub planner cannot do them.</span>
+<span class="tok-c"># A suite that only contains what you know works measures nothing.</span>
+DECLINE = <span class="tok-s">&quot;I do not know.&quot;</span>
+SUITE = [(<span class="tok-s">&quot;what is 3*(4+5)&quot;</span>, <span class="tok-s">&quot;27&quot;</span>),
+         (<span class="tok-s">&quot;what is 100/4&quot;</span>, <span class="tok-s">&quot;25.0&quot;</span>),
+         (<span class="tok-s">&quot;convert 2.5 km in m&quot;</span>, <span class="tok-s">&quot;2500.0&quot;</span>),
+         (<span class="tok-s">&quot;convert 3 day in hour&quot;</span>, <span class="tok-s">&quot;72.0&quot;</span>),
+         (<span class="tok-s">&quot;convert 3 day in hour then divided by 4&quot;</span>, <span class="tok-s">&quot;18.0&quot;</span>),
+         (<span class="tok-s">&quot;convert 2 hour in minute then times 3&quot;</span>, <span class="tok-s">&quot;360.0&quot;</span>),
+         (<span class="tok-s">&quot;what does entropy mean&quot;</span>, FACTS[<span class="tok-s">&quot;entropy&quot;</span>]),
+         (<span class="tok-s">&quot;what does attention mean&quot;</span>, FACTS[<span class="tok-s">&quot;attention&quot;</span>]),
+         (<span class="tok-s">&quot;convert 1 km in minute&quot;</span>, <span class="tok-s">&quot;ERROR&quot;</span>),
+         (<span class="tok-s">&quot;write me a poem about eigenvalues&quot;</span>, DECLINE),
+         (<span class="tok-s">&quot;remind me what entropy is&quot;</span>, FACTS[<span class="tok-s">&quot;entropy&quot;</span>]),
+         (<span class="tok-s">&quot;take 3 days in hours and halve it&quot;</span>, <span class="tok-s">&quot;36.0&quot;</span>)]
+
+<span class="tok-k">def</span> solved(task, want, feed=<span class="tok-k">True</span>):
+    got = str(agent(task, feed_observations=feed)[<span class="tok-n">0</span>]).strip()
+    <span class="tok-k">return</span> got.startswith(<span class="tok-s">&quot;ERROR&quot;</span>) <span class="tok-k">if</span> want == <span class="tok-s">&quot;ERROR&quot;</span> <span class="tok-k">else</span> got == want
+
+full = sum(solved(t, w) <span class="tok-k">for</span> t, w <span class="tok-k">in</span> SUITE)
+blind = sum(solved(t, w, feed=<span class="tok-k">False</span>) <span class="tok-k">for</span> t, w <span class="tok-k">in</span> SUITE)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;solved %d of %d with observations fed back&quot;</span> % (full, len(SUITE)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;solved %d of %d WITHOUT feeding observations back&quot;</span> % (blind, len(SUITE)))
+survivors = [t <span class="tok-k">for</span> t, w <span class="tok-k">in</span> SUITE <span class="tok-k">if</span> solved(t, w, feed=<span class="tok-k">False</span>)]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;the only thing that still works blind: %s&quot;</span> % (survivors <span class="tok-k">or</span> <span class="tok-s">&quot;nothing&quot;</span>))
+<span class="tok-k">print</span>(&quot;\nAnd it <span class="tok-s">&#x27;works&#x27;</span> by declining. Nothing that needs a tool completes,&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;multi-step or not: without the observation the planner cannot tell it has&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;finished, so it proposes the same action again and the repeat guard stops&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;it. The loop is not a refinement here -- it is the mechanism.&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nWhat the stub could not do:&quot;</span>)
+<span class="tok-k">for</span> task, want <span class="tok-k">in</span> SUITE:
+    <span class="tok-k">if</span> <span class="tok-k">not</span> solved(task, want):
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;   %-42s wanted %r&quot;</span> % (task, want[:<span class="tok-n">34</span>]))
+<span class="tok-k">print</span>(&quot;Both are phrasings, <span class="tok-k">not</span> new capabilities -- <span class="tok-s">&#x27;remind me what X is&#x27;</span> <span class="tok-k">and</span>&quot;)
+<span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;halve it&#x27;</span> need the same two tools <span class="tok-k">as</span> the tasks that <span class="tok-k">pass</span>. That gap <span class="tok-k">is</span>&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;exactly what a real model buys you, and it is the ONLY thing it buys:&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;every tool, guard, validator and budget above stays exactly as written.&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nIt also brings a failure the stub cannot have -- proposing a call that&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;is well-formed, plausible, and wrong. That is what the validator, the&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;repeat guard and the step budget are really defending against.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>solved 10 of 12 with observations fed back
+solved 1 of 12 WITHOUT feeding observations back
+the only thing that still works blind: [&#x27;write me a poem about eigenvalues&#x27;]
+
+And it &#x27;works&#x27; by declining. Nothing that needs a tool completes,
+multi-step or not: without the observation the planner cannot tell it has
+finished, so it proposes the same action again and the repeat guard stops
+it. The loop is not a refinement here -- it is the mechanism.
+
+What the stub could not do:
+   remind me what entropy is                  wanted &#x27;a measure of impurity; 0 when a no&#x27;
+   take 3 days in hours and halve it          wanted &#x27;36.0&#x27;
+Both are phrasings, not new capabilities -- &#x27;remind me what X is&#x27; and
+&#x27;halve it&#x27; need the same two tools as the tasks that pass. That gap is
+exactly what a real model buys you, and it is the ONLY thing it buys:
+every tool, guard, validator and budget above stays exactly as written.
+
+It also brings a failure the stub cannot have -- proposing a call that
+is well-formed, plausible, and wrong. That is what the validator, the
+repeat guard and the step budget are really defending against.</pre></div></section>
+
+<h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
+<ul class="links plain"><li><a href="../c4/w4-02-generation.html">Generation</a></li><li><a href="../c4/w4-06-what-it-cannot-do.html">What it cannot do</a></li><li><a href="../c4/w4-04-rlhf.html">RLHF</a></li><li><a href="../c3/w3-04-policies.html">Policies</a></li></ul>
+
+<nav class="pager">
+<a class="prev" href="../scratch/12-fine-tuning.html"><span class="dir">&#8249; previous</span><span class="ttl">Fine-tuning: head, full, and LoRA</span></a>
+<a class="next" href="../scratch/14-mlops.html"><span class="dir">next &#8250;</span><span class="ttl">After the model works</span></a>
+</nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
+</main>
+</div>
+</body>
+</html>

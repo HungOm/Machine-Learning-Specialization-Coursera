@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From scratch &#183; Retrieval, the R in RAG</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+</head>
+<body data-slug="scratch-11-retrieval" data-printable="From scratch &#183; Retrieval, the R in RAG|13 steps">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">From scratch &#183; <b>Retrieval, the R in RAG</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="done-btn">mark done</button>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<a href="../index.html" style="font-weight:700">← Study plan</a>
+<a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
+<a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
+<a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../paper.html" style="font-weight:700">✐ On paper</a>
+<a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
+<a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
+<a href="../progress.html" style="font-weight:700">▲ Progress</a>
+<a href="../reference.html" style="font-weight:700">☰ Reference sheet</a>
+<a href="../symbols.html" style="font-weight:700">∑ Symbol glossary</a>
+<a href="../map.html" style="font-weight:700">◈ Concept map</a>
+<a href="../book-index.html" style="font-weight:700;margin-bottom:10px">⌥ Index</a>
+<h4>F0 · W1 — The Maths You Actually Need</h4>
+<a class="" data-slug-link="f01-01-what-is-a-function" href="../f0/w1-01-what-is-a-function.html"><span class="n">01</span>What a function is</a>
+<a class="" data-slug-link="f01-02-reading-a-graph" href="../f0/w1-02-reading-a-graph.html"><span class="n">02</span>Reading a graph</a>
+<a class="" data-slug-link="f01-03-greek-letters" href="../f0/w1-03-greek-letters.html"><span class="n">03</span>Greek letters and other symbols</a>
+<a class="" data-slug-link="f01-04-slope" href="../f0/w1-04-slope.html"><span class="n">04</span>Slope — rise over run</a>
+<a class="" data-slug-link="f01-05-derivatives" href="../f0/w1-05-derivatives.html"><span class="n">05</span>What a derivative actually is</a>
+<a class="" data-slug-link="f01-06-partial-derivatives" href="../f0/w1-06-partial-derivatives.html"><span class="n">06</span>Partial derivatives</a>
+<a class="" data-slug-link="f01-07-sigma-notation" href="../f0/w1-07-sigma-notation.html"><span class="n">07</span>Σ — summation notation</a>
+<a class="" data-slug-link="f01-08-pi-notation" href="../f0/w1-08-pi-notation.html"><span class="n">08</span>Π — multiplying them all</a>
+<a class="" data-slug-link="f01-09-vectors" href="../f0/w1-09-vectors.html"><span class="n">09</span>Vectors</a>
+<a class="" data-slug-link="f01-10-dot-product" href="../f0/w1-10-dot-product.html"><span class="n">10</span>The dot product</a>
+<a class="" data-slug-link="f01-11-matrices" href="../f0/w1-11-matrices.html"><span class="n">11</span>Matrices and shapes</a>
+<a class="" data-slug-link="f01-12-matrix-multiplication" href="../f0/w1-12-matrix-multiplication.html"><span class="n">12</span>Matrix multiplication</a>
+<a class="" data-slug-link="f01-13-transpose" href="../f0/w1-13-transpose.html"><span class="n">13</span>Transpose</a>
+<a class="" data-slug-link="f01-14-exponentials" href="../f0/w1-14-exponentials.html"><span class="n">14</span>Exponentials and e</a>
+<a class="" data-slug-link="f01-15-logarithms" href="../f0/w1-15-logarithms.html"><span class="n">15</span>Logarithms</a>
+<a class="" data-slug-link="f01-16-probability" href="../f0/w1-16-probability.html"><span class="n">16</span>Probability basics</a>
+<a class="" data-slug-link="f01-17-mean-variance" href="../f0/w1-17-mean-variance.html"><span class="n">17</span>Mean, variance and standard deviation</a>
+<a class="" data-slug-link="f01-18-normal-distribution" href="../f0/w1-18-normal-distribution.html"><span class="n">18</span>The normal distribution</a>
+<a class="" data-slug-link="f01-19-min-max-argmax" href="../f0/w1-19-min-max-argmax.html"><span class="n">19</span>min, max, argmin and argmax</a>
+<h4>F0 · W2 — Python, NumPy and pandas</h4>
+<a class="" data-slug-link="f02-01-jupyter" href="../f0/w2-01-jupyter.html"><span class="n">01</span>Jupyter notebooks</a>
+<a class="" data-slug-link="f02-02-types" href="../f0/w2-02-types.html"><span class="n">02</span>Values and types</a>
+<a class="" data-slug-link="f02-03-lists-vs-arrays" href="../f0/w2-03-lists-vs-arrays.html"><span class="n">03</span>Lists vs NumPy arrays</a>
+<a class="" data-slug-link="f02-04-indexing-slicing" href="../f0/w2-04-indexing-slicing.html"><span class="n">04</span>Indexing and slicing</a>
+<a class="" data-slug-link="f02-05-shape-and-axis" href="../f0/w2-05-shape-and-axis.html"><span class="n">05</span>Shape and axis</a>
+<a class="" data-slug-link="f02-06-creating-arrays" href="../f0/w2-06-creating-arrays.html"><span class="n">06</span>Creating arrays</a>
+<a class="" data-slug-link="f02-07-elementwise" href="../f0/w2-07-elementwise.html"><span class="n">07</span>Elementwise arithmetic</a>
+<a class="" data-slug-link="f02-08-broadcasting" href="../f0/w2-08-broadcasting.html"><span class="n">08</span>Broadcasting</a>
+<a class="" data-slug-link="f02-09-dot-in-code" href="../f0/w2-09-dot-in-code.html"><span class="n">09</span>np.dot, matmul and @</a>
+<a class="" data-slug-link="f02-10-aggregations" href="../f0/w2-10-aggregations.html"><span class="n">10</span>sum, mean, max — along an axis</a>
+<a class="" data-slug-link="f02-11-boolean-masks" href="../f0/w2-11-boolean-masks.html"><span class="n">11</span>Boolean masks</a>
+<a class="" data-slug-link="f02-12-reshape" href="../f0/w2-12-reshape.html"><span class="n">12</span>reshape, flatten and T</a>
+<a class="" data-slug-link="f02-13-pandas-dataframes" href="../f0/w2-13-pandas-dataframes.html"><span class="n">13</span>pandas DataFrames</a>
+<a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
+<a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
+<a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
+<h4>C1 · W1 — Introduction to Machine Learning</h4>
+<a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
+<a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
+<a class="" data-slug-link="c11-03-unsupervised-learning" href="../c1/w1-03-unsupervised-learning.html"><span class="n">03</span>Unsupervised learning</a>
+<a class="" data-slug-link="c11-04-linear-regression-model" href="../c1/w1-04-linear-regression-model.html"><span class="n">04</span>The linear regression model</a>
+<a class="" data-slug-link="c11-05-cost-function-formula" href="../c1/w1-05-cost-function-formula.html"><span class="n">05</span>The cost function formula</a>
+<a class="" data-slug-link="c11-06-cost-function-intuition" href="../c1/w1-06-cost-function-intuition.html"><span class="n">06</span>Cost function intuition</a>
+<a class="" data-slug-link="c11-07-visualizing-the-cost-function" href="../c1/w1-07-visualizing-the-cost-function.html"><span class="n">07</span>Visualizing the cost function</a>
+<a class="" data-slug-link="c11-08-gradient-descent" href="../c1/w1-08-gradient-descent.html"><span class="n">08</span>Gradient descent</a>
+<a class="" data-slug-link="c11-09-implementing-gradient-descent" href="../c1/w1-09-implementing-gradient-descent.html"><span class="n">09</span>Implementing gradient descent</a>
+<a class="" data-slug-link="c11-10-gradient-descent-intuition" href="../c1/w1-10-gradient-descent-intuition.html"><span class="n">10</span>Gradient descent intuition</a>
+<a class="" data-slug-link="c11-11-learning-rate" href="../c1/w1-11-learning-rate.html"><span class="n">11</span>The learning rate</a>
+<a class="" data-slug-link="c11-12-gradient-descent-for-linear-regression" href="../c1/w1-12-gradient-descent-for-linear-regression.html"><span class="n">12</span>Gradient descent for linear regression</a>
+<a class="" data-slug-link="c11-13-running-gradient-descent" href="../c1/w1-13-running-gradient-descent.html"><span class="n">13</span>Running gradient descent</a>
+<h4>C1 · W2 — Regression with Multiple Variables</h4>
+<a class="" data-slug-link="c12-01-multiple-features" href="../c1/w2-01-multiple-features.html"><span class="n">01</span>Multiple features</a>
+<a class="" data-slug-link="c12-02-vectorization" href="../c1/w2-02-vectorization.html"><span class="n">02</span>Vectorization</a>
+<a class="" data-slug-link="c12-03-why-vectorization-is-fast" href="../c1/w2-03-why-vectorization-is-fast.html"><span class="n">03</span>Why vectorization is fast</a>
+<a class="" data-slug-link="c12-04-gradient-descent-multiple-features" href="../c1/w2-04-gradient-descent-multiple-features.html"><span class="n">04</span>Gradient descent for multiple linear regression</a>
+<a class="" data-slug-link="c12-05-feature-scaling" href="../c1/w2-05-feature-scaling.html"><span class="n">05</span>Feature scaling</a>
+<a class="" data-slug-link="c12-06-checking-convergence" href="../c1/w2-06-checking-convergence.html"><span class="n">06</span>Checking gradient descent for convergence</a>
+<a class="" data-slug-link="c12-07-choosing-the-learning-rate" href="../c1/w2-07-choosing-the-learning-rate.html"><span class="n">07</span>Choosing the learning rate</a>
+<a class="" data-slug-link="c12-08-feature-engineering" href="../c1/w2-08-feature-engineering.html"><span class="n">08</span>Feature engineering</a>
+<a class="" data-slug-link="c12-09-polynomial-regression" href="../c1/w2-09-polynomial-regression.html"><span class="n">09</span>Polynomial regression</a>
+<h4>C1 · W3 — Classification</h4>
+<a class="" data-slug-link="c13-01-motivations" href="../c1/w3-01-motivations.html"><span class="n">01</span>Motivations: why not linear regression?</a>
+<a class="" data-slug-link="c13-02-logistic-regression" href="../c1/w3-02-logistic-regression.html"><span class="n">02</span>Logistic regression</a>
+<a class="" data-slug-link="c13-03-decision-boundary" href="../c1/w3-03-decision-boundary.html"><span class="n">03</span>The decision boundary</a>
+<a class="" data-slug-link="c13-04-cost-function-for-logistic-regression" href="../c1/w3-04-cost-function-for-logistic-regression.html"><span class="n">04</span>Cost function for logistic regression</a>
+<a class="" data-slug-link="c13-05-logistic-loss" href="../c1/w3-05-logistic-loss.html"><span class="n">05</span>The logistic loss, in detail</a>
+<a class="" data-slug-link="c13-06-simplified-cost-function" href="../c1/w3-06-simplified-cost-function.html"><span class="n">06</span>The simplified cost function</a>
+<a class="" data-slug-link="c13-07-gradient-descent-logistic" href="../c1/w3-07-gradient-descent-logistic.html"><span class="n">07</span>Gradient descent for logistic regression</a>
+<a class="" data-slug-link="c13-08-the-problem-of-overfitting" href="../c1/w3-08-the-problem-of-overfitting.html"><span class="n">08</span>The problem of overfitting</a>
+<a class="" data-slug-link="c13-09-addressing-overfitting" href="../c1/w3-09-addressing-overfitting.html"><span class="n">09</span>Addressing overfitting</a>
+<a class="" data-slug-link="c13-10-cost-function-with-regularization" href="../c1/w3-10-cost-function-with-regularization.html"><span class="n">10</span>The cost function with regularization</a>
+<a class="" data-slug-link="c13-11-regularized-gradient-descent" href="../c1/w3-11-regularized-gradient-descent.html"><span class="n">11</span>Regularized linear and logistic regression</a>
+<h4>C2 · W1 — Neural Networks</h4>
+<a class="" data-slug-link="c21-01-neurons-and-the-brain" href="../c2/w1-01-neurons-and-the-brain.html"><span class="n">01</span>Neurons and the brain</a>
+<a class="" data-slug-link="c21-02-demand-prediction" href="../c2/w1-02-demand-prediction.html"><span class="n">02</span>Demand prediction</a>
+<a class="" data-slug-link="c21-03-recognizing-images" href="../c2/w1-03-recognizing-images.html"><span class="n">03</span>Example: recognizing images</a>
+<a class="" data-slug-link="c21-04-neural-network-layer" href="../c2/w1-04-neural-network-layer.html"><span class="n">04</span>Neural network layer</a>
+<a class="" data-slug-link="c21-05-more-complex-networks" href="../c2/w1-05-more-complex-networks.html"><span class="n">05</span>More complex neural networks</a>
+<a class="" data-slug-link="c21-06-forward-propagation" href="../c2/w1-06-forward-propagation.html"><span class="n">06</span>Inference: making predictions (forward propagation)</a>
+<a class="" data-slug-link="c21-07-tensorflow-inference-code" href="../c2/w1-07-tensorflow-inference-code.html"><span class="n">07</span>Inference in code (TensorFlow)</a>
+<a class="" data-slug-link="c21-08-data-in-tensorflow" href="../c2/w1-08-data-in-tensorflow.html"><span class="n">08</span>Data in TensorFlow</a>
+<a class="" data-slug-link="c21-09-building-a-network-sequential" href="../c2/w1-09-building-a-network-sequential.html"><span class="n">09</span>Building a neural network (Sequential)</a>
+<a class="" data-slug-link="c21-10-forward-prop-single-layer" href="../c2/w1-10-forward-prop-single-layer.html"><span class="n">10</span>Forward prop in a single layer (NumPy)</a>
+<a class="" data-slug-link="c21-11-general-forward-prop" href="../c2/w1-11-general-forward-prop.html"><span class="n">11</span>General implementation of forward propagation</a>
+<a class="" data-slug-link="c21-12-path-to-agi" href="../c2/w1-12-path-to-agi.html"><span class="n">12</span>Is there a path to AGI?</a>
+<a class="" data-slug-link="c21-13-vectorization" href="../c2/w1-13-vectorization.html"><span class="n">13</span>How neural networks are implemented efficiently</a>
+<a class="" data-slug-link="c21-14-matrix-multiplication" href="../c2/w1-14-matrix-multiplication.html"><span class="n">14</span>Matrix multiplication</a>
+<a class="" data-slug-link="c21-15-matmul-rules" href="../c2/w1-15-matmul-rules.html"><span class="n">15</span>Matrix multiplication rules</a>
+<a class="" data-slug-link="c21-16-matmul-code" href="../c2/w1-16-matmul-code.html"><span class="n">16</span>Matrix multiplication code</a>
+<h4>C2 · W2 — Neural Network Training</h4>
+<a class="" data-slug-link="c22-01-tensorflow-training" href="../c2/w2-01-tensorflow-training.html"><span class="n">01</span>TensorFlow implementation of training</a>
+<a class="" data-slug-link="c22-02-training-details" href="../c2/w2-02-training-details.html"><span class="n">02</span>Training details</a>
+<a class="" data-slug-link="c22-03-sigmoid-alternatives" href="../c2/w2-03-sigmoid-alternatives.html"><span class="n">03</span>Alternatives to the sigmoid activation</a>
+<a class="" data-slug-link="c22-04-choosing-activations" href="../c2/w2-04-choosing-activations.html"><span class="n">04</span>Choosing activation functions</a>
+<a class="" data-slug-link="c22-05-why-activations" href="../c2/w2-05-why-activations.html"><span class="n">05</span>Why do we need activation functions?</a>
+<a class="" data-slug-link="c22-06-multiclass" href="../c2/w2-06-multiclass.html"><span class="n">06</span>Multiclass classification</a>
+<a class="" data-slug-link="c22-07-softmax" href="../c2/w2-07-softmax.html"><span class="n">07</span>Softmax</a>
+<a class="" data-slug-link="c22-08-softmax-output-layer" href="../c2/w2-08-softmax-output-layer.html"><span class="n">08</span>Neural network with Softmax output</a>
+<a class="" data-slug-link="c22-09-improved-softmax" href="../c2/w2-09-improved-softmax.html"><span class="n">09</span>Improved implementation of softmax</a>
+<a class="" data-slug-link="c22-10-multi-label" href="../c2/w2-10-multi-label.html"><span class="n">10</span>Classification with multiple outputs (multi-label)</a>
+<a class="" data-slug-link="c22-11-advanced-optimization" href="../c2/w2-11-advanced-optimization.html"><span class="n">11</span>Advanced optimization (Adam)</a>
+<a class="" data-slug-link="c22-12-additional-layer-types" href="../c2/w2-12-additional-layer-types.html"><span class="n">12</span>Additional layer types (convolutional)</a>
+<a class="" data-slug-link="c22-13-what-is-a-derivative" href="../c2/w2-13-what-is-a-derivative.html"><span class="n">13</span>What is a derivative? (optional)</a>
+<a class="" data-slug-link="c22-14-computation-graph" href="../c2/w2-14-computation-graph.html"><span class="n">14</span>Computation graph (optional)</a>
+<a class="" data-slug-link="c22-15-larger-network-example" href="../c2/w2-15-larger-network-example.html"><span class="n">15</span>Larger neural network example (optional)</a>
+<h4>C2 · W3 — Advice for Applying ML</h4>
+<a class="" data-slug-link="c23-01-deciding-what-to-try-next" href="../c2/w3-01-deciding-what-to-try-next.html"><span class="n">01</span>Deciding what to try next</a>
+<a class="" data-slug-link="c23-02-evaluating-a-model" href="../c2/w3-02-evaluating-a-model.html"><span class="n">02</span>Evaluating a model</a>
+<a class="" data-slug-link="c23-03-model-selection" href="../c2/w3-03-model-selection.html"><span class="n">03</span>Model selection and train / cross-validation / test</a>
+<a class="" data-slug-link="c23-04-bias-and-variance" href="../c2/w3-04-bias-and-variance.html"><span class="n">04</span>Diagnosing bias and variance</a>
+<a class="" data-slug-link="c23-05-regularization-bias-variance" href="../c2/w3-05-regularization-bias-variance.html"><span class="n">05</span>Regularization and bias/variance</a>
+<a class="" data-slug-link="c23-06-baseline-performance" href="../c2/w3-06-baseline-performance.html"><span class="n">06</span>Establishing a baseline level of performance</a>
+<a class="" data-slug-link="c23-07-learning-curves" href="../c2/w3-07-learning-curves.html"><span class="n">07</span>Learning curves</a>
+<a class="" data-slug-link="c23-08-what-to-try-revisited" href="../c2/w3-08-what-to-try-revisited.html"><span class="n">08</span>Deciding what to try next, revisited</a>
+<a class="" data-slug-link="c23-09-bias-variance-neural-networks" href="../c2/w3-09-bias-variance-neural-networks.html"><span class="n">09</span>Bias / variance and neural networks</a>
+<a class="" data-slug-link="c23-10-iterative-loop" href="../c2/w3-10-iterative-loop.html"><span class="n">10</span>The iterative loop of ML development</a>
+<a class="" data-slug-link="c23-11-error-analysis" href="../c2/w3-11-error-analysis.html"><span class="n">11</span>Error analysis</a>
+<a class="" data-slug-link="c23-12-adding-data" href="../c2/w3-12-adding-data.html"><span class="n">12</span>Adding data</a>
+<a class="" data-slug-link="c23-13-transfer-learning" href="../c2/w3-13-transfer-learning.html"><span class="n">13</span>Transfer learning</a>
+<a class="" data-slug-link="c23-14-full-cycle" href="../c2/w3-14-full-cycle.html"><span class="n">14</span>The full cycle of a machine learning project</a>
+<a class="" data-slug-link="c23-15-fairness-bias-ethics" href="../c2/w3-15-fairness-bias-ethics.html"><span class="n">15</span>Fairness, bias, and ethics</a>
+<a class="" data-slug-link="c23-16-skewed-datasets" href="../c2/w3-16-skewed-datasets.html"><span class="n">16</span>Error metrics for skewed datasets</a>
+<a class="" data-slug-link="c23-17-precision-recall-tradeoff" href="../c2/w3-17-precision-recall-tradeoff.html"><span class="n">17</span>Trading off precision and recall</a>
+<h4>C2 · W4 — Decision Trees</h4>
+<a class="" data-slug-link="c24-01-decision-tree-model" href="../c2/w4-01-decision-tree-model.html"><span class="n">01</span>Decision tree model</a>
+<a class="" data-slug-link="c24-02-learning-process" href="../c2/w4-02-learning-process.html"><span class="n">02</span>The learning process</a>
+<a class="" data-slug-link="c24-03-measuring-purity" href="../c2/w4-03-measuring-purity.html"><span class="n">03</span>Measuring purity (entropy)</a>
+<a class="" data-slug-link="c24-04-information-gain" href="../c2/w4-04-information-gain.html"><span class="n">04</span>Choosing a split: information gain</a>
+<a class="" data-slug-link="c24-05-putting-it-together" href="../c2/w4-05-putting-it-together.html"><span class="n">05</span>Putting it together</a>
+<a class="" data-slug-link="c24-06-one-hot-encoding" href="../c2/w4-06-one-hot-encoding.html"><span class="n">06</span>Using one-hot encoding of categorical features</a>
+<a class="" data-slug-link="c24-07-continuous-features" href="../c2/w4-07-continuous-features.html"><span class="n">07</span>Continuous valued features</a>
+<a class="" data-slug-link="c24-08-regression-trees" href="../c2/w4-08-regression-trees.html"><span class="n">08</span>Regression trees</a>
+<a class="" data-slug-link="c24-09-using-multiple-trees" href="../c2/w4-09-using-multiple-trees.html"><span class="n">09</span>Using multiple decision trees</a>
+<a class="" data-slug-link="c24-10-sampling-with-replacement" href="../c2/w4-10-sampling-with-replacement.html"><span class="n">10</span>Sampling with replacement</a>
+<a class="" data-slug-link="c24-11-random-forest" href="../c2/w4-11-random-forest.html"><span class="n">11</span>Random forest algorithm</a>
+<a class="" data-slug-link="c24-12-xgboost" href="../c2/w4-12-xgboost.html"><span class="n">12</span>XGBoost</a>
+<a class="" data-slug-link="c24-13-trees-vs-neural-networks" href="../c2/w4-13-trees-vs-neural-networks.html"><span class="n">13</span>When to use decision trees</a>
+<h4>C3 · W1 — Unsupervised Learning</h4>
+<a class="" data-slug-link="c31-01-what-is-clustering" href="../c3/w1-01-what-is-clustering.html"><span class="n">01</span>What is clustering?</a>
+<a class="" data-slug-link="c31-02-kmeans-intuition" href="../c3/w1-02-kmeans-intuition.html"><span class="n">02</span>K-means intuition</a>
+<a class="" data-slug-link="c31-03-kmeans-algorithm" href="../c3/w1-03-kmeans-algorithm.html"><span class="n">03</span>The K-means algorithm</a>
+<a class="" data-slug-link="c31-04-kmeans-cost" href="../c3/w1-04-kmeans-cost.html"><span class="n">04</span>The optimization objective</a>
+<a class="" data-slug-link="c31-05-initializing-kmeans" href="../c3/w1-05-initializing-kmeans.html"><span class="n">05</span>Initializing K-means</a>
+<a class="" data-slug-link="c31-06-choosing-k" href="../c3/w1-06-choosing-k.html"><span class="n">06</span>Choosing the number of clusters</a>
+<a class="" data-slug-link="c31-07-finding-unusual-events" href="../c3/w1-07-finding-unusual-events.html"><span class="n">07</span>Finding unusual events</a>
+<a class="" data-slug-link="c31-08-gaussian-distribution" href="../c3/w1-08-gaussian-distribution.html"><span class="n">08</span>The Gaussian (normal) distribution</a>
+<a class="" data-slug-link="c31-09-anomaly-detection-algorithm" href="../c3/w1-09-anomaly-detection-algorithm.html"><span class="n">09</span>The anomaly detection algorithm</a>
+<a class="" data-slug-link="c31-10-developing-anomaly-detection" href="../c3/w1-10-developing-anomaly-detection.html"><span class="n">10</span>Developing and evaluating an anomaly detection system</a>
+<a class="" data-slug-link="c31-11-anomaly-vs-supervised" href="../c3/w1-11-anomaly-vs-supervised.html"><span class="n">11</span>Anomaly detection vs. supervised learning</a>
+<a class="" data-slug-link="c31-12-choosing-features" href="../c3/w1-12-choosing-features.html"><span class="n">12</span>Choosing what features to use</a>
+<h4>C3 · W2 — Recommender Systems</h4>
+<a class="" data-slug-link="c32-01-making-recommendations" href="../c3/w2-01-making-recommendations.html"><span class="n">01</span>Making recommendations</a>
+<a class="" data-slug-link="c32-02-per-item-features" href="../c3/w2-02-per-item-features.html"><span class="n">02</span>Using per-item features</a>
+<a class="" data-slug-link="c32-03-collaborative-filtering" href="../c3/w2-03-collaborative-filtering.html"><span class="n">03</span>The collaborative filtering algorithm</a>
+<a class="" data-slug-link="c32-04-binary-labels" href="../c3/w2-04-binary-labels.html"><span class="n">04</span>Binary labels: favs, likes and clicks</a>
+<a class="" data-slug-link="c32-05-mean-normalization" href="../c3/w2-05-mean-normalization.html"><span class="n">05</span>Mean normalization</a>
+<a class="" data-slug-link="c32-06-tensorflow-collaborative" href="../c3/w2-06-tensorflow-collaborative.html"><span class="n">06</span>TensorFlow implementation of collaborative filtering</a>
+<a class="" data-slug-link="c32-07-finding-related-items" href="../c3/w2-07-finding-related-items.html"><span class="n">07</span>Finding related items</a>
+<a class="" data-slug-link="c32-08-collaborative-vs-content" href="../c3/w2-08-collaborative-vs-content.html"><span class="n">08</span>Collaborative filtering vs content-based filtering</a>
+<a class="" data-slug-link="c32-09-deep-content-based" href="../c3/w2-09-deep-content-based.html"><span class="n">09</span>Deep learning for content-based filtering</a>
+<a class="" data-slug-link="c32-10-large-catalogues" href="../c3/w2-10-large-catalogues.html"><span class="n">10</span>Recommending from a large catalogue</a>
+<a class="" data-slug-link="c32-11-ethics-recommenders" href="../c3/w2-11-ethics-recommenders.html"><span class="n">11</span>Ethical use of recommender systems</a>
+<a class="" data-slug-link="c32-12-tensorflow-content-based" href="../c3/w2-12-tensorflow-content-based.html"><span class="n">12</span>TensorFlow implementation of content-based filtering</a>
+<a class="" data-slug-link="c32-13-reducing-features-pca" href="../c3/w2-13-reducing-features-pca.html"><span class="n">13</span>Reducing the number of features (PCA)</a>
+<a class="" data-slug-link="c32-14-pca-algorithm" href="../c3/w2-14-pca-algorithm.html"><span class="n">14</span>The PCA algorithm</a>
+<a class="" data-slug-link="c32-15-pca-in-code" href="../c3/w2-15-pca-in-code.html"><span class="n">15</span>PCA in code</a>
+<h4>C3 · W3 — Reinforcement Learning</h4>
+<a class="" data-slug-link="c33-01-what-is-rl" href="../c3/w3-01-what-is-rl.html"><span class="n">01</span>What is reinforcement learning?</a>
+<a class="" data-slug-link="c33-02-mars-rover" href="../c3/w3-02-mars-rover.html"><span class="n">02</span>The Mars rover example</a>
+<a class="" data-slug-link="c33-03-the-return" href="../c3/w3-03-the-return.html"><span class="n">03</span>The Return in reinforcement learning</a>
+<a class="" data-slug-link="c33-04-policies" href="../c3/w3-04-policies.html"><span class="n">04</span>Making decisions: policies</a>
+<a class="" data-slug-link="c33-05-review-of-key-concepts" href="../c3/w3-05-review-of-key-concepts.html"><span class="n">05</span>Review of key concepts</a>
+<a class="" data-slug-link="c33-06-state-action-value-function" href="../c3/w3-06-state-action-value-function.html"><span class="n">06</span>State-action value function</a>
+<a class="" data-slug-link="c33-07-state-action-value-example" href="../c3/w3-07-state-action-value-example.html"><span class="n">07</span>State-action value function example</a>
+<a class="" data-slug-link="c33-08-bellman-equation" href="../c3/w3-08-bellman-equation.html"><span class="n">08</span>The Bellman equation</a>
+<a class="" data-slug-link="c33-09-stochastic-environments" href="../c3/w3-09-stochastic-environments.html"><span class="n">09</span>Random (stochastic) environments</a>
+<a class="" data-slug-link="c33-10-continuous-state-spaces" href="../c3/w3-10-continuous-state-spaces.html"><span class="n">10</span>Continuous state spaces</a>
+<a class="" data-slug-link="c33-11-lunar-lander" href="../c3/w3-11-lunar-lander.html"><span class="n">11</span>The lunar lander</a>
+<a class="" data-slug-link="c33-12-learning-the-state-value-function" href="../c3/w3-12-learning-the-state-value-function.html"><span class="n">12</span>Learning the state-value function</a>
+<a class="" data-slug-link="c33-13-improved-architecture" href="../c3/w3-13-improved-architecture.html"><span class="n">13</span>Algorithm refinement: improved neural network architecture</a>
+<a class="" data-slug-link="c33-14-epsilon-greedy" href="../c3/w3-14-epsilon-greedy.html"><span class="n">14</span>Algorithm refinement: ε-greedy policy</a>
+<a class="" data-slug-link="c33-15-minibatch-soft-updates" href="../c3/w3-15-minibatch-soft-updates.html"><span class="n">15</span>Algorithm refinement: mini-batch and soft updates</a>
+<a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
+<h4>C4 · W1 — Sequences, Embeddings and the Old Answers</h4>
+<a class="" data-slug-link="c41-01-why-order-matters" href="../c4/w1-01-why-order-matters.html"><span class="n">01</span>Why order matters</a>
+<a class="" data-slug-link="c41-02-tokens" href="../c4/w1-02-tokens.html"><span class="n">02</span>Tokens — what a model actually reads</a>
+<a class="" data-slug-link="c41-03-one-hot-and-why-it-fails" href="../c4/w1-03-one-hot-and-why-it-fails.html"><span class="n">03</span>One-hot vectors, and why they fail here</a>
+<a class="" data-slug-link="c41-04-embeddings" href="../c4/w1-04-embeddings.html"><span class="n">04</span>Embeddings — a learned lookup table</a>
+<a class="" data-slug-link="c41-05-rnn-idea" href="../c4/w1-05-rnn-idea.html"><span class="n">05</span>What RNNs tried</a>
+<a class="" data-slug-link="c41-06-why-rnns-failed" href="../c4/w1-06-why-rnns-failed.html"><span class="n">06</span>Why RNNs failed — the two limits</a>
+<a class="" data-slug-link="c41-07-the-bottleneck" href="../c4/w1-07-the-bottleneck.html"><span class="n">07</span>The bottleneck, and the first attention</a>
+<a class="" data-slug-link="c41-08-week-1-review" href="../c4/w1-08-week-1-review.html"><span class="n">08</span>Where this leaves us</a>
+<h4>C4 · W2 — Attention</h4>
+<a class="" data-slug-link="c42-01-the-idea" href="../c4/w2-01-the-idea.html"><span class="n">01</span>Attention, in one sentence</a>
+<a class="" data-slug-link="c42-02-query-key-value" href="../c4/w2-02-query-key-value.html"><span class="n">02</span>Query, key, value — three roles, one input</a>
+<a class="" data-slug-link="c42-03-attention-by-hand" href="../c4/w2-03-attention-by-hand.html"><span class="n">03</span>Attention, computed by hand</a>
+<a class="" data-slug-link="c42-04-self-attention" href="../c4/w2-04-self-attention.html"><span class="n">04</span>Self-attention — a sentence reading itself</a>
+<a class="" data-slug-link="c42-05-why-scale" href="../c4/w2-05-why-scale.html"><span class="n">05</span>Why divide by √d</a>
+<a class="" data-slug-link="c42-06-multi-head" href="../c4/w2-06-multi-head.html"><span class="n">06</span>Multi-head attention</a>
+<a class="" data-slug-link="c42-07-masking" href="../c4/w2-07-masking.html"><span class="n">07</span>Masking — stopping a model reading ahead</a>
+<a class="" data-slug-link="c42-08-the-cost" href="../c4/w2-08-the-cost.html"><span class="n">08</span>What attention costs</a>
+<h4>C4 · W3 — The Transformer Block</h4>
+<a class="" data-slug-link="c43-01-positional-encoding" href="../c4/w3-01-positional-encoding.html"><span class="n">01</span>Positional encoding — putting order back</a>
+<a class="" data-slug-link="c43-02-residuals" href="../c4/w3-02-residuals.html"><span class="n">02</span>Residual connections</a>
+<a class="" data-slug-link="c43-03-layer-norm" href="../c4/w3-03-layer-norm.html"><span class="n">03</span>Layer normalization</a>
+<a class="" data-slug-link="c43-04-feed-forward" href="../c4/w3-04-feed-forward.html"><span class="n">04</span>The feed-forward layer</a>
+<a class="" data-slug-link="c43-05-the-block" href="../c4/w3-05-the-block.html"><span class="n">05</span>The block, assembled</a>
+<a class="" data-slug-link="c43-06-stacking" href="../c4/w3-06-stacking.html"><span class="n">06</span>Stacking blocks — what depth buys</a>
+<a class="" data-slug-link="c43-07-gpt-vs-bert" href="../c4/w3-07-gpt-vs-bert.html"><span class="n">07</span>Two shapes: GPT and BERT</a>
+<a class="" data-slug-link="c43-08-counting-a-real-model" href="../c4/w3-08-counting-a-real-model.html"><span class="n">08</span>Counting a real model</a>
+<h4>C4 · W4 — From Transformer to Language Model</h4>
+<a class="" data-slug-link="c44-01-next-token" href="../c4/w4-01-next-token.html"><span class="n">01</span>The one job: predict the next token</a>
+<a class="" data-slug-link="c44-02-generation" href="../c4/w4-02-generation.html"><span class="n">02</span>How text actually comes out</a>
+<a class="" data-slug-link="c44-03-scale" href="../c4/w4-03-scale.html"><span class="n">03</span>What scale actually did</a>
+<a class="" data-slug-link="c44-04-rlhf" href="../c4/w4-04-rlhf.html"><span class="n">04</span>RLHF — from text predictor to assistant</a>
+<a class="" data-slug-link="c44-05-context-and-cost" href="../c4/w4-05-context-and-cost.html"><span class="n">05</span>Context windows and what they cost</a>
+<a class="" data-slug-link="c44-06-what-it-cannot-do" href="../c4/w4-06-what-it-cannot-do.html"><span class="n">06</span>What these models cannot reliably do</a>
+<a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
+</aside>
+<main>
+<p class="kicker">From scratch &#183; file 11 of 14 &#183; 370 lines of NumPy</p>
+<h1>Retrieval, the R in RAG</h1>
+<p class="lede">Counting words, weighting them, cosine, then the SVD — built until lexical search fails on a synonym and dense search fails on a rare word, which is why every real system blends the two.</p>
+
+<div class="runbox">
+  <div class="rb-l">Run it yourself</div>
+  <pre><code>cd study/scratch/code
+python3 11_retrieval.py</code></pre>
+  <p>Pure NumPy &#8212; no scikit-learn, no TensorFlow. <b>Every code block below is read
+  straight out of that file, and the output under it is what that exact block printed
+  when this page was built.</b> They cannot drift apart.</p>
+  <p class="rb-b">By the end you will have built chunking with overlap, a tf-idf index, cosine search, LSA embeddings, a hybrid ranker measured on three query sets, a prompt assembler with a token budget, and a threshold for saying nothing.</p>
+</div>
+
+<section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Retrieval from scratch -- the R in RAG, built with nothing but NumPy.
+
+Run me:  python3 11_retrieval.py
+
+A language model knows only what was in its training data and what you put in
+the prompt. Retrieval decides what goes in the prompt. There is no model in
+this file at all, because retrieval is a separate problem and it is ordinary
+linear algebra you have already met: counting, weighting, cosine, SVD.
+&quot;&quot;&quot;</span>
+<span class="tok-k">import</span> re
+
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<section class="sx" id="sx-corpus"><div class="sx-prose"><p>Fourteen sentences, and two of them are the experiment: some notes say <i>cost</i> and some say <i>loss</i> for the same idea. Every retrieval system you will ever build has this problem somewhere in it.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Fourteen short notes. Deliberately written so that some say &quot;cost&quot; and some</span>
+<span class="tok-c"># say &quot;loss&quot; for the same idea, because that mismatch is the whole lesson.</span>
+DOCS = [
+    <span class="tok-s">&quot;gradient descent repeatedly nudges the weights downhill to minimise the cost&quot;</span>,
+    <span class="tok-s">&quot;the cost function measures how wrong the model is averaged over the training set&quot;</span>,
+    <span class="tok-s">&quot;a large learning rate makes gradient descent overshoot and the cost goes up&quot;</span>,
+    <span class="tok-s">&quot;we minimise the loss by taking the derivative and stepping against it&quot;</span>,
+    <span class="tok-s">&quot;the loss for one training example is squared error for regression&quot;</span>,
+    <span class="tok-s">&quot;feature scaling makes gradient descent converge faster on data with wide ranges&quot;</span>,
+    <span class="tok-s">&quot;regularisation adds a penalty on the weights so the model generalises better&quot;</span>,
+    <span class="tok-s">&quot;a decision tree splits on the feature that gives the largest information gain&quot;</span>,
+    <span class="tok-s">&quot;entropy measures impurity and information gain is the drop in entropy after a split&quot;</span>,
+    <span class="tok-s">&quot;k means alternates assigning points to centroids and moving centroids to the mean&quot;</span>,
+    <span class="tok-s">&quot;the elbow of the distortion curve is one way people choose k for clustering&quot;</span>,
+    <span class="tok-s">&quot;an anomaly is a point with very low probability under the fitted gaussian&quot;</span>,
+    <span class="tok-s">&quot;attention lets every token look at every other token and weigh what matters&quot;</span>,
+    <span class="tok-s">&quot;the query key and value vectors are three different linear views of one token&quot;</span>,
+]
+
+<span class="tok-k">print</span>(<span class="tok-s">&quot;%d documents, %d words total&quot;</span> % (len(DOCS), sum(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;shortest %d words, longest %d words&quot;</span>
+      % (min(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS), max(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>14 documents, 179 words total
+shortest 11 words, longest 14 words</pre></div></section>
+<section class="sx" id="sx-chunk"><div class="sx-prose"><p>Before anything can be searched it has to be cut up. Overlap is the only knob here and it buys exactly one thing — a fact that straddles a boundary stays findable. Look at what happens to <i>minimise the cost</i> at overlap 0: it is in neither chunk, and nothing warns you.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> chunk(text, size, overlap):
+    <span class="tok-d">&quot;&quot;&quot;Cut a long text into overlapping windows of `size` words.
+
+    Overlap exists because a fact can straddle a boundary. With no overlap a
+    sentence cut in half is retrievable by neither of its halves, and you never
+    find out -- the search simply returns something else.
+    &quot;&quot;&quot;</span>
+    words = text.split()
+    step = size - overlap
+    <span class="tok-k">if</span> step &lt;= <span class="tok-n">0</span>:
+        <span class="tok-k">raise</span> ValueError(<span class="tok-s">&quot;overlap must be smaller than size&quot;</span>)
+    out = []
+    <span class="tok-k">for</span> start <span class="tok-k">in</span> range(<span class="tok-n">0</span>, max(len(words) - overlap, <span class="tok-n">1</span>), step):
+        piece = words[start:start + size]
+        <span class="tok-k">if</span> piece:
+            out.append(<span class="tok-s">&quot; &quot;</span>.join(piece))
+        <span class="tok-k">if</span> start + size &gt;= len(words):
+            <span class="tok-k">break</span>
+    <span class="tok-k">return</span> out
+
+long_note = <span class="tok-s">&quot; &quot;</span>.join(DOCS[:<span class="tok-n">3</span>])
+<span class="tok-k">for</span> size, ov <span class="tok-k">in</span> [(<span class="tok-n">10</span>, <span class="tok-n">0</span>), (<span class="tok-n">10</span>, <span class="tok-n">4</span>)]:
+    pieces = chunk(long_note, size, ov)
+    <span class="tok-k">print</span>(&quot;\nsize=%d overlap=%d -&gt; %d chunks&quot; % (size, ov, len(pieces)))
+    <span class="tok-k">for</span> p <span class="tok-k">in</span> pieces:
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;   |&quot;</span>, p)
+<span class="tok-k">print</span>(&quot;\nAt overlap <span class="tok-n">0</span> the phrase <span class="tok-s">&#x27;minimise the cost&#x27;</span> <span class="tok-k">is</span> split between chunks <span class="tok-n">1</span>&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;and 2, so no single chunk contains it. At overlap 4 one chunk does.&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Overlap costs storage and buys recall. That is the entire trade.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+size=10 overlap=0 -&gt; 4 chunks
+   | gradient descent repeatedly nudges the weights downhill to minimise the
+   | cost the cost function measures how wrong the model is
+   | averaged over the training set a large learning rate makes
+   | gradient descent overshoot and the cost goes up
+
+size=10 overlap=4 -&gt; 6 chunks
+   | gradient descent repeatedly nudges the weights downhill to minimise the
+   | downhill to minimise the cost the cost function measures how
+   | cost function measures how wrong the model is averaged over
+   | model is averaged over the training set a large learning
+   | set a large learning rate makes gradient descent overshoot and
+   | gradient descent overshoot and the cost goes up
+
+At overlap 0 the phrase &#x27;minimise the cost&#x27; is split between chunks 1
+and 2, so no single chunk contains it. At overlap 4 one chunk does.
+Overlap costs storage and buys recall. That is the entire trade.</pre></div></section>
+<section class="sx" id="sx-vocab"><div class="sx-prose"><p>A document becomes a row of counts. That is the entire representation, and the 89% of it that is zero is why nobody stores this as a dense array at real scale.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> tokenise(text):
+    <span class="tok-d">&quot;&quot;&quot;Lowercase and keep runs of letters. Crude on purpose and easy to inspect.&quot;&quot;&quot;</span>
+    <span class="tok-k">return</span> re.findall(r<span class="tok-s">&quot;[a-z]+&quot;</span>, text.lower())
+
+<span class="tok-k">def</span> build_vocab(docs):
+    <span class="tok-d">&quot;&quot;&quot;word -&gt; column index, in first-seen order so the output is stable.&quot;&quot;&quot;</span>
+    vocab = {}
+    <span class="tok-k">for</span> d <span class="tok-k">in</span> docs:
+        <span class="tok-k">for</span> w <span class="tok-k">in</span> tokenise(d):
+            <span class="tok-k">if</span> w <span class="tok-k">not</span> <span class="tok-k">in</span> vocab:
+                vocab[w] = len(vocab)
+    <span class="tok-k">return</span> vocab
+
+<span class="tok-k">def</span> count_matrix(docs, vocab):
+    <span class="tok-d">&quot;&quot;&quot;(n_docs, n_words). Entry (i, j) is how often word j occurs in doc i.&quot;&quot;&quot;</span>
+    C = <span class="gterm" data-g="npcreate-api">np.zeros</span>((len(docs), len(vocab)))
+    <span class="tok-k">for</span> i, d <span class="tok-k">in</span> enumerate(docs):
+        <span class="tok-k">for</span> w <span class="tok-k">in</span> tokenise(d):
+            <span class="tok-k">if</span> w <span class="tok-k">in</span> vocab:
+                C[i, vocab[w]] += <span class="tok-n">1</span>
+    <span class="tok-k">return</span> C
+
+VOCAB = build_vocab(DOCS)
+COUNTS = count_matrix(DOCS, VOCAB)
+INV = {j: w <span class="tok-k">for</span> w, j <span class="tok-k">in</span> VOCAB.items()}
+<span class="tok-k">print</span>(<span class="tok-s">&quot;vocabulary: %d distinct words&quot;</span> % len(VOCAB))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;count matrix:&quot;</span>, COUNTS.shape, &quot;-&gt; one row per document, one column per word&quot;)
+<span class="tok-k">print</span>(&quot;%.1f%% of it <span class="tok-k">is</span> zeros, which <span class="tok-k">is</span> what <span class="tok-s">&#x27;sparse&#x27;</span> means <span class="tok-k">in</span> practice&quot;
+      % (<span class="tok-n">100.0</span> * (COUNTS == <span class="tok-n">0</span>)<span class="gterm" data-g="npmean-api">.mean(</span>)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;A real corpus is 99.99%% zeros. Nobody stores this as a dense array.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>vocabulary: 116 distinct words
+count matrix: (14, 116) -&gt; one row per document, one column per word
+89.8% of it is zeros, which is what &#x27;sparse&#x27; means in practice
+A real corpus is 99.99%% zeros. Nobody stores this as a dense array.</pre></div></section>
+<section class="sx" id="sx-tfidf"><div class="sx-prose"><p>idf is supposed to silence the common words. Read the last four lines carefully: on this corpus <code>how</code> scores <b>higher</b> than <code>cost</code>, because it happens to appear in only one note. idf measures rarity, and in a small collection rarity and meaning come apart.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> idf_of(counts):
+    <span class="tok-d">&quot;&quot;&quot;log(n_docs / n_docs_containing_word).
+
+    A word in every document scores 0 and drops out; a word in one document
+    scores highest. The intent is that &#x27;the&#x27; cannot dominate a search.
+    &quot;&quot;&quot;</span>
+    n = counts.shape[<span class="tok-n">0</span>]
+    df = (counts &gt; <span class="tok-n">0</span>)<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
+    <span class="tok-k">return</span> <span class="gterm" data-g="nplog-api">np.log</span>(n / np.maximum(df, <span class="tok-n">1</span>)), df
+
+<span class="tok-k">def</span> weight(counts, idf):
+    <span class="tok-d">&quot;&quot;&quot;Scale by idf, then set every row to length 1.
+
+    Normalising is why a long document is not automatically closer to
+    everything than a short one: only direction survives, not magnitude.
+    &quot;&quot;&quot;</span>
+    W = counts * idf
+    norms = <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(W, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>, keepdims=<span class="tok-k">True</span>)
+    <span class="tok-k">return</span> W / np.maximum(norms, <span class="tok-n">1e-12</span>)
+
+IDF, DF = idf_of(COUNTS)
+order = np.argsort(IDF)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;lowest idf :&quot;</span>, [INV[j] <span class="tok-k">for</span> j <span class="tok-k">in</span> order[:<span class="tok-n">6</span>]])
+<span class="tok-k">print</span>(<span class="tok-s">&quot;highest idf:&quot;</span>, [INV[j] <span class="tok-k">for</span> j <span class="tok-k">in</span> order[-<span class="tok-n">6</span>:]])
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nBut look at these two:&quot;</span>)
+<span class="tok-k">for</span> w <span class="tok-k">in</span> [<span class="tok-s">&quot;how&quot;</span>, <span class="tok-s">&quot;cost&quot;</span>, <span class="tok-s">&quot;loss&quot;</span>, <span class="tok-s">&quot;the&quot;</span>]:
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %-6s appears in %2d of %d docs, idf %.3f&quot;</span>
+          % (w, DF[VOCAB[w]], len(DOCS), IDF[VOCAB[w]]))
+<span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;how&#x27;</span> scores higher than <span class="tok-s">&#x27;cost&#x27;</span>. idf <span class="tok-k">is</span> a statistic OF THIS CORPUS, <span class="tok-k">and</span>&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;in a small one a rare function word looks exactly like a rare technical&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;word. idf alone does not identify meaning; it identifies rarity.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>lowest idf : [&#x27;the&#x27;, &#x27;and&#x27;, &#x27;a&#x27;, &#x27;is&#x27;, &#x27;one&#x27;, &#x27;on&#x27;]
+highest idf: [&#x27;converge&#x27;, &#x27;scaling&#x27;, &#x27;regression&#x27;, &#x27;error&#x27;, &#x27;adds&#x27;, &#x27;views&#x27;]
+
+But look at these two:
+   how    appears in  1 of 14 docs, idf 2.639
+   cost   appears in  3 of 14 docs, idf 1.540
+   loss   appears in  2 of 14 docs, idf 1.946
+   the    appears in 12 of 14 docs, idf 0.154
+&#x27;how&#x27; scores higher than &#x27;cost&#x27;. idf is a statistic OF THIS CORPUS, and
+in a small one a rare function word looks exactly like a rare technical
+word. idf alone does not identify meaning; it identifies rarity.</pre></div></section>
+<section class="sx" id="sx-stopwords"><div class="sx-prose"><p>So every real search system ships a stop list. Not because the designers were lazy about idf — because of the measurement in the section directly above. Also note <code>contributions()</code>: a search you cannot explain is a search you cannot debug.</p></div><div class="sx-code"><pre><code><span class="tok-c"># This is why every real search system ships an explicit list. It is not</span>
+<span class="tok-c"># inelegance, it is the fix for the problem measured directly above.</span>
+STOP = set(<span class="tok-d">&quot;&quot;&quot;a an and are as at be by for from how i in is it its of on or so
+that the their them then there these this to under we what when where which
+with do does did make made you your&quot;&quot;&quot;</span>.split())
+
+<span class="tok-k">def</span> drop_stopwords(idf, vocab, stop):
+    <span class="tok-d">&quot;&quot;&quot;Zero the columns of the stop words. Everything downstream is unchanged.&quot;&quot;&quot;</span>
+    idf = idf.copy()
+    <span class="tok-k">for</span> w <span class="tok-k">in</span> stop:
+        <span class="tok-k">if</span> w <span class="tok-k">in</span> vocab:
+            idf[vocab[w]] = <span class="tok-n">0.0</span>
+    <span class="tok-k">return</span> idf
+
+IDF_S = drop_stopwords(IDF, VOCAB, STOP)
+TFIDF = weight(COUNTS, IDF_S)
+killed = sum(<span class="tok-n">1</span> <span class="tok-k">for</span> w <span class="tok-k">in</span> VOCAB <span class="tok-k">if</span> IDF_S[VOCAB[w]] == <span class="tok-n">0</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;silenced %d of %d vocabulary entries&quot;</span> % (killed, len(VOCAB)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;every document row still has length %.4f&quot;</span> % <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(TFIDF[<span class="tok-n">0</span>]))
+
+<span class="tok-k">def</span> contributions(q, doc_i, vocab, idf, mat, top=<span class="tok-n">4</span>):
+    <span class="tok-d">&quot;&quot;&quot;Which words actually produced this score? A search you cannot explain is
+    a search you cannot debug.&quot;&quot;&quot;</span>
+    qv = embed_query(q, vocab, idf)
+    per = mat[doc_i] * qv
+    idx = np.argsort(per)[::-<span class="tok-n">1</span>][:top]
+    <span class="tok-k">return</span> [(INV[j], float(per[j])) <span class="tok-k">for</span> j <span class="tok-k">in</span> idx <span class="tok-k">if</span> per[j] &gt; <span class="tok-n">0</span>]</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>silenced 21 of 116 vocabulary entries
+every document row still has length 1.0000</pre></div></section>
+<section class="sx" id="sx-retrieve"><div class="sx-prose"><p>Cosine similarity is a <span class="gterm" data-g="dot-product-f0">dot product</span> once both sides have length 1, which is the whole reason the rows were normalised. Each result prints the words that actually earned the score.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> embed_query(q, vocab, idf):
+    <span class="tok-d">&quot;&quot;&quot;Put the query through exactly the same pipeline as the documents.
+
+    Processing query and document differently is the most common retrieval bug
+    there is, and it fails quietly -- you get results, just worse ones.
+    &quot;&quot;&quot;</span>
+    c = count_matrix([q], vocab)[<span class="tok-n">0</span>]
+    v = c * idf
+    <span class="tok-k">return</span> v / max(<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(v), <span class="tok-n">1e-12</span>)
+
+<span class="tok-k">def</span> search(q, docs, mat, vocab, idf, k=<span class="tok-n">3</span>):
+    <span class="tok-d">&quot;&quot;&quot;Cosine similarity is a plain dot product once both sides have length 1.&quot;&quot;&quot;</span>
+    qv = embed_query(q, vocab, idf)
+    scores = mat @ qv
+    top = np.argsort(scores)[::-<span class="tok-n">1</span>][:k]
+    <span class="tok-k">return</span> [(int(i), float(scores[i]), docs[i]) <span class="tok-k">for</span> i <span class="tok-k">in</span> top]
+
+<span class="tok-k">for</span> q <span class="tok-k">in</span> [<span class="tok-s">&quot;how does gradient descent choose its step&quot;</span>,
+          <span class="tok-s">&quot;what is information gain&quot;</span>]:
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;\nquery:&quot;</span>, q)
+    <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> search(q, DOCS, TFIDF, VOCAB, IDF_S):
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;   %.3f  [%2d]  %s&quot;</span> % (s, i, d))
+    top = search(q, DOCS, TFIDF, VOCAB, IDF_S, k=<span class="tok-n">1</span>)[<span class="tok-n">0</span>][<span class="tok-n">0</span>]
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   won on:&quot;</span>, contributions(q, top, VOCAB, IDF_S, TFIDF))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nScores are cosines: 1.0 is the same direction, 0.0 shares no word.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+query: how does gradient descent choose its step
+   0.275  [10]  the elbow of the distortion curve is one way people choose k for clustering
+   0.232  [ 0]  gradient descent repeatedly nudges the weights downhill to minimise the cost
+   0.191  [ 2]  a large learning rate makes gradient descent overshoot and the cost goes up
+   won on: [(&#x27;choose&#x27;, 0.2746473873607581)]
+
+query: what is information gain
+   0.405  [ 7]  a decision tree splits on the feature that gives the largest information gain
+   0.336  [ 8]  entropy measures impurity and information gain is the drop in entropy after a split
+   0.000  [13]  the query key and value vectors are three different linear views of one token
+   won on: [(&#x27;information&#x27;, 0.20247321363331852), (&#x27;gain&#x27;, 0.20247321363331852)]
+
+Scores are cosines: 1.0 is the same direction, 0.0 shares no word.</pre></div></section>
+<section class="sx" id="sx-mismatch"><div class="sx-prose"><p>The failure. The query says <i>loss</i>; the notes that answer it say <i>cost</i>; they share no word, so they score exactly 0.000. This is not a tuning problem. tf-idf has no mechanism that could ever know those two words mean the same thing.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Now a query that means the same thing but reaches for the other word.</span>
+q = <span class="tok-s">&quot;how do I make the loss smaller&quot;</span>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;query:&quot;</span>, q)
+hits = search(q, DOCS, TFIDF, VOCAB, IDF_S, k=<span class="tok-n">4</span>)
+<span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> hits:
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %.3f  [%2d]  %s&quot;</span> % (s, i, d))
+COST_DOCS = {<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">2</span>}
+found = sorted(COST_DOCS &amp; {i <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> hits})
+<span class="tok-k">print</span>(&quot;\nDocuments <span class="tok-n">0</span>, <span class="tok-n">1</span> <span class="tok-k">and</span> <span class="tok-n">2</span> answer this question, using the word <span class="tok-s">&#x27;cost&#x27;</span>.&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Retrieved from that set: %s&quot;</span> % (found <span class="tok-k">if</span> found <span class="tok-k">else</span> <span class="tok-s">&quot;none&quot;</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;They contain no query word at all, so they score exactly 0.000. Matching&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;letters is not matching meaning, and no tuning of tf-idf repairs it,&quot;</span>)
+<span class="tok-k">print</span>(&quot;because tf-idf never sees that <span class="tok-s">&#x27;cost&#x27;</span> <span class="tok-k">and</span> <span class="tok-s">&#x27;loss&#x27;</span> are the same thing.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>query: how do I make the loss smaller
+   0.327  [ 3]  we minimise the loss by taking the derivative and stepping against it
+   0.316  [ 4]  the loss for one training example is squared error for regression
+   0.000  [13]  the query key and value vectors are three different linear views of one token
+   0.000  [12]  attention lets every token look at every other token and weigh what matters
+
+Documents 0, 1 and 2 answer this question, using the word &#x27;cost&#x27;.
+Retrieved from that set: none
+They contain no query word at all, so they score exactly 0.000. Matching
+letters is not matching meaning, and no tuning of tf-idf repairs it,
+because tf-idf never sees that &#x27;cost&#x27; and &#x27;loss&#x27; are the same thing.</pre></div></section>
+<section class="sx" id="sx-dense"><div class="sx-prose"><p>The SVD from file 08, pointed at a word <span class="gterm" data-g="matrix-f0">matrix</span> instead of a feature matrix. Words that keep the same company end up with similar coordinates, so a note can now score against a word it does not contain. The cost documents come back. This is 1990s technology and a modern embedding model does the same job far better — but it does <i>this</i> job.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> lsa(mat, k):
+    <span class="tok-d">&quot;&quot;&quot;Compress the sparse rows to k dense dimensions with the SVD -- the same
+    machinery as file 08, pointed at a word matrix instead of a feature matrix.
+
+    Vt&#x27;s rows are directions in word space. Two words that keep the same
+    company get similar coordinates, so a document can now score against a word
+    it does not literally contain. That is the whole trick, and it is 1990
+    technology; a modern embedding model does the same job far better.
+    &quot;&quot;&quot;</span>
+    U, S, Vt = np.linalg.svd(mat, full_matrices=<span class="tok-k">False</span>)
+    doc_vecs = U[:, :k] * S[:k]
+    doc_vecs /= np.maximum(<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(doc_vecs, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>, keepdims=<span class="tok-k">True</span>), <span class="tok-n">1e-12</span>)
+    <span class="tok-k">return</span> doc_vecs, Vt[:k]
+
+<span class="tok-k">def</span> dense_search(q, docs, doc_vecs, comps, vocab, idf, k=<span class="tok-n">3</span>):
+    qv = embed_query(q, vocab, idf) @ comps.T
+    qv /= max(<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(qv), <span class="tok-n">1e-12</span>)
+    scores = doc_vecs @ qv
+    top = np.argsort(scores)[::-<span class="tok-n">1</span>][:k]
+    <span class="tok-k">return</span> [(int(i), float(scores[i]), docs[i]) <span class="tok-k">for</span> i <span class="tok-k">in</span> top]
+
+DIM = <span class="tok-n">6</span>
+DENSE, COMPS = lsa(TFIDF, DIM)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;compressed %d sparse dimensions down to %d dense ones&quot;</span> % (TFIDF.shape[<span class="tok-n">1</span>], DIM))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nsame query:&quot;</span>, q)
+<span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> dense_search(q, DOCS, DENSE, COMPS, VOCAB, IDF_S, k=<span class="tok-n">4</span>):
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %+.3f  [%2d]  %s&quot;</span> % (s, i, d))
+dfound = sorted(COST_DOCS &amp; {i <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span>
+                             dense_search(q, DOCS, DENSE, COMPS, VOCAB, IDF_S, k=<span class="tok-n">4</span>)})
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nCost documents now retrieved: %s&quot;</span> % (dfound <span class="tok-k">if</span> dfound <span class="tok-k">else</span> <span class="tok-s">&quot;none&quot;</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>compressed 116 sparse dimensions down to 6 dense ones
+
+same query: how do I make the loss smaller
+   +0.968  [ 3]  we minimise the loss by taking the derivative and stepping against it
+   +0.940  [ 4]  the loss for one training example is squared error for regression
+   +0.223  [ 0]  gradient descent repeatedly nudges the weights downhill to minimise the cost
+   +0.143  [ 1]  the cost function measures how wrong the model is averaged over the training set
+
+Cost documents now retrieved: [0, 1]</pre></div></section>
+<section class="sx" id="sx-compare"><div class="sx-prose"><p>Three query sets, kept apart on purpose. Dense wins on synonyms and <b>loses</b> on rare exact words, because compressing to six dimensions is precisely what blurs <code>gaussian</code> into its neighbours. Neither method dominates, which is the finding, not a disappointment.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Two query sets, kept separate on purpose. The first shares words with its</span>
+<span class="tok-c"># answers; the second deliberately does not. Averaging them together would</span>
+<span class="tok-c"># hide the only difference that matters.</span>
+PLAIN = [(<span class="tok-s">&quot;what is information gain&quot;</span>, {<span class="tok-n">7</span>, <span class="tok-n">8</span>}),
+         (<span class="tok-s">&quot;how do centroids move&quot;</span>, {<span class="tok-n">9</span>}),
+         (<span class="tok-s">&quot;what do query and key vectors do&quot;</span>, {<span class="tok-n">12</span>, <span class="tok-n">13</span>}),
+         (<span class="tok-s">&quot;choosing k for clustering&quot;</span>, {<span class="tok-n">10</span>})]
+MISMATCH = [(<span class="tok-s">&quot;how do I make the loss smaller&quot;</span>, {<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">2</span>}),
+            (<span class="tok-s">&quot;what pushes the cost upward&quot;</span>, {<span class="tok-n">2</span>}),
+            (<span class="tok-s">&quot;a rule for splitting on impurity&quot;</span>, {<span class="tok-n">7</span>})]
+<span class="tok-c"># And a third set: rare exact terms, the case lexical search is best at.</span>
+EXACT = [(<span class="tok-s">&quot;gaussian&quot;</span>, {<span class="tok-n">11</span>}), (<span class="tok-s">&quot;distortion&quot;</span>, {<span class="tok-n">10</span>}), (<span class="tok-s">&quot;overshoot&quot;</span>, {<span class="tok-n">2</span>}),
+         (<span class="tok-s">&quot;impurity&quot;</span>, {<span class="tok-n">8</span>}), (<span class="tok-s">&quot;anomaly&quot;</span>, {<span class="tok-n">11</span>}), (<span class="tok-s">&quot;scaling&quot;</span>, {<span class="tok-n">5</span>}),
+         (<span class="tok-s">&quot;penalty&quot;</span>, {<span class="tok-n">6</span>}), (<span class="tok-s">&quot;derivative&quot;</span>, {<span class="tok-n">3</span>}), (<span class="tok-s">&quot;squared error&quot;</span>, {<span class="tok-n">4</span>})]
+
+<span class="tok-k">def</span> recall_at(fn, qs, k):
+    <span class="tok-k">return</span> float(<span class="gterm" data-g="npmean-api">np.mean</span>([len({i <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> fn(q, k)} &amp; gold) &gt; <span class="tok-n">0</span> <span class="tok-k">for</span> q, gold <span class="tok-k">in</span> qs]))
+
+lex = <span class="tok-k">lambda</span> q, k: search(q, DOCS, TFIDF, VOCAB, IDF_S, k=k)
+den = <span class="tok-k">lambda</span> q, k: dense_search(q, DOCS, DENSE, COMPS, VOCAB, IDF_S, k=k)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;                      plain  mismatch  exact&quot;</span>)
+<span class="tok-k">for</span> name, f <span class="tok-k">in</span> [(<span class="tok-s">&quot;lexical&quot;</span>, lex), (<span class="tok-s">&quot;dense  &quot;</span>, den)]:
+    <span class="tok-k">for</span> k <span class="tok-k">in</span> [<span class="tok-n">1</span>, <span class="tok-n">3</span>]:
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;  %s recall@%d :   %.2f     %.2f    %.2f&quot;</span>
+              % (name, k, recall_at(f, PLAIN, k), recall_at(f, MISMATCH, k),
+                 recall_at(f, EXACT, k)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nRead the last column. <span class="gterm" data-g="dense-api">Dense</span> retrieval WINS on synonyms and LOSES on&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;rare exact words -- compressing to 6 dimensions is exactly what blurs&quot;</span>)
+<span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;gaussian&#x27;</span> into its neighbours. Neither method dominates.&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nHow many dimensions to keep is a real knob, not a formality:&quot;</span>)
+<span class="tok-k">for</span> k <span class="tok-k">in</span> [<span class="tok-n">2</span>, <span class="tok-n">4</span>, <span class="tok-n">6</span>, <span class="tok-n">8</span>, <span class="tok-n">12</span>, <span class="tok-n">14</span>]:
+    dv, cp = lsa(TFIDF, k)
+    f = <span class="tok-k">lambda</span> q, kk, dv=dv, cp=cp: dense_search(q, DOCS, dv, cp, VOCAB, IDF_S, k=kk)
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   k=%2d  plain@3 %.2f   mismatch@3 %.2f   exact@3 %.2f&quot;</span>
+          % (k, recall_at(f, PLAIN, <span class="tok-n">3</span>), recall_at(f, MISMATCH, <span class="tok-n">3</span>),
+             recall_at(f, EXACT, <span class="tok-n">3</span>)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Too few dimensions and unrelated notes collapse together -- and notice the&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;exact column climbing back to 1.00 by k=8, because rare words stop being&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;blurred once there is room to keep them apart. The top of the&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;range does not misbehave here, and it cannot: this matrix has rank 14, so&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;k=14 is the original data back. On a real corpus of millions of documents&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;that ceiling is thousands of times further away, and the curve keeps&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;mattering all the way up.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>                      plain  mismatch  exact
+  lexical recall@1 :   1.00     0.00    1.00
+  lexical recall@3 :   1.00     0.33    1.00
+  dense   recall@1 :   1.00     0.00    0.78
+  dense   recall@3 :   1.00     1.00    0.78
+
+Read the last column. Dense retrieval WINS on synonyms and LOSES on
+rare exact words -- compressing to 6 dimensions is exactly what blurs
+&#x27;gaussian&#x27; into its neighbours. Neither method dominates.
+
+How many dimensions to keep is a real knob, not a formality:
+   k= 2  plain@3 1.00   mismatch@3 0.33   exact@3 0.78
+   k= 4  plain@3 1.00   mismatch@3 1.00   exact@3 0.78
+   k= 6  plain@3 1.00   mismatch@3 1.00   exact@3 0.78
+   k= 8  plain@3 1.00   mismatch@3 1.00   exact@3 1.00
+   k=12  plain@3 1.00   mismatch@3 1.00   exact@3 1.00
+   k=14  plain@3 1.00   mismatch@3 1.00   exact@3 1.00
+Too few dimensions and unrelated notes collapse together -- and notice the
+exact column climbing back to 1.00 by k=8, because rare words stop being
+blurred once there is room to keep them apart. The top of the
+range does not misbehave here, and it cannot: this matrix has rank 14, so
+k=14 is the original data back. On a real corpus of millions of documents
+that ceiling is thousands of times further away, and the curve keeps
+mattering all the way up.</pre></div></section>
+<section class="sx" id="sx-hybrid"><div class="sx-prose"><p>So add the scores. The blend keeps the exact matches dense blurs and the synonyms lexical cannot see, for the price of one more dot product. Note the plateau: a broad range of alpha scores identically here, so anyone quoting a precise best alpha is quoting their corpus, not yours.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Nobody in production picks one. They add the two scores, because the failures</span>
+<span class="tok-c"># are not the same failures.</span>
+<span class="tok-k">def</span> hybrid(q, alpha, k=<span class="tok-n">3</span>):
+    ql = embed_query(q, VOCAB, IDF_S)
+    qd = ql @ COMPS.T
+    qd /= max(<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(qd), <span class="tok-n">1e-12</span>)
+    scores = (<span class="tok-n">1</span> - alpha) * (TFIDF @ ql) + alpha * (DENSE @ qd)
+    top = np.argsort(scores)[::-<span class="tok-n">1</span>][:k]
+    <span class="tok-k">return</span> [(int(i), float(scores[i]), DOCS[i]) <span class="tok-k">for</span> i <span class="tok-k">in</span> top]
+
+<span class="tok-k">print</span>(<span class="tok-s">&quot;           plain  mismatch  exact   mean&quot;</span>)
+best = (<span class="tok-k">None</span>, -<span class="tok-n">1.0</span>)
+<span class="tok-k">for</span> a <span class="tok-k">in</span> [<span class="tok-n">0.0</span>, <span class="tok-n">0.2</span>, <span class="tok-n">0.4</span>, <span class="tok-n">0.5</span>, <span class="tok-n">0.6</span>, <span class="tok-n">0.8</span>, <span class="tok-n">1.0</span>]:
+    f = <span class="tok-k">lambda</span> q, k, a=a: hybrid(q, a, k)
+    r = [recall_at(f, PLAIN, <span class="tok-n">3</span>), recall_at(f, MISMATCH, <span class="tok-n">3</span>), recall_at(f, EXACT, <span class="tok-n">3</span>)]
+    mean = float(<span class="gterm" data-g="npmean-api">np.mean</span>(r))
+    <span class="tok-k">if</span> mean &gt; best[<span class="tok-n">1</span>]:
+        best = (a, mean)
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;  alpha=%.1f  %.2f    %.2f     %.2f   %.2f&quot;</span> % (a, r[<span class="tok-n">0</span>], r[<span class="tok-n">1</span>], r[<span class="tok-n">2</span>], mean))
+ties = [a <span class="tok-k">for</span> a <span class="tok-k">in</span> [<span class="tok-n">0.0</span>, <span class="tok-n">0.2</span>, <span class="tok-n">0.4</span>, <span class="tok-n">0.5</span>, <span class="tok-n">0.6</span>, <span class="tok-n">0.8</span>, <span class="tok-n">1.0</span>]
+        <span class="tok-k">if</span> abs(<span class="gterm" data-g="npmean-api">np.mean</span>([recall_at(<span class="tok-k">lambda</span> q, k, a=a: hybrid(q, a, k), qs, <span class="tok-n">3</span>)
+                        <span class="tok-k">for</span> qs <span class="tok-k">in</span> (PLAIN, MISMATCH, EXACT)]) - best[<span class="tok-n">1</span>]) &lt; <span class="tok-n">1e-9</span>]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nalpha 0.0 is pure lexical, 1.0 is pure dense. Everything from %.1f to %.1f&quot;</span>
+      % (min(ties), max(ties)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;scores the same here -- a broad plateau, not a sharp optimum.&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Both ends give up something. The blend keeps the exact matches that dense&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;blurs and the synonyms that lexical cannot see, and it costs one extra&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;dot product. Where the best alpha sits depends entirely on your corpus&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;and your queries, so measure it -- this number is not transferable.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>           plain  mismatch  exact   mean
+  alpha=0.0  1.00    0.33     1.00   0.78
+  alpha=0.2  1.00    1.00     1.00   1.00
+  alpha=0.4  1.00    1.00     1.00   1.00
+  alpha=0.5  1.00    1.00     1.00   1.00
+  alpha=0.6  1.00    1.00     1.00   1.00
+  alpha=0.8  1.00    1.00     1.00   1.00
+  alpha=1.0  1.00    1.00     0.78   0.93
+
+alpha 0.0 is pure lexical, 1.0 is pure dense. Everything from 0.2 to 0.8
+scores the same here -- a broad plateau, not a sharp optimum.
+Both ends give up something. The blend keeps the exact matches that dense
+blurs and the synonyms that lexical cannot see, and it costs one extra
+dot product. Where the best alpha sits depends entirely on your corpus
+and your queries, so measure it -- this number is not transferable.</pre></div></section>
+<section class="sx" id="sx-assemble"><div class="sx-prose"><p>Retrieval ends in a string. The budget is real — attention costs grow with the square of the context — so something gets dropped, and the ranker is what chooses. A bad ranker with a big budget just fails more expensively.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> build_prompt(question, hits, budget_words):
+    <span class="tok-d">&quot;&quot;&quot;Retrieval ends here: a string. Everything above exists to fill this in.
+
+    The budget is real. Attention costs grow with the square of the context
+    (C4 W2 &#x27;the cost&#x27;), so something has to be dropped -- and ranking is what
+    chooses. A bad ranker with a big budget just fails more expensively.
+    &quot;&quot;&quot;</span>
+    header = <span class="tok-s">&quot;Answer using only the notes below. If they do not contain the answer, say so.&quot;</span>
+    used, kept = len(header.split()) + len(question.split()), []
+    <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> hits:
+        <span class="tok-k">if</span> used + len(d.split()) &gt; budget_words:
+            <span class="tok-k">break</span>
+        kept.append((i, s, d))
+        used += len(d.split())
+    notes = <span class="tok-s">&quot;\n&quot;</span>.join(<span class="tok-s">&quot;[%d] %s&quot;</span> % (i, d) <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span> kept)
+    <span class="tok-k">return</span> <span class="tok-s">&quot;%s\n\n%s\n\nQuestion: %s&quot;</span> % (header, notes, question), used, len(kept)
+
+question = <span class="tok-s">&quot;why does a big learning rate hurt&quot;</span>
+hits = search(question, DOCS, TFIDF, VOCAB, IDF_S, k=<span class="tok-n">5</span>)
+<span class="tok-k">for</span> budget <span class="tok-k">in</span> [<span class="tok-n">200</span>, <span class="tok-n">40</span>]:
+    prompt, used, n = build_prompt(question, hits, budget)
+    <span class="tok-k">print</span>(&quot;\nbudget %d words -&gt; kept %d of %d notes, used %d words&quot;
+          % (budget, n, len(hits), used))
+    <span class="tok-k">if</span> budget == <span class="tok-n">40</span>:
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;---&quot;</span>)
+        <span class="tok-k">print</span>(prompt)
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;---&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+budget 200 words -&gt; kept 5 of 5 notes, used 89 words
+
+budget 40 words -&gt; kept 1 of 5 notes, used 35 words
+---
+Answer using only the notes below. If they do not contain the answer, say so.
+
+[2] a large learning rate makes gradient descent overshoot and the cost goes up
+
+Question: why does a big learning rate hurt
+---</pre></div></section>
+<section class="sx" id="sx-abstain"><div class="sx-prose"><p>The most under-built part of most systems. Without a floor the retriever always returns its top k however irrelevant, and a model handed irrelevant notes still answers, fluently. A good share of what gets called hallucination is retrieval that should have said nothing.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> answerable(q, mat, vocab, idf, floor):
+    <span class="tok-d">&quot;&quot;&quot;Refuse when nothing scores above a floor.
+
+    Without this a retriever always returns its top k however irrelevant, and a
+    model handed irrelevant notes will still answer, fluently. A good share of
+    what gets called hallucination is retrieval that should have said nothing.
+    &quot;&quot;&quot;</span>
+    best = float(<span class="gterm" data-g="npmaxmin-api">np.max</span>(mat @ embed_query(q, vocab, idf)))
+    <span class="tok-k">return</span> best &gt;= floor, best
+
+probes = [<span class="tok-s">&quot;what is entropy&quot;</span>, <span class="tok-s">&quot;how does k means pick centroids&quot;</span>,
+          <span class="tok-s">&quot;what is the capital of Norway&quot;</span>, <span class="tok-s">&quot;how do I renew a passport&quot;</span>]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;           query                          best score&quot;</span>)
+<span class="tok-k">for</span> q <span class="tok-k">in</span> probes:
+    _, best = answerable(q, TFIDF, VOCAB, IDF_S, <span class="tok-n">0.0</span>)
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %-38s %.3f&quot;</span> % (q, best))
+in_scope = [answerable(q, TFIDF, VOCAB, IDF_S, <span class="tok-n">0</span>)[<span class="tok-n">1</span>] <span class="tok-k">for</span> q <span class="tok-k">in</span> probes[:<span class="tok-n">2</span>]]
+out_scope = [answerable(q, TFIDF, VOCAB, IDF_S, <span class="tok-n">0</span>)[<span class="tok-n">1</span>] <span class="tok-k">for</span> q <span class="tok-k">in</span> probes[<span class="tok-n">2</span>:]]
+floor = (min(in_scope) + max(out_scope)) / <span class="tok-n">2</span>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nlowest in-scope score %.3f, highest out-of-scope score %.3f&quot;</span>
+      % (min(in_scope), max(out_scope)))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;a floor of %.3f separates them on these four&quot;</span> % floor)
+<span class="tok-k">for</span> q <span class="tok-k">in</span> probes:
+    ok, best = answerable(q, TFIDF, VOCAB, IDF_S, floor)
+    <span class="tok-k">print</span>(&quot;   %-38s -&gt; %s<span class="tok-s">&quot; % (q, &quot;</span>answer<span class="tok-s">&quot; if ok else &quot;</span>say you do <span class="tok-k">not</span> know&quot;))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nFour probes is not a calibration. The method is right and the sample is&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;far too small: collect the queries you actually get, score them, and put&quot;</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;the floor where the two groups stop overlapping -- if they ever do.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>           query                          best score
+   what is entropy                        0.644
+   how does k means pick centroids        0.684
+   what is the capital of Norway          0.000
+   how do I renew a passport              0.000
+
+lowest in-scope score 0.644, highest out-of-scope score 0.000
+a floor of 0.322 separates them on these four
+   what is entropy                        -&gt; answer
+   how does k means pick centroids        -&gt; answer
+   what is the capital of Norway          -&gt; say you do not know
+   how do I renew a passport              -&gt; say you do not know
+
+Four probes is not a calibration. The method is right and the sample is
+far too small: collect the queries you actually get, score them, and put
+the floor where the two groups stop overlapping -- if they ever do.</pre></div></section>
+
+<h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
+<ul class="links plain"><li><a href="../c4/w1-04-embeddings.html">Embeddings</a></li><li><a href="../c4/w2-02-query-key-value.html">Query, key and value</a></li><li><a href="../c4/w4-05-context-and-cost.html">Context and cost</a></li><li><a href="../f0/w1-10-dot-product.html">The dot product</a></li></ul>
+
+<nav class="pager">
+<a class="prev" href="../scratch/10-reinforcement-learning.html"><span class="dir">&#8249; previous</span><span class="ttl">Reinforcement learning</span></a>
+<a class="next" href="../scratch/12-fine-tuning.html"><span class="dir">next &#8250;</span><span class="ttl">Fine-tuning: head, full, and LoRA</span></a>
+</nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">·</span> Hung Om</footer>
+</main>
+</div>
+</body>
+</html>

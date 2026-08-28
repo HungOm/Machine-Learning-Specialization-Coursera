@@ -417,4 +417,219 @@ dict(file="10_reinforcement_learning.py", slug="10-reinforcement-learning",
                "its initial estimate forever and the policy comes out wrong. Any "
                "exploration at all fixes it.</p>",
      }),
+
+dict(file="11_retrieval.py", slug="11-retrieval",
+     title="Retrieval, the R in RAG",
+     lede="Counting words, weighting them, cosine, then the SVD \u2014 built until "
+          "lexical search fails on a synonym and dense search fails on a rare word, "
+          "which is why every real system blends the two.",
+     builds="chunking with overlap, a tf-idf index, cosine search, LSA embeddings, "
+            "a hybrid ranker measured on three query sets, a prompt assembler with a "
+            "token budget, and a threshold for saying nothing",
+     lessons=[("c4/w1-04-embeddings.html", "Embeddings"),
+              ("c4/w2-02-query-key-value.html", "Query, key and value"),
+              ("c4/w4-05-context-and-cost.html", "Context and cost"),
+              ("f0/w1-10-dot-product.html", "The dot product")],
+     prose={
+"corpus": "<p>Fourteen sentences, and two of them are the experiment: some notes say "
+          "<i>cost</i> and some say <i>loss</i> for the same idea. Every retrieval "
+          "system you will ever build has this problem somewhere in it.</p>",
+"chunk": "<p>Before anything can be searched it has to be cut up. Overlap is the "
+         "only knob here and it buys exactly one thing \u2014 a fact that straddles a "
+         "boundary stays findable. Look at what happens to <i>minimise the cost</i> "
+         "at overlap 0: it is in neither chunk, and nothing warns you.</p>",
+"vocab": "<p>A document becomes a row of counts. That is the entire representation, "
+         "and the 89% of it that is zero is why nobody stores this as a dense array "
+         "at real scale.</p>",
+"tfidf": "<p>idf is supposed to silence the common words. Read the last four lines "
+         "carefully: on this corpus <code>how</code> scores <b>higher</b> than "
+         "<code>cost</code>, because it happens to appear in only one note. idf "
+         "measures rarity, and in a small collection rarity and meaning come apart.</p>",
+"stopwords": "<p>So every real search system ships a stop list. Not because the "
+             "designers were lazy about idf \u2014 because of the measurement in the "
+             "section directly above. Also note <code>contributions()</code>: a search "
+             "you cannot explain is a search you cannot debug.</p>",
+"retrieve": "<p>Cosine similarity is a dot product once both sides have length 1, "
+            "which is the whole reason the rows were normalised. Each result prints "
+            "the words that actually earned the score.</p>",
+"mismatch": "<p>The failure. The query says <i>loss</i>; the notes that answer it say "
+            "<i>cost</i>; they share no word, so they score exactly 0.000. This is not "
+            "a tuning problem. tf-idf has no mechanism that could ever know those two "
+            "words mean the same thing.</p>",
+"dense": "<p>The SVD from file 08, pointed at a word matrix instead of a feature "
+         "matrix. Words that keep the same company end up with similar coordinates, "
+         "so a note can now score against a word it does not contain. The cost "
+         "documents come back. This is 1990s technology and a modern embedding model "
+         "does the same job far better \u2014 but it does <i>this</i> job.</p>",
+"compare": "<p>Three query sets, kept apart on purpose. Dense wins on synonyms and "
+           "<b>loses</b> on rare exact words, because compressing to six dimensions "
+           "is precisely what blurs <code>gaussian</code> into its neighbours. Neither "
+           "method dominates, which is the finding, not a disappointment.</p>",
+"hybrid": "<p>So add the scores. The blend keeps the exact matches dense blurs and the "
+          "synonyms lexical cannot see, for the price of one more dot product. Note "
+          "the plateau: a broad range of alpha scores identically here, so anyone "
+          "quoting a precise best alpha is quoting their corpus, not yours.</p>",
+"assemble": "<p>Retrieval ends in a string. The budget is real \u2014 attention costs "
+            "grow with the square of the context \u2014 so something gets dropped, and "
+            "the ranker is what chooses. A bad ranker with a big budget just fails "
+            "more expensively.</p>",
+"abstain": "<p>The most under-built part of most systems. Without a floor the retriever "
+           "always returns its top k however irrelevant, and a model handed irrelevant "
+           "notes still answers, fluently. A good share of what gets called "
+           "hallucination is retrieval that should have said nothing.</p>",
+     }),
+
+dict(file="12_fine_tuning.py", slug="12-fine-tuning",
+     title="Fine-tuning: head, full, and LoRA",
+     lede="Pretrain on 20000 examples, adapt to 60 three different ways, and measure "
+          "what each one costs and what each one breaks \u2014 including the forgetting "
+          "that freezing the body does not prevent.",
+     builds="a pretrained network, a from-scratch baseline, head-only training, full "
+            "fine-tuning, LoRA with its own gradients derived by hand, a rank sweep, "
+            "and two sweeps that show what actually decides whether transfer works",
+     lessons=[("c2/w3-13-transfer-learning.html", "Transfer learning"),
+              ("c4/w3-08-counting-a-real-model.html", "Counting a real model"),
+              ("c2/w2-11-advanced-optimization.html", "Advanced optimization"),
+              ("c1/w3-10-cost-function-with-regularization.html", "Regularization")],
+     prose={
+"tasks": "<p>20000 examples of the task you do not care about, 60 of the task you do. "
+         "That ratio is the entire situation and it is why any of this exists.</p>",
+"model": "<p>Two ReLU layers and a linear head \u2014 file 03 and file 04 again. The one "
+         "addition is the <code>delta</code> hook on W2, which is all LoRA will need.</p>",
+"pretrain": "<p>0.90 on task A, and the same model gets 0.65 on task B. Related is "
+            "not the same, and that gap is what the rest of the file tries to close.</p>",
+"baseline": "<p>The number every fine-tuning result has to beat and the one most often "
+            "left out of the comparison. Note the train accuracy: 1.0000. Memorising "
+            "60 points is easy; generalising from them is not.</p>",
+"head_only": "<p>Read the task A line twice. It got <b>worse</b>, even though the body "
+             "never moved \u2014 because the head belongs to task A too, and you just "
+             "retrained it on something else. Freezing the body is not the same as "
+             "keeping the old behaviour, and almost every explanation of this implies "
+             "that it is.</p>",
+"full": "<p>The best task B number and a 19-point drop on task A. Nothing "
+        "malfunctioned. You asked for the weights that fit 60 examples and you got "
+        "them; catastrophic forgetting is that request being granted.</p>",
+"lora": "<p>W + BA, with B starting at <b>zero</b> so the adapted model begins "
+        "identical to the base \u2014 random B would start you somewhere worse than "
+        "where you began. The gradients here are derived by hand from the chain rule "
+        "through the product. Then the property no parameter count shows: detach the "
+        "adapter and task A comes back at 0.8870, untouched.</p>",
+"rank": "<p>The saving at this toy size is unimpressive, and the arithmetic printed "
+        "underneath is why it matters on real models: the full matrix grows with d "
+        "squared, the adapter only with d. At 4096 wide it is 0.39%. Rank r can only "
+        "move the weights in r directions, so if the task needs more, it cannot follow.</p>",
+"verdict": "<p>Four methods, two columns, no winner. Pick by what you are short of: "
+           "data, compute, memory, or the need to keep the original behaviour.</p>",
+"relatedness": "<p>The table that answers <i>will transfer work here</i>. Two different "
+               "stories: using the base unchanged collapses from 0.89 to 0.47 as the "
+               "task drifts, while fine-tuning holds up and still beats scratch even at "
+               "drift 3.0, where the label rule has almost nothing to do with the "
+               "original. What transfers is not the answers \u2014 it is the features.</p>",
+"data_size": "<p>And the other axis. By 5000 examples every method lands within a point "
+             "or two of every other. Fine-tuning pays in the middle band, where you "
+             "have enough data to steer a model but not enough to raise one.</p>",
+     }),
+
+dict(file="13_agent_loop.py", slug="13-agent-loop",
+     title="An agent loop, and how it breaks",
+     lede="Tools, schemas, a strict parser, three guard rails and a budget \u2014 with a "
+          "deterministic stub where the model goes, so that what is left on the page "
+          "is exactly the part you have to get right yourself.",
+     builds="a safe arithmetic tool, argument validation, a tool runner that never "
+            "raises, an action parser, the think-act-observe loop, a repeat guard, "
+            "token accounting, and an evaluation suite with deliberate failures in it",
+     lessons=[("c4/w4-02-generation.html", "Generation"),
+              ("c4/w4-06-what-it-cannot-do.html", "What it cannot do"),
+              ("c4/w4-04-rlhf.html", "RLHF"),
+              ("c3/w3-04-policies.html", "Policies")],
+     prose={
+"tools": "<p>A tool is a name, a declared argument shape, and a function. The declared "
+         "shape is not paperwork \u2014 it is the only thing between a wrong guess and a "
+         "stack trace in production. Note that <code>calc</code> parses to a syntax "
+         "tree and refuses anything not on a list; never hand a string from a model "
+         "straight to <code>eval</code>.</p>",
+"validate": "<p>Check before running, and return something the caller can act on. "
+            "<i>unknown argument radius</i> is repairable. A traceback is not.</p>",
+"run_tool": "<p>Every failure comes back as a string. An agent that crashes on a bad "
+            "call has one bad step; an agent that is told what went wrong has a chance "
+            "to fix it on the next one.</p>",
+"parse": "<p>The fragile joint. A real model returns prose with a call somewhere "
+         "inside, and the format is a request rather than a guarantee. Three of the "
+         "five examples fail, and failing loudly is the correct behaviour \u2014 guessing "
+         "at a malformed call is how agents take actions nobody asked for.</p>",
+"policy": "<p>The stand-in for the model: deterministic, so this file gives the same "
+          "answer twice and needs nothing installed. Look at the <code>\\b</code> "
+          "boundaries in the regex. Without them the alternation matches the "
+          "<i>m</i> at the start of <i>minute</i> and converts km to metres instead "
+          "\u2014 a wrong answer, silently, from a parser that looked fine.</p>",
+"loop": "<p>Think, act, observe, repeat. Four tasks, and the third one needs two "
+        "tools where the second feeds the first. That is the whole architecture; "
+        "everything else on this page is a guard rail.</p>",
+"guards": "<p>Three failures, three different guards. The third is the classic runaway "
+          "agent \u2014 a planner that keeps choosing the same action, each step costing "
+          "a full model call \u2014 stopped after 2 steps instead of 20.</p>",
+"budget": "<p>The loop re-sends the whole transcript every step, so cost grows with the "
+          "<b>square</b> of the step count, not linearly. This is why <i>let it keep "
+          "trying</i> is an expensive default.</p>",
+"evaluate": "<p>Two deliberate failures in the suite, because a suite containing only "
+            "what you know works measures nothing. Then the ablation: stop feeding "
+            "observations back and the score goes to 1 of 12, and the one survivor "
+            "<i>succeeds</i> by declining. Both missing tasks are phrasings, not new "
+            "capabilities \u2014 which is precisely what a real model buys you, and the "
+            "only thing it buys. Every tool, guard and validator above stays as "
+            "written.</p>",
+     }),
+
+dict(file="14_mlops.py", slug="14-mlops",
+     title="After the model works",
+     lede="Versioning by hash, training/serving skew, drift that means nothing and "
+          "damage that shows on no input monitor, delayed labels, and a canary big "
+          "enough to actually decide something.",
+     builds="a content-addressed model registry, a demonstration of skew costing real "
+            "accuracy, PSI per feature, two cases that break naive drift monitoring, "
+            "proxy metrics for the label-lag window, a bootstrap confidence interval "
+            "for a canary, and a one-line rollback",
+     lessons=[("c2/w3-14-full-cycle.html", "The full cycle"),
+              ("c2/w3-10-iterative-loop.html", "The iterative loop"),
+              ("c1/w2-05-feature-scaling.html", "Feature scaling"),
+              ("c2/w3-16-skewed-datasets.html", "Skewed datasets")],
+     prose={
+"task": "<p>A loan-approval shape: two features, one decision. Small enough to see "
+        "everything that follows.</p>",
+"train": "<p><code>standardise</code> returns the statistics as well as the data, "
+         "because <b>those statistics are part of the model</b>. They are the most "
+         "commonly lost artefact in this entire file.</p>",
+"registry": "<p>A version is not a number someone increments. It is a hash of "
+            "everything that could change the answer: data, weights, scaler. Retrain "
+            "on identical data and the version is identical; nudge one feature by "
+            "0.001 and it is not. If a version can stay the same while the data "
+            "changed, the version is decoration.</p>",
+"skew": "<p>The most expensive bug here and the quietest. Recomputing the scaling "
+        "statistics at serving time throws no error, returns sensible-looking "
+        "probabilities, passes every shape test \u2014 and costs real accuracy, because "
+        "the weights were learned in the training data's units. The only reliable "
+        "defence is that one piece of code does the transform for both paths.</p>",
+"drift": "<p>PSI, per feature, against a fixed reference. Income moves and years does "
+         "not, and the table says which. <i>Something drifted</i> is not actionable; "
+         "<i>income drifted</i> is.</p>",
+"false_alarm": "<p>The two cases that make naive drift monitoring untrustworthy. In A "
+               "the inputs move a long way and accuracy is <b>fine</b>. In B the "
+               "inputs are identical, every monitor reads zero, and accuracy collapses "
+               "to 0.52 because the rule changed. Drift tells you the world moved. "
+               "Only labels tell you the model is wrong.</p>",
+"delayed_labels": "<p>And labels are what arrives late. The approval rate holds near "
+                  "0.50 across all five weeks while accuracy falls from 0.84 to 0.53. "
+                  "Watch what you can see, and be honest about what it misses.</p>",
+"canary": "<p>A real 3-point gain, read off five canaries of different sizes. The "
+          "40-user row reports <b>+0.1013</b>, more than three times the truth \u2014 not "
+          "a small error but a different conclusion, and nothing on that row says so. "
+          "The interval is what says so. Work out the traffic you need before you "
+          "start, from the smallest gain you would act on.</p>",
+"rollback": "<p>Rolling back is changing one string \u2014 but only because both versions "
+            "are still loadable and both carry their own scaling statistics. A "
+            "rollback plan that requires retraining is not a rollback plan.</p>",
+"checklist": "<p>Eight questions, none of them modelling questions. That is the "
+             "lesson of the lane's last file: once the model works, almost nothing "
+             "that goes wrong afterwards is the model's fault.</p>",
+     }),
 ]
