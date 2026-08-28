@@ -237,13 +237,13 @@ predicts that beyond some size, bigger houses get <em>cheaper</em>. The square r
 natural shape here — prices rise with size but with diminishing returns.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>It is <b>still linear regression</b>. “Linear” refers to being linear in the
 <em>parameters</em> w, not in x. You have not changed the algorithm at all — only what you feed it.</p></div><h2><span class="ico">⚠️</span>Scaling becomes essential</h2><div class="callout warn"><span class="tag">Watch out</span><p>If x ranges from 1 to 1000, then x² ranges to 1,000,000 and x³ to 1,000,000,000. Those
 three features are on wildly different scales, and gradient descent will be hopeless without rescaling.
-<b>Polynomial features make feature scaling mandatory rather than merely helpful.</b></p></div><h2><span class="ico">💻</span>In code</h2><pre><code>X = np.c_[x, x**<span class="tok-n">2</span>, x**<span class="tok-n">3</span>]          <span class="tok-c"># three columns instead of one</span>
+<b>Polynomial features make feature scaling mandatory rather than merely helpful.</b></p></div><h2><span class="ico">💻</span>In code</h2><pre><code>X = <span class="gterm" data-g="npc-api">np.c_</span>[x, x**<span class="tok-n">2</span>, x**<span class="tok-n">3</span>]          <span class="tok-c"># three columns instead of one</span>
 
-mu, sigma = X.mean(axis=<span class="tok-n">0</span>), X.std(axis=<span class="tok-n">0</span>)
+mu, sigma = X<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>), X<span class="gterm" data-g="npstd-api">.std(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
 X = (X - mu) / sigma              <span class="tok-c"># now essential, not optional</span>
 
 w, b, _ = gradient_descent(X, y, ...)</code></pre><p>scikit-learn does the first line for you with
-<code>PolynomialFeatures(degree=3)</code>, which also generates the interaction terms (x₁x₂ and so on) when
+<code>PolynomialFeatures(<span class="gterm" data-g="kwdegree-api">degree=</span>3)</code>, which also generates the interaction terms (x₁x₂ and so on) when
 you have several features.</p><h2><span class="ico">🤔</span>Which degree, though?</h2><p>This lesson gives you the mechanism and deliberately not the answer. Choosing the degree is
 a real decision with a real trade-off: too low and the model cannot follow the pattern, too high and it
 starts fitting the noise.</p>

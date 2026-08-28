@@ -244,8 +244,8 @@ len(x)               <span class="tok-c"># 2</span>
 x[<span class="tok-n">0</span>]                 <span class="tok-c"># 3         -- counting starts at zero</span>
 x[-<span class="tok-n">1</span>]                <span class="tok-c"># 4         -- last one</span>
 
-np.linalg.norm(x)    <span class="tok-c"># 5.0       -- the length</span>
-x + np.array([<span class="tok-n">1</span>, <span class="tok-n">1</span>]) <span class="tok-c"># array([4, 5])   -- elementwise</span>
+<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(x)    <span class="tok-c"># 5.0       -- the length</span>
+x + <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">1</span>]) <span class="tok-c"># array([4, 5])   -- elementwise</span>
 <span class="tok-n">2</span> * x                <span class="tok-c"># array([6, 8])   -- scales the arrow, same direction</span></code></pre><h2><span class="ico">🔬</span>What is actually happening</h2><p>Two operations on vectors matter, and they mean genuinely different things:</p>
 <ul>
 <li><b>Adding</b> two vectors joins the arrows nose to tail. [3,4] + [1,1] = [4,5].</li>

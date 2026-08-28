@@ -248,10 +248,10 @@ Gain = 1.00 − 0.7219 = <b>0.2781</b>.</p><table class="data"><thead><tr><th>Sp
 <span class="tok-k">def</span> entropy(y):
     <span class="tok-k">if</span> len(y) == <span class="tok-n">0</span>:
         <span class="tok-k">return</span> <span class="tok-n">0.0</span>
-    p = np.mean(y)
+    p = <span class="gterm" data-g="npmean-api">np.mean</span>(y)
     <span class="tok-k">if</span> p == <span class="tok-n">0</span> <span class="tok-k">or</span> p == <span class="tok-n">1</span>:
         <span class="tok-k">return</span> <span class="tok-n">0.0</span>                       <span class="tok-c"># log(0) guard</span>
-    <span class="tok-k">return</span> -p * np.log2(p) - (<span class="tok-n">1</span> - p) * np.log2(<span class="tok-n">1</span> - p)
+    <span class="tok-k">return</span> -p * <span class="gterm" data-g="nplog2-api">np.log2</span>(p) - (<span class="tok-n">1</span> - p) * <span class="gterm" data-g="nplog2-api">np.log2</span>(<span class="tok-n">1</span> - p)
 
 <span class="tok-k">def</span> information_gain(X, y, feature):
     left  = y[X[:, feature] == <span class="tok-n">1</span>]

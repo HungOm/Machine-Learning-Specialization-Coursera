@@ -250,20 +250,20 @@ X = <span class="gterm" data-g="nparray-api">np.array</span>([
     [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>], [<span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>], [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>],
     [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>], [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>],
 ])
-y = np.array([<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>])
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;{len(y)} animals, {int(y.sum())} of them cats&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>10 animals, 5 of them cats</pre></div></section>
+y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>])
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;{len(y)} animals, {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))} of them cats&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>10 animals, 5 of them cats</pre></div></section>
 <section class="sx" id="sx-entropy"><div class="sx-prose"><p>Entropy is “how surprised would a random pick from this node make you”. Maximum at 50/50, zero when the node is pure. The 0·<span class="gterm" data-g="logarithm-f0">log</span> 0 case has to be special-cased because the formula would otherwise be 0 × −∞.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> entropy(y):
     <span class="tok-d">&quot;&quot;&quot;H(p) = -p log2 p - (1-p) log2 (1-p), with 0 log 0 taken as 0.&quot;&quot;&quot;</span>
     <span class="tok-k">if</span> len(y) == <span class="tok-n">0</span>:
         <span class="tok-k">return</span> <span class="tok-n">0.0</span>
-    p = float(np.mean(y))
+    p = float(<span class="gterm" data-g="npmean-api">np.mean</span>(y))
     <span class="tok-k">if</span> p <span class="tok-k">in</span> (<span class="tok-n">0.0</span>, <span class="tok-n">1.0</span>):
         <span class="tok-k">return</span> <span class="tok-n">0.0</span>
-    <span class="tok-k">return</span> float(-p * np.log2(p) - (<span class="tok-n">1</span> - p) * np.log2(<span class="tok-n">1</span> - p))
+    <span class="tok-k">return</span> float(-p * <span class="gterm" data-g="nplog2-api">np.log2</span>(p) - (<span class="tok-n">1</span> - p) * <span class="gterm" data-g="nplog2-api">np.log2</span>(<span class="tok-n">1</span> - p))
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nentropy at a few purities:&quot;</span>)
 <span class="tok-k">for</span> cats, total <span class="tok-k">in</span> [(<span class="tok-n">5</span>, <span class="tok-n">10</span>), (<span class="tok-n">8</span>, <span class="tok-n">10</span>), (<span class="tok-n">10</span>, <span class="tok-n">10</span>), (<span class="tok-n">0</span>, <span class="tok-n">10</span>), (<span class="tok-n">1</span>, <span class="tok-n">10</span>)]:
-    yy = np.r_[<span class="gterm" data-g="npcreate-api">np.ones</span>(cats), np.zeros(total - cats)]
+    yy = np.r_[<span class="gterm" data-g="npcreate-api">np.ones</span>(cats), <span class="gterm" data-g="npcreate-api">np.zeros</span>(total - cats)]
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {cats}/{total} cats  p = {cats/total:.1f}  H = {entropy(yy):.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 entropy at a few purities:
   5/10 cats  p = 0.5  H = 1.0000
@@ -286,8 +286,8 @@ entropy at a few purities:
 <span class="tok-k">print</span>(<span class="tok-s">&quot;information gain per feature:&quot;</span>)
 <span class="tok-k">for</span> j, name <span class="tok-k">in</span> enumerate(FEATURES):
     left, right = y[X[:, j] == <span class="tok-n">1</span>], y[X[:, j] == <span class="tok-n">0</span>]
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {name:11s} left {len(left)} ({int(left.sum())} cats, H={entropy(left):.4f})&quot;</span>
-          f<span class="tok-s">&quot;  right {len(right)} ({int(right.sum())} cats, H={entropy(right):.4f})&quot;</span>
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {name:11s} left {len(left)} ({int(left<span class="gterm" data-g="npsum-api">.sum(</span>))} cats, H={entropy(left):.4f})&quot;</span>
+          f<span class="tok-s">&quot;  right {len(right)} ({int(right<span class="gterm" data-g="npsum-api">.sum(</span>))} cats, H={entropy(right):.4f})&quot;</span>
           f<span class="tok-s">&quot;  gain = {information_gain(X, y, j):.4f}&quot;</span>)
 best = max(range(<span class="tok-n">3</span>), key=<span class="tok-k">lambda</span> j: information_gain(X, y, j))
 <span class="tok-k">print</span>(f&quot;-&gt; split on {FEATURES[best]}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
@@ -300,17 +300,17 @@ information gain per feature:
 <section class="sx" id="sx-build"><div class="sx-prose"><p>Nine lines of recursion. Stop when the node is pure, when you run out of depth, when you run out of features, or when no split helps at all. Those four conditions are the entire difference between a tree that generalises and one that memorises.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> build(X, y, depth=<span class="tok-n">0</span>, max_depth=<span class="tok-n">3</span>, min_samples=<span class="tok-n">1</span>, used=()):
     <span class="tok-d">&quot;&quot;&quot;Recursively split until pure, out of features, or out of depth.&quot;&quot;&quot;</span>
     <span class="tok-k">if</span> entropy(y) == <span class="tok-n">0</span> <span class="tok-k">or</span> depth &gt;= max_depth <span class="tok-k">or</span> len(y) &lt;= min_samples:
-        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(np.mean(y)))),
-                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y.sum())}
+        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(<span class="gterm" data-g="npmean-api">np.mean</span>(y)))),
+                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}
     candidates = [j <span class="tok-k">for</span> j <span class="tok-k">in</span> range(X.shape[<span class="tok-n">1</span>]) <span class="tok-k">if</span> j <span class="tok-k">not</span> <span class="tok-k">in</span> used]
     <span class="tok-k">if</span> <span class="tok-k">not</span> candidates:
-        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(np.mean(y)))),
-                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y.sum())}
+        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(<span class="gterm" data-g="npmean-api">np.mean</span>(y)))),
+                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}
     j = max(candidates, key=<span class="tok-k">lambda</span> k: information_gain(X, y, k))
     gain = information_gain(X, y, j)
     <span class="tok-k">if</span> gain &lt;= <span class="tok-n">1e-12</span>:                       <span class="tok-c"># no split helps: stop</span>
-        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(np.mean(y)))),
-                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y.sum())}
+        <span class="tok-k">return</span> {<span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">True</span>, <span class="tok-s">&quot;predict&quot;</span>: int(round(float(<span class="gterm" data-g="npmean-api">np.mean</span>(y)))),
+                <span class="tok-s">&quot;n&quot;</span>: len(y), <span class="tok-s">&quot;cats&quot;</span>: int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}
     mask = X[:, j] == <span class="tok-n">1</span>
     <span class="tok-k">return</span> {
         <span class="tok-s">&quot;leaf&quot;</span>: <span class="tok-k">False</span>, <span class="tok-s">&quot;feature&quot;</span>: j, <span class="tok-s">&quot;gain&quot;</span>: gain, <span class="tok-s">&quot;n&quot;</span>: len(y),
@@ -318,7 +318,7 @@ information gain per feature:
         <span class="tok-s">&quot;no&quot;</span>:  build(X[~mask], y[~mask], depth + <span class="tok-n">1</span>, max_depth, min_samples, used + (j,)),
     }
 
-<span class="tok-k">def</span> show(node, indent=<span class="tok-s">&quot;&quot;</span>, label=<span class="tok-s">&quot;root&quot;</span>):
+<span class="tok-k">def</span> show(node, indent=<span class="tok-s">&quot;&quot;</span>, <span class="gterm" data-g="kwplotstyle-api">label=</span><span class="tok-s">&quot;root&quot;</span>):
     <span class="tok-k">if</span> node[<span class="tok-s">&quot;leaf&quot;</span>]:
         <span class="tok-k">print</span>(f&quot;{indent}{label}: LEAF -&gt; {<span class="tok-s">&#x27;CAT&#x27;</span> <span class="tok-k">if</span> node[<span class="tok-s">&#x27;predict&#x27;</span>] <span class="tok-k">else</span> <span class="tok-s">&#x27;NOT CAT&#x27;</span>} &quot;
               f&quot;({node[<span class="tok-s">&#x27;cats&#x27;</span>]}/{node[<span class="tok-s">&#x27;n&#x27;</span>]} cats)&quot;)
@@ -345,10 +345,10 @@ root: ear shape?  (n=10, gain=0.2781)
     <span class="tok-k">return</span> node[<span class="tok-s">&quot;predict&quot;</span>]
 
 <span class="tok-k">def</span> predict(node, X):
-    <span class="tok-k">return</span> np.array([predict_one(node, x) <span class="tok-k">for</span> x <span class="tok-k">in</span> X])
+    <span class="tok-k">return</span> <span class="gterm" data-g="nparray-api">np.array</span>([predict_one(node, x) <span class="tok-k">for</span> x <span class="tok-k">in</span> X])
 
 pred = predict(tree, X)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;\ntraining accuracy: {(pred == y).mean():.2f}  ({(pred == y).sum()}/{len(y)})&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;\ntraining accuracy: {(pred == y)<span class="gterm" data-g="npmean-api">.mean(</span>):.2f}  ({(pred == y)<span class="gterm" data-g="npsum-api">.sum(</span>)}/{len(y)})&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;predictions:&quot;</span>, pred)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;actual     :&quot;</span>, y)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 training accuracy: 1.00  (10/10)
@@ -370,7 +370,7 @@ actual     : [1 1 0 0 1 1 0 1 0 0]</pre></div></section>
             best_gain, best_t = g, t
     <span class="tok-k">return</span> best_t, best_gain
 
-weight = np.array([<span class="tok-n">7.2</span>, <span class="tok-n">8.8</span>, <span class="tok-n">15.0</span>, <span class="tok-n">9.2</span>, <span class="tok-n">8.4</span>, <span class="tok-n">7.6</span>, <span class="tok-n">11.0</span>, <span class="tok-n">10.2</span>, <span class="tok-n">18.0</span>, <span class="tok-n">20.0</span>])
+weight = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">7.2</span>, <span class="tok-n">8.8</span>, <span class="tok-n">15.0</span>, <span class="tok-n">9.2</span>, <span class="tok-n">8.4</span>, <span class="tok-n">7.6</span>, <span class="tok-n">11.0</span>, <span class="tok-n">10.2</span>, <span class="tok-n">18.0</span>, <span class="tok-n">20.0</span>])
 t, g = best_threshold(weight, y)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\ncontinuous feature (weight): best threshold {t:.2f} kg, gain {g:.4f}&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  tried {len(np.unique(weight)) - 1} candidate midpoints&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
@@ -378,13 +378,13 @@ continuous feature (weight): best threshold 9.00 kg, gain 0.6100
   tried 9 candidate midpoints</pre></div></section>
 <section class="sx" id="sx-overfit"><div class="sx-prose"><p>The point of the file. Generate labels that are <b>pure noise</b> — there is nothing to learn — and watch training accuracy climb towards 1.0 as depth increases. A tree can always memorise. 100% training accuracy from a tree is a warning, not a result.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Grow it without limits on noisy data and watch training accuracy hit 1.0</span>
 rng = np.random.default_rng(<span class="tok-n">1</span>)
-Xn = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, size=(<span class="tok-n">40</span>, <span class="tok-n">6</span>))
-yn = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, size=<span class="tok-n">40</span>)                  <span class="tok-c"># labels are pure noise</span>
+Xn = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">6</span>))
+yn = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, <span class="gterm" data-g="kwsize-api">size=</span><span class="tok-n">40</span>)                  <span class="tok-c"># labels are pure noise</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\npure-noise data, 40 examples, 6 binary features:&quot;</span>)
 <span class="tok-k">print</span>(f&quot;{<span class="tok-s">&#x27;max depth&#x27;</span>:&gt;<span class="tok-n">10</span>} {<span class="tok-s">&#x27;train acc&#x27;</span>:&gt;<span class="tok-n">10</span>}&quot;)
 <span class="tok-k">for</span> d <span class="tok-k">in</span> [<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">6</span>]:
     t2 = build(Xn, yn, max_depth=d, used=())
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{d:10d} {(predict(t2, Xn) == yn).mean():10.3f}&quot;</span>)
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{d:10d} {(predict(t2, Xn) == yn)<span class="gterm" data-g="npmean-api">.mean(</span>):10.3f}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Training accuracy climbs towards 1.0 on data with no signal at all.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;That is overfitting in its purest form — and why depth limits exist.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 pure-noise data, 40 examples, 6 binary features:

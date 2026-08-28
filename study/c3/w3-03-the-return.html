@@ -239,7 +239,7 @@ about the future. It encodes impatience. Real systems typically use 0.9, 0.99 or
 0.5 purely so the arithmetic stays doable in your head.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>A reward two steps away was worth 6.25 rather than 25. <b>Why discount at all, rather than counting every reward equally?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because a distant reward is less certain and less useful, and because without discounting an endless task has an infinite return that cannot be compared with anything. γ makes the sum finite and encodes a preference for sooner.</p></div></details></div><h2><span class="ico">🔬</span>Why discount at all?</h2><p>Three genuine reasons, and it is worth knowing all three:</p>
 <ol>
 <li><b>The maths needs it.</b> In a task with no terminal state, an undiscounted sum of rewards can be
-infinite, and infinity minus infinity gives you nothing to optimise. γ &lt; 1 makes the sum converge.</li>
+infinite, and infinity minus infinity gives you nothing to optimise. γ &lt; 1 makes the sum <span class="gterm" data-g="convergence-native">converge</span>.</li>
 <li><b>It models real impatience.</b> In finance this is literally the interest rate. A reward now can be
 reinvested; a reward later cannot.</li>
 <li><b>It handles uncertainty.</b> The further ahead you look, the less reliable your model of what will

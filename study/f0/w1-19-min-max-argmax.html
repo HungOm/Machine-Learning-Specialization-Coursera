@@ -241,15 +241,15 @@ reads straightforwardly: “the action a that makes Q biggest” — the action,
 </ul><div class="explain"><span class="tag">Say it out loud</span><p>max gave 0.7 and argmax gave position 1. <b>Why does anyone need both, when one clearly determines the other?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because they answer different questions and the useful one is usually argmax. Knowing the winning <span class="gterm" data-g="probability-f0">probability</span> is 0.7 does not tell you which digit was recognised; knowing it was position 1 does. The value measures confidence, the position <em>is</em> the prediction.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The four in turn</span><span class="h">watch whether the highlight lands on the value or on the index</span></div><div class="demo-body" data-anim="fargmax"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">12</span>, <span class="tok-n">31</span>, <span class="tok-n">7</span>, <span class="tok-n">24</span>, <span class="tok-n">19</span>])
 
-np.max(x)        <span class="tok-c"># 31</span>
+<span class="gterm" data-g="npmaxmin-api">np.max</span>(x)        <span class="tok-c"># 31</span>
 <span class="gterm" data-g="npargmax-api">np.argmax</span>(x)     <span class="tok-c"># 1</span>
-np.min(x)        <span class="tok-c"># 7</span>
-np.argmin(x)     <span class="tok-c"># 2</span>
+<span class="gterm" data-g="npmaxmin-api">np.min</span>(x)        <span class="tok-c"># 7</span>
+<span class="gterm" data-g="npargmax-api">np.argmin</span>(x)     <span class="tok-c"># 2</span>
 
 <span class="tok-c"># the classic use: turning 10 class probabilities into a predicted digit</span>
 probs = <span class="gterm" data-g="tfpredict-api">model.predict</span>(X)      <span class="tok-c"># shape (m, 10)</span>
-preds = np.argmax(probs, axis=<span class="tok-n">1</span>)    <span class="tok-c"># shape (m,)  -- which class won, per row</span></code></pre><div class="callout warn"><span class="tag">Watch out</span><p><code>axis=1</code> takes the max across each <b>row</b> — one answer per example, which is
-what you want. <code>axis=0</code> goes down the columns and asks a completely different, useless question.
+preds = <span class="gterm" data-g="npargmax-api">np.argmax</span>(probs, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)    <span class="tok-c"># shape (m,)  -- which class won, per row</span></code></pre><div class="callout warn"><span class="tag">Watch out</span><p><code><span class="gterm" data-g="kwaxis-api">axis=</span>1</code> takes the max across each <b>row</b> — one answer per example, which is
+what you want. <code><span class="gterm" data-g="kwaxis-api">axis=</span>0</code> goes down the columns and asks a completely different, useless question.
 Getting this wrong produces an answer of the wrong length, which at least fails loudly.</p></div><h2><span class="ico">🔬</span>What is actually happening</h2><p>Where these appear in the three courses:</p>
 <ul>
 <li><b>Classification</b> (C2 W2): the network gives 10 probabilities; <code>argmax</code> turns them into

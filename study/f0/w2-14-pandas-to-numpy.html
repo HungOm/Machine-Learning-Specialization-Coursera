@@ -234,7 +234,7 @@ NumPy.</p>
 after.</p></div><h2><span class="ico">🔤</span>The crossing</h2><table class="decode"><thead><tr><th>Written</th><th>Say it</th><th>What it is</th></tr></thead><tbody><tr><td><code>.to_numpy()</code></td><td>“to numpy”</td><td>the modern spelling. Returns a plain array.</td></tr><tr><td><code>.values</code></td><td>“values”</td><td>the older spelling. You will see it in older notebooks. Same thing.</td></tr><tr><td><code>X</code></td><td>“capital X”</td><td>conventionally your <b>features</b> — a 2-D array.</td></tr><tr><td><code>y</code></td><td>“lowercase y”</td><td>conventionally your <b>target</b> — a 1-D array.</td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The names falling away</span><span class="h">after crossing you have positions, not labels</span></div><div class="demo-body" data-anim="fpandasnumpy"></div></div><h2><span class="ico">💻</span>The standard pattern</h2><pre><code><span class="tok-k">import</span> pandas <span class="tok-k">as</span> pd
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
-df = pd.read_csv(<span class="tok-s">&#x27;houses.csv&#x27;</span>)
+df = <span class="gterm" data-g="pdreadcsv-api">pd.read_csv</span>(<span class="tok-s">&#x27;houses.csv&#x27;</span>)
 
 <span class="tok-c"># select the columns you want FIRST, while you still have names</span>
 X = df[[<span class="tok-s">&#x27;size&#x27;</span>, <span class="tok-s">&#x27;beds&#x27;</span>, <span class="tok-s">&#x27;floors&#x27;</span>, <span class="tok-s">&#x27;age&#x27;</span>]].to_numpy()    <span class="tok-c"># (1000, 4)</span>
@@ -243,7 +243,7 @@ y = df[<span class="tok-s">&#x27;price&#x27;</span>].to_numpy()                 
 X.shape, y.shape          <span class="tok-c"># ((1000, 4), (1000,))</span>
 
 <span class="tok-c"># now everything from the NumPy lessons applies:</span>
-X = (X - X.mean(axis=<span class="tok-n">0</span>)) / X.std(axis=<span class="tok-n">0</span>)                <span class="tok-c"># feature scaling</span></code></pre><div class="callout warn"><span class="tag">Watch out</span><p>Note the shapes. <code>df[['price']]</code> would give <b>(1000, 1)</b>, while
+X = (X - X<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)) / X<span class="gterm" data-g="npstd-api">.std(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                <span class="tok-c"># feature scaling</span></code></pre><div class="callout warn"><span class="tag">Watch out</span><p>Note the shapes. <code>df[['price']]</code> would give <b>(1000, 1)</b>, while
 <code>df['price']</code> gives <b>(1000,)</b>. Most scikit-learn and TensorFlow code wants y as
 <code>(m,)</code> and X as <code>(m, n)</code>. Getting y as (m,1) produces confusing <span class="gterm" data-g="broadcasting-f0">broadcasting</span> bugs
 later rather than an immediate error.</p></div><h2><span class="ico">🔬</span>What is actually happening</h2><p>Why cross over at all, rather than doing everything in pandas? Because pandas carries the index

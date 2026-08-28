@@ -241,7 +241,7 @@ explore almost everything.</p>
 should be small — but not zero, because there may still be corners of the state space you have not
 visited.</p>
 <p>The assignment uses ε = 1.0 decaying multiplicatively to a floor of 0.01. Andrew notes something worth
-remembering: in reinforcement learning, a badly chosen hyperparameter does not merely slow you down by a
+remembering: in reinforcement learning, a badly chosen <span class="gterm" data-g="hyperparameter-native">hyperparameter</span> does not merely slow you down by a
 factor of three the way it might in supervised learning — it can make the difference between learning and
 never learning at all. RL is genuinely more brittle.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>ε = 0 from the start.</b> The agent locks onto whatever its random initialisation
 happened to favour and never revises it. This is the single most common reason a DQN “does not

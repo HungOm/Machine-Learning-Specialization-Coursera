@@ -235,15 +235,15 @@ matter what z is, and it <b>grows very fast</b> as z gets bigger.</p>
 that matter.</p><div class="explain"><span class="tag">Say it out loud</span><p>Ten doublings reached 1024, not 20. <b>Why does repeated multiplication run away so much faster than repeated addition?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because each step is applied to the result of the last, so the amount added grows with the total. Adding 2 ten times adds 2 each time; doubling ten times adds 1, then 2, then 4, then 8 — the increment itself is compounding.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The curve, and the numbers at each point</span><span class="h">notice it never touches the bottom, however far left you go</span></div><div class="demo-body" data-anim="fexp"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 <span class="gterm" data-g="npexp-api">np.exp</span>(<span class="tok-n">0</span>)          <span class="tok-c"># 1.0</span>
-np.exp(<span class="tok-n">1</span>)          <span class="tok-c"># 2.718281828...</span>
+<span class="gterm" data-g="npexp-api">np.exp</span>(<span class="tok-n">1</span>)          <span class="tok-c"># 2.718281828...</span>
 np.e               <span class="tok-c"># 2.718281828...   the constant itself</span>
 
 z = <span class="gterm" data-g="nparray-api">np.array</span>([-<span class="tok-n">2</span>, <span class="tok-n">0</span>, <span class="tok-n">2</span>])
-np.exp(z)          <span class="tok-c"># array([0.135, 1.   , 7.389])   -- works on whole arrays</span>
+<span class="gterm" data-g="npexp-api">np.exp</span>(z)          <span class="tok-c"># array([0.135, 1.   , 7.389])   -- works on whole arrays</span>
 
 <span class="tok-c"># the sigmoid, which is just this:</span>
 <span class="tok-k">def</span> sigmoid(z):
-    <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + np.exp(-z))</code></pre><div class="callout warn"><span class="tag">Watch out</span><p><code>np.exp(1000)</code> gives <code>inf</code> — the answer is too big for the computer
+    <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-z))</code></pre><div class="callout warn"><span class="tag">Watch out</span><p><code><span class="gterm" data-g="npexp-api">np.exp</span>(1000)</code> gives <code>inf</code> — the answer is too big for the computer
 to hold. This is <b>overflow</b>, and it is exactly the problem that softmax has to work around in Course
 2, Week 2 by subtracting the largest value first.</p></div><h2><span class="ico">🔬</span>What is actually happening</h2><p>Two questions worth answering.</p>
 <p><b>Why <span class="gterm" data-g="exponential-f0">exponentials</span> in softmax?</b> Because you need to turn scores that might be negative into

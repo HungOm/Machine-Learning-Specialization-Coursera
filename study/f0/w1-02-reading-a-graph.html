@@ -239,8 +239,8 @@ ys = <span class="tok-n">0.6</span> * xs**<span class="tok-n">2</span> - <span c
 
 plt.plot(xs, ys)
 plt.xlabel(<span class="tok-s">&#x27;x&#x27;</span>); plt.ylabel(<span class="tok-s">&#x27;y&#x27;</span>)
-plt.axhline(<span class="tok-n">0</span>, color=<span class="tok-s">&#x27;grey&#x27;</span>, lw=<span class="tok-n">0.8</span>)   <span class="tok-c"># draw the axes</span>
-plt.axvline(<span class="tok-n">0</span>, color=<span class="tok-s">&#x27;grey&#x27;</span>, lw=<span class="tok-n">0.8</span>)</code></pre><p>A curve on a screen is not really a curve — it is a few hundred straight lines joining a few
+plt.axhline(<span class="tok-n">0</span>, <span class="gterm" data-g="kwplotstyle-api">color=</span><span class="tok-s">&#x27;grey&#x27;</span>, <span class="gterm" data-g="kwplotstyle-api">lw=</span><span class="tok-n">0.8</span>)   <span class="tok-c"># draw the axes</span>
+plt.axvline(<span class="tok-n">0</span>, <span class="gterm" data-g="kwplotstyle-api">color=</span><span class="tok-s">&#x27;grey&#x27;</span>, <span class="gterm" data-g="kwplotstyle-api">lw=</span><span class="tok-n">0.8</span>)</code></pre><p>A curve on a screen is not really a curve — it is a few hundred straight lines joining a few
 hundred dots. <code>linspace</code> makes the dots; more dots means a smoother-looking curve.</p><h2><span class="ico">🔬</span>What is actually happening</h2><p>The computer never draws a curve. It evaluates the function at 200 x values, gets 200 y values,
 and joins the dots with straight segments. At 200 points your eye cannot see the joins.</p>
 <p>This matters practically: if a plot looks suspiciously angular, the fix is usually more points, not a

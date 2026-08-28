@@ -248,8 +248,8 @@ checks the answer against scikit-learn, so you can see it really is the same.
 X = <span class="gterm" data-g="nparray-api">np.array</span>([
     [<span class="tok-n">2.10</span>, <span class="tok-n">3</span>, <span class="tok-n">20</span>], [<span class="tok-n">1.60</span>, <span class="tok-n">3</span>, <span class="tok-n">15</span>], [<span class="tok-n">2.40</span>, <span class="tok-n">3</span>, <span class="tok-n">18</span>], [<span class="tok-n">1.42</span>, <span class="tok-n">2</span>, <span class="tok-n">30</span>],
     [<span class="tok-n">3.00</span>, <span class="tok-n">4</span>, <span class="tok-n">8</span>],  [<span class="tok-n">1.99</span>, <span class="tok-n">3</span>, <span class="tok-n">25</span>], [<span class="tok-n">1.27</span>, <span class="tok-n">2</span>, <span class="tok-n">40</span>], [<span class="tok-n">2.65</span>, <span class="tok-n">4</span>, <span class="tok-n">12</span>],
-], dtype=float)
-y = np.array([<span class="tok-n">400</span>., <span class="tok-n">330</span>., <span class="tok-n">369</span>., <span class="tok-n">232</span>., <span class="tok-n">540</span>., <span class="tok-n">400</span>., <span class="tok-n">200</span>., <span class="tok-n">480</span>.])
+], <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
+y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">400</span>., <span class="tok-n">330</span>., <span class="tok-n">369</span>., <span class="tok-n">232</span>., <span class="tok-n">540</span>., <span class="tok-n">400</span>., <span class="tok-n">200</span>., <span class="tok-n">480</span>.])
 m, n = X.shape
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m} examples, n = {n} features&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>m = 8 examples, n = 3 features</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Three lines. <code>X @ w</code> produces all eight predictions at once and <code>+ b</code> broadcasts the same number onto every one of them. There is no loop because there does not need to be one.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_cost(X, y, w, b):
@@ -270,11 +270,11 @@ m, n = X.shape
     m = len(y)
     err = (X @ w + b) - y            <span class="tok-c"># (m,)</span>
     dj_dw = (X.T @ err) / m          <span class="tok-c"># (n, m) @ (m,) -&gt; (n,)</span>
-    dj_db = float(np.sum(err) / m)   <span class="tok-c"># scalar</span>
+    dj_db = float(<span class="gterm" data-g="npsum-api">np.sum</span>(err) / m)   <span class="tok-c"># scalar</span>
     <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div></section>
 <section class="sx" id="sx-check_gradient"><div class="sx-prose"><p>Before trusting a hand-derived gradient, check it. Nudge one parameter by a tiny ε, see how much the cost moved, divide. If the analytic and numerical answers disagree beyond about 1e-6, the analytic one is wrong — this catches almost every <span class="gterm" data-g="derivative-f0">derivative</span> bug you will ever write.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> numeric_gradient(f, theta, eps=<span class="tok-n">1e-6</span>):
     <span class="tok-d">&quot;&quot;&quot;Central difference. Used only to prove the analytic gradient is right.&quot;&quot;&quot;</span>
-    g = np.zeros_like(theta, dtype=float)
+    g = np.zeros_like(theta, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(theta.size):
         up, dn = theta.astype(float).copy(), theta.astype(float).copy()
         up[i] += eps
@@ -282,25 +282,25 @@ m, n = X.shape
         g[i] = (f(up) - f(dn)) / (<span class="tok-n">2</span> * eps)
     <span class="tok-k">return</span> g
 
-w0, b0 = np.array([<span class="tok-n">0.2</span>, -<span class="tok-n">1.0</span>, <span class="tok-n">0.5</span>]), <span class="tok-n">3.0</span>
+w0, b0 = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">0.2</span>, -<span class="tok-n">1.0</span>, <span class="tok-n">0.5</span>]), <span class="tok-n">3.0</span>
 ana_w, ana_b = compute_gradient(X, y, w0, b0)
 num_w = numeric_gradient(<span class="tok-k">lambda</span> w: compute_cost(X, y, w, b0), w0)
-num_b = numeric_gradient(<span class="tok-k">lambda</span> bb: compute_cost(X, y, w0, bb[<span class="tok-n">0</span>]), np.array([b0]))[<span class="tok-n">0</span>]
-<span class="tok-k">print</span>(<span class="tok-s">&quot;analytic dj_dw:&quot;</span>, np.round(ana_w, <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, np.round(num_w, <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{np.max(np.abs(ana_w - num_w)):.3e}&quot;</span>,
+num_b = numeric_gradient(<span class="tok-k">lambda</span> bb: compute_cost(X, y, w0, bb[<span class="tok-n">0</span>]), <span class="gterm" data-g="nparray-api">np.array</span>([b0]))[<span class="tok-n">0</span>]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;analytic dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(ana_w, <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(num_w, <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana_w - num_w)):.3e}&quot;</span>,
       <span class="tok-s">&quot;| db diff:&quot;</span>, f<span class="tok-s">&quot;{abs(ana_b - num_b):.3e}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>analytic dj_dw: [ -795.832078 -1150.94375  -6547.42125 ]
 numeric  dj_dw: [ -795.832078 -1150.943746 -6547.421246]
 max difference: 3.931e-06 | db diff: 7.248e-07</pre></div></section>
 <section class="sx" id="sx-scaling"><div class="sx-prose"><p>Look at the ranges before and after. Age spans 32 while size spans 1.73 — a factor of nearly twenty, which means their gradients differ by nearly twenty and no single α suits both. Note the function returns μ and σ as well: <b>those are part of the trained model</b> and you must keep them to predict on anything new.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> zscore(X):
     <span class="tok-d">&quot;&quot;&quot;Return scaled X plus the mu and sigma you must keep for prediction.&quot;&quot;&quot;</span>
-    mu = X.mean(axis=<span class="tok-n">0</span>)
-    sigma = X.std(axis=<span class="tok-n">0</span>)
+    mu = X<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
+    sigma = X<span class="gterm" data-g="npstd-api">.std(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
     <span class="tok-k">return</span> (X - mu) / sigma, mu, sigma
 
 Xs, mu, sigma = zscore(X)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nbefore scaling, column ranges:&quot;</span>, np.round(X.max(<span class="tok-n">0</span>) - X.min(<span class="tok-n">0</span>), <span class="tok-n">2</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;after  scaling, column ranges:&quot;</span>, np.round(Xs.max(<span class="tok-n">0</span>) - Xs.min(<span class="tok-n">0</span>), <span class="tok-n">2</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nbefore scaling, column ranges:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(X<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="tok-n">0</span>) - X<span class="gterm" data-g="npmaxmin-api">.min(</span><span class="tok-n">0</span>), <span class="tok-n">2</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;after  scaling, column ranges:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xs<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="tok-n">0</span>) - Xs<span class="gterm" data-g="npmaxmin-api">.min(</span><span class="tok-n">0</span>), <span class="tok-n">2</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 before scaling, column ranges: [ 1.73  2.   32.  ]
 after  scaling, column ranges: [3.04 2.83 3.3 ]</pre></div></section>
 <section class="sx" id="sx-descent"><div class="sx-prose"><p>The two updates both use the <i>old</i> w and b, because both gradients were computed before either changed. Doing it any other way is the classic simultaneous-update bug — and it usually still <span class="gterm" data-g="convergence-native">converges</span>, which is why it survives in so much code.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradient_descent(X, y, alpha, iters):
@@ -319,7 +319,7 @@ w, b, hist = gradient_descent(Xs, y, alpha=<span class="tok-n">0.1</span>, iters
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\niteration      cost&quot;</span>)
 <span class="tok-k">for</span> i, c <span class="tok-k">in</span> hist:
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{i:9d}  {c:9.4f}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;\nlearned w = {np.round(w, 3)}   b = {b:.3f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;\nlearned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 3)}   b = {b:.3f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 iteration      cost
         0  58285.3121
       200   240.9076
@@ -338,21 +338,21 @@ learned w = [40.894 66.565  0.18 ]   b = 368.875</pre></div></section>
     <span class="tok-d">&quot;&quot;&quot;Scale with the TRAINING mu and sigma, never with new data&#x27;s own.&quot;&quot;&quot;</span>
     <span class="tok-k">return</span> float(((x_raw - mu) / sigma) @ w + b)
 
-house = np.array([<span class="tok-n">2.0</span>, <span class="tok-n">3</span>, <span class="tok-n">22</span>])
+house = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2.0</span>, <span class="tok-n">3</span>, <span class="tok-n">22</span>])
 <span class="tok-k">print</span>(f&quot;\n2000 sq ft, <span class="tok-n">3</span> bed, <span class="tok-n">22</span> yrs -&gt; ${predict(house, w, b, mu, sigma):.1f}k&quot;)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;training predictions:&quot;</span>, np.round(Xs @ w + b, <span class="tok-n">1</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;training predictions:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xs @ w + b, <span class="tok-n">1</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;actual prices:       &quot;</span>, y)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 2000 sq ft, 3 bed, 22 yrs -&gt; $365.0k
 training predictions: [372.2 336.2 393.7 229.4 530.7 364.4 218.9 505.6]
 actual prices:        [400. 330. 369. 232. 540. 400. 200. 480.]</pre></div></section>
 <section class="sx" id="sx-compare"><div class="sx-prose"><p>The real test. <code>np.linalg.lstsq</code> solves for w and b directly, with no learning rate and no iterations. Undo our scaling and the two answers agree to three decimal places — so the sixty lines above really do compute linear regression, and not merely something that looks like it.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The closed-form solution (the &quot;normal equation&quot;) for comparison.</span>
-Xb = np.c_[np.ones(m), X]                       <span class="tok-c"># add a column of 1s for b</span>
+Xb = <span class="gterm" data-g="npc-api">np.c_</span>[<span class="gterm" data-g="npcreate-api">np.ones</span>(m), X]                       <span class="tok-c"># add a column of 1s for b</span>
 theta = np.linalg.lstsq(Xb, y, rcond=<span class="tok-k">None</span>)[<span class="tok-n">0</span>]   <span class="tok-c"># least squares, solved directly</span>
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nnormal equation  b, w:&quot;</span>, np.round(theta, <span class="tok-n">3</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nnormal equation  b, w:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(theta, <span class="tok-n">3</span>))
 <span class="tok-c"># Undo the scaling on our gradient-descent answer so the two are comparable</span>
 w_unscaled = w / sigma
 b_unscaled = b - float(w @ (mu / sigma))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;gradient descent b, w:&quot;</span>, np.round(np.r_[b_unscaled, w_unscaled], <span class="tok-n">3</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;gradient descent b, w:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(np.r_[b_unscaled, w_unscaled], <span class="tok-n">3</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;agree to 3 dp:&quot;</span>, np.allclose(theta, np.r_[b_unscaled, w_unscaled], atol=<span class="tok-n">1e-3</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 normal equation  b, w: [-6.1281e+01  7.1749e+01  9.4137e+01  1.9000e-02]
 gradient descent b, w: [-6.1280e+01  7.1750e+01  9.4137e+01  1.9000e-02]

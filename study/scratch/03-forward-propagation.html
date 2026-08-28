@@ -246,9 +246,9 @@ the matrix version giving identical numbers.
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 <span class="tok-k">def</span> sigmoid(z):
-    z = np.asarray(z, dtype=float)
+    z = np.asarray(z, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">return</span> np.where(z &gt;= <span class="tok-n">0</span>, <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))),
-                    np.exp(-np.abs(z)) / (<span class="tok-n">1</span> + np.exp(-np.abs(z))))</code></pre></div></section>
+                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div></section>
 <section class="sx" id="sx-one_neuron"><div class="sx-prose"><p>A neuron is a <span class="gterm" data-g="dot-product-f0">dot product</span> wearing a squash function. Once that sentence is genuinely obvious, the rest of neural networks is bookkeeping about shapes.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> neuron(x, w, b, g=sigmoid):
     <span class="tok-d">&quot;&quot;&quot;A neuron is a dot product wearing a squash function. That is all.&quot;&quot;&quot;</span>
     z = <span class="gterm" data-g="npdot-api">np.dot</span>(w, x) + b
@@ -256,8 +256,8 @@ the matrix version giving identical numbers.
 
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1.0</span>, <span class="tok-n">3.0</span>])
 <span class="tok-k">print</span>(<span class="tok-s">&quot;one neuron, w=[2,-1], b=0.5, x=[1,3]&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  z =&quot;</span>, np.dot([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>], x) + <span class="tok-n">0.5</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  a =&quot;</span>, round(float(neuron(x, np.array([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>]), <span class="tok-n">0.5</span>)), <span class="tok-n">6</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>one neuron, w=[2,-1], b=0.5, x=[1,3]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  z =&quot;</span>, <span class="gterm" data-g="npdot-api">np.dot</span>([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>], x) + <span class="tok-n">0.5</span>)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  a =&quot;</span>, round(float(neuron(x, <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>]), <span class="tok-n">0.5</span>)), <span class="tok-n">6</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>one neuron, w=[2,-1], b=0.5, x=[1,3]
   z = -0.5
   a = 0.377541</pre></div></section>
 <section class="sx" id="sx-layer_loop"><div class="sx-prose"><p>The obvious version: walk the units one at a time. Note that <code>W</code> holds each unit's weights as a <i>column</i>. That convention is what makes the next version work.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> dense_loop(a_in, W, b, g=sigmoid):
@@ -265,11 +265,11 @@ x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n
 
     W is (n_in, n_out) — column j holds unit j&#x27;s weights.
     &quot;&quot;&quot;</span>
-    units = W.shape[<span class="tok-n">1</span>]
+    <span class="gterm" data-g="kwunits-api">units =</span> W.shape[<span class="tok-n">1</span>]
     a_out = <span class="gterm" data-g="npcreate-api">np.zeros</span>(units)
     <span class="tok-k">for</span> j <span class="tok-k">in</span> range(units):
         w = W[:, j]                       <span class="tok-c"># this unit&#x27;s weight vector</span>
-        a_out[j] = g(np.dot(w, a_in) + b[j])
+        a_out[j] = g(<span class="gterm" data-g="npdot-api">np.dot</span>(w, a_in) + b[j])
     <span class="tok-k">return</span> a_out</code></pre></div></section>
 <section class="sx" id="sx-layer_matmul"><div class="sx-prose"><p>The same layer as one matrix multiply. <code>A_in @ W</code> is (m, n_in) @ (n_in, n_out) → (m, n_out): every example against every unit, in one operation. The next block proves the two agree.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> dense(A_in, W, b, g=sigmoid):
     <span class="tok-d">&quot;&quot;&quot;The same layer for a whole batch at once.
@@ -279,13 +279,13 @@ x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n
     &quot;&quot;&quot;</span>
     <span class="tok-k">return</span> g(A_in @ W + b)
 
-W1 = np.array([[<span class="tok-n">1.0</span>, -<span class="tok-n">1.0</span>, <span class="tok-n">0.5</span>],
+W1 = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1.0</span>, -<span class="tok-n">1.0</span>, <span class="tok-n">0.5</span>],
                [<span class="tok-n">1.0</span>,  <span class="tok-n">2.0</span>, -<span class="tok-n">1.5</span>]])       <span class="tok-c"># 2 inputs -&gt; 3 units</span>
-b1 = np.array([-<span class="tok-n">1.0</span>, <span class="tok-n">0.0</span>, <span class="tok-n">0.25</span>])
+b1 = <span class="gterm" data-g="nparray-api">np.array</span>([-<span class="tok-n">1.0</span>, <span class="tok-n">0.0</span>, <span class="tok-n">0.25</span>])
 loop_out = dense_loop(x, W1, b1)
-mat_out = dense(x.reshape(<span class="tok-n">1</span>, -<span class="tok-n">1</span>), W1, b1)[<span class="tok-n">0</span>]
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nloop version  :&quot;</span>, np.round(loop_out, <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;matmul version:&quot;</span>, np.round(mat_out, <span class="tok-n">6</span>))
+mat_out = dense(x<span class="gterm" data-g="npreshape-api">.reshape(</span><span class="tok-n">1</span>, -<span class="tok-n">1</span>), W1, b1)[<span class="tok-n">0</span>]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nloop version  :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(loop_out, <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;matmul version:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(mat_out, <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;identical:&quot;</span>, np.allclose(loop_out, mat_out))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 loop version  : [0.952574 0.993307 0.022977]
 matmul version: [0.952574 0.993307 0.022977]
@@ -298,12 +298,12 @@ identical: True</pre></div></section>
     <span class="tok-k">return</span> A
 
 relu = <span class="tok-k">lambda</span> z: np.maximum(<span class="tok-n">0.0</span>, z)
-W2 = np.array([[<span class="tok-n">1.5</span>], [-<span class="tok-n">2.0</span>], [<span class="tok-n">1.0</span>]])     <span class="tok-c"># 3 units -&gt; 1 output</span>
-b2 = np.array([<span class="tok-n">0.5</span>])
+W2 = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1.5</span>], [-<span class="tok-n">2.0</span>], [<span class="tok-n">1.0</span>]])     <span class="tok-c"># 3 units -&gt; 1 output</span>
+b2 = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">0.5</span>])
 net = [(W1, b1), (W2, b2)]
 acts = [relu, sigmoid]
 
-batch = np.array([[<span class="tok-n">1.0</span>, <span class="tok-n">3.0</span>], [<span class="tok-n">0.0</span>, <span class="tok-n">0.0</span>], [-<span class="tok-n">2.0</span>, <span class="tok-n">1.0</span>], [<span class="tok-n">4.0</span>, -<span class="tok-n">1.0</span>]])
+batch = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1.0</span>, <span class="tok-n">3.0</span>], [<span class="tok-n">0.0</span>, <span class="tok-n">0.0</span>], [-<span class="tok-n">2.0</span>, <span class="tok-n">1.0</span>], [<span class="tok-n">4.0</span>, -<span class="tok-n">1.0</span>]])
 out = forward(batch, net, acts)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nbatch of 4 through a 2-3-1 network:&quot;</span>)
 <span class="tok-k">for</span> xi, oi <span class="tok-k">in</span> zip(batch, out.ravel()):
@@ -333,8 +333,8 @@ lin = forward(batch, net, [identity, identity])
 W_eq = W1 @ W2                      <span class="tok-c"># one matrix does the whole network</span>
 b_eq = b1 @ W2 + b2
 collapsed = batch @ W_eq + b_eq
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\ntwo linear layers   :&quot;</span>, np.round(lin.ravel(), <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;one equivalent layer:&quot;</span>, np.round(collapsed.ravel(), <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\ntwo linear layers   :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(lin.ravel(), <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;one equivalent layer:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(collapsed.ravel(), <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;identical:&quot;</span>, np.allclose(lin, collapsed))
 <span class="tok-k">print</span>(&quot;-&gt; stacking linear layers <span class="tok-k">is</span> pointless; the non-linearity <span class="tok-k">is</span> the point.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 two linear layers   : [ -8.75  -0.75 -12.75  19.25]
@@ -345,19 +345,19 @@ identical: True
 <span class="tok-c"># Good roast = temperature in [180, 260] AND duration in [12, 15].</span>
 <span class="tok-c"># Build four detectors by hand, then AND them in the output unit.</span>
 K = <span class="tok-n">60.0</span>                      <span class="tok-c"># how sharp each detector&#x27;s step is</span>
-Wd = np.array([
+Wd = <span class="gterm" data-g="nparray-api">np.array</span>([
     <span class="tok-c">#  too cool   too hot   too short   too long</span>
     [   -<span class="tok-n">1.0</span>,       <span class="tok-n">1.0</span>,      <span class="tok-n">0.0</span>,        <span class="tok-n">0.0</span>   ],   <span class="tok-c"># temperature feeds units 1-2</span>
     [    <span class="tok-n">0.0</span>,       <span class="tok-n">0.0</span>,     -<span class="tok-n">4.0</span>,        <span class="tok-n">4.0</span>   ],   <span class="tok-c"># duration feeds units 3-4</span>
 ])
-bd = np.array([ <span class="tok-n">180.0</span>,    -<span class="tok-n">260.0</span>,      <span class="tok-n">48.0</span>,      -<span class="tok-n">60.0</span> ])
+bd = <span class="gterm" data-g="nparray-api">np.array</span>([ <span class="tok-n">180.0</span>,    -<span class="tok-n">260.0</span>,      <span class="tok-n">48.0</span>,      -<span class="tok-n">60.0</span> ])
 <span class="tok-c"># unit 1 fires when -T + 180 &gt; 0, i.e. T &lt; 180.  unit 2 when T &gt; 260.</span>
 <span class="tok-c"># unit 3 when -4D + 48 &gt; 0, i.e. D &lt; 12.          unit 4 when D &gt; 15.</span>
-Wout = np.array([[-K], [-K], [-K], [-K]])   <span class="tok-c"># any detector firing vetoes the roast</span>
-bout = np.array([K / <span class="tok-n">2</span>])                    <span class="tok-c"># nothing firing -&gt; sigmoid(K/2) = 1</span>
+Wout = <span class="gterm" data-g="nparray-api">np.array</span>([[-K], [-K], [-K], [-K]])   <span class="tok-c"># any detector firing vetoes the roast</span>
+bout = <span class="gterm" data-g="nparray-api">np.array</span>([K / <span class="tok-n">2</span>])                    <span class="tok-c"># nothing firing -&gt; sigmoid(K/2) = 1</span>
 
 coffee = [(Wd, bd), (Wout, bout)]
-tests = np.array([[<span class="tok-n">200</span>., <span class="tok-n">13.9</span>], [<span class="tok-n">200</span>., <span class="tok-n">17.0</span>], [<span class="tok-n">285</span>., <span class="tok-n">12.5</span>],
+tests = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">200</span>., <span class="tok-n">13.9</span>], [<span class="tok-n">200</span>., <span class="tok-n">17.0</span>], [<span class="tok-n">285</span>., <span class="tok-n">12.5</span>],
                   [<span class="tok-n">175</span>., <span class="tok-n">13.0</span>], [<span class="tok-n">220</span>., <span class="tok-n">12.5</span>], [<span class="tok-n">259.9</span>, <span class="tok-n">14.9</span>]])
 probs = forward(tests, coffee, [sigmoid, sigmoid]).ravel()
 <span class="tok-k">print</span>(&quot;\nhand-built roast checker  (temp C, minutes) -&gt; P(good)&quot;)
@@ -377,15 +377,15 @@ hand-built roast checker  (temp C, minutes) -&gt; P(good)
 h = dense(tests, Wd, bd, sigmoid)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ninside the hidden layer  [too cool, too hot, too short, too long]&quot;</span>)
 <span class="tok-k">for</span> (t, d), row <span class="tok-k">in</span> zip(tests, h):
-    <span class="tok-k">print</span>(f&quot;  {t:<span class="tok-n">5.</span>0f} C, {d:<span class="tok-n">4.</span>1f} min -&gt; {np.round(row, <span class="tok-n">3</span>)}&quot;)
+    <span class="tok-k">print</span>(f&quot;  {t:<span class="tok-n">5.</span>0f} C, {d:<span class="tok-n">4.</span>1f} min -&gt; {<span class="gterm" data-g="npround-api">np.round</span>(row, <span class="tok-n">3</span>)}&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nEvery row of zeros is a good roast. The output unit is just an AND gate:&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;it adds -60 for every detector that fires, so one firing is enough to veto.&quot;</span>)
 
 <span class="tok-c"># Sweep a grid and see how faithfully the network reproduces the rule.</span>
 <span class="tok-c"># The grid is deliberately offset so no point lands exactly on a boundary,</span>
 <span class="tok-c"># where a sigmoid is genuinely 0.5 and the answer is a coin flip.</span>
-T, D = np.meshgrid(<span class="gterm" data-g="nprange-api">np.linspace</span>(<span class="tok-n">150.7</span>, <span class="tok-n">300.7</span>, <span class="tok-n">61</span>), np.linspace(<span class="tok-n">10.13</span>, <span class="tok-n">18.13</span>, <span class="tok-n">41</span>))
-grid = np.c_[T.ravel(), D.ravel()]
+T, D = np.meshgrid(<span class="gterm" data-g="nprange-api">np.linspace</span>(<span class="tok-n">150.7</span>, <span class="tok-n">300.7</span>, <span class="tok-n">61</span>), <span class="gterm" data-g="nprange-api">np.linspace</span>(<span class="tok-n">10.13</span>, <span class="tok-n">18.13</span>, <span class="tok-n">41</span>))
+grid = <span class="gterm" data-g="npc-api">np.c_</span>[T.ravel(), D.ravel()]
 want = ((grid[:, <span class="tok-n">0</span>] &gt;= <span class="tok-n">180</span>) &amp; (grid[:, <span class="tok-n">0</span>] &lt;= <span class="tok-n">260</span>) &amp;
         (grid[:, <span class="tok-n">1</span>] &gt;= <span class="tok-n">12</span>) &amp; (grid[:, <span class="tok-n">1</span>] &lt;= <span class="tok-n">15</span>))
 <span class="tok-c"># distance to the nearest boundary, in the units each detector actually sees</span>
@@ -398,8 +398,8 @@ edge = np.minimum(np.minimum(np.abs(grid[:, <span class="tok-n">0</span>] - <spa
     c2 = [(Wd * sharp, bd * sharp), (Wout, bout)]
     got = forward(grid, c2, [sigmoid, sigmoid]).ravel() &gt;= <span class="tok-n">0.5</span>
     agree = got == want
-    band = edge[~agree].max() <span class="tok-k">if</span> (~agree).any() <span class="tok-k">else</span> <span class="tok-n">0.0</span>
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{sharp:10.0f} {100 * agree.mean():7.2f}%   {band:.3f}&quot;</span>)
+    band = edge[~agree]<span class="gterm" data-g="npmaxmin-api">.max(</span>) <span class="tok-k">if</span> (~agree).any() <span class="tok-k">else</span> <span class="tok-n">0.0</span>
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{sharp:10.0f} {100 * agree<span class="gterm" data-g="npmean-api">.mean(</span>):7.2f}%   {band:.3f}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nA sigmoid boundary is SOFT: near the edge the unit outputs something&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;between 0 and 1, so the AND gate is undecided. Steeper weights shrink&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;that band but never remove it — which is exactly why the network can&quot;</span>)

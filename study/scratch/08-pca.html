@@ -250,7 +250,7 @@ what every library actually uses.
     Skipping this step makes the first component point at the mean instead of
     along the spread — a silent and very common error.
     &quot;&quot;&quot;</span>
-    mu = X.mean(axis=<span class="tok-n">0</span>)
+    mu = X<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
     <span class="tok-k">return</span> X - mu, mu</code></pre></div></section>
 <section class="sx" id="sx-covariance"><div class="sx-prose"><p>The diagonal holds each feature's variance; the off-diagonal says how strongly the features move together. That single matrix is all PCA ever looks at — note it never sees <code>y</code>.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> covariance(Xc):
     <span class="tok-d">&quot;&quot;&quot;(1/m) Xc^T Xc — entry (i,j) is how features i and j vary together.&quot;&quot;&quot;</span>
@@ -288,9 +288,9 @@ diagonal = each feature&#x27;s variance; off-diagonal = how they move together</
     <span class="tok-k">return</span> vecs[:, :k], vals, mu
 
 W, vals, mu = pca_eig(X, <span class="tok-n">1</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;\neigenvalues: {np.round(vals, 4)}   (variance along each direction)&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;first principal component: {np.round(W[:, 0], 4)}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;variance explained by PC1: {vals[0] / vals.sum():.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;\neigenvalues: {<span class="gterm" data-g="npround-api">np.round</span>(vals, 4)}   (variance along each direction)&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;first principal component: {<span class="gterm" data-g="npround-api">np.round</span>(W[:, 0], 4)}&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;variance explained by PC1: {vals[0] / vals<span class="gterm" data-g="npsum-api">.sum(</span>):.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 eigenvalues: [3. 1.]   (variance along each direction)
 first principal component: [0.7071 0.7071]
 variance explained by PC1: 0.7500</pre></div></section>
@@ -304,9 +304,9 @@ variance explained by PC1: 0.7500</pre></div></section>
 
 Z = project(X, W, mu)
 Xr = reconstruct(Z, W, mu)
-err = np.mean(<span class="gterm" data-g="npsum-api">np.sum</span>((X - Xr) ** <span class="tok-n">2</span>, axis=<span class="tok-n">1</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nprojected to 1-D:&quot;</span>, np.round(Z.ravel(), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;reconstructed:\n&quot;</span>, np.round(Xr, <span class="tok-n">3</span>))
+err = <span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((X - Xr) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nprojected to 1-D:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Z.ravel(), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;reconstructed:\n&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xr, <span class="tok-n">3</span>))
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;mean squared reconstruction error: {err:.4f}&quot;</span>)
 <span class="tok-k">print</span>(f&quot;discarded eigenvalue was {vals[<span class="tok-n">1</span>]:.4f}  &lt;- the error equals it&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 projected to 1-D: [-2.1213 -2.1213  1.4142  1.4142  1.4142]
@@ -330,8 +330,8 @@ discarded eigenvalue was 1.0000  &lt;- the error equals it</pre></div></section>
 
 W2, vals2, _ = pca_svd(X, <span class="tok-n">1</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nSVD route:&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  component  {np.round(W2[:, 0], 4)}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  eigenvalues {np.round(vals2, 4)}&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  component  {<span class="gterm" data-g="npround-api">np.round</span>(W2[:, 0], 4)}&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  eigenvalues {<span class="gterm" data-g="npround-api">np.round</span>(vals2, 4)}&quot;</span>)
 <span class="tok-c"># Components are only defined up to a sign — both directions span the same line.</span>
 same = np.allclose(np.abs(W[:, <span class="tok-n">0</span>]), np.abs(W2[:, <span class="tok-n">0</span>]))
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  same direction as eigen route (up to sign): {same}&quot;</span>)
@@ -342,25 +342,25 @@ SVD route:
   same direction as eigen route (up to sign): True
   same eigenvalues: True</pre></div></section>
 <section class="sx" id="sx-perfect"><div class="sx-prose"><p>Perfectly correlated data: the second eigenvalue is exactly zero, PC1 explains 100% of the variance, and the reconstruction is lossless to 1e-32. The data was always one-dimensional; PCA just noticed.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A perfectly correlated dataset — the second dimension carries nothing.</span>
-Xp = np.array([[<span class="tok-n">1</span>., <span class="tok-n">1</span>.], [<span class="tok-n">2</span>., <span class="tok-n">2</span>.], [<span class="tok-n">3</span>., <span class="tok-n">3</span>.], [<span class="tok-n">4</span>., <span class="tok-n">4</span>.], [<span class="tok-n">5</span>., <span class="tok-n">5</span>.]])
+Xp = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1</span>., <span class="tok-n">1</span>.], [<span class="tok-n">2</span>., <span class="tok-n">2</span>.], [<span class="tok-n">3</span>., <span class="tok-n">3</span>.], [<span class="tok-n">4</span>., <span class="tok-n">4</span>.], [<span class="tok-n">5</span>., <span class="tok-n">5</span>.]])
 Wp, valsp, mup = pca_eig(Xp, <span class="tok-n">1</span>)
 Zp = project(Xp, Wp, mup)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nperfectly correlated data:&quot;</span>)
-<span class="tok-k">print</span>(f&quot;  eigenvalues {np.round(valsp, <span class="tok-n">6</span>)}  &lt;- the second <span class="tok-k">is</span> exactly <span class="tok-n">0</span>&quot;)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  variance explained by PC1: {valsp[0] / valsp.sum():.4f}&quot;</span>)
+<span class="tok-k">print</span>(f&quot;  eigenvalues {<span class="gterm" data-g="npround-api">np.round</span>(valsp, <span class="tok-n">6</span>)}  &lt;- the second <span class="tok-k">is</span> exactly <span class="tok-n">0</span>&quot;)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  variance explained by PC1: {valsp[0] / valsp<span class="gterm" data-g="npsum-api">.sum(</span>):.4f}&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  reconstruction error: &quot;</span>
-      f&quot;{np.mean(np.sum((Xp - reconstruct(Zp, Wp, mup))**<span class="tok-n">2</span>, axis=<span class="tok-n">1</span>)):.2e}  &lt;- lossless&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+      f&quot;{<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((Xp - reconstruct(Zp, Wp, mup))**<span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)):.2e}  &lt;- lossless&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 perfectly correlated data:
   eigenvalues [4. 0.]  &lt;- the second is exactly 0
   variance explained by PC1: 1.0000
   reconstruction error: 7.89e-32  &lt;- lossless</pre></div></section>
 <section class="sx" id="sx-higher_dim"><div class="sx-prose"><p>The realistic case. Fifty features generated from three hidden ones plus noise — and the cumulative variance jumps to 0.999 at exactly three components. PCA found the true dimensionality without being told it.</p></div><div class="sx-code"><pre><code><span class="tok-c"># 50 features that secretly live in 3 dimensions.</span>
 rng = np.random.default_rng(<span class="tok-n">0</span>)
-latent = rng.normal(size=(<span class="tok-n">300</span>, <span class="tok-n">3</span>))
-mixing = rng.normal(size=(<span class="tok-n">3</span>, <span class="tok-n">50</span>))
-Xh = latent @ mixing + rng.normal(<span class="tok-n">0</span>, <span class="tok-n">0.05</span>, size=(<span class="tok-n">300</span>, <span class="tok-n">50</span>))
+latent = rng.normal(<span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">300</span>, <span class="tok-n">3</span>))
+mixing = rng.normal(<span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">3</span>, <span class="tok-n">50</span>))
+Xh = latent @ mixing + rng.normal(<span class="tok-n">0</span>, <span class="tok-n">0.05</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">300</span>, <span class="tok-n">50</span>))
 _, vh, _ = pca_eig(Xh, <span class="tok-n">3</span>)
-cum = np.cumsum(vh) / vh.sum()
+cum = np.cumsum(vh) / vh<span class="gterm" data-g="npsum-api">.sum(</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\n50 noisy features generated from 3 latent ones:&quot;</span>)
 <span class="tok-k">for</span> k <span class="tok-k">in</span> [<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">4</span>, <span class="tok-n">10</span>]:
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  first {k:2d} components explain {cum[k-1]:.4f} of the variance&quot;</span>)

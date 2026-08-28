@@ -246,29 +246,29 @@ output, log loss instead of squared error, and a lambda term on w.
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p>Forty of each class, deliberately overlapping — a perfectly separable dataset would let the weights grow without limit and hide what λ does.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">7</span>)
 <span class="tok-c"># Two blobs: exam scores of students who passed (1) and failed (0)</span>
-neg = rng.normal([<span class="tok-n">45</span>, <span class="tok-n">50</span>], <span class="tok-n">12</span>, size=(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
-pos = rng.normal([<span class="tok-n">70</span>, <span class="tok-n">72</span>], <span class="tok-n">12</span>, size=(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
+neg = rng.normal([<span class="tok-n">45</span>, <span class="tok-n">50</span>], <span class="tok-n">12</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
+pos = rng.normal([<span class="tok-n">70</span>, <span class="tok-n">72</span>], <span class="tok-n">12</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
 X = np.vstack([neg, pos])
-y = np.r_[<span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">40</span>), np.ones(<span class="tok-n">40</span>)]
+y = np.r_[<span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">40</span>), <span class="gterm" data-g="npcreate-api">np.ones</span>(<span class="tok-n">40</span>)]
 m, n = X.shape
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m}, n = {n}, positives = {int(y.sum())}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>m = 80, n = 2, positives = 40</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m}, n = {n}, positives = {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>m = 80, n = 2, positives = 40</pre></div></section>
 <section class="sx" id="sx-sigmoid"><div class="sx-prose"><p>The textbook <code>1/(1+<span class="gterm" data-g="npexp-api">np.exp</span>(-z))</code> overflows for very negative z, because <code>e^1000</code> does not fit in a float. The two branches here are algebraically identical and each avoids the overflow the other would hit. Libraries all do some version of this; it is worth seeing once.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> sigmoid(z):
     <span class="tok-d">&quot;&quot;&quot;1 / (1 + e^-z), written so it never overflows.
 
-    For very negative z, e^-z is astronomically large and np.exp warns.
+    For very negative z, e^-z is astronomically large and <span class="gterm" data-g="npexp-api">np.exp</span> warns.
     The two branches are algebraically identical; each avoids the overflow
     the other would hit.
     &quot;&quot;&quot;</span>
-    z = np.asarray(z, dtype=float)
+    z = np.asarray(z, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     out = np.empty_like(z)
     pos = z &gt;= <span class="tok-n">0</span>
-    out[pos] = <span class="tok-n">1.0</span> / (<span class="tok-n">1.0</span> + np.exp(-z[pos]))
-    ez = np.exp(z[~pos])
+    out[pos] = <span class="tok-n">1.0</span> / (<span class="tok-n">1.0</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-z[pos]))
+    ez = <span class="gterm" data-g="npexp-api">np.exp</span>(z[~pos])
     out[~pos] = ez / (<span class="tok-n">1.0</span> + ez)
     <span class="tok-k">return</span> out
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid(-1000) =&quot;</span>, sigmoid(-<span class="tok-n">1000.0</span>), <span class="tok-s">&quot; (no overflow warning)&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid([-2, 0, 2]) =&quot;</span>, np.round(sigmoid([-<span class="tok-n">2</span>, <span class="tok-n">0</span>, <span class="tok-n">2</span>]), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid([-2, 0, 2]) =&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(sigmoid([-<span class="tok-n">2</span>, <span class="tok-n">0</span>, <span class="tok-n">2</span>]), <span class="tok-n">4</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;g(-z) == 1 - g(z):&quot;</span>, np.allclose(sigmoid(-<span class="tok-n">3.7</span>), <span class="tok-n">1</span> - sigmoid(<span class="tok-n">3.7</span>)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>sigmoid(-1000) = 0.0  (no overflow warning)
 sigmoid([-2, 0, 2]) = [0.1192 0.5    0.8808]
 g(-z) == 1 - g(z): True</pre></div></section>
@@ -277,35 +277,35 @@ g(-z) == 1 - g(z): True</pre></div></section>
     f = sigmoid(X @ w + b)
     eps = <span class="tok-n">1e-12</span>                                  <span class="tok-c"># keeps log() away from 0</span>
     f = np.clip(f, eps, <span class="tok-n">1</span> - eps)
-    loss = -(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * np.log(<span class="tok-n">1</span> - f))
-    <span class="tok-k">return</span> float(loss.mean() + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div></section>
+    <span class="gterm" data-g="kwloss-api">loss =</span> -(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f))
+    <span class="tok-k">return</span> float(loss<span class="gterm" data-g="npmean-api">.mean(</span>) + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>Compare this line with the linear-regression version: <code>(X.T @ err) / m</code>. Character for character the same. Only the definition of <code>err</code> changed, because a sigmoid's <span class="gterm" data-g="derivative-f0">derivative</span> and a log's derivative cancel exactly. That cancellation is the real reason these two are always paired.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_gradient(X, y, w, b, lam=<span class="tok-n">0.0</span>):
     <span class="tok-d">&quot;&quot;&quot;Character for character the same as linear regression, except f.&quot;&quot;&quot;</span>
     m = len(y)
     err = sigmoid(X @ w + b) - y
     dj_dw = (X.T @ err) / m + (lam / m) * w      <span class="tok-c"># penalty derivative is (lam/m)w</span>
-    dj_db = float(err.sum() / m)                 <span class="tok-c"># b is NOT regularized</span>
+    dj_db = float(err<span class="gterm" data-g="npsum-api">.sum(</span>) / m)                 <span class="tok-c"># b is NOT regularized</span>
     <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div></section>
 <section class="sx" id="sx-check_gradient"><div class="sx-prose"><p>Same checker as file 01, now with λ switched on, so the penalty's derivative <code>(λ/m)·w</code> is verified too.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> numeric_gradient(f, theta, eps=<span class="tok-n">1e-6</span>):
-    g = np.zeros_like(theta, dtype=float)
+    g = np.zeros_like(theta, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(theta.size):
         up, dn = theta.astype(float).copy(), theta.astype(float).copy()
         up[i] += eps; dn[i] -= eps
         g[i] = (f(up) - f(dn)) / (<span class="tok-n">2</span> * eps)
     <span class="tok-k">return</span> g
 
-Xs = (X - X.mean(<span class="tok-n">0</span>)) / X.std(<span class="tok-n">0</span>)                  <span class="tok-c"># scale, as always</span>
+Xs = (X - X<span class="gterm" data-g="npmean-api">.mean(</span><span class="tok-n">0</span>)) / X<span class="gterm" data-g="npstd-api">.std(</span><span class="tok-n">0</span>)                  <span class="tok-c"># scale, as always</span>
 w0, b0, lam = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">0.3</span>, -<span class="tok-n">0.2</span>]), <span class="tok-n">0.1</span>, <span class="tok-n">1.5</span>
 ana, _ = compute_gradient(Xs, y, w0, b0, lam)
 num = numeric_gradient(<span class="tok-k">lambda</span> w: compute_cost(Xs, y, w, b0, lam), w0)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nanalytic dj_dw:&quot;</span>, np.round(ana, <span class="tok-n">8</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, np.round(num, <span class="tok-n">8</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{np.max(np.abs(ana - num)):.3e}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nanalytic dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(ana, <span class="tok-n">8</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(num, <span class="tok-n">8</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana - num)):.3e}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 analytic dj_dw: [-0.33510702 -0.36844957]
 numeric  dj_dw: [-0.33510702 -0.36844957]
 max difference: 6.785e-11</pre></div></section>
 <section class="sx" id="sx-train"><div class="sx-prose"><p>Nothing new — the loop is identical to linear regression.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradient_descent(X, y, alpha, iters, lam=<span class="tok-n">0.0</span>):
-    w, b = np.zeros(X.shape[<span class="tok-n">1</span>]), <span class="tok-n">0.0</span>
+    w, b = <span class="gterm" data-g="npcreate-api">np.zeros</span>(X.shape[<span class="tok-n">1</span>]), <span class="tok-n">0.0</span>
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(iters):
         dw, db = compute_gradient(X, y, w, b, lam)
         w, b = w - alpha * dw, b - alpha * db
@@ -315,7 +315,7 @@ max difference: 6.785e-11</pre></div></section>
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntraining (lambda = 0):&quot;</span>)
 w, b = gradient_descent(Xs, y, alpha=<span class="tok-n">0.5</span>, iters=<span class="tok-n">5000</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;learned w = {np.round(w, 4)}  b = {b:.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;learned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 4)}  b = {b:.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 training (lambda = 0):
   iter     0  cost 0.56794
   iter  1000  cost 0.12141
@@ -325,9 +325,9 @@ training (lambda = 0):
 learned w = [4.7222 2.8503]  b = -0.0952</pre></div></section>
 <section class="sx" id="sx-evaluate"><div class="sx-prose"><p>The threshold at 0.5 is a <i>separate decision</i> made after training. The model outputs a <span class="gterm" data-g="probability-f0">probability</span>; turning it into a label is your choice, and moving it trades <span class="gterm" data-g="precisionrecall-native">precision</span> against recall.</p></div><div class="sx-code"><pre><code>prob = sigmoid(Xs @ w + b)
 pred = (prob &gt;= <span class="tok-n">0.5</span>).astype(int)                 <span class="tok-c"># the threshold is a separate choice</span>
-acc = (pred == y).mean()
-tp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">1</span>)).sum()); fp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">0</span>)).sum())
-fn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">1</span>)).sum()); tn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">0</span>)).sum())
+acc = (pred == y)<span class="gterm" data-g="npmean-api">.mean(</span>)
+tp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">1</span>))<span class="gterm" data-g="npsum-api">.sum(</span>)); fp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">0</span>))<span class="gterm" data-g="npsum-api">.sum(</span>))
+fn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">1</span>))<span class="gterm" data-g="npsum-api">.sum(</span>)); tn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">0</span>))<span class="gterm" data-g="npsum-api">.sum(</span>))
 prec = tp / (tp + fp); rec = tp / (tp + fn)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\naccuracy {acc:.3f}   TP {tp}  FP {fp}  FN {fn}  TN {tn}&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;precision {prec:.3f}   recall {rec:.3f}   F1 {2*prec*rec/(prec+rec):.3f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
@@ -345,12 +345,12 @@ decision boundary in scaled space:
 <section class="sx" id="sx-regularization"><div class="sx-prose"><p>Watch ‖w‖ shrink as λ grows while accuracy holds or improves. That is <span class="gterm" data-g="regularization-native">regularization</span> doing its job: the same decisions, made with less confidence, which generalises better.</p></div><div class="sx-code"><pre><code><span class="tok-k">print</span>(<span class="tok-s">&quot;\nwhat lambda does to the weights:&quot;</span>)
 <span class="tok-k">print</span>(f&quot;{<span class="tok-s">&#x27;lambda&#x27;</span>:&gt;<span class="tok-n">8</span>}  {<span class="tok-s">&#x27;|w|&#x27;</span>:&gt;<span class="tok-n">8</span>}  {<span class="tok-s">&#x27;train acc&#x27;</span>:&gt;<span class="tok-n">9</span>}&quot;)
 <span class="tok-k">for</span> lam <span class="tok-k">in</span> [<span class="tok-n">0.0</span>, <span class="tok-n">1.0</span>, <span class="tok-n">10.0</span>, <span class="tok-n">100.0</span>]:
-    wl, bl = np.zeros(n), <span class="tok-n">0.0</span>
+    wl, bl = <span class="gterm" data-g="npcreate-api">np.zeros</span>(n), <span class="tok-n">0.0</span>
     <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(<span class="tok-n">3000</span>):
         dw, db = compute_gradient(Xs, y, wl, bl, lam)
         wl, bl = wl - <span class="tok-n">0.5</span> * dw, bl - <span class="tok-n">0.5</span> * db
-    a = ((sigmoid(Xs @ wl + bl) &gt;= <span class="tok-n">0.5</span>).astype(int) == y).mean()
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{lam:8.0f}  {np.linalg.norm(wl):8.4f}  {a:9.3f}&quot;</span>)
+    a = ((sigmoid(Xs @ wl + bl) &gt;= <span class="tok-n">0.5</span>).astype(int) == y)<span class="gterm" data-g="npmean-api">.mean(</span>)
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;{lam:8.0f}  {<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(wl):8.4f}  {a:9.3f}&quot;</span>)
 <span class="tok-k">print</span>(&quot;\nbigger <span class="tok-k">lambda</span> -&gt; smaller weights -&gt; a flatter, more cautious model.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 what lambda does to the weights:
   lambda       |w|  train acc
@@ -367,12 +367,12 @@ bigger lambda -&gt; smaller weights -&gt; a flatter, more cautious model.</pre><
 <span class="tok-k">print</span>(f&quot;{<span class="tok-s">&#x27;alpha&#x27;</span>:&gt;<span class="tok-n">7</span>} {<span class="tok-s">&#x27;lambda&#x27;</span>:&gt;<span class="tok-n">7</span>} {<span class="tok-s">&#x27;1-a*l/m&#x27;</span>:&gt;<span class="tok-n">9</span>}   outcome&quot;)
 <span class="tok-k">for</span> alpha, lam <span class="tok-k">in</span> [(<span class="tok-n">0.5</span>, <span class="tok-n">100.0</span>), (<span class="tok-n">0.5</span>, <span class="tok-n">320.0</span>), (<span class="tok-n">0.5</span>, <span class="tok-n">1000.0</span>), (<span class="tok-n">0.05</span>, <span class="tok-n">1000.0</span>)]:
     factor = <span class="tok-n">1</span> - alpha * lam / m
-    wl, bl = np.zeros(n), <span class="tok-n">0.0</span>
+    wl, bl = <span class="gterm" data-g="npcreate-api">np.zeros</span>(n), <span class="tok-n">0.0</span>
     <span class="tok-k">with</span> np.errstate(over=<span class="tok-s">&quot;ignore&quot;</span>, invalid=<span class="tok-s">&quot;ignore&quot;</span>):   <span class="tok-c"># divergence is the point here</span>
         <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(<span class="tok-n">2000</span>):
             dw, db = compute_gradient(Xs, y, wl, bl, lam)
             wl, bl = wl - alpha * dw, bl - alpha * db
-        norm = np.linalg.norm(wl)
+        norm = <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(wl)
     state = <span class="tok-s">&quot;diverged&quot;</span> <span class="tok-k">if</span> <span class="tok-k">not</span> np.isfinite(norm) <span class="tok-k">else</span> f<span class="tok-s">&quot;|w| = {norm:.4f}&quot;</span>
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{alpha:7.2f} {lam:7.0f} {factor:9.3f}   {state}&quot;</span>)
 <span class="tok-k">print</span>(&quot;\nStable only <span class="tok-k">while</span> alpha*<span class="tok-k">lambda</span>/m &lt; <span class="tok-n">2</span>, i.e. alpha &lt; 2m/<span class="tok-k">lambda</span>.&quot;)

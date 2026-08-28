@@ -237,17 +237,17 @@ everything about how long you wait. On a large dataset this is the difference be
 overnight and one that trains over a fortnight.</p></div><h2><span class="ico">🔬</span>Scaling up gradient descent</h2><p>The same idea applies to the update step. With 16 features, the non-vectorised version is:</p><pre><code><span class="tok-k">for</span> j <span class="tok-k">in</span> range(<span class="tok-n">16</span>):
     w[j] = w[j] - <span class="tok-n">0.1</span> * d[j]</code></pre><p>and the vectorised version is one line that does all sixteen at the same moment:</p><pre><code>w = w - <span class="tok-n">0.1</span> * d</code></pre><p>With 16 parameters this hardly matters. With 100,000 — an entirely ordinary size for a
 neural network — it is the difference between practical and impossible.</p><h2><span class="ico">🧮</span>Timed on ten million numbers</h2><p>Two <span class="gterm" data-g="vector-f0">vectors</span> of 10,000,000 elements, dot-producted both ways, measured on this
-machine:</p><table class="data"><thead><tr><th>Version</th><th>time</th><th>relative</th></tr></thead><tbody><tr><td><code>for i in range(n): s += a[i]*b[i]</code></td><td>≈ 2,154 ms</td><td>1×</td></tr><tr><td><code>np.dot(a, b)</code></td><td><b>11.4 ms</b></td><td><b>≈ 189× faster</b></td></tr></tbody></table><p>Two seconds against one hundredth of a second, for identical arithmetic — the same ten
+machine:</p><table class="data"><thead><tr><th>Version</th><th>time</th><th>relative</th></tr></thead><tbody><tr><td><code>for i in range(n): s += a[i]*b[i]</code></td><td>≈ 2,154 ms</td><td>1×</td></tr><tr><td><code><span class="gterm" data-g="npdot-api">np.dot</span>(a, b)</code></td><td><b>11.4 ms</b></td><td><b>≈ 189× faster</b></td></tr></tbody></table><p>Two seconds against one hundredth of a second, for identical arithmetic — the same ten
 million multiplications and ten million additions happen either way.</p>
 <p>The difference is where the work is done. The loop runs in the Python interpreter, which for every
-single element re-checks types, looks up methods and builds a temporary object. <code>np.dot</code>
+single element re-checks types, looks up methods and builds a temporary object. <code><span class="gterm" data-g="npdot-api">np.dot</span></code>
 hands the whole array to compiled code that pays none of that per element, reads memory in a
 cache-friendly order, and uses SIMD instructions that perform several multiplications per clock
 cycle.</p>
 <p>Now scale it up. A single gradient-descent step is a <span class="gterm" data-g="dot-product-f0">dot product</span>; a real run is thousands of
 steps. At 189×, two seconds per step becomes eleven milliseconds — the difference between a model
 you can iterate on and one you cannot.</p><div class="explain"><span class="tag">Say it out loud</span><p>The speedup comes from removing the loop, not from doing less arithmetic.
-<b>So why is <code>np.dot</code> on a 10-element array barely faster than a Python loop?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because there is a fixed cost to entering NumPy at all — checking shapes and
+<b>So why is <code><span class="gterm" data-g="npdot-api">np.dot</span></code> on a 10-element array barely faster than a Python loop?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because there is a fixed cost to entering NumPy at all — checking shapes and
 dtypes, and dispatching into the compiled routine — and it is paid once per call regardless of size.
 On 10 elements that overhead dominates and the loop is competitive. On 10 million it is invisible,
 amortised over every element. The lesson is that vectorisation pays in proportion to how much work

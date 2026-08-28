@@ -228,7 +228,7 @@
 <p class="lede">The same two steps, written as maths and as code — with the notation that shows up in the assignment.</p>
 <div class="bookrail" title="Lesson 132 of 172 in the book"><i style="width:77%"></i></div>
 <p class="bookrail-cap"><span>C3 · Week 1 · lesson 3 of 12</span><span class="r">132 of 172 · 77% of the book</span></p>
-<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>K-means alternates two steps until nothing changes. <b>Guess whether it is guaranteed to stop</b> — and whether stopping means it found the best answer.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the difference between converging and converging to the <em>right</em> place.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have a pile of dots and you want to sort them into two groups, but nobody
+<h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>K-means alternates two steps until nothing changes. <b>Guess whether it is guaranteed to stop</b> — and whether stopping means it found the best answer.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the difference between <span class="gterm" data-g="convergence-native">converging</span> and converging to the <em>right</em> place.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have a pile of dots and you want to sort them into two groups, but nobody
 has told you what the groups are.</p>
 <p>So you guess. Drop two pins on the page at random. Every dot joins whichever pin it is nearer
 to &mdash; that is group one and group two. Now look at each group and move its pin to the middle
@@ -239,24 +239,24 @@ sentences written in symbols.</p></div><h2><span class="ico">🔢</span>The math
 
 <span class="tok-k">def</span> find_closest_centroids(X, centroids):
     K = centroids.shape[<span class="tok-n">0</span>]
-    idx = <span class="gterm" data-g="npcreate-api">np.zeros</span>(X.shape[<span class="tok-n">0</span>], dtype=int)
+    idx = <span class="gterm" data-g="npcreate-api">np.zeros</span>(X.shape[<span class="tok-n">0</span>], <span class="gterm" data-g="kwdtype-api">dtype=</span>int)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(X.shape[<span class="tok-n">0</span>]):
-        distances = np.linalg.norm(X[i] - centroids, axis=<span class="tok-n">1</span>)   <span class="tok-c"># one distance per centroid</span>
-        idx[i] = np.argmin(distances)                          <span class="tok-c"># &lt;- arg min</span>
+        distances = <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(X[i] - centroids, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)   <span class="tok-c"># one distance per centroid</span>
+        idx[i] = <span class="gterm" data-g="npargmax-api">np.argmin</span>(distances)                          <span class="tok-c"># &lt;- arg min</span>
     <span class="tok-k">return</span> idx
 
 <span class="tok-k">def</span> compute_centroids(X, idx, K):
-    centroids = np.zeros((K, X.shape[<span class="tok-n">1</span>]))
+    centroids = <span class="gterm" data-g="npcreate-api">np.zeros</span>((K, X.shape[<span class="tok-n">1</span>]))
     <span class="tok-k">for</span> k <span class="tok-k">in</span> range(K):
         points = X[idx == k]                                   <span class="tok-c"># boolean mask</span>
         <span class="tok-k">if</span> len(points) &gt; <span class="tok-n">0</span>:
-            centroids[k] = points.mean(axis=<span class="tok-n">0</span>)                 <span class="tok-c"># &lt;- the mean</span>
+            centroids[k] = points<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                 <span class="tok-c"># &lt;- the mean</span>
     <span class="tok-k">return</span> centroids
 
 <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(max_iters):
     idx = find_closest_centroids(X, centroids)
     centroids = compute_centroids(X, idx, K)</code></pre><p>Those two functions are the graded exercises in the Week 1 assignment. The loop underneath
-is given to you.</p><div class="callout warn"><span class="tag">Watch out</span><p><code>np.linalg.norm(X[i] - centroids, axis=1)</code> relies on broadcasting:
+is given to you.</p><div class="callout warn"><span class="tag">Watch out</span><p><code><span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(X[i] - centroids, <span class="gterm" data-g="kwaxis-api">axis=</span>1)</code> relies on <span class="gterm" data-g="broadcasting-f0">broadcasting</span>:
 <code>X[i]</code> is shape (n,) and <code>centroids</code> is (K, n), so the subtraction produces (K, n)
 and the norm along axis 1 gives K distances. If you are unsure, print the shapes.</p></div><h2><span class="ico">🧮</span>One real run, iteration by iteration</h2><p>The assignment’s 300-point data set, started from the centroids the lab hands you —
 [3, 3], [6, 2], [8, 5]. Watch where they end up:</p><table class="data"><thead><tr><th></th><th>centroid 0</th><th>centroid 1</th><th>centroid 2</th></tr></thead><tbody><tr><td>start</td><td>(3.00, 3.00)</td><td>(6.00, 2.00)</td><td>(8.00, 5.00)</td></tr><tr><td>after 10 iterations</td><td>(1.95, 5.03)</td><td>(3.04, 1.02)</td><td>(6.03, 3.00)</td></tr></tbody></table><p>Cluster sizes at the end: <b>98, 102, 100</b> — a near-perfect three-way split of the

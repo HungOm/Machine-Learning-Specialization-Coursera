@@ -224,7 +224,7 @@
 <main>
 <p class="kicker">From scratch &#183; file 5 of 10 &#183; 126 lines of NumPy</p>
 <h1>Softmax and multi-class</h1>
-<p class="lede">Including the numerical trap that <code>from_logits=True</code> exists to avoid, demonstrated by breaking the naive version first.</p>
+<p class="lede">Including the numerical trap that <code><span class="gterm" data-g="kwfromlogits-api">from_logits=</span>True</code> exists to avoid, demonstrated by breaking the naive version first.</p>
 
 <div class="runbox">
   <div class="rb-l">Run it yourself</div>
@@ -240,58 +240,58 @@ python3 05_softmax.py</code></pre>
 
 Run me:  python3 05_softmax.py
 
-Includes the numerical-stability trick that `from_logits=True` uses, shown
+Includes the numerical-stability trick that `<span class="gterm" data-g="kwfromlogits-api">from_logits=</span>True` uses, shown
 by breaking the naive version first.
 &quot;&quot;&quot;</span>
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
 <section class="sx" id="sx-naive"><div class="sx-prose"><p>The definition, written exactly as the formula reads. It works, right up until it does not.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> softmax_naive(z):
     e = <span class="gterm" data-g="npexp-api">np.exp</span>(z)
-    <span class="tok-k">return</span> e / e.sum()
+    <span class="tok-k">return</span> e / e<span class="gterm" data-g="npsum-api">.sum(</span>)
 
-<span class="tok-k">print</span>(<span class="tok-s">&quot;softmax([2, 1, 0, 3]) =&quot;</span>, np.round(softmax_naive(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>., <span class="tok-n">3</span>.])), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;sums to&quot;</span>, softmax_naive(np.array([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>., <span class="tok-n">3</span>.])).sum())</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>softmax([2, 1, 0, 3]) = [0.2369 0.0871 0.0321 0.6439]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;softmax([2, 1, 0, 3]) =&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(softmax_naive(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>., <span class="tok-n">3</span>.])), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;sums to&quot;</span>, softmax_naive(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>., <span class="tok-n">3</span>.]))<span class="gterm" data-g="npsum-api">.sum(</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>softmax([2, 1, 0, 3]) = [0.2369 0.0871 0.0321 0.6439]
 sums to 1.0</pre></div></section>
 <section class="sx" id="sx-overflow"><div class="sx-prose"><p>Logits in the hundreds are entirely normal in a trained network, and <code>e^1000</code> is not a number a float can hold. The naive version returns nan and your training run is over.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Now break it. Logits of a few hundred are entirely normal in a trained network.</span>
 <span class="tok-k">with</span> np.errstate(over=<span class="tok-s">&quot;ignore&quot;</span>, invalid=<span class="tok-s">&quot;ignore&quot;</span>):
-    bad = softmax_naive(np.array([<span class="tok-n">1000</span>., <span class="tok-n">999</span>., <span class="tok-n">998</span>.]))
+    bad = softmax_naive(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1000</span>., <span class="tok-n">999</span>., <span class="tok-n">998</span>.]))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nnaive softmax on [1000, 999, 998]:&quot;</span>, bad, &quot; &lt;- overflowed to nan&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 naive softmax on [1000, 999, 998]: [nan nan nan]  &lt;- overflowed to nan</pre></div></section>
-<section class="sx" id="sx-stable"><div class="sx-prose"><p>The fix is one line, and it is free: softmax(z + c) = softmax(z) for any constant c, because e^c cancels top and bottom. Choose c = −max(z) and the largest exponent becomes e⁰ = 1, so nothing can overflow. The shift invariance is proved numerically two lines down.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> softmax(z, axis=-<span class="tok-n">1</span>):
+<section class="sx" id="sx-stable"><div class="sx-prose"><p>The fix is one line, and it is free: softmax(z + c) = softmax(z) for any constant c, because e^c cancels top and bottom. Choose c = −max(z) and the largest exponent becomes e⁰ = 1, so nothing can overflow. The shift invariance is proved numerically two lines down.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> softmax(z, <span class="gterm" data-g="kwaxis-api">axis=</span>-<span class="tok-n">1</span>):
     <span class="tok-d">&quot;&quot;&quot;Subtract the max first. Algebraically identical, numerically safe.
 
     softmax(z + c) == softmax(z) for any constant c, because e^c cancels
     from the top and the bottom. Choosing c = -max(z) makes the largest
     exponent e^0 = 1, so nothing can overflow.
     &quot;&quot;&quot;</span>
-    z = np.asarray(z, dtype=float)
-    z = z - z.max(axis=axis, keepdims=<span class="tok-k">True</span>)
-    e = np.exp(z)
-    <span class="tok-k">return</span> e / e.sum(axis=axis, keepdims=<span class="tok-k">True</span>)
+    z = np.asarray(z, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
+    z = z - z<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="gterm" data-g="kwaxis-api">axis=</span>axis, keepdims=<span class="tok-k">True</span>)
+    e = <span class="gterm" data-g="npexp-api">np.exp</span>(z)
+    <span class="tok-k">return</span> e / e<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span>axis, keepdims=<span class="tok-k">True</span>)
 
-<span class="tok-k">print</span>(<span class="tok-s">&quot;stable softmax on [1000, 999, 998]:&quot;</span>, np.round(softmax(np.array([<span class="tok-n">1000</span>., <span class="tok-n">999</span>., <span class="tok-n">998</span>.])), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;shift invariance:  softmax([2,1,0]) ==&quot;</span>, np.round(softmax(np.array([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>.])), <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;                   softmax([12,11,10]) ==&quot;</span>, np.round(softmax(np.array([<span class="tok-n">12</span>., <span class="tok-n">11</span>., <span class="tok-n">10</span>.])), <span class="tok-n">6</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>stable softmax on [1000, 999, 998]: [0.6652 0.2447 0.09  ]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;stable softmax on [1000, 999, 998]:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(softmax(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1000</span>., <span class="tok-n">999</span>., <span class="tok-n">998</span>.])), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;shift invariance:  softmax([2,1,0]) ==&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(softmax(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>.])), <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;                   softmax([12,11,10]) ==&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(softmax(<span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">12</span>., <span class="tok-n">11</span>., <span class="tok-n">10</span>.])), <span class="tok-n">6</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>stable softmax on [1000, 999, 998]: [0.6652 0.2447 0.09  ]
 shift invariance:  softmax([2,1,0]) == [0.665241 0.244728 0.090031]
                    softmax([12,11,10]) == [0.665241 0.244728 0.090031]</pre></div></section>
-<section class="sx" id="sx-logsoftmax"><div class="sx-prose"><p>Now the other half. Computing the <span class="gterm" data-g="probability-f0">probability</span> and <i>then</i> its log loses <span class="gterm" data-g="precisionrecall-native">precision</span> twice, and once a probability underflows to zero the log is −inf and there is no gradient. Computing <code>z − log Σ e^z</code> directly never forms the tiny number at all. This is exactly what <code>from_logits=True</code> switches on.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> log_softmax(z, axis=-<span class="tok-n">1</span>):
+<section class="sx" id="sx-logsoftmax"><div class="sx-prose"><p>Now the other half. Computing the <span class="gterm" data-g="probability-f0">probability</span> and <i>then</i> its log loses <span class="gterm" data-g="precisionrecall-native">precision</span> twice, and once a probability underflows to zero the log is −inf and there is no gradient. Computing <code>z − log Σ e^z</code> directly never forms the tiny number at all. This is exactly what <code><span class="gterm" data-g="kwfromlogits-api">from_logits=</span>True</code> switches on.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> log_softmax(z, <span class="gterm" data-g="kwaxis-api">axis=</span>-<span class="tok-n">1</span>):
     <span class="tok-d">&quot;&quot;&quot;log(softmax(z)) without ever forming softmax(z).
 
     log(e^z_i / sum e^z_j) = z_i - log(sum e^z_j). Computing it this way never
     creates the tiny probability that log() would then have to rescue.
     &quot;&quot;&quot;</span>
-    z = np.asarray(z, dtype=float)
-    m = z.max(axis=axis, keepdims=<span class="tok-k">True</span>)
-    <span class="tok-k">return</span> z - m - <span class="gterm" data-g="nplog-api">np.log</span>(np.exp(z - m).sum(axis=axis, keepdims=<span class="tok-k">True</span>))
+    z = np.asarray(z, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
+    m = z<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="gterm" data-g="kwaxis-api">axis=</span>axis, keepdims=<span class="tok-k">True</span>)
+    <span class="tok-k">return</span> z - m - <span class="gterm" data-g="nplog-api">np.log</span>(<span class="gterm" data-g="npexp-api">np.exp</span>(z - m)<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span>axis, keepdims=<span class="tok-k">True</span>))
 
 <span class="tok-c"># A gap of ~750 in the logits is enough: e^-750 is below the smallest float64,</span>
 <span class="tok-c"># so the probability underflows to exactly 0 and log(0) is -inf.</span>
-z = np.array([<span class="tok-n">400</span>., <span class="tok-n">0</span>., -<span class="tok-n">400</span>.])
+z = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">400</span>., <span class="tok-n">0</span>., -<span class="tok-n">400</span>.])
 <span class="tok-k">with</span> np.errstate(divide=<span class="tok-s">&quot;ignore&quot;</span>):
     p_first = softmax(z)
-    naive_log = np.log(p_first)
+    naive_log = <span class="gterm" data-g="nplog-api">np.log</span>(p_first)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nsoftmax([400, 0, -400])   :&quot;</span>, p_first, &quot; &lt;- the last one underflowed to <span class="tok-n">0</span>&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;then log of that          :&quot;</span>, naive_log, &quot; &lt;- -inf, <span class="tok-k">and</span> no gradient&quot;)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;direct log_softmax        :&quot;</span>, np.round(log_softmax(z), <span class="tok-n">1</span>), &quot; &lt;- still usable&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;direct log_softmax        :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(log_softmax(z), <span class="tok-n">1</span>), &quot; &lt;- still usable&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Same maths, different order of operations, and only one of them survives.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 softmax([400, 0, -400])   : [1.0000000e+000 1.9151696e-174 0.0000000e+000]  &lt;- the last one underflowed to 0
 then log of that          : [   0. -400.  -inf]  &lt;- -inf, and no gradient
@@ -303,8 +303,8 @@ Same maths, different order of operations, and only one of them survives.</pre><
     Only the true class&#x27;s log-probability enters the loss — that is the
     &quot;pick one entry&quot; that the -log(a_y) formula describes.
     &quot;&quot;&quot;</span>
-    ls = log_softmax(logits, axis=<span class="tok-n">1</span>)
-    <span class="tok-k">return</span> float(-ls[<span class="gterm" data-g="nprange-api">np.arange</span>(len(y)), y].mean())</code></pre></div></section>
+    ls = log_softmax(logits, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)
+    <span class="tok-k">return</span> float(-ls[<span class="gterm" data-g="nprange-api">np.arange</span>(len(y)), y]<span class="gterm" data-g="npmean-api">.mean(</span>))</code></pre></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p><code>softmax(z) − onehot(y)</code>, divided by m. Beautifully simple, and the same shape of answer as the sigmoid case for the same reason: the messy <span class="gterm" data-g="derivative-f0">derivatives</span> cancel. Verified numerically underneath.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> grad_logits(logits, y):
     <span class="tok-d">&quot;&quot;&quot;dJ/dz for softmax + cross-entropy is (softmax(z) - onehot(y)) / m.
 
@@ -312,39 +312,39 @@ Same maths, different order of operations, and only one of them survives.</pre><
     derivatives cancel, which is the real reason these pairs go together.
     &quot;&quot;&quot;</span>
     m = len(y)
-    P = softmax(logits, axis=<span class="tok-n">1</span>)
-    P[np.arange(m), y] -= <span class="tok-n">1.0</span>
+    P = softmax(logits, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)
+    P[<span class="gterm" data-g="nprange-api">np.arange</span>(m), y] -= <span class="tok-n">1.0</span>
     <span class="tok-k">return</span> P / m
 
 rng = np.random.default_rng(<span class="tok-n">3</span>)
-logits = rng.normal(size=(<span class="tok-n">5</span>, <span class="tok-n">4</span>))
-yv = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">4</span>, size=<span class="tok-n">5</span>)
+logits = rng.normal(<span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">5</span>, <span class="tok-n">4</span>))
+yv = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">4</span>, <span class="gterm" data-g="kwsize-api">size=</span><span class="tok-n">5</span>)
 ana = grad_logits(logits.copy(), yv)
 num = np.zeros_like(ana)
 eps = <span class="tok-n">1e-6</span>
 <span class="tok-k">for</span> i <span class="tok-k">in</span> range(logits.size):
     up, dn = logits.copy(), logits.copy()
-    up.reshape(-<span class="tok-n">1</span>)[i] += eps; dn.reshape(-<span class="tok-n">1</span>)[i] -= eps
-    num.reshape(-<span class="tok-n">1</span>)[i] = (cross_entropy(up, yv) - cross_entropy(dn, yv)) / (<span class="tok-n">2</span> * eps)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;\ngradient check: max diff {np.max(np.abs(ana - num)):.3e}  &quot;</span>
-      f&quot;{<span class="tok-s">&#x27;PASS&#x27;</span> <span class="tok-k">if</span> np.max(np.abs(ana - num)) &lt; <span class="tok-n">1e-7</span> <span class="tok-k">else</span> <span class="tok-s">&#x27;FAIL&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    up<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] += eps; dn<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] -= eps
+    num<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] = (cross_entropy(up, yv) - cross_entropy(dn, yv)) / (<span class="tok-n">2</span> * eps)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;\ngradient check: max diff {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana - num)):.3e}  &quot;</span>
+      f&quot;{<span class="tok-s">&#x27;PASS&#x27;</span> <span class="tok-k">if</span> <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana - num)) &lt; <span class="tok-n">1e-7</span> <span class="tok-k">else</span> <span class="tok-s">&#x27;FAIL&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 gradient check: max diff 2.805e-10  PASS</pre></div></section>
 <section class="sx" id="sx-train"><div class="sx-prose"><p>Three blobs, one linear softmax layer, trained by hand to 99.4%.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Three blobs, one linear softmax classifier, trained by hand.</span>
-means = np.array([[<span class="tok-n">0</span>., <span class="tok-n">0</span>.], [<span class="tok-n">4</span>., <span class="tok-n">4</span>.], [<span class="tok-n">8</span>., <span class="tok-n">0</span>.]])
-X = np.vstack([rng.normal(mu, <span class="tok-n">1.1</span>, size=(<span class="tok-n">60</span>, <span class="tok-n">2</span>)) <span class="tok-k">for</span> mu <span class="tok-k">in</span> means])
+means = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">0</span>., <span class="tok-n">0</span>.], [<span class="tok-n">4</span>., <span class="tok-n">4</span>.], [<span class="tok-n">8</span>., <span class="tok-n">0</span>.]])
+X = np.vstack([rng.normal(mu, <span class="tok-n">1.1</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">60</span>, <span class="tok-n">2</span>)) <span class="tok-k">for</span> mu <span class="tok-k">in</span> means])
 y = np.repeat([<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">2</span>], <span class="tok-n">60</span>)
-Xs = (X - X.mean(<span class="tok-n">0</span>)) / X.std(<span class="tok-n">0</span>)
-W, b = <span class="gterm" data-g="npcreate-api">np.zeros</span>((<span class="tok-n">2</span>, <span class="tok-n">3</span>)), np.zeros(<span class="tok-n">3</span>)
+Xs = (X - X<span class="gterm" data-g="npmean-api">.mean(</span><span class="tok-n">0</span>)) / X<span class="gterm" data-g="npstd-api">.std(</span><span class="tok-n">0</span>)
+W, b = <span class="gterm" data-g="npcreate-api">np.zeros</span>((<span class="tok-n">2</span>, <span class="tok-n">3</span>)), <span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">3</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntraining a 3-class softmax classifier:&quot;</span>)
 <span class="tok-k">for</span> it <span class="tok-k">in</span> range(<span class="tok-n">3001</span>):
     logits = Xs @ W + b
     <span class="tok-k">if</span> it % <span class="tok-n">750</span> == <span class="tok-n">0</span>:
-        acc = (logits.argmax(<span class="tok-n">1</span>) == y).mean()
+        acc = (logits.argmax(<span class="tok-n">1</span>) == y)<span class="gterm" data-g="npmean-api">.mean(</span>)
         <span class="tok-k">print</span>(f<span class="tok-s">&quot;  iter {it:4d}  loss {cross_entropy(logits, y):.4f}  acc {acc:.3f}&quot;</span>)
     dZ = grad_logits(logits, y)
     W -= <span class="tok-n">0.5</span> * (Xs.T @ dZ)
-    b -= <span class="tok-n">0.5</span> * dZ.sum(<span class="tok-n">0</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;final accuracy: {(( Xs @ W + b).argmax(1) == y).mean():.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    b -= <span class="tok-n">0.5</span> * dZ<span class="gterm" data-g="npsum-api">.sum(</span><span class="tok-n">0</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;final accuracy: {(( Xs @ W + b).argmax(1) == y)<span class="gterm" data-g="npmean-api">.mean(</span>):.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 training a 3-class softmax classifier:
   iter    0  loss 1.0986  acc 0.333
   iter  750  loss 0.0297  acc 0.994
@@ -353,13 +353,13 @@ training a 3-class softmax classifier:
   iter 3000  loss 0.0183  acc 0.994
 final accuracy: 0.9944</pre></div></section>
 <section class="sx" id="sx-multilabel"><div class="sx-prose"><p>The distinction that matters in practice, in one comparison. The same three logits give a softmax that sums to 1 — the classes compete — or three independent sigmoids that do not. A photo can contain a car and a bus; softmax structurally cannot say so.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Multi-class vs multi-label: the difference in one comparison.</span>
-<span class="tok-k">def</span> sigmoid(z): <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + np.exp(-np.asarray(z, float)))
-raw = np.array([<span class="tok-n">3.0</span>, <span class="tok-n">2.5</span>, -<span class="tok-n">1.0</span>])            <span class="tok-c"># car, bus, pedestrian</span>
+<span class="tok-k">def</span> sigmoid(z): <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.asarray(z, float)))
+raw = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">3.0</span>, <span class="tok-n">2.5</span>, -<span class="tok-n">1.0</span>])            <span class="tok-c"># car, bus, pedestrian</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nsame three logits, two different heads:&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  softmax (mutually exclusive):&quot;</span>, np.round(softmax(raw), <span class="tok-n">4</span>),
-      <span class="tok-s">&quot; sum =&quot;</span>, round(float(softmax(raw).sum()), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  sigmoids (independent)      :&quot;</span>, np.round(sigmoid(raw), <span class="tok-n">4</span>),
-      <span class="tok-s">&quot; sum =&quot;</span>, round(float(sigmoid(raw).sum()), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  softmax (mutually exclusive):&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(softmax(raw), <span class="tok-n">4</span>),
+      <span class="tok-s">&quot; sum =&quot;</span>, round(float(softmax(raw)<span class="gterm" data-g="npsum-api">.sum(</span>)), <span class="tok-n">4</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  sigmoids (independent)      :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(sigmoid(raw), <span class="tok-n">4</span>),
+      <span class="tok-s">&quot; sum =&quot;</span>, round(float(sigmoid(raw)<span class="gterm" data-g="npsum-api">.sum(</span>)), <span class="tok-n">4</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  A photo can hold a car AND a bus. Softmax cannot say that: raising&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  one probability must lower the others. Independent sigmoids can.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 same three logits, two different heads:

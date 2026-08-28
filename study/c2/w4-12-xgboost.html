@@ -236,11 +236,11 @@ the same data.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div 
 examples that the previous b−1 trees got <b>wrong</b> more likely to be picked. Each new tree therefore
 specialises in the hard cases.</p><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>boosting</td><td>“focus on the hard ones”</td><td>Trees are built <b>sequentially</b>, each one correcting the ensemble so far.</td></tr><tr><td>deliberate sampling</td><td>“the opposite of random”</td><td>Random forest samples uniformly. Boosting samples the current mistakes preferentially.</td></tr><tr><td>gradient boosting</td><td>“the real formulation”</td><td>Each tree is fitted to the <em>residual errors</em> — the gradient of the loss — rather than to a re-weighted sample. Same intuition, cleaner maths.</td></tr><tr><td>XGBoost</td><td>“eXtreme Gradient Boosting”</td><td>A specific, very fast implementation with built-in <span class="gterm" data-g="regularization-native">regularisation</span>, clever split-finding, missing-value handling and parallelism.</td></tr></tbody></table><div class="callout warn"><span class="tag">Watch out</span><p>The one real downside: because trees are built <b>in sequence</b>, boosting cannot
 parallelise across trees the way a random forest can. XGBoost gets its speed from parallelising <em>inside</em>
-each tree instead.</p></div><h2><span class="ico">💻</span>In code — it really is this short</h2><pre><code><span class="tok-k">from</span> xgboost <span class="tok-k">import</span> XGBClassifier
+each tree instead.</p></div><h2><span class="ico">💻</span>In code — it really is this short</h2><pre><code><span class="tok-k">from</span> xgboost <span class="tok-k">import</span> <span class="gterm" data-g="sklearnforest-api">XGBClassifier</span>
 
-model = XGBClassifier(
-    n_estimators=<span class="tok-n">100</span>,        <span class="tok-c"># number of boosting rounds</span>
-    learning_rate=<span class="tok-n">0.1</span>,       <span class="tok-c"># how much each tree is allowed to contribute</span>
+model = <span class="gterm" data-g="sklearnforest-api">XGBClassifier</span>(
+    <span class="gterm" data-g="kwnestimators-api">n_estimators=</span><span class="tok-n">100</span>,        <span class="tok-c"># number of boosting rounds</span>
+    <span class="gterm" data-g="kwlr-api">learning_rate=</span><span class="tok-n">0.1</span>,       <span class="tok-c"># how much each tree is allowed to contribute</span>
     max_depth=<span class="tok-n">4</span>,             <span class="tok-c"># boosted trees are SHALLOW on purpose</span>
     early_stopping_rounds=<span class="tok-n">10</span>,
 )
@@ -248,7 +248,7 @@ model = XGBClassifier(
 y_pred = <span class="gterm" data-g="tfpredict-api">model.predict</span>(X_test)
 
 <span class="tok-c"># regression is the same object with a different name:</span>
-<span class="tok-c"># from xgboost import XGBRegressor</span></code></pre><p><code>max_depth=4</code> is not a typo. Boosting deliberately uses <b>weak</b> trees — often
+<span class="tok-c"># from xgboost import <span class="gterm" data-g="sklearnforest-api">XGBRegressor</span></span></code></pre><p><code>max_depth=4</code> is not a typo. Boosting deliberately uses <b>weak</b> trees — often
 depth 3 to 6 — because the ensemble supplies the power and shallow trees keep each correction small and
 safe. A boosted forest of depth-20 trees usually overfits badly.</p><h2><span class="ico">⚖️</span>Random forest vs boosting</h2><table class="data"><thead><tr><th></th><th>Random forest</th><th>Boosting / XGBoost</th></tr></thead><tbody><tr><td>Trees built</td><td>independently, in parallel</td><td>sequentially, each fixing the last</td></tr><tr><td>Sampling</td><td>uniformly random</td><td>focused on current errors</td></tr><tr><td>Tree depth</td><td>deep, fully grown</td><td><b>shallow</b> (3–6)</td></tr><tr><td>Overfits?</td><td>rarely</td><td><b>yes, if you let it</b> — needs early stopping</td></tr><tr><td>Tuning needed</td><td>almost none</td><td>some — learning rate matters</td></tr><tr><td>Typical accuracy</td><td>very good</td><td><b>usually better</b></td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>On a table of numbers and categories, gradient-boosted trees are still the thing to
 beat. They win the large majority of tabular competitions on Kaggle, and neural networks have repeatedly

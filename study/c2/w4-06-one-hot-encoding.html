@@ -236,7 +236,7 @@ everything is back to two branches and nothing else has to change.</p></div><h2>
 feature into <b>any</b> algorithm that expects numbers. You will use it for neural networks constantly.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">import</span> pandas <span class="tok-k">as</span> pd
 
 df = <span class="gterm" data-g="pddataframe-api">pd.DataFrame</span>({<span class="tok-s">&#x27;ear&#x27;</span>: [<span class="tok-s">&#x27;pointy&#x27;</span>, <span class="tok-s">&#x27;floppy&#x27;</span>, <span class="tok-s">&#x27;oval&#x27;</span>, <span class="tok-s">&#x27;pointy&#x27;</span>]})
-pd.get_dummies(df, columns=[<span class="tok-s">&#x27;ear&#x27;</span>], dtype=int)
+<span class="gterm" data-g="pdgetdummies-api">pd.get_dummies</span>(df, <span class="gterm" data-g="kwcolumns-api">columns=</span>[<span class="tok-s">&#x27;ear&#x27;</span>], <span class="gterm" data-g="kwdtype-api">dtype=</span>int)
 <span class="tok-c">#    ear_floppy  ear_oval  ear_pointy</span>
 <span class="tok-c"># 0           0         0           1</span>
 <span class="tok-c"># 1           1         0           0</span>

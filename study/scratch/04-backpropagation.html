@@ -249,7 +249,7 @@ rng = np.random.default_rng(<span class="tok-n">0</span>)
 
 <span class="tok-k">def</span> sigmoid(z):
     <span class="tok-k">return</span> np.where(z &gt;= <span class="tok-n">0</span>, <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))),
-                    np.exp(-np.abs(z)) / (<span class="tok-n">1</span> + np.exp(-np.abs(z))))</code></pre></div></section>
+                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div></section>
 <section class="sx" id="sx-one_node"><div class="sx-prose"><p>Start with the smallest graph that has anything to say. Forward: compute a, then J. Backward: work out how much J changes per unit of a, then multiply by how much a changes per unit of w. That multiplication <i>is</i> the chain rule, and it is all backprop ever does.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Start with the smallest possible graph:  a = wx + b,  J = (a - y)^2</span>
 w, b, x, y = <span class="tok-n">3.0</span>, <span class="tok-n">1.0</span>, <span class="tok-n">2.0</span>, <span class="tok-n">5.0</span>
 a = w * x + b
@@ -296,7 +296,7 @@ numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
 <span class="tok-k">def</span> cost(A2, y):
     eps = <span class="tok-n">1e-12</span>
     f = np.clip(A2.ravel(), eps, <span class="tok-n">1</span> - eps)
-    <span class="tok-k">return</span> float(-np.mean(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * np.log(<span class="tok-n">1</span> - f)))</code></pre></div></section>
+    <span class="tok-k">return</span> float(-<span class="gterm" data-g="npmean-api">np.mean</span>(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f)))</code></pre></div></section>
 <section class="sx" id="sx-backward"><div class="sx-prose"><p>The whole algorithm, right to left. The one piece worth pausing on: <code>dZ2 = (A2 − y)/m</code>. For a sigmoid output with <span class="gterm" data-g="logloss-native">log loss</span>, the sigmoid's derivative and the <span class="gterm" data-g="logarithm-f0">log</span>'s derivative cancel completely — the same cancellation you saw in logistic regression, and the reason that pairing is universal.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> backward(cache, y, P):
     <span class="tok-d">&quot;&quot;&quot;Derived by hand, right to left.
 
@@ -309,17 +309,17 @@ numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
     W1, b1, W2, b2 = P
     m = X.shape[<span class="tok-n">0</span>]
 
-    dZ2 = (A2 - y.reshape(-<span class="tok-n">1</span>, <span class="tok-n">1</span>)) / m          <span class="tok-c"># (m, 1)</span>
+    dZ2 = (A2 - y<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>, <span class="tok-n">1</span>)) / m          <span class="tok-c"># (m, 1)</span>
     dW2 = A1.T @ dZ2                           <span class="tok-c"># (h, m) @ (m, 1) -&gt; (h, 1)</span>
-    db2 = dZ2.sum(axis=<span class="tok-n">0</span>)                      <span class="tok-c"># (1,)</span>
+    db2 = dZ2<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                      <span class="tok-c"># (1,)</span>
 
     dA1 = dZ2 @ W2.T                           <span class="tok-c"># (m, 1) @ (1, h) -&gt; (m, h)</span>
     dZ1 = dA1 * d_relu(Z1)                     <span class="tok-c"># ReLU passes gradient only where z &gt; 0</span>
     dW1 = X.T @ dZ1                            <span class="tok-c"># (n, m) @ (m, h) -&gt; (n, h)</span>
-    db1 = dZ1.sum(axis=<span class="tok-n">0</span>)                      <span class="tok-c"># (h,)</span>
+    db1 = dZ1<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                      <span class="tok-c"># (h,)</span>
     <span class="tok-k">return</span> [dW1, db1, dW2, db2]</code></pre></div></section>
 <section class="sx" id="sx-gradcheck"><div class="sx-prose"><p>Four gradients, four checks, all agreeing to about 1e-10. This is the test that tells you a hand-derived backward pass is right, and it is worth writing before you trust any network you built yourself.</p></div><div class="sx-code"><pre><code>X = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">0</span>., <span class="tok-n">0</span>.], [<span class="tok-n">0</span>., <span class="tok-n">1</span>.], [<span class="tok-n">1</span>., <span class="tok-n">0</span>.], [<span class="tok-n">1</span>., <span class="tok-n">1</span>.]])
-y = np.array([<span class="tok-n">0</span>., <span class="tok-n">1</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>.])                  <span class="tok-c"># XOR</span>
+y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">0</span>., <span class="tok-n">1</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>.])                  <span class="tok-c"># XOR</span>
 h = <span class="tok-n">8</span>
 <span class="tok-k">def</span> init(seed=<span class="tok-n">2</span>):
     <span class="tok-d">&quot;&quot;&quot;He initialisation: variance 2/fan_in keeps ReLU activations from dying.
@@ -330,28 +330,28 @@ h = <span class="tok-n">8</span>
     disagrees with the analytic one for a genuine mathematical reason.
     &quot;&quot;&quot;</span>
     r = np.random.default_rng(seed)
-    <span class="tok-k">return</span> [r.normal(<span class="tok-n">0</span>, np.sqrt(<span class="tok-n">2</span> / <span class="tok-n">2</span>), (<span class="tok-n">2</span>, h)), r.normal(<span class="tok-n">0</span>, <span class="tok-n">0.1</span>, h),
-            r.normal(<span class="tok-n">0</span>, np.sqrt(<span class="tok-n">2</span> / h), (h, <span class="tok-n">1</span>)), r.normal(<span class="tok-n">0</span>, <span class="tok-n">0.1</span>, <span class="tok-n">1</span>)]
+    <span class="tok-k">return</span> [r.normal(<span class="tok-n">0</span>, <span class="gterm" data-g="npsqrt-api">np.sqrt</span>(<span class="tok-n">2</span> / <span class="tok-n">2</span>), (<span class="tok-n">2</span>, h)), r.normal(<span class="tok-n">0</span>, <span class="tok-n">0.1</span>, h),
+            r.normal(<span class="tok-n">0</span>, <span class="gterm" data-g="npsqrt-api">np.sqrt</span>(<span class="tok-n">2</span> / h), (h, <span class="tok-n">1</span>)), r.normal(<span class="tok-n">0</span>, <span class="tok-n">0.1</span>, <span class="tok-n">1</span>)]
 
 P = init()
 A2, cache = forward(X, P)
 grads = backward(cache, y, P)
 
 <span class="tok-k">def</span> numeric_grads(P, i, eps=<span class="tok-n">1e-6</span>):
-    g = np.zeros_like(P[i], dtype=float)
-    flat = g.reshape(-<span class="tok-n">1</span>)
+    g = np.zeros_like(P[i], <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
+    flat = g<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)
     <span class="tok-k">for</span> k <span class="tok-k">in</span> range(P[i].size):
         up = [p.copy() <span class="tok-k">for</span> p <span class="tok-k">in</span> P]; dn = [p.copy() <span class="tok-k">for</span> p <span class="tok-k">in</span> P]
-        up[i].reshape(-<span class="tok-n">1</span>)[k] += eps
-        dn[i].reshape(-<span class="tok-n">1</span>)[k] -= eps
+        up[i]<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[k] += eps
+        dn[i]<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[k] -= eps
         flat[k] = (cost(forward(X, up)[<span class="tok-n">0</span>], y) - cost(forward(X, dn)[<span class="tok-n">0</span>], y)) / (<span class="tok-n">2</span> * eps)
     <span class="tok-k">return</span> g
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ngradient check — hand-derived vs numerical:&quot;</span>)
 <span class="tok-k">for</span> i, name <span class="tok-k">in</span> enumerate([<span class="tok-s">&quot;dW1&quot;</span>, <span class="tok-s">&quot;db1&quot;</span>, <span class="tok-s">&quot;dW2&quot;</span>, <span class="tok-s">&quot;db2&quot;</span>]):
     n = numeric_grads(P, i)
-    diff = np.max(np.abs(grads[i] - n))
-    rel = diff / max(<span class="tok-n">1e-12</span>, np.max(np.abs(grads[i])) + np.max(np.abs(n)))
+    diff = <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(grads[i] - n))
+    rel = diff / max(<span class="tok-n">1e-12</span>, <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(grads[i])) + <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(n)))
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {name}: max abs diff {diff:.3e}   relative {rel:.3e}   &quot;</span>
           f&quot;{<span class="tok-s">&#x27;PASS&#x27;</span> <span class="tok-k">if</span> rel &lt; <span class="tok-n">1e-6</span> <span class="tok-k">else</span> <span class="tok-s">&#x27;FAIL&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 gradient check — hand-derived vs numerical:
@@ -361,14 +361,14 @@ gradient check — hand-derived vs numerical:
   db2: max abs diff 3.212e-11   relative 1.608e-10   PASS</pre></div></section>
 <section class="sx" id="sx-relu_kink"><div class="sx-prose"><p>Now break it deliberately. With biases at exactly zero, every hidden unit sees z = 0 for the input [0, 0] — precisely the kink where ReLU has no derivative. The analytic gradient picks the flat side; the numerical one averages across the corner. Neither is wrong, and the check fails for an honest mathematical reason. This is why the initialiser puts the biases slightly off zero.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Now break it on purpose. Zero biases put every unit exactly on the ReLU kink</span>
 <span class="tok-c"># for the input [0, 0], and the gradient check fails — correctly.</span>
-Pz = [P[<span class="tok-n">0</span>].copy(), <span class="gterm" data-g="npcreate-api">np.zeros</span>(h), P[<span class="tok-n">2</span>].copy(), np.zeros(<span class="tok-n">1</span>)]
+Pz = [P[<span class="tok-n">0</span>].copy(), <span class="gterm" data-g="npcreate-api">np.zeros</span>(h), P[<span class="tok-n">2</span>].copy(), <span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">1</span>)]
 _, cz = forward(X, Pz)
 gz = backward(cz, y, Pz)
 nz = numeric_grads(Pz, <span class="tok-n">1</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nwith biases at exactly zero, db1 analytic vs numeric:&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  analytic:&quot;</span>, np.round(gz[<span class="tok-n">1</span>], <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  numeric :&quot;</span>, np.round(nz, <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(f&quot;  max diff: {np.max(np.abs(gz[<span class="tok-n">1</span>] - nz)):.3e}  &lt;- a REAL disagreement&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  analytic:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(gz[<span class="tok-n">1</span>], <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  numeric :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(nz, <span class="tok-n">6</span>))
+<span class="tok-k">print</span>(f&quot;  max diff: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(gz[<span class="tok-n">1</span>] - nz)):.3e}  &lt;- a REAL disagreement&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  ReLU has no derivative at z = 0. The analytic version picks the flat&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  side; the numeric version averages across the kink. Neither is wrong.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  This is why gradient checks on ReLU nets need biases off the kink.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
@@ -410,15 +410,15 @@ training on XOR:
   [1. 1.]   0       0.0000   OK</pre></div></section>
 <section class="sx" id="sx-why_hidden"><div class="sx-prose"><p>The control experiment. Train the same data with no hidden layer and it sticks at exactly 0.5 for all four inputs, forever, because XOR is not linearly separable. The hidden layer is not a performance tweak — it is the thing that makes the problem solvable at all.</p></div><div class="sx-code"><pre><code><span class="tok-c"># XOR is not linearly separable — prove a network with NO hidden layer fails.</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nsame problem with no hidden layer (plain logistic regression):&quot;</span>)
-w1, b1 = np.zeros(<span class="tok-n">2</span>), <span class="tok-n">0.0</span>
+w1, b1 = <span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">2</span>), <span class="tok-n">0.0</span>
 <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(<span class="tok-n">20000</span>):
     f = sigmoid(X @ w1 + b1)
     err = f - y
     w1 -= <span class="tok-n">1.0</span> * (X.T @ err) / len(y)
-    b1 -= <span class="tok-n">1.0</span> * err.mean()
+    b1 -= <span class="tok-n">1.0</span> * err<span class="gterm" data-g="npmean-api">.mean(</span>)
 pred = sigmoid(X @ w1 + b1)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  predictions:&quot;</span>, np.round(pred, <span class="tok-n">4</span>), &quot; -&gt; all stuck near <span class="tok-n">0.5</span>&quot;)
-<span class="tok-k">print</span>(f&quot;  accuracy {(((pred &gt;= .<span class="tok-n">5</span>).astype(float)) == y).mean():.2f} — no better than guessing.&quot;)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  predictions:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(pred, <span class="tok-n">4</span>), &quot; -&gt; all stuck near <span class="tok-n">0.5</span>&quot;)
+<span class="tok-k">print</span>(f&quot;  accuracy {(((pred &gt;= .<span class="tok-n">5</span>).astype(float)) == y)<span class="gterm" data-g="npmean-api">.mean(</span>):.2f} — no better than guessing.&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  The hidden layer is not an optimisation. It is what makes XOR solvable.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 same problem with no hidden layer (plain logistic regression):
   predictions: [0.5 0.5 0.5 0.5]  -&gt; all stuck near 0.5

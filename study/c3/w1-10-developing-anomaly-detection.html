@@ -237,13 +237,13 @@ using cross-validation only — accepting that your final number will be optimis
 compromise than pretending 2 examples give a reliable test estimate.</p><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>unsupervised training</td><td>“normal only”</td><td>μ and σ are fitted without ever seeing an anomaly.</td></tr><tr><td>supervised evaluation</td><td>“a few labels for tuning”</td><td>The handful of known anomalies are used only to choose ε and to score. This is not cheating — it is the only way to tune anything.</td></tr><tr><td>skewed classes</td><td>“1% positives or fewer”</td><td>Which is why accuracy is meaningless here, exactly as in C2 W3 L16.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Report <b>precision, recall and F1</b>, never accuracy. A detector that flags nothing at
 all scores 99.5% accuracy on a dataset that is 0.5% anomalies — and is worthless.</p></div><h2><span class="ico">💻</span>Choosing ε</h2><pre><code><span class="tok-k">def</span> select_threshold(y_val, p_val):
     best_epsilon, best_F1 = <span class="tok-n">0</span>, <span class="tok-n">0</span>
-    step = (p_val.max() - p_val.min()) / <span class="tok-n">1000</span>
+    step = (p_val<span class="gterm" data-g="npmaxmin-api">.max(</span>) - p_val<span class="gterm" data-g="npmaxmin-api">.min(</span>)) / <span class="tok-n">1000</span>
 
-    <span class="tok-k">for</span> epsilon <span class="tok-k">in</span> <span class="gterm" data-g="nprange-api">np.arange</span>(p_val.min(), p_val.max(), step):
+    <span class="tok-k">for</span> epsilon <span class="tok-k">in</span> <span class="gterm" data-g="nprange-api">np.arange</span>(p_val<span class="gterm" data-g="npmaxmin-api">.min(</span>), p_val<span class="gterm" data-g="npmaxmin-api">.max(</span>), step):
         predictions = (p_val &lt; epsilon)
         tp = <span class="gterm" data-g="npsum-api">np.sum</span>((predictions == <span class="tok-n">1</span>) &amp; (y_val == <span class="tok-n">1</span>))
-        fp = np.sum((predictions == <span class="tok-n">1</span>) &amp; (y_val == <span class="tok-n">0</span>))
-        fn = np.sum((predictions == <span class="tok-n">0</span>) &amp; (y_val == <span class="tok-n">1</span>))
+        fp = <span class="gterm" data-g="npsum-api">np.sum</span>((predictions == <span class="tok-n">1</span>) &amp; (y_val == <span class="tok-n">0</span>))
+        fn = <span class="gterm" data-g="npsum-api">np.sum</span>((predictions == <span class="tok-n">0</span>) &amp; (y_val == <span class="tok-n">1</span>))
         <span class="tok-k">if</span> tp + fp == <span class="tok-n">0</span> <span class="tok-k">or</span> tp + fn == <span class="tok-n">0</span>:
             <span class="tok-k">continue</span>
         prec = tp / (tp + fp)

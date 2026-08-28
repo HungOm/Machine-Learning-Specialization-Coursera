@@ -245,10 +245,10 @@ multiplying one is doing the real work in this specialization.</p></div><h2><spa
 
 <span class="tok-c"># probability estimated from data = just a mean of True/False</span>
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>])
-p = y.mean()                    <span class="tok-c"># 0.4  -- 4 out of 10 are 1</span>
+p = y<span class="gterm" data-g="npmean-api">.mean(</span>)                    <span class="tok-c"># 0.4  -- 4 out of 10 are 1</span>
 
 <span class="tok-c"># independent events: multiply</span>
-np.prod([<span class="tok-n">0.3</span>, <span class="tok-n">0.3</span>])             <span class="tok-c"># 0.09</span>
+<span class="gterm" data-g="npprod-api">np.prod</span>([<span class="tok-n">0.3</span>, <span class="tok-n">0.3</span>])             <span class="tok-c"># 0.09</span>
 
 <span class="tok-c"># a model&#x27;s output IS a probability</span>
 probs = <span class="gterm" data-g="tfpredict-api">model.predict</span>(X)        <span class="tok-c"># e.g. array([0.92, 0.13, 0.68])</span>

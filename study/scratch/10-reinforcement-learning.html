@@ -289,7 +289,7 @@ from state 4, always right: path [4, 5, 6]  return 10.0</pre></div></section>
                 newV[s] = REWARD[s]
             <span class="tok-k">else</span>:
                 newV[s] = max(REWARD[s] + gamma * V[step(s, a)] <span class="tok-k">for</span> a <span class="tok-k">in</span> ACTIONS)
-        <span class="tok-k">if</span> np.max(np.abs(newV - V)) &lt; tol:
+        <span class="tok-k">if</span> <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(newV - V)) &lt; tol:
             V = newV
             <span class="tok-k">break</span>
         V = newV
@@ -301,7 +301,7 @@ V, sweeps = value_iteration()
 value iteration converged in 4 sweeps
 V* = [100.0, 50.0, 25.0, 12.5, 20.0, 40.0]</pre></div></section>
 <section class="sx" id="sx-q_and_policy"><div class="sx-prose"><p>Q(s, a) answers “what if I take this action once, then behave optimally forever after”. The optimal policy is simply the <span class="gterm" data-g="argmax-f0">argmax</span> over Q, which is why Q is the more useful of the two functions.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> q_from_v(V, gamma=GAMMA):
-    Q = np.zeros((N_STATES, len(ACTIONS)))
+    Q = <span class="gterm" data-g="npcreate-api">np.zeros</span>((N_STATES, len(ACTIONS)))
     <span class="tok-k">for</span> s <span class="tok-k">in</span> range(N_STATES):
         <span class="tok-k">for</span> a <span class="tok-k">in</span> ACTIONS:
             Q[s, a] = REWARD[s] <span class="tok-k">if</span> s <span class="tok-k">in</span> TERMINAL <span class="tok-k">else</span> REWARD[s] + gamma * V[step(s, a)]
@@ -345,13 +345,13 @@ The tie is at 100g^3 = 40g^2, i.e. g = 0.4 exactly.</pre></div></section>
     result with value iteration, which was handed the whole model.
     &quot;&quot;&quot;</span>
     rng = np.random.default_rng(seed)
-    Qh = np.zeros((N_STATES, len(ACTIONS)))
+    Qh = <span class="gterm" data-g="npcreate-api">np.zeros</span>((N_STATES, len(ACTIONS)))
     <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(episodes):
         s = int(rng.choice([<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">4</span>]))          <span class="tok-c"># start somewhere non-terminal</span>
         <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(<span class="tok-n">30</span>):
             a = int(rng.integers(<span class="tok-n">2</span>)) <span class="tok-k">if</span> rng.random() &lt; eps <span class="tok-k">else</span> int(Qh[s].argmax())
             s2 = step(s, a)
-            target = REWARD[s] + gamma * (REWARD[s2] <span class="tok-k">if</span> s2 <span class="tok-k">in</span> TERMINAL <span class="tok-k">else</span> Qh[s2].max())
+            target = REWARD[s] + gamma * (REWARD[s2] <span class="tok-k">if</span> s2 <span class="tok-k">in</span> TERMINAL <span class="tok-k">else</span> Qh[s2]<span class="gterm" data-g="npmaxmin-api">.max(</span>))
             Qh[s, a] += alpha * (target - Qh[s, a])
             s = s2
             <span class="tok-k">if</span> s <span class="tok-k">in</span> TERMINAL:

@@ -153,23 +153,34 @@ def badge_terms(html_text):
     """Wrap the first mention of each refresher term in a badge.
 
     Works on text between tags only, tracks whether we are inside an element
-    where a badge would be wrong (code, headings, the bonus panel itself), and
-    fires once per key per page so the result is a hint, not a rash.
+    where a badge would be wrong (code, headings, the bonus panel itself, or
+    an eqp() formula's own part labels — those already carry their own
+    gterm badges, authored directly by the formula, and re-scanning their
+    text would double-badge it), and fires once per key per page so the
+    result is a hint, not a rash.
+
+    IMPORTANT history note: this used to bail out for the WHOLE page the
+    moment any "gterm" string appeared anywhere in it — which meant any page
+    using even one eqp() formula (99 of 172 lesson pages) got zero prose
+    refresher badges at all, since eqp() emits its own gterm spans directly.
+    Replaced with the depth-tracked "faneq" skip below, which excludes only
+    the formula block itself and leaves the surrounding prose to be scanned
+    normally.
     """
     global _TRIG_RE, _TRIG_KEY
     if _TRIG_RE is None:
         _TRIG_RE, _TRIG_KEY = _patterns()
-    if "gterm" in html_text or not _TRIG_KEY:
+    if not _TRIG_KEY:
         return html_text
     seen = set()
-    depth = {"skip": 0, "bonus": 0, "topbar": 0}
+    depth = {"skip": 0, "bonus": 0, "topbar": 0, "faneq": 0}
     out = []
     pos = 0
     for m in re.finditer(r"<[^>]+>", html_text):
         text = html_text[pos:m.start()]
         tag = m.group(0)
         if text:
-            if depth["skip"] or depth["bonus"] or depth["topbar"] or len(seen) == len(set(_TRIG_KEY)):
+            if depth["skip"] or depth["bonus"] or depth["topbar"] or depth["faneq"] or len(seen) == len(set(_TRIG_KEY)):
                 out.append(text)
             else:
                 out.append(_badge_text(text, seen))
@@ -191,8 +202,18 @@ def badge_terms(html_text):
             depth["topbar"] += 1
         elif depth["topbar"] and low.startswith("</header"):
             depth["topbar"] = max(0, depth["topbar"] - 1)
+        # an eqp() block is a <div class="fanat-eq..."> containing exactly one
+        # nested <div class="fanat-row">...</div> (everything inside that is
+        # spans). Track div depth from the moment we see the outer div so we
+        # correctly exit after the one level of nesting, however it's spaced.
+        if 'class="fanat-eq' in low:
+            depth["faneq"] += 1
+        elif depth["faneq"] and low.startswith("<div"):
+            depth["faneq"] += 1
+        elif depth["faneq"] and low.startswith("</div"):
+            depth["faneq"] = max(0, depth["faneq"] - 1)
     tail = html_text[pos:]
-    out.append(tail if (depth["skip"] or depth["bonus"] or depth["topbar"]) else _badge_text(tail, seen))
+    out.append(tail if (depth["skip"] or depth["bonus"] or depth["topbar"] or depth["faneq"]) else _badge_text(tail, seen))
     return "".join(out)
 
 
@@ -213,25 +234,26 @@ CODE_INNER = re.compile(r"(<code>)(.*?)(</code>)", re.S)
 
 
 def badge_api_calls(html_text):
-    """Wrap the first mention of a known library call — the mirror image of
+    """Wrap EVERY mention of a known library call — the mirror image of
     badge_terms(): this one works ONLY inside <code>...</code>, prose is left
     alone. Reuses the exact same .gterm/.gpop machinery, just a second,
-    separately-scoped pass with its own pattern list (content_apiref.py) and
-    its own once-per-page "seen" set."""
+    separately-scoped pass with its own pattern list (content_apiref.py).
+
+    Unlike badge_terms()'s prose pass, this badges every occurrence, not just
+    the first per page: a method you are trying to make second nature is
+    worth re-explaining on hover at every encounter, and gloss.js attaches an
+    independent listener per element, so repeated badges of the same key cost
+    nothing and never conflict."""
     global _API_RE, _API_KEY
     if _API_RE is None:
         _API_RE, _API_KEY = _build_patterns(_load_modules(API_MODULES))
     if not _API_KEY or "<code>" not in html_text:
         return html_text
-    seen = set()
 
     def sub_text(text):
         def sub(m):
             idx = next(i for i, g in enumerate(m.groups()) if g is not None)
             key = _API_KEY[idx]
-            if key in seen:
-                return m.group(0)
-            seen.add(key)
             return '<span class="gterm" data-g="%s">%s</span>' % (key, m.group(0))
         return _API_RE.sub(sub, text)
 

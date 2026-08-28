@@ -259,8 +259,8 @@ is for: it is how you choose between runs that disagree.
     X[:, None, :] is (m, 1, n) and centroids[None] is (1, k, n); broadcasting
     them together gives every point-centroid difference at once, shape (m,k,n).
     &quot;&quot;&quot;</span>
-    d = np.linalg.norm(X[:, <span class="tok-k">None</span>, :] - centroids[<span class="tok-k">None</span>, :, :], axis=<span class="tok-n">2</span>)   <span class="tok-c"># (m, k)</span>
-    <span class="tok-k">return</span> d.argmin(axis=<span class="tok-n">1</span>)</code></pre></div></section>
+    d = <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(X[:, <span class="tok-k">None</span>, :] - centroids[<span class="tok-k">None</span>, :, :], <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">2</span>)   <span class="tok-c"># (m, k)</span>
+    <span class="tok-k">return</span> d.argmin(<span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)</code></pre></div></section>
 <section class="sx" id="sx-move"><div class="sx-prose"><p>The empty-cluster case is real and has to be handled — the mean of no points is 0/0. Here it re-seeds at a random point, which keeps k intact; the alternative is to drop the centroid and accept k − 1.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> move(X, idx, k):
     <span class="tok-d">&quot;&quot;&quot;Each centroid becomes the mean of the points assigned to it.
 
@@ -270,13 +270,13 @@ is for: it is how you choose between runs that disagree.
     out = <span class="gterm" data-g="npcreate-api">np.zeros</span>((k, X.shape[<span class="tok-n">1</span>]))
     <span class="tok-k">for</span> j <span class="tok-k">in</span> range(k):
         pts = X[idx == j]
-        out[j] = pts.mean(axis=<span class="tok-n">0</span>) <span class="tok-k">if</span> len(pts) <span class="tok-k">else</span> X[np.random.randint(len(X))]
+        out[j] = pts<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>) <span class="tok-k">if</span> len(pts) <span class="tok-k">else</span> X[np.random.randint(len(X))]
     <span class="tok-k">return</span> out</code></pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p><code>centroids[idx]</code> is fancy <span class="gterm" data-g="indexing-f0">indexing</span>: it builds an array the same length as X holding each point's own centroid, so the whole cost is one vectorized expression.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> cost(X, idx, centroids):
     <span class="tok-d">&quot;&quot;&quot;Mean squared distance from each point to its own centroid.&quot;&quot;&quot;</span>
-    <span class="tok-k">return</span> float(np.mean(<span class="gterm" data-g="npsum-api">np.sum</span>((X - centroids[idx]) ** <span class="tok-n">2</span>, axis=<span class="tok-n">1</span>)))</code></pre></div></section>
+    <span class="tok-k">return</span> float(<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((X - centroids[idx]) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)))</code></pre></div></section>
 <section class="sx" id="sx-fit"><div class="sx-prose"><p>Alternate the two steps until nothing moves. It always terminates, because both steps can only lower J and there are finitely many assignments.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> kmeans(X, k, init, iters=<span class="tok-n">50</span>):
-    c = np.array(init, dtype=float)
+    c = <span class="gterm" data-g="nparray-api">np.array</span>(init, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(iters):
         idx = assign(X, c)
         new = move(X, idx, k)
@@ -290,7 +290,7 @@ is for: it is how you choose between runs that disagree.
                     (<span class="tok-s">&quot;B: points 1 and 3&quot;</span>, [X[<span class="tok-n">0</span>], X[<span class="tok-n">2</span>]])]:
     idx, c, J = kmeans(X, <span class="tok-n">2</span>, init)
     <span class="tok-k">print</span>(f&quot;  {label}  -&gt;  clusters {idx}  J = {J:.4f}&quot;)
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;      centroids {np.round(c, 3).tolist()}&quot;</span>)
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;      centroids {<span class="gterm" data-g="npround-api">np.round</span>(c, 3).tolist()}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nBoth are converged — neither can improve by another step. They are&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;different LOCAL optima, and J is the only thing that tells them apart.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 same data, same algorithm, two different starting points:
@@ -306,7 +306,7 @@ different LOCAL optima, and J is the only thing that tells them apart.</pre></di
     rng = np.random.default_rng(seed)
     best = <span class="tok-k">None</span>
     <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(n_restarts):
-        init = X[rng.choice(len(X), size=k, replace=<span class="tok-k">False</span>)]
+        init = X[rng.choice(len(X), <span class="gterm" data-g="kwsize-api">size=</span>k, <span class="gterm" data-g="kwreplace-api">replace=</span><span class="tok-k">False</span>)]
         idx, c, J = kmeans(X, k, init)
         <span class="tok-k">if</span> best <span class="tok-k">is</span> <span class="tok-k">None</span> <span class="tok-k">or</span> J &lt; best[<span class="tok-n">2</span>]:
             best = (idx, c, J)
@@ -316,7 +316,7 @@ idx, c, J = kmeans_best(X, <span class="tok-n">2</span>)
 <span class="tok-k">print</span>(f&quot;\n50 random restarts -&gt; best J = {J:.4f}, clusters {idx}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 50 random restarts -&gt; best J = 1.3125, clusters [1 1 0 0 0 0]</pre></div></section>
 <section class="sx" id="sx-elbow"><div class="sx-prose"><p>120 points from three real blobs. The drops collapse after k = 3, which is the right answer. Note J never rises with k: at k = m every point is its own cluster and J is exactly zero, so you can never choose k by minimising J.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">4</span>)
-blobs = np.vstack([rng.normal(mu, <span class="tok-n">0.6</span>, size=(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
+blobs = np.vstack([rng.normal(mu, <span class="tok-n">0.6</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
                    <span class="tok-k">for</span> mu <span class="tok-k">in</span> [[<span class="tok-n">0</span>, <span class="tok-n">0</span>], [<span class="tok-n">5</span>, <span class="tok-n">5</span>], [<span class="tok-n">10</span>, <span class="tok-n">0</span>]]])
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\n120 points drawn from 3 real blobs — the elbow test:&quot;</span>)
 <span class="tok-k">print</span>(f&quot;{<span class="tok-s">&#x27;k&#x27;</span>:&gt;<span class="tok-n">3</span>} {<span class="tok-s">&#x27;J&#x27;</span>:&gt;<span class="tok-n">9</span>}   {<span class="tok-s">&#x27;drop&#x27;</span>:&gt;<span class="tok-n">8</span>}&quot;)

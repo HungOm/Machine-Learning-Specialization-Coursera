@@ -258,8 +258,8 @@ Y = <span class="gterm" data-g="nparray-api">np.array</span>([
 R = (~np.isnan(Y)).astype(float)          <span class="tok-c"># 1 where a rating exists</span>
 Yf = np.nan_to_num(Y)                      <span class="tok-c"># zeros where it does not (masked out below)</span>
 n_m, n_u = Y.shape
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;{n_m} films, {n_u} users, {int(R.sum())} of {n_m*n_u} cells rated &quot;</span>
-      f<span class="tok-s">&quot;({100*R.mean():.0f}% dense)&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>5 films, 4 users, 15 of 20 cells rated (75% dense)</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;{n_m} films, {n_u} users, {int(R<span class="gterm" data-g="npsum-api">.sum(</span>))} of {n_m*n_u} cells rated &quot;</span>
+      f<span class="tok-s">&quot;({100*R<span class="gterm" data-g="npmean-api">.mean(</span>):.0f}% dense)&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>5 films, 4 users, 15 of 20 cells rated (75% dense)</pre></div></section>
 <section class="sx" id="sx-normalise"><div class="sx-prose"><p>Subtract each film's mean over the users who actually rated it. The reason will be obvious in the cold-start block at the bottom, but briefly: without it, a user who has rated nothing is predicted to hate everything.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> mean_normalise(Y, R):
     <span class="tok-d">&quot;&quot;&quot;Subtract each film&#x27;s mean over the users who actually rated it.
 
@@ -267,12 +267,12 @@ n_m, n_u = Y.shape
     there and nothing pushes back) and is predicted to rate everything 0.
     After it, that same user is predicted the film&#x27;s average.
     &quot;&quot;&quot;</span>
-    counts = R.sum(axis=<span class="tok-n">1</span>)
-    mu = np.where(counts &gt; <span class="tok-n">0</span>, (Y * R).sum(axis=<span class="tok-n">1</span>) / np.maximum(counts, <span class="tok-n">1</span>), <span class="tok-n">0.0</span>)
+    counts = R<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)
+    mu = np.where(counts &gt; <span class="tok-n">0</span>, (Y * R)<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>) / np.maximum(counts, <span class="tok-n">1</span>), <span class="tok-n">0.0</span>)
     <span class="tok-k">return</span> (Y - mu[:, <span class="tok-k">None</span>]) * R, mu
 
 Yn, mu = mean_normalise(Yf, R)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nper-film mean rating:&quot;</span>, np.round(mu, <span class="tok-n">3</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nper-film mean rating:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(mu, <span class="tok-n">3</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Multiplying the error by <code>R</code> is the whole trick. It switches off every unrated cell, so “not rated” and “rated 0” stay different things. Without it the model would learn from 99% fake zeros.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> cost(X, W, b, Yn, R, lam):
     <span class="tok-d">&quot;&quot;&quot;Squared error over RATED cells only, plus regularization on X and W.
@@ -282,7 +282,7 @@ per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
     &quot;&quot;&quot;</span>
     err = (X @ W.T + b) - Yn
     J = <span class="tok-n">0.5</span> * <span class="gterm" data-g="npsum-api">np.sum</span>((err * R) ** <span class="tok-n">2</span>)
-    J += (lam / <span class="tok-n">2</span>) * (np.sum(X ** <span class="tok-n">2</span>) + np.sum(W ** <span class="tok-n">2</span>))
+    J += (lam / <span class="tok-n">2</span>) * (<span class="gterm" data-g="npsum-api">np.sum</span>(X ** <span class="tok-n">2</span>) + <span class="gterm" data-g="npsum-api">np.sum</span>(W ** <span class="tok-n">2</span>))
     <span class="tok-k">return</span> float(J)</code></pre></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>Two gradients, because there are two sets of unknowns. <code>X</code> is not data here — it is a parameter being optimised alongside <code>W</code>. That is what makes this collaborative rather than content-based.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradients(X, W, b, Yn, R, lam):
     <span class="tok-d">&quot;&quot;&quot;Derivatives with respect to the film features AND the user weights.
@@ -292,7 +292,7 @@ per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
     err = ((X @ W.T + b) - Yn) * R          <span class="tok-c"># masked error, (n_m, n_u)</span>
     dX = err @ W + lam * X                  <span class="tok-c"># (n_m,n_u)@(n_u,k) -&gt; (n_m,k)</span>
     dW = err.T @ X + lam * W                <span class="tok-c"># (n_u,n_m)@(n_m,k) -&gt; (n_u,k)</span>
-    db = err.sum(axis=<span class="tok-n">0</span>)                    <span class="tok-c"># (n_u,)</span>
+    db = err<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                    <span class="tok-c"># (n_u,)</span>
     <span class="tok-k">return</span> dX, dW, db</code></pre></div></section>
 <section class="sx" id="sx-gradcheck"><div class="sx-prose"><p>Both gradients checked numerically before any training. With two interacting unknowns this is not optional.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">1</span>)
 k = <span class="tok-n">3</span>
@@ -303,20 +303,20 @@ dX, dW, db = gradients(X, W, b, Yn, R, lam)
     g = np.zeros_like(mat)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(mat.size):
         up, dn = mat.copy(), mat.copy()
-        up.reshape(-<span class="tok-n">1</span>)[i] += <span class="tok-n">1e-6</span>; dn.reshape(-<span class="tok-n">1</span>)[i] -= <span class="tok-n">1e-6</span>
+        up<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] += <span class="tok-n">1e-6</span>; dn<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] -= <span class="tok-n">1e-6</span>
         a = cost(up, W, b, Yn, R, lam) <span class="tok-k">if</span> which == <span class="tok-s">&quot;X&quot;</span> <span class="tok-k">else</span> cost(X, up, b, Yn, R, lam)
         c = cost(dn, W, b, Yn, R, lam) <span class="tok-k">if</span> which == <span class="tok-s">&quot;X&quot;</span> <span class="tok-k">else</span> cost(X, dn, b, Yn, R, lam)
-        g.reshape(-<span class="tok-n">1</span>)[i] = (a - c) / <span class="tok-n">2e-6</span>
+        g<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] = (a - c) / <span class="tok-n">2e-6</span>
     <span class="tok-k">return</span> g
-<span class="tok-k">print</span>(f&quot;\ngradient check  dX: {np.max(np.abs(dX - num_grad(X, <span class="tok-s">&#x27;X&#x27;</span>))):.2e}   &quot;
-      f&quot;dW: {np.max(np.abs(dW - num_grad(W, <span class="tok-s">&#x27;W&#x27;</span>))):.2e}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f&quot;\ngradient check  dX: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(dX - num_grad(X, <span class="tok-s">&#x27;X&#x27;</span>))):.2e}   &quot;
+      f&quot;dW: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(dW - num_grad(W, <span class="tok-s">&#x27;W&#x27;</span>))):.2e}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 gradient check  dX: 5.56e-09   dW: 5.11e-09</pre></div></section>
 <section class="sx" id="sx-train"><div class="sx-prose"><p>Plain gradient descent on all three parameter sets at once.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> fit(Yn, R, k=<span class="tok-n">3</span>, lam=<span class="tok-n">1.0</span>, alpha=<span class="tok-n">0.02</span>, iters=<span class="tok-n">3000</span>, seed=<span class="tok-n">1</span>):
     rng = np.random.default_rng(seed)
     n_m, n_u = Yn.shape
     X = rng.normal(<span class="tok-n">0</span>, .<span class="tok-n">5</span>, (n_m, k))
     W = rng.normal(<span class="tok-n">0</span>, .<span class="tok-n">5</span>, (n_u, k))
-    b = np.zeros(n_u)
+    b = <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_u)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(iters):
         dX, dW, db = gradients(X, W, b, Yn, R, lam)
         X -= alpha * dX; W -= alpha * dW; b -= alpha * db
@@ -343,7 +343,7 @@ training (learning X and W together):
 
 rated = R.astype(bool)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nerror on the ratings it was shown: &quot;</span>
-      f<span class="tok-s">&quot;{np.sqrt(np.mean((P[rated] - Yf[rated])**2)):.4f} RMSE&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+      f<span class="tok-s">&quot;{<span class="gterm" data-g="npsqrt-api">np.sqrt</span>(<span class="gterm" data-g="npmean-api">np.mean</span>((P[rated] - Yf[rated])**2)):.4f} RMSE&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
 predicted ratings (existing ratings in brackets):
                              Alice       Bob     Carol      Dave
 Love at Last               4.88[5]   4.72[5]   0.31[0]   0.10[0]
@@ -354,13 +354,13 @@ Swords vs Karate           0.08[0]   0.07[0]   4.24[5]   2.76
 
 error on the ratings it was shown: 0.3530 RMSE</pre></div></section>
 <section class="sx" id="sx-cold_start"><div class="sx-prose"><p>Eve has rated nothing. Her <code>w</code> <span class="gterm" data-g="convergence-native">converges</span> to exactly zero, because the only term in the cost that mentions it is the <span class="gterm" data-g="regularization-native">regularization</span> penalty and nothing pushes back. Without mean normalisation she would be predicted 0.00 for every film; with it, she gets each film's average — a far better first guess.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A brand-new user who has rated nothing at all.</span>
-Y2 = np.c_[Yf, np.zeros(n_m)]
-R2 = np.c_[R, np.zeros(n_m)]
+Y2 = <span class="gterm" data-g="npc-api">np.c_</span>[Yf, <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_m)]
+R2 = <span class="gterm" data-g="npc-api">np.c_</span>[R, <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_m)]
 Yn2, mu2 = mean_normalise(Y2, R2)
 X2, W2, b2 = fit(Yn2, R2, iters=<span class="tok-n">3000</span>)
 P2 = X2 @ W2.T + b2 + mu2[:, <span class="tok-k">None</span>]
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ncold start — a new user, Eve, who has rated nothing:&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  her learned w = {np.round(W2[-1], 6)}  (regularization pulled it to 0)&quot;</span>)
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  her learned w = {<span class="gterm" data-g="npround-api">np.round</span>(W2[-1], 6)}  (regularization pulled it to 0)&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  her learned b = {b2[-1]:.6f}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  film                      predicted   film average&quot;</span>)
 <span class="tok-k">for</span> i, f <span class="tok-k">in</span> enumerate(FILMS):
@@ -384,7 +384,7 @@ cold start — a new user, Eve, who has rated nothing:
 <section class="sx" id="sx-related"><div class="sx-prose"><p>Similar films fall out for free, with no user involved: just compare the learned feature <span class="gterm" data-g="vector-f0">vectors</span>. The three romances cluster and the two action films cluster, and nobody ever told the model what a genre is.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Similar films fall out for free: compare the learned feature vectors.</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nmost similar film to each (squared distance in learned feature space):&quot;</span>)
 <span class="tok-k">for</span> i, f <span class="tok-k">in</span> enumerate(FILMS):
-    d = np.sum((X - X[i]) ** <span class="tok-n">2</span>, axis=<span class="tok-n">1</span>)
+    d = <span class="gterm" data-g="npsum-api">np.sum</span>((X - X[i]) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)
     d[i] = np.inf
     j = int(d.argmin())
     <span class="tok-k">print</span>(f&quot;  {f:24s} -&gt; {FILMS[j]:24s} (d = {d[j]:.3f})&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>

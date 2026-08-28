@@ -242,15 +242,15 @@ route.</p>
 <li>To predict: <b>majority vote</b> (classification) or <b>average</b> (regression) over all B trees.</li>
 </ol><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>B</td><td>“the number of trees”</td><td>64, 100, 128 are typical. More never hurts accuracy — only compute. Past ~100 the gains flatten.</td></tr><tr><td>k</td><td>“features per split”</td><td>Usually k = √n for classification, n/3 for regression. This is the one genuinely new <span class="gterm" data-g="hyperparameter-native">hyperparameter</span>.</td></tr><tr><td>feature bagging</td><td>“the extra randomness”</td><td>The difference between bagged trees and a random forest. Bagging randomises the rows; the forest also randomises the columns.</td></tr><tr><td>out-of-bag score</td><td>“free validation”</td><td><code>oob_score=True</code> gives you a validation estimate without holding anything out.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Random forests are <b>hard to break</b>. They need almost no tuning, do not need feature
 scaling, handle mixed data types, tolerate missing values reasonably, and rarely <span class="gterm" data-g="overfitting-native">overfit</span> badly. That is why
-they are the standard first thing to try on a table of data.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">from</span> sklearn.ensemble <span class="tok-k">import</span> RandomForestClassifier
+they are the standard first thing to try on a table of data.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">from</span> sklearn.ensemble <span class="tok-k">import</span> <span class="gterm" data-g="sklearnforest-api">RandomForestClassifier</span>
 
-clf = RandomForestClassifier(
-    n_estimators=<span class="tok-n">100</span>,      <span class="tok-c"># B — number of trees</span>
+clf = <span class="gterm" data-g="sklearnforest-api">RandomForestClassifier</span>(
+    <span class="gterm" data-g="kwnestimators-api">n_estimators=</span><span class="tok-n">100</span>,      <span class="tok-c"># B — number of trees</span>
     max_features=<span class="tok-s">&#x27;sqrt&#x27;</span>,   <span class="tok-c"># k — features considered per split</span>
     oob_score=<span class="tok-k">True</span>,        <span class="tok-c"># free validation from the left-out examples</span>
-    random_state=<span class="tok-n">1</span>,
+    <span class="gterm" data-g="kwrandomstate-api">random_state=</span><span class="tok-n">1</span>,
 )
-clf.fit(X_train, y_train)
+clf<span class="gterm" data-g="sklearnfit-api">.fit(</span>X_train, y_train)
 <span class="tok-k">print</span>(<span class="tok-s">&#x27;out-of-bag accuracy:&#x27;</span>, clf.oob_score_)
 <span class="tok-k">print</span>(<span class="tok-s">&#x27;feature importances:&#x27;</span>, clf.feature_importances_)</code></pre><div class="callout "><span class="tag">A useful side effect</span><p><code>feature_importances_</code> is a genuinely useful by-product: how much each
 feature reduced impurity across the whole forest. Treat it as a hint rather than a truth — it is biased
