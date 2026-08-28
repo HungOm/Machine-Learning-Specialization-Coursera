@@ -100,9 +100,7 @@
       A.txt(ctx, 'Inputs are numbers. Each wire has a weight. The neuron adds them, then squashes the total into 0…1.',
         410, 275, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lastT); });
-    var lastT = 0;
-    A.loop(c.cv, function (t) { lastT = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -168,9 +166,7 @@
         'z = 3.1(' + r.afford.toFixed(2) + ') + 2.6(' + r.aware.toFixed(2) + ') + 2.4(' + r.qual.toFixed(2) +
         ') − 4.0 = <b>' + r.z.toFixed(2) + '</b>   →   g(z) = <b>' + r.p.toFixed(3) + '</b>');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0;
-    A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -249,9 +245,7 @@
       A.txt(ctx, 'Same idea every layer: build slightly bigger things out of the layer before. Nobody hand-drew these — they were learned.',
         40, 300, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0;
-    A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -298,8 +292,7 @@
         'a<sub>2</sub><sup>[1]</sup> = g(' + W[1][0] + '·' + x1.toFixed(2) + ' + ' + W[1][1] + '·' + x2.toFixed(2) + ' + ' + b[1] + ') = g(' + zs[1].toFixed(2) + ') = <b>' + as[1].toFixed(3) + '</b>\n' +
         'a<sub>3</sub><sup>[1]</sup> = g(' + W[2][0] + '·' + x1.toFixed(2) + ' + ' + W[2][1] + '·' + x2.toFixed(2) + ' + ' + b[2] + ') = g(' + zs[2].toFixed(2) + ') = <b>' + as[2].toFixed(3) + '</b>');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -347,8 +340,7 @@
       ro.set('a<sub>' + (hl.j + 1) + '</sub><sup>[' + hl.l + ']</sup> = g( <b>w</b><sub>' + (hl.j + 1) + '</sub><sup>[' + hl.l + ']</sup> · <b>a</b><sup>[' + (hl.l - 1) + ']</sup> + b<sub>' + (hl.j + 1) + '</sub><sup>[' + hl.l + ']</sup> )\n' +
         'superscript [' + hl.l + '] = which layer   ·   subscript ' + (hl.j + 1) + ' = which unit inside that layer   ·   it reads the WHOLE previous layer a<sup>[' + (hl.l - 1) + ']</sup>');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -431,8 +423,7 @@
     A.button(bar, 'draw a 0', function () {
       for (var i = 0; i < grid.length; i++) grid[i] = tmplZero[i]; render(lt);
     });
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -562,8 +553,7 @@
     A.button(bar, '‹ back', function () { step = (step + lines.length - 1) % lines.length; render(lt); });
     A.button(bar, 'next step ›', function () { step = (step + 1) % lines.length; render(lt); }).classList.add('primary');
     root.appendChild(bar);
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -614,8 +604,7 @@
         '\nTensorFlow (and Dense layers) always want <b>2-D</b>: rows = examples, columns = features.');
     }
     syncBtns();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -652,8 +641,7 @@
     }
     ro.set('model = Sequential([Dense(3, activation="sigmoid"), Dense(1, activation="sigmoid")])\n' +
       'model.compile(...)   ·   model.fit(X, Y)   ·   <b>model.predict(X_new)</b> runs the whole stack for you.');
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -698,8 +686,7 @@
     var bar = A.ctrls(root);
     A.toggle(bar, 'auto', function (on) { playing = on; }, true);
     A.button(bar, 'step ›', function () { playing = false; stepN = (stepN + 1) % 4; render(lt); });
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -748,8 +735,7 @@
         el.style.fontWeight = on ? '700' : '400';
       });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -806,8 +792,7 @@
       A.txt(ctx, 'The “one learning algorithm” hypothesis: maybe one piece of brain tissue can learn ANY input,',
         40, 285, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -852,8 +837,7 @@
       A.txt(ctx, 'Same maths. Same answer. Very different running time — this is why GPUs matter.',
         40, 285, { size: 12, w: 600, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -890,8 +874,7 @@
       ro.set('np.dot(a, w) = <b>32</b>    ·    in maths this is written  <b>a · w</b>  or  <b>a<sup>T</sup>w</b>' +
         '\nBoth lists must be the SAME length, or there is nothing to pair up.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -937,8 +920,7 @@
       ro.set('Rows of the answer come from rows of <b>A</b>. Columns of the answer come from columns of <b>W</b>.' +
         '\nShape rule: <b>(m × n) × (n × p) = (m × p)</b> — the two inner numbers must be equal.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -972,8 +954,7 @@
       ro.set('def dense(A_T, W, b):\n    Z = np.matmul(A_T, W) + b\n    return g(Z)' +
         '\n\nRows of <b>A_T</b> = your examples. Columns of <b>W</b> = your neurons. Every example meets every neuron in one shot.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

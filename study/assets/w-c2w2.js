@@ -37,8 +37,7 @@
         30, 26, { size: 12, w: 600, fill: P.soft });
       A.txt(ctx, 'Only the model in step 1 got bigger.', 30, 310, { size: 12, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -383,8 +382,7 @@
       A.txt(ctx, 'each output depends on all the others.', 140, 336, { size: 11.5, w: 700, fill: P.a });
       A.txt(ctx, '25 → 15 → 10 with softmax', 140, 30, { size: 12.5, w: 700, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -627,8 +625,7 @@
         '  ·  fewer weights, faster, less overfitting, and the same detector reused everywhere',
         x0, 308, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -738,8 +735,7 @@
     var bar = A.ctrls(root);
     A.toggle(bar, 'auto', function (on) { playing = on; }, true);
     A.button(bar, 'step ›', function () { playing = false; step = (step + 1) % 8; render(lt); });
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -787,8 +783,7 @@
       A.txt(ctx, 'Naively nudging each weight one at a time would cost N forward passes. Backprop gets all N derivatives in one sweep.',
         380, 304, { align: 'center', size: 11.5, w: 600, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

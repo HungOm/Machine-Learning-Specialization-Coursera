@@ -133,6 +133,14 @@ branches back that do not help on a validation set. It often works better than e
 split that looks useless can enable a great one below it. scikit-learn offers it as
 <code>ccp_alpha</code>.</p>""", "The other approach: prune afterwards")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("node", "“node”, or “a split”", "A point in the tree where a question is asked."),
+            ("root node", "“the root”", "The very first question, at the top, seen by every example."),
+            ("leaf node", "“a leaf”", "A node that asks nothing and makes a prediction instead."),
+            ("purity", "“how mixed it is”", "How close a group is to being all one class. Entropy is one way to measure it."),
+            ("stopping criterion", "“when to stop”", "The rule that ends the recursion — max depth, minimum examples, or too little gain."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Assuming the greedy tree is the best tree.</b> It usually isn’t. It is a good tree
 found quickly, and that trade is why the algorithm is practical.</p>""")
@@ -1274,6 +1282,13 @@ and XGBoost.</li>
 <p>Course 3 goes to unsupervised learning (clustering, anomaly detection), recommender systems, and
 reinforcement learning. The habits from Week 3 carry into all of it.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("structured data", "“tabular data”", "Rows and columns, like a spreadsheet. Trees are excellent here."),
+            ("unstructured data", "“images, audio, text”", "No natural columns. Neural networks, essentially always."),
+            ("interpretability", "“can you explain it”", "Whether a human can follow why the model decided what it did. A small tree is readable; a network is not."),
+            ("end-to-end", "“end to end”", "Training several stacked models together as one. Networks allow it; trees do not."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Reaching for a neural network on a 5,000-row spreadsheet.</b> XGBoost will very
 likely beat it, train in seconds and need no tuning. Try the cheap thing first.</p>""")

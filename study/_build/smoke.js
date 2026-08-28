@@ -32,7 +32,18 @@ function el(tag) {
     children: [], style: {}, dataset: {}, _cls: new Set(),
     innerHTML: '', textContent: '', value: '0',
     clientWidth: 760, clientHeight: 300, offsetTop: 0, width: 760, height: 300,
-    appendChild(c) { this.children.push(c); return c; },
+    appendChild(c) { c.parentNode = this; this.children.push(c); return c; },
+    insertBefore(c, ref) {
+      c.parentNode = this;
+      const i = ref ? this.children.indexOf(ref) : -1;
+      i < 0 ? this.children.push(c) : this.children.splice(i, 0, c);
+      return c;
+    },
+    get nextSibling() {
+      const p = this.parentNode; if (!p) return null;
+      const i = p.children.indexOf(this);
+      return i >= 0 && i + 1 < p.children.length ? p.children[i + 1] : null;
+    },
     addEventListener() {}, removeEventListener() {},
     getBoundingClientRect() { return { left: 0, top: 0, width: 760, height: 300 }; },
     getContext() { return this._ctx || (this._ctx = ctxStub()); },

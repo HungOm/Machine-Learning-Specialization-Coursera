@@ -121,8 +121,7 @@
         '\nRead it as P(y = 1 | x; w, b): “the chance that y is 1, given this x and these parameters”.' +
         '\nThe name is historical — it is called logistic <em>regression</em> and it is a classification algorithm.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -203,53 +202,80 @@
      4. Why squared error does not work here
      ============================================================ */
   A.def('logcost', function (root) {
-    var c = A.canvas(root, 760, 330), ctx = c.ctx;
-    var ro = A.readout(root);
-    function render(t) {
-      var P = A.pal(); c.clear(P.panel); t = t || 0;
-      [[190, 'squared error on a sigmoid', 'bumpy — many local minima', P.r, true],
-       [570, 'the logistic cost', 'a single smooth bowl', P.g, false]
-      ].forEach(function (pn) {
-        var cx = pn[0];
-        A.txt(ctx, pn[1], cx, 48, { align: 'center', size: 13, w: 700, fill: pn[3] });
-        A.txt(ctx, pn[2], cx, 68, { align: 'center', size: 11, fill: pn[3] });
-        ctx.save(); ctx.strokeStyle = pn[3]; ctx.lineWidth = 2.6; ctx.beginPath();
-        for (var i = 0; i <= 140; i++) {
-          var u = -1 + 2 * i / 140;
-          var y = pn[4]
-            ? 100 - 26 * Math.sin(u * 5.2) - 20 * Math.sin(u * 9.7 + .7) + 46 * u * u
-            : 40 + 96 * u * u;
-          var px = cx + u * 140, py = 96 + y * .62;
-          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    var c = A.canvas(root, 760, 372), ctx = c.ctx;
+    var bar = A.ctrls(root), ro = A.readout(root);
+    var X = [0, 1, 2, 3, 4, 5], Y = [0, 0, 0, 1, 1, 1];
+    var w0 = -5, b0 = 10, N = 300;
+
+    /* gradient descent, actually run, on both cost functions */
+    function run(kind) {
+      var w = w0, b = b0, acc = [], a = 1;
+      for (var it = 0; it <= N; it++) {
+        var gw = 0, gb = 0, right = 0;
+        for (var i = 0; i < X.length; i++) {
+          var z = w * X[i] + b, f = A.sig(z), e = f - Y[i];
+          /* squared error drags an extra g'(z) = f(1-f) along; log loss does not */
+          var m = kind === 'sq' ? e * f * (1 - f) : e;
+          gw += m * X[i]; gb += m;
+          if ((f >= .5 ? 1 : 0) === Y[i]) right++;
         }
-        ctx.stroke(); ctx.restore();
-        if (pn[4]) {
-          [-0.66, -0.06, 0.58].forEach(function (u) {
-            var y = 100 - 26 * Math.sin(u * 5.2) - 20 * Math.sin(u * 9.7 + .7) + 46 * u * u;
-            A.dot(ctx, cx + u * 140, 96 + y * .62, 5, P.r);
-          });
-          A.txt(ctx, 'gradient descent can get stuck in any of these', cx, 216,
-            { align: 'center', size: 10.5, fill: P.r });
-        } else {
-          A.dot(ctx, cx, 96 + 40 * .62, 6, P.g);
-          A.txt(ctx, 'gradient descent always finds the bottom', cx, 216,
-            { align: 'center', size: 10.5, fill: P.g });
-        }
-      });
-      A.txt(ctx, 'Course 1 Week 1 used (f − y)² and it worked beautifully. Why not here?', 40, 250,
-        { size: 12.5, w: 700, fill: P.soft });
-      A.txt(ctx, 'Because f now has a sigmoid inside it. Squaring the error of a squashed function produces a',
-        40, 272, { size: 12, fill: P.soft });
-      A.txt(ctx, 'non-convex surface — a bumpy landscape with many valleys, exactly the situation from Week 1’s',
-        40, 292, { size: 12, fill: P.soft });
-      A.txt(ctx, 'hill picture that we were relieved to avoid. So logistic regression needs a different cost.',
-        40, 312, { size: 12, w: 700, fill: P.a });
-      ro.set('“Convex” means bowl-shaped: one minimum, and gradient descent is guaranteed to reach it.' +
-        '\nSquared error is convex for linear regression and <b>not</b> convex for logistic regression. ' +
-        'The next lesson builds a cost that is.');
+        acc.push(right / X.length);
+        w -= a * gw / X.length; b -= a * gb / X.length;
+      }
+      return { acc: acc, w: w, b: b, end: acc[acc.length - 1] };
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+
+    A.slider(bar, { label: 'start w =', min: -8, max: 8, step: .5, value: w0,
+      fmt: function (v) { return v.toFixed(1); }, on: function (v) { w0 = v; render(); } });
+    A.slider(bar, { label: 'start b =', min: -20, max: 20, step: 1, value: b0,
+      fmt: function (v) { return v.toFixed(0); }, on: function (v) { b0 = v; render(); } });
+
+    function render() {
+      var P = A.pal(); c.clear(P.panel);
+      var sq = run('sq'), lg = run('log');
+
+      var box = { x: 62, y: 56, w: 380, h: 190 };
+      var S = A.axes(ctx, box, [0, N], [0, 1.05], {
+        xticks: 3, yticks: 4,
+        xfmt: function (v) { return v.toFixed(0); },
+        yfmt: function (v) { return v.toFixed(2); },
+        xlab: 'gradient descent steps', ylab: 'accuracy'
+      });
+      A.plot(ctx, S, [0, N], function (x) { return sq.acc[A.clamp(Math.round(x), 0, N)]; }, P.r, 2.6);
+      A.plot(ctx, S, [0, N], function (x) { return lg.acc[A.clamp(Math.round(x), 0, N)]; }, P.g, 2.6);
+      A.txt(ctx, 'squared error → ' + sq.end.toFixed(2), 74, 76, { size: 12, w: 700, fill: P.r });
+      A.txt(ctx, 'log loss → ' + lg.end.toFixed(2), 74, 96, { size: 12, w: 700, fill: P.g });
+
+      var box2 = { x: 520, y: 56, w: 200, h: 190 };
+      var S2 = A.axes(ctx, box2, [-8, 8], [0, .28], {
+        xticks: 4, yticks: 3,
+        xfmt: function (v) { return v.toFixed(0); },
+        yfmt: function (v) { return v.toFixed(2); },
+        xlab: 'z', ylab: 'g′(z)'
+      });
+      A.plot(ctx, S2, [-8, 8], function (z) { var g = A.sig(z); return g * (1 - g); }, P.r, 2.4);
+      var z0 = w0 * 3 + b0, g0 = A.sig(z0) * (1 - A.sig(z0));
+      A.dot(ctx, S2.X(A.clamp(z0, -8, 8)), S2.Y(g0), 5, P.a);
+      A.txt(ctx, 'g′(z) at your start = ' + g0.toFixed(4), 620, 268,
+        { align: 'center', size: 11, mono: true, fill: g0 < .02 ? P.r : P.soft });
+
+      A.txt(ctx, 'Squared error multiplies every gradient by g′(z) = g(1−g), which peaks at 0.25 and',
+        40, 296, { size: 12.5, fill: P.soft });
+      A.txt(ctx, 'collapses to nearly nothing once the sigmoid saturates — exactly where a badly placed',
+        40, 316, { size: 12.5, fill: P.soft });
+      A.txt(ctx, 'model sits. Log loss is built so that factor cancels, so its gradient stays alive.',
+        40, 336, { size: 12.5, w: 700, fill: P.a });
+      A.txt(ctx, 'Drag to a confident-but-wrong start and watch the red line flatline.',
+        40, 358, { size: 11.5, fill: P.faint });
+
+      ro.set('From w = ' + w0.toFixed(1) + ', b = ' + b0.toFixed(0) + ' after ' + N + ' steps: ' +
+        '<b>squared error</b> ends at w = ' + sq.w.toFixed(2) + ', accuracy <b>' + sq.end.toFixed(2) + '</b>. ' +
+        '<b>Log loss</b> ends at w = ' + lg.w.toFixed(2) + ', accuracy <b>' + lg.end.toFixed(2) + '</b>.' +
+        '\nBoth run the identical algorithm on the identical data. Only the cost function differs.' +
+        '\nThis is a real optimisation, run in your browser — not a drawing of one.');
+    }
+    A.bind(c, render);
+    render();
   });
 
   /* ============================================================
@@ -349,8 +375,7 @@
         '\nNote there is no 1/2 here — that only existed in the squared-error cost to cancel the 2 from ' +
         'differentiating a square. There is no square to differentiate now.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -390,8 +415,7 @@
         '\nIt is not a coincidence: it is a property of pairing the sigmoid with the log loss. Pair them ' +
         'wrongly and the tidiness disappears.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -471,8 +495,7 @@
         '\nCourse 2 Week 3 turns this picture into two numbers you can measure.');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -512,8 +535,7 @@
       A.txt(ctx, 'deleting a feature. It is why option 3 usually beats option 2.', 40, 314,
         { size: 11.5, w: 700, fill: P.g });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -659,8 +681,7 @@
         'Larger λ shrinks harder. This is the same mechanism as <code>weight_decay</code> in every ' +
         'modern deep-learning optimiser.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

@@ -266,9 +266,13 @@ the <b>shape</b> it produces here is unusable.</p>""")
         + h2("🔢", "What went wrong")
         + """<p>In Week 1, f = wx + b, so (f − y)² was a quadratic in w and b — and quadratics are convex,
 guaranteed.</p>
-<p>Now f = g(wx + b), with a sigmoid in the middle. Squaring the error of a squashed function produces a
-surface with multiple local minima. Gradient descent’s guarantee is gone, and its behaviour becomes
-dependent on where you happen to start.</p>"""
+<p>Now f = g(wx + b), with a sigmoid in the middle. Squaring the error of a squashed function is
+no longer convex in general — the guarantee is gone, and where you end up can depend on where you
+started.</p>
+<p>Two honest caveats, because they matter for what you will actually see. Losing the guarantee does not
+mean every data set produces a visibly bumpy surface; small problems often have just one minimum anyway.
+And the failure you are most likely to meet is not a wrong valley at all — it is gradient descent
+barely moving, for the reason worked out further down this page.</p>"""
         + decode([
             ("convex", "“one bowl”", "Exactly one minimum. Gradient descent with a small enough α always finds it."),
             ("non-convex", "“many valleys”", "Several local minima. Where you end up depends on where you began."),
@@ -621,6 +625,13 @@ for linear regression. Both are instances of a general pattern: pair the right l
 output function and the messy chain-rule factor disappears, leaving (prediction − target) × input.
 The same form shows up again for softmax in Course 2.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("gradient", "“gradient”", "The vector of all the partial derivatives — one per parameter. Points uphill; you step the other way."),
+            ("partial derivative", "“partial d J by d w”", "How much J changes when you nudge <em>one</em> parameter, holding the rest still. Written ∂J/∂w."),
+            ("simultaneous update", "“update together”", "Compute every derivative from the <b>old</b> parameters, then assign. Updating one before computing the next is the classic bug."),
+            ("chain rule", "“chain rule”", "How to differentiate a function inside a function. It is why the sigmoid's own slope shows up in the derivative — and why the log loss is built to cancel it."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("What is the only difference between the two gradient computations?",
@@ -795,6 +806,13 @@ wiggles between the data points.</p>
 <b>penalising large weights</b> should stop the wiggling. It is a direct, almost crude, response to an
 observed symptom — and it works remarkably well.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("regularization", "“regularisation”", "Adding a penalty for large weights so the fitted curve stays smooth."),
+            ("lambda (λ)", "“lambda”", "How hard to penalise. 0 = no penalty; very large = every weight crushed to nearly zero."),
+            ("feature selection", "“feature selection”", "Dropping features by hand. Works, but throws away whatever information they carried."),
+            ("generalisation", "“generalisation”", "Performance on data the model has never seen. The only thing that actually matters."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("You are overfitting and cannot collect more data. What are your options?",

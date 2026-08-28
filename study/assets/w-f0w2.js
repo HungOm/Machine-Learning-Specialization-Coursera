@@ -63,8 +63,7 @@
         'so if you run cells out of order, results can surprise you. <b>Restart &amp; Run All</b> is the ' +
         'cure when things get strange.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -105,8 +104,7 @@
         '\n<code>"5" + "5"</code> gives <code>"55"</code>. <code>5 + 5</code> gives <code>10</code>. ' +
         'Same keystrokes, very different answer.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -146,8 +144,7 @@
         '\nA <b>NumPy array</b> is a maths object — all one type, and + means “add the numbers”.' +
         '\nThis single difference is behind a large share of beginner confusion.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -248,8 +245,7 @@
         '\nMost NumPy confusion is shape confusion. When something behaves oddly, print the shape of ' +
         'every array involved — the wrong one is usually obvious immediately.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -352,8 +348,7 @@
         '<code>1 / (1 + np.exp(-Z))</code> just does it to every number.');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -401,8 +396,7 @@
         'silently produce a <b>bigger, wrong</b> array instead of an error.' +
         '\nWhen a result has a surprising shape, that is almost always what happened. Print the shapes.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -711,8 +705,7 @@
         '\nA common shape trap: <code>df[\'price\']</code> gives shape <code>(m,)</code> while ' +
         '<code>df[[\'price\']]</code> gives <code>(m, 1)</code>. The double brackets keep it 2-D.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -817,8 +810,7 @@
         '\nEvery graded exercise in this specialization is “fill in the body of a function whose ' +
         'signature is already written for you”.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

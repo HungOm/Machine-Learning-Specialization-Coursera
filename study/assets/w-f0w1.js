@@ -55,8 +55,7 @@
         ['2*x + 1', 'x**2', 'x/2'][which] + '</code>');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -168,8 +167,7 @@
       A.txt(ctx, 'Say the highlighted one out loud. That is genuinely the whole exercise.',
         40, 74 + 9 * 46 + 14, { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -400,8 +398,7 @@
         'is where it stops, and what follows is the thing you add up each time.' +
         '\nWhen you see Σ in a formula, read it as: “now add this up for every example”.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -447,8 +444,7 @@
         '\nMultiplying many numbers below 1 gets very small very fast, which is why code often adds up ' +
         '<b>logs</b> instead: log(a×b) = log(a) + log(b).');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -568,8 +564,7 @@
         '\nGeometrically: <b>a · b = |a| |b| cos θ</b>. Positive = aligned, zero = perpendicular, ' +
         'negative = opposed.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -629,8 +624,7 @@
         '\nA <b>vector</b> is just a matrix with one row (or one column). A single number is called a ' +
         '<b>scalar</b>.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -682,8 +676,7 @@
         'Middles match → legal. The answer is the outer two → (3×3).' +
         '\n<code>A @ B</code> · <code>np.matmul(A, B)</code> · <code>A.dot(B)</code> — all the same thing.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -727,8 +720,7 @@
         '\nWritten <b>M<sup>T</sup></b> in maths, said “M transpose”. It is plumbing, not a deep idea: ' +
         'you reach for it when the shapes refuse to match.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -1017,8 +1009,7 @@
         '\nIn formulas: <b>argmax<sub>a</sub> Q(s,a)</b> means “the ACTION a that makes Q biggest” — ' +
         'the action, not the number. Same word, same meaning.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

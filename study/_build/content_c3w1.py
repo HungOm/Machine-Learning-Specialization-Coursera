@@ -1007,6 +1007,13 @@ you deployed last month, so this year’s fraud genuinely does not look like las
 pressure is precisely why fraud is usually anomaly detection rather than classification.</p>""",
                "Why fraud is on the anomaly side")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("positive example", "“a positive”", "An example of the thing you are looking for — a fraud, a defect. The rare class."),
+            ("skewed classes", "“imbalanced”", "One class vastly outnumbers the other. Makes accuracy useless as a metric."),
+            ("novel anomaly", "“something new”", "A failure unlike anything in your data. Anomaly detection can catch these; a classifier cannot."),
+            ("density estimation", "“how likely is this”", "Modelling what normal looks like, then flagging the improbable. What p(x) &lt; ε is doing."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Detecting previously unknown security exploits in server logs. Which?",
@@ -1102,6 +1109,13 @@ anything unusual. Compressing the tail brings those points to a sane distance, t
 to reflect the bulk of the data, and now a genuinely extreme value stands out. Order is preserved;
 what changes is how many standard deviations each gap is worth.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("skew", "“lopsidedness”", "How far a distribution leans. 0 is a symmetric bell; large positive means a long right tail."),
+            ("transform", "“transform”", "Applying log or a root to make a feature look Gaussian. Changes spacing, not order."),
+            ("Gaussian", "“normal distribution”", "The bell curve. The one shape this algorithm knows how to model."),
+            ("error analysis", "“error analysis”", "Looking at the anomalies you <em>missed</em> and inventing a feature that would have caught them."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Adding features that are noisy but not informative.</b> Every extra feature is
 another chance for a normal example to look unusual by accident, which raises your false-alarm rate. Fewer,

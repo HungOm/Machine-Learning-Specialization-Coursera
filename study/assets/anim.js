@@ -43,6 +43,61 @@
     };
   };
 
+
+  /* ---------- transport: play / pause / scrub -------------------
+     Every auto-playing widget gets one. An animation you cannot stop
+     is a thing that happens AT you; one you can scrub is a thing you
+     can interrogate — step back to the frame that confused you and
+     hold it there. ------------------------------------------------ */
+  A.autoplay = function (root, c, render, opt) {
+    opt = opt || {};
+    var span = opt.span || 16;          /* seconds of timeline on the scrubber */
+    var lt = 0, paused = false, lp = null;
+
+    var bar = document.createElement('div');
+    bar.className = 'transport';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn tp';
+
+    var inp = document.createElement('input');
+    inp.type = 'range'; inp.min = 0; inp.max = span; inp.step = 0.02; inp.value = 0;
+    inp.className = 'tp-scrub';
+    inp.setAttribute('aria-label', 'scrub the animation');
+
+    var tag = document.createElement('span');
+    tag.className = 'tp-tag';
+
+    function paint() { render(lt); }
+    function setPaused(v) {
+      paused = v;
+      btn.textContent = v ? '\u25b6' : '\u275a\u275a';
+      btn.setAttribute('aria-label', v ? 'play the animation' : 'pause the animation');
+      btn.classList.toggle('primary', v);
+      tag.textContent = v ? 'paused \u2014 drag to scrub' : 'playing';
+      if (lp) lp.toggle(!v);
+    }
+    btn.addEventListener('click', function () { setPaused(!paused); });
+    inp.addEventListener('input', function () {
+      if (!paused) setPaused(true);
+      lt = parseFloat(inp.value);
+      paint();
+    });
+
+    bar.appendChild(btn); bar.appendChild(inp); bar.appendChild(tag);
+    /* sit directly under the canvas, above any sliders and the readout */
+    if (root.insertBefore && c.cv) root.insertBefore(bar, c.cv.nextSibling);
+    else root.appendChild(bar);
+    setPaused(false);
+
+    A.bind(c, paint);
+    lp = A.loop(c.cv, function (t) {
+      if (paused) return;
+      lt = t; inp.value = (t % span).toFixed(2); render(t);
+    });
+    return { paint: paint, pause: function () { setPaused(true); } };
+  };
+
   /* ---------- canvas ---------- */
   A.canvas = function (root, w, h) {
     var cv = document.createElement('canvas');

@@ -796,6 +796,13 @@ a1.numpy()             # array([[0.2, 0.7, 0.5]], dtype=float32)   <- back to Nu
 “an array with any number of dimensions”. A number is a 0-D tensor, a list is 1-D, a matrix is 2-D, a stack
 of images is 4-D. That is the whole concept.</p>""", "“Tensor” demystified")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("tensor", "“tensor”", "TensorFlow's array. Same idea as a NumPy array, with extra machinery for GPUs and gradients."),
+            ("rank", "“rank”", "How many dimensions. A scalar is rank 0, a vector rank 1, a matrix rank 2."),
+            ("<code>.numpy()</code>", "“dot numpy”", "Converts a tensor back to a plain NumPy array so you can print or plot it."),
+            ("row vector", "“row vector”", "Shape (1, n) — a 2-D array with one row. Keras wants this even for a single example."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>(2,) is not (1,2).</b> The trailing comma in <code>(2,)</code> means “one dimension,
 of length two”. It is Python’s way of writing a one-element tuple, and it is the single most common source
@@ -1203,6 +1210,13 @@ learn to process.</p>"""
 hypothesis and openly unsure about the timeline. That combination — excited about the work, humble about
 the extrapolation — is the professional norm. Be suspicious of anyone who has only one of the two.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("ANI", "“artificial narrow intelligence”", "A system good at one task. Everything that exists today, including the very impressive things."),
+            ("AGI", "“artificial general intelligence”", "A system that can learn any task a person can. Does not exist, and nobody can say how far away it is."),
+            ("one learning algorithm hypothesis", "“one algorithm”", "The conjecture that one piece of brain tissue can learn to process any sense — the strongest scientific argument for the AGI idea."),
+            ("neuroplasticity", "“plasticity”", "The brain's ability to rewire. The rewiring experiments are the evidence the hypothesis rests on."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("What is the one-learning-algorithm hypothesis in one sentence?",

@@ -109,8 +109,7 @@
         'performance P, if its performance at T improves with more E</b> (Tom Mitchell, 1997).' +
         '\nThe useful version: you show it examples instead of writing the rules.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -190,8 +189,7 @@
         'question to ask about any new problem.');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -253,8 +251,7 @@
       A.txt(ctx, 'Course 3 covers all three of these properly. This lesson is just the map.',
         30, 308, { size: 12, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -374,8 +371,7 @@
         '\nOne number summarising how wrong the whole line is. Smaller is better; the goal is to find ' +
         'the w and b that make it smallest.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -578,8 +574,7 @@
         '\nGood news for linear regression: its cost function is a single smooth <b>bowl</b> with no ' +
         'local minima at all, so this problem cannot arise there. It very much can for neural networks.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -641,8 +636,7 @@
         '\nThe sequential version is not gradient descent — it is a different algorithm that happens to ' +
         'often still work, which is exactly what makes the bug hard to notice.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -761,8 +755,7 @@
         '\nIf J ever <em>increases</em> between iterations, α is too large. That is the single most useful ' +
         'debugging rule in this course.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -815,8 +808,7 @@
         'It has exactly one minimum and gradient descent always finds it, from any starting point.' +
         '\nThis is a genuinely special property. You lose it the moment you build a neural network.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================

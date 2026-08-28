@@ -121,8 +121,7 @@
         (res ? 'cat' : 'not a cat') + '</b>\nOnly the features ON THE PATH were used. ' +
         (ex.E ? 'Whiskers were never even looked at.' : 'Face shape was never even looked at.'));
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -164,8 +163,7 @@
         40, 24, { size: 11.5, fill: P.faint });
       A.txt(ctx, 'example is the purest possible overfit.', 40, 314, { size: 11.5, w: 700, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -267,8 +265,7 @@
         '\near shape <b>' + gains[0].toFixed(4) + '</b>   ·   face shape <b>' + gains[1].toFixed(4) +
         '</b>   ·   whiskers <b>' + gains[2].toFixed(4) + '</b>');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -325,8 +322,7 @@
         '  else → pick the feature with the highest information gain,\n' +
         '         split the examples, and call <b>build()</b> on each half');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -356,8 +352,7 @@
       A.txt(ctx, 'Now every feature is binary again, so the yes/no tree works unchanged. Bonus: neural networks need this too.',
         40, 310, { size: 12, w: 700, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -567,8 +562,7 @@
         'which changes everything below it.\nAveraging many trees cancels that out. The ensemble is far more ' +
         'stable than any of its members — which is the entire idea behind the rest of this week.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -720,8 +714,7 @@
       A.txt(ctx, 'XGBoost adds built-in regularisation, clever stopping rules and a very fast implementation.',
         40, 324, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -761,8 +754,7 @@
       A.txt(ctx, 'no tuning, and it is still the thing to beat on most tabular problems.', 40, 324,
         { size: 12, w: 700, fill: P.g });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

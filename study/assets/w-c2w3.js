@@ -113,8 +113,7 @@
       A.txt(ctx, 'A diagnostic tells you WHICH half of the list to look at — that is the whole point of this week.',
         40, 324, { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -226,8 +225,7 @@
         'you fitted a choice to it.\nThat is why there are three sets: <b>train</b> fits the parameters, ' +
         '<b>cross-validation</b> picks the model, <b>test</b> is only ever read at the very end.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -483,8 +481,7 @@
       A.txt(ctx, 'the list and it is useless against high bias — which is why the diagnostic pays for itself.',
         40, 286, { size: 12, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -534,8 +531,7 @@
       A.txt(ctx, 'as a smaller one — so “too big” is a compute problem, not an accuracy problem.',
         40, 322, { size: 12, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -620,8 +616,7 @@
       A.txt(ctx, 'Speed round the loop matters more than cleverness on any single lap.', 60, 312,
         { size: 12, w: 700, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -669,8 +664,7 @@
       A.txt(ctx, 'categories can overlap — one email can be both pharma and phishing', 40, 148,
         { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -721,8 +715,7 @@
       A.txt(ctx, 'For speech: add café noise, car noise, a bad phone line. Same idea.', 40, 290,
         { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -769,8 +762,7 @@
       A.txt(ctx, 'That is why the borrowed layers transfer — but only if the INPUT TYPE matches. Image → image, audio → audio.',
         60, 324, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -814,8 +806,7 @@
       A.txt(ctx, 'Deployment is not the end: models decay as the world drifts away from the data they were trained on.',
         40, 288, { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================

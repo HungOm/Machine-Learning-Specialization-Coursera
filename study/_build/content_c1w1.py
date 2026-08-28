@@ -453,6 +453,13 @@ and you get a quadratic. A quadratic with a positive leading coefficient is a U.
 getting stuck in a wrong valley, no dependence on where you start. Gradient descent on this shape simply
 cannot fail. You will lose that guarantee in Week 3, and lose it thoroughly in Course 2.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("parameter", "“parameter”", "A number the model <b>learns</b> — w and b. Contrast with a hyperparameter such as α, which you choose."),
+            ("parabola", "“parabola”", "The U-shaped curve of a squared term. One lowest point, and it gets steeper the further out you go."),
+            ("global minimum", "“the lowest point anywhere”", "The best possible parameters. A convex cost has exactly one."),
+            ("convex", "“bowl-shaped”", "One minimum, no other valleys. Gradient descent cannot get trapped."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Reading the right-hand graph as if it were data.</b> The x-axis is w, not house
 size. The curve is not a prediction — it is a score for each possible model.</p>""")

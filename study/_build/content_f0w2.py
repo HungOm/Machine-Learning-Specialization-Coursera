@@ -242,6 +242,14 @@ meaning, so the only sensible reading of “times 2” is “twice as many”. T
 they model different things, which is exactly why converting with <code>np.array(...)</code> at the
 boundary matters so much.</p>""")
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("list", "“list”", "Python's own container. Holds anything — numbers, strings, other lists. <code>+</code> joins, <code>*</code> repeats."),
+        ("ndarray", "“n-d array”", "NumPy's array. All one type, fixed size, and arithmetic applies to every element at once."),
+        ("elementwise", "“element by element”", "The operation is applied to each position separately. <code>a + b</code> adds the first to the first, second to second."),
+        ("dtype", "“d-type”", "The one type every element shares — <code>int64</code>, <code>float64</code>. Printed by <code>a.dtype</code>."),
+        ("vectorised", "“vectorised”", "Written as whole-array operations rather than a loop. Faster, and the style the rest of the course uses."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b><code>my_list * 2</code> silently doing the wrong thing.</b> No error. You just get six
 elements where you expected three doubled ones.</p>""")
@@ -524,6 +532,14 @@ it is a fixed sequence started from a seed. Setting the seed means your "random"
 run, so a result you got yesterday can be reproduced today. Every serious experiment sets one. It is also
 why the labs give identical answers on your machine and everyone else's.</p>"""
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("np.zeros", "“n-p zeros”", "An array filled with 0.0. You pass the <b>shape</b>, as a tuple: <code>np.zeros((2,3))</code>."),
+        ("np.arange", "“a-range”", "Like <code>range</code>, but returns an array. Stop value excluded."),
+        ("np.linspace", "“lin-space”", "n evenly spaced values between two ends, both <b>included</b>. Use it for plotting."),
+        ("shape", "“shape”", "A tuple of lengths, one per dimension. <code>(3,)</code> is 1-D; <code>(3,1)</code> is 2-D."),
+        ("seed", "“seed”", "A number that makes “random” repeatable. Same seed, same numbers, every run."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b>Forgetting the tuple.</b> <code>np.zeros((2,3))</code>, not <code>np.zeros(2,3)</code>.
 The same applies to <code>ones</code>, <code>full</code> and <code>random.rand</code>'s cousins.</p>""")
@@ -604,6 +620,13 @@ happening — they are just happening inside compiled C code rather than in Pyth
 matrix multiplication <b>collapse</b> a dimension. When you are reading code and wondering what shape
 something is, that distinction answers it.</p>"""
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("elementwise", "“element by element”", "Same position meets same position. Needs matching shapes, or shapes that broadcast."),
+        ("in-place", "“in place”", "<code>a += 1</code> changes the existing array. <code>a = a + 1</code> builds a new one."),
+        ("universal function", "“ufunc”", "NumPy's name for a function that applies itself to every element — <code>np.exp</code>, <code>np.sqrt</code>, <code>np.log</code>."),
+        ("scalar", "“scalar”", "A single number, as opposed to an array. A scalar broadcasts against anything."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b>Mismatched shapes.</b> <code>a + b</code> with lengths 3 and 4 is a ValueError — there
 is nothing to pair the fourth with. Unless broadcasting applies, which is the next lesson.</p>""")
@@ -723,6 +746,13 @@ row, however many rows there are. That is exactly the operation you want most of
 one that needs no ceremony. Aligning from the left would make “one value per item” easy and “one
 value per feature” awkward, which is the rarer need.</p>""")
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("broadcasting", "“broadcasting”", "Reusing a smaller array against a bigger one without copying it. Free, because nothing is duplicated in memory."),
+        ("aligned from the right", "“right-aligned”", "Shapes are compared last-dimension-first. (2,3) against (3,) compares 3 with 3."),
+        ("compatible", "“compatible”", "Two dimensions match if they are equal, or if one of them is <b>1</b>. A 1 stretches; anything else is an error."),
+        ("degenerate axis", "“an axis of length one”", "A dimension of size 1 — the thing that gets stretched. <code>reshape(-1,1)</code> creates one deliberately."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b>(3,1) + (1,3) giving a (3,3).</b> No error, nine numbers where you wanted three. The
 most common quiet bug in NumPy.</p>""")
@@ -821,6 +851,13 @@ of linear algebra is built from — a dot product is one row against one column,
 multiplication is that repeated — and writing <code>.sum()</code> by hand every time is both noisy
 and slower, since the fused version never builds the intermediate array.</p>""")
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("dot product", "“dot product”", "Multiply matching elements, then add them all up. Two vectors in, one number out."),
+        ("@", "“at”, or “matmul”", "The matrix-multiplication operator. <code>a @ b</code>. Modern Python's preferred spelling."),
+        ("np.matmul", "“mat-mul”", "Same as <code>@</code>. Differs from <code>np.dot</code> only for arrays of 3 dimensions or more."),
+        ("inner dimension", "“the inner numbers”", "In (m,n) @ (n,k), the two n's. They must match, and they vanish from the result."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b><code>*</code> where you meant <code>@</code>.</b> On square matrices both work and give
 different answers. This is the expensive one.</p>""")
@@ -1012,6 +1049,13 @@ And it is how the confusion-matrix counts in Course 2 are computed —
 <p>Note that unlike slicing, boolean indexing returns a <b>copy</b>, not a view. Modifying the result does
 not touch the original.</p>"""
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("mask", "“mask”", "An array of True/False, the same shape as your data, saying which elements you want."),
+        ("boolean indexing", "“fancy indexing”", "<code>a[a &gt; 5]</code> — using a mask in the brackets. Returns only the selected elements, always as 1-D."),
+        ("&amp; and |", "“and”, “or”", "Elementwise and/or for masks. <b>Not</b> <code>and</code>/<code>or</code>, which fail on arrays — and each side needs its own brackets."),
+        ("np.where", "“where”", "Two jobs: with one argument it returns the <em>positions</em>; with three it picks elementwise between two choices."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b><code>and</code> instead of <code>&amp;</code>.</b> Gives “The truth value of an array
 with more than one element is ambiguous” — a confusing message for a simple cause.</p>""")
@@ -1365,6 +1409,14 @@ produces a (4,25) and I expected (25,4)”.</p>"""
 A <code>ValueError</code> naming two shapes has told you exactly what is wrong. Read it before searching
 the internet.</p>""")
 
+    + h2("🔤", "The words, decoded")
+    + decode([
+        ("traceback", "“traceback”", "The list of function calls that led to the error. <b>Read it from the bottom up</b> — the last line is what actually broke."),
+        ("ValueError", "“value error”", "The type was fine but the value was not — nearly always a shape mismatch in this course."),
+        ("IndexError", "“index error”", "You asked for a position that does not exist. Usually an off-by-one, or a loop running past the end."),
+        ("NameError", "“name error”", "A name Python has never seen — a typo, or a cell you have not run yet."),
+        ("AttributeError", "“attribute error”", "The object has no such method. Usually means it is a list where you thought it was an array."),
+    ])
     + h2("🕳", "Traps")
     + trap("""<p><b>Reading the traceback from the top.</b> The top is the outermost call and rarely the
 problem. Start at the bottom.</p>""")

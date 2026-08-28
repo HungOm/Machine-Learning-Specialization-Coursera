@@ -492,6 +492,13 @@ respawning power-ups forever, never finishing the race — and scored higher tha
 <p>The general name is <b>specification gaming</b>: the agent maximises exactly what you wrote down, which
 turns out not to be what you meant.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("discount factor (γ)", "“gamma”", "How much a reward one step later is worth. 0.5 is impatient; 0.99 is patient."),
+            ("terminal state", "“the end”", "A state where the episode stops. Its value is just its own reward — no future to discount."),
+            ("reward shaping", "“shaping”", "Adding extra rewards to guide learning. Easy to get wrong: the agent optimises what you wrote, not what you meant."),
+            ("optimal policy", "“the best plan”", "The action choice in every state that maximises expected return. Read straight off Q by taking the largest value."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Set R(6) = 40 → 200 with γ = 0.5. What happens to π*(4)?",
@@ -834,6 +841,14 @@ crashing is only −100, and hovering for a hundred steps costs −30.</p>
 landing, because landing risks the −100. The balance between these numbers <em>is</em> the specification of
 the behaviour, and small changes produce qualitatively different pilots.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("state space", "“the state”", "Every number describing the situation. Here 8: position, velocity, angle, angular velocity, two leg contacts."),
+            ("action space", "“the actions”", "What the agent may do. Here 4: nothing, left thruster, main, right."),
+            ("episode", "“one attempt”", "One run from reset to crash or landing."),
+            ("reward function", "“the reward”", "The numbers that define success. Designing it <em>is</em> the real work, and it is where things go wrong."),
+            ("sparse reward", "“sparse”", "Reward arriving only at the very end, so the agent gets almost no signal along the way."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Forgetting the leg-contact flags are binary.</b> They are 0 or 1 while everything
 else is a real number. Feeding raw unnormalised state into a network mixes scales — the C2 W1 scaling
@@ -1059,6 +1074,13 @@ to rediscover the same state-reading logic separately for each action’s corner
 Shared structure means shared learning, which is the same argument that makes multi-output networks
 preferable to N separate binary classifiers.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("Q-network", "“Q network”", "The neural network that estimates Q(s,a). Input a state, output one value per action."),
+            ("one output per action", "“vectorised Q”", "The improvement: all four action-values from a single forward pass, so the max is free."),
+            ("<code>reduce_max</code>", "“reduce max”", "TensorFlow's max along an axis. The vectorised “try every action” step."),
+            ("greedy action", "“the greedy action”", "<code>argmax</code> over the outputs — the action the network currently rates highest."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Using softmax on the output.</b> These are values, not probabilities. They do not
 sum to 1 and they must not be normalised against each other.</p>""")
@@ -1305,6 +1327,13 @@ Course 2, Week 3: split your data honestly, diagnose before you fix, look at you
 measure the thing you actually care about. That survives every change of framework and every new model
 architecture.</p>""", "If you remember one thing")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("sim-to-real gap", "“sim to real”", "RL learns in simulation and then fails on real hardware, because the simulator was not the world."),
+            ("sample efficiency", "“how much experience it needs”", "RL typically needs millions of episodes. The main reason it is rare outside simulation."),
+            ("reward hacking", "“reward hacking”", "The agent finds a way to score highly that you never intended. Common, and instructive."),
+            ("hype-to-use ratio", "“the honest caveat”", "RL gets research attention far out of proportion to its commercial deployment. Worth knowing before you specialise."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Why does RL work so much better in simulation than on real robots?",

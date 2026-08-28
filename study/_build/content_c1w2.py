@@ -563,6 +563,13 @@ plot more than any other in the course.</p>"""
 which depends on your data. He says he prefers looking at the graph, and that is reasonable advice: the
 graph tells you <em>why</em> it stopped, and a threshold only tells you <em>that</em> it did.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("convergence", "“settling down”", "J has stopped changing meaningfully. Not zero — just flat."),
+            ("learning curve", "“learning curve”", "J plotted against iteration number. The one plot you should always make."),
+            ("epsilon (ε)", "“epsilon”", "A tiny threshold, e.g. 0.001. Declare convergence when J falls by less than ε in one step."),
+            ("iteration", "“iteration”", "One full update of every parameter. In batch gradient descent, one pass over all the data."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Not recording J at all.</b> Then a failing model is a mystery instead of a
 five-second diagnosis. Always keep the history.</p>""")
@@ -630,6 +637,13 @@ guaranteed</em> to decrease every iteration, provided the gradient is correct.</
         + warn("""<p>The best α depends heavily on whether you scaled your features. Scale first, then tune
 α — doing it the other way round means redoing the tuning.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("learning rate (α)", "“alpha”", "How far to step, per unit of gradient. The single most important number you choose by hand."),
+            ("hyperparameter", "“hyper-parameter”", "A number you set, not one the model learns. α, λ, the number of layers."),
+            ("diverge", "“blow up”", "J grows instead of shrinking, usually to infinity. Always means α is too large — or the derivative is wrong."),
+            ("oscillate", "“bounce”", "J goes down, up, down, up. Overshooting the valley. Halve α."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Why go up by ×3 rather than adding a fixed amount?",
@@ -817,6 +831,13 @@ the cost a bowl with one minimum, and the derivatives stay the same simple form.
 that, <var>x</var>² is just another column of numbers and nothing in the algorithm needs to change —
 which is exactly the trick.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("polynomial", "“polynomial”", "A sum of powers: x, x², x³. Degree = the highest power."),
+            ("feature engineering", "“feature engineering”", "Creating new input columns from the ones you have, using what you know about the problem."),
+            ("linear in the parameters", "“linear in w”", "Every w appears to the first power. That — not the shape of the curve — is what makes it linear regression."),
+            ("degree", "“degree”", "The highest power used. Higher degree = more flexible = easier to overfit."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Why is polynomial regression still called linear regression?",

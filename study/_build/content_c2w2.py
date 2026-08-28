@@ -207,8 +207,9 @@ learning?</b></p>""",
                   """<p>Two reasons, and both matter. First, |<var>y</var> − <var>f</var>| is bounded
 by 1 — a catastrophically wrong prediction is treated as barely worse than a mildly wrong one, so
 the model has little reason to fix it. The log is unbounded, so it does. Second, and decisively, the
-squared/absolute error paired with a sigmoid gives a cost surface with local minima, while the log
-loss gives a single bowl — which is what makes gradient descent reliable here at all. It is the same
+squared/absolute error paired with a sigmoid is not convex in general, while the log
+loss is — and, more practically, squared error's gradient carries a g′(z) factor that dies
+exactly where the model is confidently wrong — which is what makes gradient descent reliable here at all. It is the same
 argument you met in Course 1 when logistic regression dropped squared error.</p>""")
 
         + h2("🕳", "Traps")
@@ -403,6 +404,13 @@ this hundreds of millions of times per epoch.</li>
 <li><b>Empirics.</b> Networks with ReLU hidden layers simply train faster and reach better minima.</li>
 </ol>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("activation function", "“the squasher”", "The g applied after the weighted sum. What makes a network more than a stack of straight lines."),
+            ("output layer", "“the last layer”", "Its activation is decided by the <b>problem</b>: sigmoid for binary, linear for any-sign regression, ReLU for never-negative."),
+            ("hidden layer", "“a middle layer”", "Any layer that is not the output. ReLU, almost always."),
+            ("vanishing gradient", "“the gradient dies”", "Slopes multiplied together shrink towards zero, so early layers stop learning. Sigmoid's flat tails cause it; ReLU's slope of 1 does not."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Mixing up multi-class and multi-label.</b> Softmax = exactly one answer is correct.
 Several sigmoids = several answers can be correct at once. Lesson 10 covers this in full.</p>""")
@@ -517,6 +525,13 @@ you can <b>find</b> it with gradient descent, or that the number of units needed
 will generalise to new data. Depth matters in practice precisely because deep networks need exponentially
 fewer units than shallow ones for many functions.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("linear function", "“a straight line”", "f(x) = wx + b. Composing two of them gives another one — which is the whole problem."),
+            ("composition", "“a function of a function”", "Feeding one layer's output into the next. With linear layers it collapses; with a non-linearity it does not."),
+            ("expressive power", "“what it can represent”", "The set of shapes a model can take. Adding linear layers adds parameters and no expressive power at all."),
+            ("universal approximation", "“it can fit anything”", "The theorem that a big enough one-hidden-layer network can approximate any continuous function. True, and much less useful than it sounds — it says nothing about whether you can <em>find</em> those weights."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>“Linear activation is a kind of activation, so I’m fine.”</b> No. Linear is the
 identity, and identity functions compose into the identity. It has to be genuinely non-linear.</p>""")
@@ -1025,6 +1040,13 @@ softmax the denominator is the sum over <em>all three</em>, so unit 2 is judged 
 and next to a 2.2 and a 1.4 it looks far worse than it did alone. Nothing about the bus evidence
 changed; the question changed from “is there a bus?” to “is the bus the best answer?”.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("multi-label", "“several labels at once”", "Each example can carry any number of tags. Independent sigmoids, one per tag."),
+            ("multi-class", "“one of N”", "Exactly one answer out of several. Softmax, and the probabilities sum to 1."),
+            ("independent outputs", "“independent”", "Each unit answers its own yes/no question and ignores the others. Nothing forces the outputs to add to anything."),
+            ("threshold", "“the cut-off”", "The number each sigmoid output is compared against, usually 0.5, and one per label."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Using softmax for multi-label.</b> It forces the probabilities to compete. A photo
 containing both a car and a bus can then never score high on both — the model is structurally prevented
@@ -1538,6 +1560,13 @@ and at each step the quantity it already carries is exactly what every parameter
 needs. The total is proportional to the number of <em>connections traversed once</em>, which is one
 network’s worth — not to the number of parameters differentiated.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("multiply-add", "“a MAC”", "One multiplication plus one addition — the unit that hardware and cost estimates are counted in."),
+            ("FLOPs", "“flops”", "Floating-point operations. How compute budgets are quoted; one multiply-add is two FLOPs."),
+            ("epoch", "“epoch”", "One full pass over the whole training set."),
+            ("throughput", "“throughput”", "Examples processed per second. What vectorisation and GPUs actually buy you."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Memory, not speed, is usually the wall.</b> Every intermediate activation is kept for
 the backward pass, so memory grows with depth × batch size. “Out of memory” during training almost always

@@ -245,8 +245,9 @@ for the “certain and wrong” row instead of 4.605. <b>Why is the log version 
 learning?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Two reasons, and both matter. First, |<var>y</var> − <var>f</var>| is bounded
 by 1 — a catastrophically wrong prediction is treated as barely worse than a mildly wrong one, so
 the model has little reason to fix it. The log is unbounded, so it does. Second, and decisively, the
-squared/absolute error paired with a sigmoid gives a cost surface with local minima, while the log
-loss gives a single bowl — which is what makes gradient descent reliable here at all. It is the same
+squared/absolute error paired with a sigmoid is not convex in general, while the log
+loss is — and, more practically, squared error's gradient carries a g′(z) factor that dies
+exactly where the model is confidently wrong — which is what makes gradient descent reliable here at all. It is the same
 argument you met in Course 1 when logistic regression dropped squared error.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Loss vs cost.</b> Loss = one example. Cost = the average over the dataset. The course
 is careful about this and so are interviewers.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Using MSE for classification.</b> It <em>runs</em>, and it trains badly: the gradient
 is tiny exactly where the model is confidently wrong, which is where you most need a big correction.</p></div><div class="callout warn"><span class="tag">Watch out</span><p>For <b>regression</b> with a neural network you swap the loss for

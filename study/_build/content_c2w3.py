@@ -53,6 +53,13 @@ themselves several times over.</p>""")
             card("<h3>Lessons 15–17</h3><p>Fairness, and what to measure when 99% of your labels are the "
                  "same value.</p>"))
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("diagnostic", "“a diagnostic”", "A test you run to find out <em>why</em> a model is bad, rather than guessing. This whole week is diagnostics."),
+            ("bias", "“bias”, as in underfitting", "The model is too simple to fit even the training data. Nothing to do with fairness — different word, same spelling."),
+            ("variance", "“variance”, as in overfitting", "The model fits the training data and not much else."),
+            ("baseline", "“baseline”", "What a reasonable alternative achieves — usually a human. Without it, an error rate means nothing."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Your model has 0.1% error on training data and 30% on new data. Is more data likely to help?",
@@ -770,6 +777,13 @@ the U-shape. More data is weeks of work, so you spend it only when the λ sweep 
 learning curve shows J<sub>cv</sub> still falling at your current m. The order is not arbitrary:
 cheap interventions also tell you <em>how much</em> the expensive one might buy.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("high bias", "“underfitting”", "J_train is high, and J_cv is about the same. More data will not help."),
+            ("high variance", "“overfitting”", "J_train is low and J_cv is much higher. More data probably will help."),
+            ("regularisation parameter", "“lambda”", "Raise it to fight variance, lower it to fight bias. The two directions are opposite."),
+            ("cross-validation set", "“the dev set”", "The split you tune against. Also called the validation set, or dev set — three names, one thing."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Collecting data to fix high bias.</b> The single most expensive mistake in this
 week. It is on the variance list <em>only</em>.</p>""")
@@ -849,6 +863,13 @@ model = Sequential([
 stopping</b> are two other common regularisers you will meet later — dropout randomly switches units off
 during training, early stopping just stops when J<sub>cv</sub> starts rising.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("capacity", "“how flexible it is”", "How complicated a function the model can represent. Set by layers and units."),
+            ("bias-variance tradeoff", "“the see-saw”", "The classical idea that reducing one raises the other. Large regularised networks largely break it."),
+            ("kernel_regularizer", "“weight penalty”", "The Keras argument that adds λΣw² to the loss for that layer."),
+            ("L2 regularisation", "“L-two”", "Penalising the sum of squared weights. The same λ term you met in Course 1."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Making the network bigger without regularising.</b> Then you really will overfit.
 The claim is “bigger <em>with</em> appropriate regularisation”, and the second half is doing work.</p>""")
@@ -915,6 +936,13 @@ your corpus, and for each email record whether that word appears. Then a neural 
 <p>Your first version will be mediocre. The interesting question is what you do next, and the honest
 answer is that you cannot know until you look at the failures — which is Lesson 11.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("iterative loop", "“the loop”", "Choose an architecture, train, diagnose, repeat. Nobody gets it right the first time, and the loop is the job."),
+            ("architecture", "“architecture”", "The structural choices — how many layers, which activations, which features. Everything you pick before training."),
+            ("error analysis", "“error analysis”", "Reading misclassified examples by hand and sorting them into categories. Manual, unglamorous, and the highest-value hour you will spend."),
+            ("deployment", "“shipping it”", "Putting the model where real users hit it. Where a new and different set of problems begins."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Trying to design the perfect system up front.</b> You do not yet know what the hard
 cases look like. Build the crude version, look at what it gets wrong, and let the data tell you.</p>""")
@@ -1062,6 +1090,13 @@ rather than adding volume.</p>
 <p>On many practical problems, with a decent architecture already available, improving the data is the
 higher-return activity. Andrew has spent much of the last few years arguing exactly this.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("data augmentation", "“augmentation”", "Making new training examples by distorting existing ones. The distortion must resemble noise that actually occurs."),
+            ("data synthesis", "“synthesis”", "Manufacturing examples from scratch — rendering text in many fonts, for instance."),
+            ("data-centric", "“data-centric”", "Improving the data and holding the model fixed, rather than the reverse. Often the better return."),
+            ("transfer learning", "“transfer learning”", "Starting from a model trained on someone else's much larger data set."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Augmenting with distortions that never happen.</b> If your production images are
 always upright, rotating them 90° adds noise, not signal.</p>""")
@@ -1242,6 +1277,13 @@ shows an item never learns whether people wanted it.</li>
 <p>The field name for this is <b>MLOps</b>. It is a whole discipline, and it is where most ML value is
 actually won or lost.</p>"""
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("scoping", "“scoping”", "Deciding what the project is for, before any data is collected. The stage most often skipped."),
+            ("deployment", "“deployment”", "Serving the model to real traffic — an API, monitoring, and a rollback plan."),
+            ("MLOps", "“em-el-ops”", "The engineering practice around deployed models: versioning, monitoring, retraining."),
+            ("concept drift", "“drift”", "The world changes and the model silently gets worse. Why monitoring exists."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Treating deployment as the finish line.</b> It is the start of the maintenance
 phase, which lasts as long as the product does.</p>""")
@@ -1325,6 +1367,13 @@ subgroup.</b></p>""")
 Postcode, name, school and shopping history are all proxies. The model rediscovers the attribute; you just
 lose the ability to measure the disparity.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("bias", "“bias”, as in unfairness", "Systematically worse outcomes for a group. Unrelated to the bias/variance sense used elsewhere this week."),
+            ("disparate impact", "“disparate impact”", "A system that harms one group more than another, whether or not anyone intended it."),
+            ("adversarial attack", "“adversarial”", "A deliberately crafted input designed to fool the model."),
+            ("audit", "“audit”", "Measuring performance separately per group <b>before</b> shipping. The single most useful concrete step."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Your loan model is 94% accurate overall. What is the next thing to measure?",

@@ -94,8 +94,7 @@
         '\nEvery cost function this week sums <b>only over the entries where r(i, j) = 1</b> — you can never be ' +
         'penalised for a rating that does not exist.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -301,8 +300,7 @@
       ro.set('L(f, y) = −y·log(f) − (1−y)·log(1−f)   where f = g(w<sup>(j)</sup>·x<sup>(i)</sup> + b<sup>(j)</sup>)' +
         '\nThis is what real systems actually use: almost nobody has star ratings, and everybody has clicks.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -427,8 +425,7 @@
     A.button(bar, '‹ back', function () { step = (step + lines.length - 1) % lines.length; render(lt); });
     A.button(bar, 'next step ›', function () { step = (step + 1) % lines.length; render(lt); }).classList.add('primary');
     root.appendChild(bar);
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -523,8 +520,7 @@
         40, 302, { size: 12, fill: P.soft });
       A.txt(ctx, 'the patterns nobody thought to describe.', 40, 318, { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -595,8 +591,7 @@
         '\nBoth towers are trained together, end to end, with one cost function — this is the ' +
         '“chain networks together” advantage from C2 W4 L13, being cashed in.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -699,8 +694,7 @@
         'on</b> — it shapes the very preferences it claims to be measuring.');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -833,8 +827,7 @@
         '\nKeep the first few and you keep most of the information with far fewer numbers. ' +
         'It is <b>unsupervised</b> — there is no y anywhere.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -934,8 +927,7 @@
         'compress features before a supervised model — is much less useful now that computers are fast and ' +
         'regularisation handles extra features well.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

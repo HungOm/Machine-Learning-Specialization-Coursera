@@ -50,8 +50,7 @@
         '10×floors − 2×age + 80.' +
         '\nRead those as: +$100 per sqft, +$4k per bedroom, +$10k per floor, −$2k per year of age.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -109,8 +108,7 @@
         '\nThe dot product multiplies matching entries and adds them all up — exactly the weighted sum ' +
         'the model needs, in one operation.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -157,8 +155,7 @@
       A.txt(ctx, 'This is also exactly why GPUs matter for machine learning.', 40, 322,
         { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -203,8 +200,7 @@
         'scikit-learn may use it internally without telling you. Worth knowing it exists; not worth ' +
         'reaching for.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -384,8 +380,7 @@
         '\nToo small wastes your time; too large diverges. There is usually a comfortable range of a ' +
         'factor of ten in between, so you do not need to be precise.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -432,8 +427,7 @@
         '\nRatios, differences, products, logs, counts per unit time — these are where domain knowledge ' +
         'enters a machine learning system.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================

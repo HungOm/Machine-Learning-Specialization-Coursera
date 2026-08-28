@@ -86,8 +86,7 @@
       A.txt(ctx, 'Clustering asks: “are there natural groups in here?” Nobody tells it the answer, and nobody can mark it right or wrong.',
         40, 306, { size: 12, w: 600, fill: P.soft });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -267,8 +266,7 @@
         '\n<b>assign</b> minimises J over the assignments c, holding μ fixed. ' +
         '<b>move</b> minimises J over the centroids μ, holding c fixed.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -328,8 +326,7 @@
       A.txt(ctx, 'The fix is embarrassingly simple: run it 50–1000 times and keep whichever run got the lowest J.',
         40, 308, { size: 12, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -354,7 +351,10 @@
         Js.push(bestJ);
       }
     })();
-    var ro = A.readout(root);
+    var sel = 3;
+    var bar = A.ctrls(root), ro = A.readout(root);
+    A.slider(bar, { label: 'K =', min: 1, max: 8, step: 1, value: sel,
+      fmt: function (v) { return v.toFixed(0); }, on: function (v) { sel = v; render(); } });
     function render() {
       var P = A.pal(); c.clear(P.panel);
       var box = { x: 70, y: 46, w: 320, h: 200 };
@@ -365,9 +365,13 @@
       ctx.save(); ctx.strokeStyle = P.a; ctx.lineWidth = 2.6; ctx.beginPath();
       Js.forEach(function (j, i) { var px = S.X(i + 1), py = S.Y(j); i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); });
       ctx.stroke(); ctx.restore();
-      Js.forEach(function (j, i) { A.dot(ctx, S.X(i + 1), S.Y(j), 4.5, i === 2 ? P.g : P.a); });
-      A.dot(ctx, S.X(3), S.Y(Js[2]), 9, P.g);
-      A.txt(ctx, 'the "elbow"', S.X(3) + 12, S.Y(Js[2]) - 10, { size: 12, w: 700, fill: P.g });
+      Js.forEach(function (j, i) { A.dot(ctx, S.X(i + 1), S.Y(j), 4.5, i === sel - 1 ? P.g : P.a); });
+      A.dot(ctx, S.X(sel), S.Y(Js[sel - 1]), 9, P.g);
+      var gain = sel > 1 ? Js[sel - 2] - Js[sel - 1] : null;
+      A.txt(ctx, 'K = ' + sel, S.X(sel) + 12, S.Y(Js[sel - 1]) - 10, { size: 12, w: 700, fill: P.g });
+      A.txt(ctx, gain === null ? 'one cluster — nothing to compare against'
+              : 'this step bought ' + gain.toFixed(2) + ' of J',
+        S.X(sel) + 12, S.Y(Js[sel - 1]) + 8, { size: 10.5, fill: gain !== null && gain < 0.25 ? P.faint : P.g });
       A.txt(ctx, 'J always falls as K grows — more centroids can only fit tighter.', 70, 274,
         { size: 11.5, fill: P.faint });
       A.txt(ctx, 'So you can never pick K by minimising J. K = m would give J = 0.', 70, 292,
@@ -691,8 +695,7 @@
         40, 310, { size: 12, w: 700, fill: P.soft });
       A.txt(ctx, 'Yes → supervised.   No → anomaly detection.', 40, 328, { size: 12, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================

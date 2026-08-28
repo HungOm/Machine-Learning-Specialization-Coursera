@@ -108,8 +108,7 @@
         '\nReinforcement learning: “here is the situation. Do something. …that was worth 3 points.”' +
         '\nThe job is to find a <b>policy</b> — a rule mapping every state to an action — that collects the most reward.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -310,8 +309,7 @@
       A.txt(ctx, 'If that is false for your problem, put the missing history INTO the state.', 40, 326,
         { size: 11.5, fill: P.faint });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -439,8 +437,7 @@
         Vsp.toFixed(2) + ' = <b>' + Q.toFixed(2) + '</b>');
     }
     sync();
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -486,8 +483,7 @@
         '\nThe only change is that <b>E</b>[…] — an average weighted by how likely each outcome is. ' +
         'Everything else in the course carries over untouched.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();
@@ -549,8 +545,7 @@
         '\nContinuous state: s ∈ ℝ<sup>n</sup> — a table would need infinitely many rows. ' +
         'So instead we train a function that <b>takes s and returns Q</b>.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -606,8 +601,7 @@
         'This one balances four goals at once — get there, do not crash, stay upright, and do not waste fuel.' +
         '\nGet it slightly wrong and you get a lander that hovers forever, or one that dives to the pad and explodes.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -657,8 +651,7 @@
         'training on them in order makes the network unstable. Sampling randomly from the buffer breaks that ' +
         'correlation.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -710,8 +703,7 @@
         'millions of times during training. It also makes max<sub>a′</sub> Q(s′, a′) a single <code>max()</code> ' +
         'over four numbers you already have.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -765,8 +757,7 @@
         '\nConfusingly, the “greedy” part is the 1 − ε part. Some texts call this “ε-greedy exploration”; ' +
         'either way ε is the fraction of the time you deliberately ignore your own advice.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -822,8 +813,7 @@
         '\n<b>Soft update</b> — blend the new weights into the old ones instead of swapping them, so the ' +
         'training targets change smoothly.');
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
   /* ============================================================
@@ -859,8 +849,7 @@
       A.txt(ctx, 'human feedback is how every modern chat model is tuned.', 40, 318,
         { size: 11.5, w: 700, fill: P.a });
     }
-    A.bind(c, function () { render(lt); });
-    var lt = 0; A.loop(c.cv, function (t) { lt = t; render(t); });
+    A.autoplay(root, c, render);
   });
 
 })();

@@ -919,6 +919,14 @@ to consider fewer candidates, which costs recall — the one thing it exists to 
 tuning knob is the number of candidates, and you find it by measuring whether more candidates still
 improve the final recommendations.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("retrieval", "“retrieval”", "Cheaply assembling a few hundred plausible candidates. Judged on recall, not precision."),
+            ("ranking", "“ranking”", "Running the expensive model on those candidates only, to order them."),
+            ("candidate generation", "“candidates”", "Another name for retrieval. The list handed to the ranker."),
+            ("precomputed embedding", "“cached vector”", "An item's v_m, computed offline because it does not depend on who is looking. What makes serving feasible."),
+            ("latency", "“latency”", "How long a request takes. The hard budget everything here is designed around."),
+        ])
         + h2("🕳", "Traps")
         + trap("""<p><b>Judging retrieval by precision.</b> Retrieval should be judged on <em>recall</em> —
 did the good items survive? Precision is the ranker’s job.</p>""")
@@ -999,6 +1007,13 @@ predict a world they do not affect; this one does not have that luxury.</p>""")
 mitigations cost real money. The recommendation is not “here is the fix” — it is “know what you are
 building, and be transparent about the trade you are making”.</p>""")
 
+        + h2("🔤", "The words, decoded")
+        + decode([
+            ("engagement optimisation", "“maximising watch time”", "Training on time spent rather than on whether the recommendation was good. The root of most of the harm."),
+            ("filter bubble", "“the bubble”", "Being shown steadily narrower content because that is what you clicked."),
+            ("amplification", "“amplification”", "The system making an existing tendency stronger, rather than merely reflecting it."),
+            ("transparency", "“transparency”", "Telling people why they were shown something, and letting them change it."),
+        ])
         + h2("✅", "Check yourself")
         + quiz([
             ("Why does optimising for engagement tend to amplify outrage?",
