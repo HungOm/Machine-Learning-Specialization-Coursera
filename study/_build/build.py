@@ -18,26 +18,52 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)                      # study/
 sys.path.insert(0, HERE)
 
-# order matters: it defines the pagination chain
-CARD_MODULES = ["cards_f0", "cards_c1", "cards_c2", "cards_c3", "cards_c4"]
-PLAIN_MODULES = ["cards_plain_f0", "cards_plain_c1", "cards_plain_c2", "cards_plain_c3",
-                 "cards_plain_c4"]
+# ---------------------------------------------------------------- hidden courses
+# C4 (attention and transformers) was written alongside the specialization but
+# is not part of it. Naming a course here drops it from every generated page —
+# lessons, the plan, problems, cards, paper sheets, mastery rows, and the
+# cross-links pointing into it — without touching a single source file. Empty
+# the set and the whole course is back on the next build.
+HIDDEN_COURSES = {"C4"}
+_HIDDEN_DIRS = tuple("%s/" % c.lower() for c in sorted(HIDDEN_COURSES))
 
-PROBLEM_MODULES = [
+
+def shown(course):
+    """False for a course this build is hiding."""
+    return str(course).upper() not in HIDDEN_COURSES
+
+
+def _shown_modules(names):
+    """Drop content/card/problem modules belonging to a hidden course."""
+    tags = tuple("_%s" % c.lower() for c in sorted(HIDDEN_COURSES))
+    return [n for n in names if not any(t in n for t in tags)]
+
+
+def shown_href(href):
+    """False for a cross-link pointing into a hidden course's pages."""
+    return not href.lstrip("./").startswith(_HIDDEN_DIRS)
+
+
+# order matters: it defines the pagination chain
+CARD_MODULES = _shown_modules(["cards_f0", "cards_c1", "cards_c2", "cards_c3", "cards_c4"])
+PLAIN_MODULES = _shown_modules(["cards_plain_f0", "cards_plain_c1", "cards_plain_c2",
+                                "cards_plain_c3", "cards_plain_c4"])
+
+PROBLEM_MODULES = _shown_modules([
     "problems_f0w1", "problems_f0w2", "problems_f0w3",
     "problems_c1w1", "problems_c1w2", "problems_c1w3",
     "problems_c2w1", "problems_c2w2", "problems_c2w3", "problems_c2w4",
     "problems_c3w1", "problems_c3w2", "problems_c3w3",
     "problems_c4w1", "problems_c4w2", "problems_c4w3", "problems_c4w4",
-]
+])
 
-MODULES = [
+MODULES = _shown_modules([
     "content_f0w1", "content_f0w2", "content_f0w3",
     "content_c1w1", "content_c1w2", "content_c1w3",
     "content_c2w1", "content_c2w2", "content_c2w3", "content_c2w4",
     "content_c3w1", "content_c3w2", "content_c3w3",
     "content_c4w1", "content_c4w2", "content_c4w3", "content_c4w4",
-]
+])
 
 COURSE_TITLE = {
     "F0": "Foundations",
@@ -46,6 +72,7 @@ COURSE_TITLE = {
     "C3": "Unsupervised Learning, Recommenders, RL",
     "C1": "Supervised Machine Learning",
 }
+COURSE_TITLE = {c: t for c, t in COURSE_TITLE.items() if shown(c)}
 
 
 # ---------------------------------------------------------------- glyph repair
@@ -548,8 +575,12 @@ def build_gloss():
     for m in _refreshers() + _load_modules(API_MODULES) + _load_modules(FORMULA_PART_MODULES):
         anchor = getattr(m, "ANCHOR", "")
         for t in getattr(m, "TERMS", []):
-            more_href = t.get("more_href") or ("reference.html#%s" % anchor)
-            more_label = t.get("more_label") or "the whole refresher"
+            more_href = t.get("more_href") or ""
+            if not more_href or not shown_href(more_href):
+                more_href = "reference.html#%s" % anchor
+                more_label = "the whole refresher"
+            else:
+                more_label = t.get("more_label") or "the whole refresher"
             data[t["key"]] = {"label": t["label"], "say": t["say"], "gist": t["gist"],
                               "body": t["body"], "ml": t["ml"],
                               "moreHref": more_href, "moreLabel": more_label}
@@ -586,6 +617,7 @@ PARTS = [
     ("C3", "IV",  "Unsupervised, Recommenders, RL"),
     ("C4", "V",   "Attention & Transformers"),
 ]
+PARTS = [p for p in PARTS if shown(p[0])]
 PART_OF = {c: (roman, title) for c, roman, title in PARTS}
 
 
@@ -1657,7 +1689,7 @@ def build_scratch(weeks, flat):
                 name, code, out, err, d["prose"].get(name, "")))
         lessons = "".join(
             '<li><a href="../%s">%s</a></li>' % (href, html.escape(t))
-            for href, t in d["lessons"])
+            for href, t in d["lessons"] if shown_href(href))
         prev = ('<a class="prev" href="../%s"><span class="dir">&#8249; previous</span>'
                 '<span class="ttl">%s</span></a>' % (files[i - 1], html.escape(lane[i - 1]["title"]))
                 ) if i else '<span class="ghost"></span>'
@@ -1872,7 +1904,7 @@ def build_labs(weeks, flat):
                    '%s' % (len(r["exercises"]), "".join(cards)))
 
         lessons = "".join('<li><a href="../%s">%s</a></li>' % (href, html.escape(t))
-                          for href, t in r["lessons"])
+                          for href, t in r["lessons"] if shown_href(href))
         exline = ("" if not r["exercises"]
                   else " <b>%d graded exercises</b> (UNQ_C%s)."
                        % (len(r["exercises"]),
@@ -1991,7 +2023,8 @@ def build_paper(weeks, flat):
         return 0
     importlib.reload(content_paper)
     sheets = []
-    for sh in content_paper.SHEETS:
+    paper_sheets = [sh for sh in content_paper.SHEETS if shown(sh["c"])]
+    for sh in paper_sheets:
         items = "".join("<li>%s</li>" % i for i in sh["items"])
         sheets.append(
             '<section class="sheet"><header><span class="sh-n">%s W%s</span>'
@@ -2011,8 +2044,8 @@ def build_paper(weeks, flat):
                     method=content_paper.METHOD,
                     sheets="\n".join(sheets),
                     refs='<ul class="reflist">%s</ul>' % refs,
-                    nitems=sum(len(s["items"]) for s in content_paper.SHEETS)))
-    return len(content_paper.SHEETS)
+                    nitems=sum(len(sh["items"]) for sh in paper_sheets)))
+    return len(paper_sheets)
 
 
 _CODE_CACHE = {}
@@ -2188,7 +2221,9 @@ def build_mastery(weeks, flat, cards):
                       criteria=content_mastery.CRITERIA_NOTE,
                       budget=content_mastery.BUDGET_NOTE,
                       budget_table=table,
-                      weekdata=json.dumps(content_mastery.WEEKS, ensure_ascii=False)))
+                      weekdata=json.dumps(
+                          {k: v for k, v in content_mastery.WEEKS.items()
+                           if shown(k[:2])}, ensure_ascii=False)))
     return round(grand / 60)
 
 
