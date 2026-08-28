@@ -488,7 +488,7 @@
      9. The neural-network recipe
      ============================================================ */
   A.def('nnrecipe', function (root) {
-    var c = A.canvas(root, 760, 330), ctx = c.ctx;
+    var c = A.canvas(root, 760, 360), ctx = c.ctx;
     function render(t) {
       var P = A.pal(); c.clear(P.panel); t = t || 0;
       var step = Math.floor((t * .5) % 5);
@@ -526,10 +526,11 @@
       ctx.beginPath(); ctx.moveTo(160, 180); ctx.bezierCurveTo(60, 120, 120, 40, 296, 60); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(720, 284); ctx.bezierCurveTo(748, 160, 640, 40, 504, 60); ctx.stroke();
       ctx.restore();
+      /* the "done" box ends at y=310 (266+44) — keep the caption below that, not through it */
       A.txt(ctx, 'A large neural network with proper regularisation is almost always at least as good',
-        40, 306, { size: 12, fill: P.faint });
+        40, 332, { size: 12, fill: P.faint });
       A.txt(ctx, 'as a smaller one — so “too big” is a compute problem, not an accuracy problem.',
-        40, 322, { size: 12, fill: P.faint });
+        40, 348, { size: 12, fill: P.faint });
     }
     A.autoplay(root, c, render);
   });
@@ -596,7 +597,8 @@
         A.dot(ctx, x, y, on ? 15 : 11, on ? P.a : P.line);
         A.dot(ctx, x, y, on ? 9 : 6, P.panel);
         var lx = cx + Math.cos(s.a) * (R + 40), ly = cy + Math.sin(s.a) * (R + 40);
-        var al = Math.abs(Math.cos(s.a)) < .3 ? 'center' : (Math.cos(s.a) > 0 ? 'left' : 'right');
+        /* a left-aligned label on the right of the ring would run into the side panel at x=500 */
+        var al = Math.abs(Math.cos(s.a)) < .3 ? 'center' : (Math.cos(s.a) > 0 ? 'right' : 'left');
         A.txt(ctx, s.t, lx, ly, { align: al, size: 13, w: 700, fill: on ? P.a : P.soft });
         A.txt(ctx, s.s, lx, ly + 16, { align: al, size: 11, fill: P.faint });
       });
@@ -854,7 +856,7 @@
      16. Confusion matrix, precision and recall
      ============================================================ */
   A.def('confusion', function (root) {
-    var c = A.canvas(root, 760, 340), ctx = c.ctx;
+    var c = A.canvas(root, 760, 360), ctx = c.ctx;
     var th = 0.5;
     var bar = A.ctrls(root), ro = A.readout(root);
     A.slider(bar, { label: 'threshold', min: .02, max: .98, step: .01, value: th,
@@ -898,11 +900,12 @@
         A.txt(ctx, (m[1] * 100).toFixed(1) + '%', mx + 190, y + 36, { align: 'right', size: 12, mono: true, w: 700, fill: P.ink });
         A.txt(ctx, m[2], mx, y + 36, { size: 10.5, fill: P.faint });
       });
-      A.txt(ctx, 'Only 5% of these 400 patients are actually ill. A model that always says "healthy"', 40, 268,
+      /* the accuracy bar (the 4th metric row) ends at y=264 — keep clear below it */
+      A.txt(ctx, 'Only 5% of these 400 patients are actually ill. A model that always says "healthy"', 40, 284,
         { size: 12, fill: P.soft });
       A.txt(ctx, 'scores 95% accuracy — and catches nobody. Precision and recall refuse to be fooled like that.',
-        40, 286, { size: 12, w: 700, fill: P.a });
-      A.txt(ctx, 'threshold = ' + th.toFixed(2), 40, 320, { size: 13, mono: true, w: 700, fill: P.soft });
+        40, 302, { size: 12, w: 700, fill: P.a });
+      A.txt(ctx, 'threshold = ' + th.toFixed(2), 40, 336, { size: 13, mono: true, w: 700, fill: P.soft });
       ro.set('Raise the threshold → fewer flags → <b>precision up, recall down</b> (you only shout when very sure).' +
         '\nLower it → more flags → <b>recall up, precision down</b> (you catch more, and cry wolf more).');
     }

@@ -80,10 +80,12 @@
             return R[i][j] >= 4 ? 3 : 0;
           }, size: 15 });
       A.txt(ctx, 'ratings 0–5, and a lot of question marks', 250, 44, { size: 13, w: 700, fill: P.soft });
-      A.txt(ctx, 'Would ' + USERS[hot[1]] + ' like “' + MOVIES[hot[0]] + '”?', 40, 130,
-        { size: 13.5, w: 700, fill: P.a });
-      A.txt(ctx, 'That single question is the', 40, 158, { size: 12, fill: P.faint });
-      A.txt(ctx, 'whole of recommender systems.', 40, 176, { size: 12, fill: P.faint });
+      var mTitle = MOVIES[hot[0]];
+      if (mTitle.length > 16) mTitle = mTitle.slice(0, 15) + '…';
+      A.txt(ctx, 'Would ' + USERS[hot[1]] + ' like', 40, 122, { size: 13.5, w: 700, fill: P.a });
+      A.txt(ctx, '“' + mTitle + '”?', 40, 142, { size: 13.5, w: 700, fill: P.a });
+      A.txt(ctx, 'That single question is the', 40, 172, { size: 12, fill: P.faint });
+      A.txt(ctx, 'whole of recommender systems.', 40, 190, { size: 12, fill: P.faint });
       A.txt(ctx, 'n_u = ' + USERS.length + ' users', 40, 210, { size: 12, mono: true, fill: P.soft });
       A.txt(ctx, 'n_m = ' + MOVIES.length + ' movies', 40, 228, { size: 12, mono: true, fill: P.soft });
       A.txt(ctx, 'r(i,j) = 1 if rated', 40, 252, { size: 12, mono: true, fill: P.soft });
@@ -270,7 +272,7 @@
      4. Binary labels
      ============================================================ */
   A.def('binarylabels', function (root) {
-    var c = A.canvas(root, 760, 320), ctx = c.ctx;
+    var c = A.canvas(root, 760, 450), ctx = c.ctx;
     var B = [[1, 1, 0, 0], [1, null, null, 0], [null, 1, 0, null], [0, 0, 1, 1], [0, 0, 1, null]];
     var ro = A.readout(root);
     function render(t) {
@@ -286,17 +288,17 @@
       A.matrix(ctx, x0, y0, 5, 4, cw, ch, P,
         function (i, j) { return B[i][j] === null ? '?' : (B[i][j] ? '1' : '0'); },
         { state: function (i, j) { return B[i][j] === null ? 4 : B[i][j] ? 3 : 0; }, size: 15 });
-      A.txt(ctx, '1 = engaged (clicked, watched, bought, liked)', 40, 108, { size: 11.5, fill: P.g });
-      A.txt(ctx, '0 = shown it and did NOT engage', 40, 128, { size: 11.5, fill: P.soft });
-      A.txt(ctx, '? = never shown it at all', 40, 148, { size: 11.5, fill: P.r });
-      A.txt(ctx, 'the “0 vs ?” distinction', 40, 182, { size: 12, w: 700, fill: P.a });
-      A.txt(ctx, 'matters enormously and is', 40, 200, { size: 11.5, fill: P.faint });
-      A.txt(ctx, 'the source of most bugs.', 40, 218, { size: 11.5, fill: P.faint });
+      /* the matrix spans y0=70 .. y0+5*ch=270 — every line below sits clear of it */
+      A.txt(ctx, '1 = engaged (clicked, watched, bought, liked)', 40, 288, { size: 11.5, fill: P.g });
+      A.txt(ctx, '0 = shown it and did NOT engage', 40, 306, { size: 11.5, fill: P.soft });
+      A.txt(ctx, '? = never shown it at all', 40, 324, { size: 11.5, fill: P.r });
+      A.txt(ctx, 'the “0 vs ?” distinction matters enormously and is the source of most bugs.', 40, 350,
+        { size: 12, w: 700, fill: P.a });
       A.txt(ctx, 'Same algorithm, two swaps — exactly the jump from linear to logistic regression in Course 1.',
-        40, 264, { size: 12.5, w: 700, fill: P.soft });
-      A.txt(ctx, 'prediction:  w·x + b   →   g(w·x + b) = 1 / (1 + e^−(w·x+b))', 40, 288,
+        40, 382, { size: 12.5, w: 700, fill: P.soft });
+      A.txt(ctx, 'prediction:  w·x + b   →   g(w·x + b) = 1 / (1 + e^−(w·x+b))', 40, 406,
         { size: 12, mono: true, fill: P.a });
-      A.txt(ctx, 'loss:  squared error   →   binary cross-entropy', 40, 308, { size: 12, mono: true, fill: P.a });
+      A.txt(ctx, 'loss:  squared error   →   binary cross-entropy', 40, 428, { size: 12, mono: true, fill: P.a });
       ro.set('L(f, y) = −y·log(f) − (1−y)·log(1−f)   where f = g(w<sup>(j)</sup>·x<sup>(i)</sup> + b<sup>(j)</sup>)' +
         '\nThis is what real systems actually use: almost nobody has star ratings, and everybody has clicks.');
     }

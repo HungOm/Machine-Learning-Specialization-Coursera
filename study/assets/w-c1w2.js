@@ -57,7 +57,7 @@
      2. Vectorisation
      ============================================================ */
   A.def('vectorization', function (root) {
-    var c = A.canvas(root, 760, 330), ctx = c.ctx;
+    var c = A.canvas(root, 760, 400), ctx = c.ctx;
     var ro = A.readout(root);
     function render(t) {
       var P = A.pal(); c.clear(P.panel); t = t || 0;
@@ -98,11 +98,12 @@
         });
         A.txt(ctx, wy[2], 706, y + 72, { align: 'right', size: 9.5, fill: P.faint });
       });
+      /* the three boxes end at y=316 (52 + 2*92 + 80); keep all commentary below that */
       A.txt(ctx, 'All three compute exactly the same number. Only the third is worth writing.',
-        40, 264, { size: 12.5, w: 700, fill: P.soft });
+        40, 344, { size: 12.5, w: 700, fill: P.soft });
       A.txt(ctx, 'NumPy indexes from 0, but the maths indexes from 1. w₁ in a formula is w[0] in code —',
-        40, 292, { size: 11.5, fill: P.faint });
-      A.txt(ctx, 'a permanent, low-grade source of off-by-one bugs. Be deliberate about it.', 40, 310,
+        40, 368, { size: 11.5, fill: P.faint });
+      A.txt(ctx, 'a permanent, low-grade source of off-by-one bugs. Be deliberate about it.', 40, 386,
         { size: 11.5, fill: P.faint });
       ro.set('f<sub>w,b</sub>(x) = <b><span class="ov vec">w</span> · <span class="ov vec">x</span> + b</b>  =  np.dot(w, x) + b' +
         '\nThe dot product multiplies matching entries and adds them all up — exactly the weighted sum ' +

@@ -128,7 +128,7 @@
      2. The two decisions in learning a tree
      ============================================================ */
   A.def('treeprocess', function (root) {
-    var c = A.canvas(root, 760, 320), ctx = c.ctx;
+    var c = A.canvas(root, 760, 340), ctx = c.ctx;
     var stops = [
       ['a node is 100% one class', 'nothing left to separate — make it a leaf'],
       ['splitting would exceed max depth', 'keeps the tree small, and small trees generalise'],
@@ -161,7 +161,7 @@
       });
       A.txt(ctx, 'A bigger tree always fits the training data better — and a tree deep enough to isolate every',
         40, 24, { size: 11.5, fill: P.faint });
-      A.txt(ctx, 'example is the purest possible overfit.', 40, 314, { size: 11.5, w: 700, fill: P.soft });
+      A.txt(ctx, 'example is the purest possible overfit.', 40, 334, { size: 11.5, w: 700, fill: P.soft });
     }
     A.autoplay(root, c, render);
   });
@@ -316,8 +316,9 @@
         'every group is now 100% one class — stop',
         'done. the recursion ended because there was nothing left to separate'][step];
       A.txt(ctx, msg, 40, 320, { size: 12.5, w: 700, fill: P.a });
+      /* the root box's top edge is at y=30 (56-26) — keep this caption clear above it */
       A.txt(ctx, 'recursion: the algorithm for a branch is the SAME algorithm as for the whole tree, on less data',
-        40, 30, { size: 12, fill: P.faint });
+        40, 16, { size: 12, fill: P.faint });
       ro.set('build(node):\n  if stopping criterion met → make a leaf, predict the majority class\n' +
         '  else → pick the feature with the highest information gain,\n' +
         '         split the examples, and call <b>build()</b> on each half');

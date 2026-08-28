@@ -240,7 +240,8 @@
           }
           if (on) A.line(ctx, cx - 68, cy + 34, cx + 68, cy + 34, P.a, 1.4);
         }
-        A.txt(ctx, pn.e, x + 12, 214, { size: 9.5, fill: P.faint });
+        /* the bulleted list below is the only rendering — a leftover single-line version of
+           the same string used to be drawn here too and overflowed across panel boundaries */
         var words = pn.e.split(' · ');
         words.forEach(function (wd, k) {
           A.txt(ctx, '· ' + wd, x + 12, 206 + k * 15, { size: 9.5, fill: on ? P.soft : P.faint });

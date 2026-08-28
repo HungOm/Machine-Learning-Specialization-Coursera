@@ -668,7 +668,7 @@
      14. pandas → NumPy
      ============================================================ */
   A.def('fpandasnumpy', function (root) {
-    var c = A.canvas(root, 760, 320), ctx = c.ctx;
+    var c = A.canvas(root, 760, 360), ctx = c.ctx;
     var ro = A.readout(root);
     function render(t) {
       var P = A.pal(); c.clear(P.panel); t = t || 0;
@@ -691,15 +691,16 @@
       A.matrix(ctx, 430, 96, 3, 3, 74, 42, P, function (i, j) { return String(R[i][j]); },
         { state: function () { return 3; }, size: 12, label: 'X   (a NumPy array)' });
       ctx.restore();
-      A.txt(ctx, 'the column names are GONE', 430 + 110, 186, { align: 'center', size: 11, fill: P.r });
+      /* the array matrix spans y=96..222 — this callout used to sit ON TOP of its last row */
+      A.txt(ctx, 'the column names are GONE', 430 + 110, 240, { align: 'center', size: 11, fill: P.r });
       A.txt(ctx, 'Load and clean with pandas. Do the maths with NumPy. Cross over once, deliberately.',
-        40, 226, { size: 12.5, w: 700, fill: P.soft });
-      A.txt(ctx, 'X = df[[\'size\', \'beds\']].to_numpy()      # the features', 40, 256,
+        40, 262, { size: 12.5, w: 700, fill: P.soft });
+      A.txt(ctx, 'X = df[[\'size\', \'beds\']].to_numpy()      # the features', 40, 288,
         { size: 12.5, mono: true, w: 700, fill: P.g });
-      A.txt(ctx, 'y = df[\'price\'].to_numpy()                # the target', 40, 278,
+      A.txt(ctx, 'y = df[\'price\'].to_numpy()                # the target', 40, 310,
         { size: 12.5, mono: true, w: 700, fill: P.g });
       A.txt(ctx, 'Once converted you lose the names — so select the columns you want BEFORE converting.',
-        40, 308, { size: 12, w: 700, fill: P.a });
+        40, 340, { size: 12, w: 700, fill: P.a });
       ro.set('<code>.to_numpy()</code> is the modern spelling; <code>.values</code> is the old one you ' +
         'will see in older notebooks. Same thing.' +
         '\nA common shape trap: <code>df[\'price\']</code> gives shape <code>(m,)</code> while ' +
