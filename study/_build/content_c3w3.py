@@ -695,7 +695,7 @@ Average over many.</p>""")
 
 # ============================================================ 10
 L.append(dict(
-    slug="10-continuous-state-spaces", title="Continuous state spaces", mins=8, tag="core",
+    slug="10-continuous-state-spaces", title="Continuous state spaces", mins=13, tag="core",
     lede="Six squares was a teaching example. Real problems have states made of real numbers — and a "
          "lookup table stops being possible.",
     body=(
@@ -735,6 +735,32 @@ is 100¹² — more cells than atoms in a building.</p>
 <p>This is the <b>curse of dimensionality</b>, and it is why function approximation is not a convenience
 but a necessity. A neural network also <em>generalises</em>: it learns that states near each other tend to
 have similar Q values, which a table can never do.</p>"""
+
+        + h2("🧮", "Why you cannot just chop it into bins")
+        + """<p>The Mars rover had 6 states, so <var>Q</var> fitted in a 6 × 2 table. The lunar
+lander’s state is 8 continuous numbers. The obvious repair — divide each into bins — runs into this:</p>"""
+        + table(["bins per dimension", "states in the table (bins⁸)", ""],
+                [["3", "6,561", "far too coarse to fly with"],
+                 ["10", "<b>100,000,000</b>", "100 million rows"],
+                 ["20", "<b>25,600,000,000</b>", "25.6 billion"]])
+        + """<p>Ten bins per axis is already crude — it cannot tell a 5° tilt from a 30° one — and it
+already needs a hundred million table entries. Worse than the storage: each entry would have to be
+<em>visited</em>, repeatedly, to learn its value. The lander would have to experience every one of
+those hundred million situations many times over.</p>
+<p>This is the curse of dimensionality, and the exponent is what kills it. Adding one more sensor
+does not add rows, it multiplies them by 10.</p>
+<p>A neural network never enumerates states. It takes the 8 numbers as input and outputs
+<var>Q</var>, so it must <em>generalise</em> — and generalising is exactly what a table cannot do.
+Two nearly identical states are unrelated rows in a table and near-identical inputs to a network.</p>"""
+        + explain("""<p>A table has one independent number per state, which sounds like an advantage —
+it can represent absolutely any Q function. <b>Why is that flexibility fatal here?</b></p>""",
+                  """<p>Because every one of those numbers must be learned from experience of that
+exact state, and nothing learned about one row ever helps another. A table has no notion that
+“tilted 10° at 3 m/s” resembles “tilted 11° at 3 m/s” — they are unrelated cells, so the lesson must
+be paid for twice. Unlimited flexibility with no sharing means the data required grows as fast as
+the table does. The network’s inability to represent arbitrary functions is precisely what forces it
+to assume nearby states behave alike, and that assumption is true here, so it is worth far more than
+the flexibility it costs.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -839,7 +865,7 @@ lesson applies.</p>""")
 
 # ============================================================ 12
 L.append(dict(
-    slug="12-learning-the-state-value-function", title="Learning the state-value function", mins=12, tag="core",
+    slug="12-learning-the-state-value-function", title="Learning the state-value function", mins=16, tag="core",
     lede="The algorithm itself. Turn reinforcement learning into supervised learning by manufacturing your "
          "own training targets — from the network you are training.",
     body=(
@@ -894,6 +920,36 @@ and discarded.</li>
 <p>Removing the replay buffer from DQN was tested in the original paper, and performance collapses. It is
 not an optimisation — it is load-bearing.</p>"""
 
+        + h2("🧮", "The network, and the training set it invents")
+        + """<p>The assignment’s <var>Q</var>-network, counted:</p>"""
+        + table(["Layer", "shape", "parameters"],
+                [["Input", "8 (the state)", "—"],
+                 ["Dense(64, relu)", "(8, 64)", "8 × 64 + 64 = 576"],
+                 ["Dense(64, relu)", "(64, 64)", "64 × 64 + 64 = 4,160"],
+                 ["Dense(4, linear)", "(64, 4)", "64 × 4 + 4 = 260"],
+                 ["", "", "<b>4,996 total</b>"]])
+        + """<p>Under five thousand parameters — smaller than the Week 1 digit classifier. The
+difficulty in reinforcement learning has never been the network.</p>
+<p>It is where the training data comes from. There is no labelled set; the agent manufactures one by
+flying badly. Each experience is a tuple (s, a, R, s′), and the target is built from Bellman:</p>"""
+        + eq("""<var>y</var> <span class="op">=</span> <var>R</var>
+<span class="op">+</span> γ <span class="op">·</span> max<sub>a′</sub>
+<var>Q̂</var>(<var>s</var>′, <var>a</var>′)""", "the label, computed from the network's own output")
+        + """<p>Then it is ordinary supervised learning: input <var>s</var>, target <var>y</var>,
+mean squared error. Except for one thing that has no counterpart anywhere else in this course —
+<b>the labels are produced by the model being trained</b>. Improve <var>Q</var> and every target
+changes, which is why the algorithm needs the frozen target network and the replay buffer to stay
+stable at all.</p>"""
+        + explain("""<p>Training a model on labels generated by that same model sounds circular — it
+could confidently agree with itself about anything. <b>What stops it?</b></p>""",
+                  """<p>The reward. Look at the target: <var>y</var> = <var>R</var> + γ·max
+<var>Q̂</var>. Only the second term is the model’s own opinion; the first is a fact the environment
+supplied. At a terminal state there is no second term at all, so those targets are pure reality —
+and every step backwards from a terminal state carries a little of that reality with it, discounted
+by γ. The circularity is real but it is anchored, and the anchor propagates outward from the states
+where the truth is known. Remove the reward and the whole thing does collapse into
+self-agreement.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Expecting monotonic improvement.</b> RL training curves are famously spiky. The
 agent gets better, then suddenly worse, then better. This is normal, and it is why people average over
@@ -931,7 +987,7 @@ forgets what it learned earlier. Sample randomly from the buffer.</p>""")
 # ============================================================ 13
 L.append(dict(
     slug="13-improved-architecture", title="Algorithm refinement: improved neural network architecture",
-    mins=8, tag="core",
+    mins=13, tag="core",
     lede="Move the actions from the input side to the output side. Four times less compute, for free.",
     body=(
         pretest("""<p>The first architecture outputs Q for one action, so four actions need four forward passes. <b>Guess the fix.</b></p>""",
@@ -971,6 +1027,37 @@ q_network = Sequential([
         + warn("""<p>The output activation is <b>linear</b>, not sigmoid or softmax. Q values are unbounded
 real numbers — they can be −200 or +140. Squashing them into 0…1 would destroy the information the Bellman
 equation depends on.</p>""")
+
+        + h2("🧮", "Counting the forward passes you save")
+        + """<p>The naive design takes the state <em>and</em> the action as input and returns one
+number. The improved design takes only the state and returns one number per action:</p>"""
+        + table(["", "naive: Q(s, a) → 1 output", "improved: Q(s) → 4 outputs"],
+                [["inputs", "8 state + 4 one-hot action = 12", "8"],
+                 ["outputs", "1", "4"],
+                 ["passes to evaluate one action", "1", "1 (read one output)"],
+                 ["passes to find max<sub>a′</sub> Q(s′, a′)", "<b>4</b>", "<b>1</b>"]])
+        + """<p>A factor of four, and it is not a micro-optimisation, because that max is not
+occasional. It appears in <em>every single target</em>:
+<var>y</var> = <var>R</var> + γ·max<sub>a′</sub> <var>Q̂</var>(<var>s</var>′, <var>a</var>′). Train
+on a mini-batch of 64 experiences and the naive version needs 256 forward passes to build 64 targets;
+the improved version needs 64.</p>
+<p>In code the change is one number — the width of the final layer — and the shape of the input:</p>"""
+        + code("""
+Dense(units=num_actions, activation='linear')     # 4 outputs, not 1
+
+max_qsa = tf.reduce_max(target_q_network(next_states), axis=-1)   # one call, all actions
+""")
+        + """<p><code>reduce_max</code> along the last axis is the whole “try every action” step,
+vectorised away exactly as in Course 2 Week 1.</p>"""
+        + explain("""<p>Both designs compute the same <var>Q</var> values. <b>Why does the improved
+one also tend to <em>learn</em> better, not merely faster?</b></p>""",
+                  """<p>Because the four outputs share every hidden layer. Whatever the network
+figures out about reading a state — “this tilt plus this velocity is dangerous” — is computed once
+and used by all four action-values, so evidence about one action improves the representation used to
+judge the others. In the naive design the action is just another input feature, and the network has
+to rediscover the same state-reading logic separately for each action’s corner of the input space.
+Shared structure means shared learning, which is the same argument that makes multi-output networks
+preferable to N separate binary classifiers.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Using softmax on the output.</b> These are values, not probabilities. They do not

@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.6 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.6 · 12 min read</span></p>
 <h1><span class="secno">9.6</span>Using one-hot encoding of categorical features</h1>
 <p class="lede">What to do when a feature has three values instead of two — and why this trick matters for neural networks too.</p>
 <div class="bookrail" title="Lesson 122 of 172 in the book"><i style="width:71%"></i></div>
@@ -241,7 +241,21 @@ pd.get_dummies(df, columns=[<span class="tok-s">&#x27;ear&#x27;</span>], dtype=i
 <span class="tok-c"># 0           0         0           1</span>
 <span class="tok-c"># 1           1         0           0</span>
 <span class="tok-c"># 2           0         1           0</span>
-<span class="tok-c"># 3           0         0           1</span></code></pre><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Ordinal encoding unordered categories.</b> Mapping {red, green, blue} → {0,1,2}
+<span class="tok-c"># 3           0         0           1</span></code></pre><h2><span class="ico">🧮</span>Encoded, and scored</h2><p>Suppose ear shape has three values, not two: pointy, floppy, oval. One-hot turns one
+column into three 0/1 columns, exactly one of which is 1 per row. Score each:</p><table class="data"><thead><tr><th>Encoded feature</th><th>left branch (=1)</th><th>right branch (=0)</th><th>gain</th></tr></thead><tbody><tr><td>is_pointy</td><td>4 of 5 cats</td><td>1 of 5 cats</td><td><b>0.2781</b></td></tr><tr><td>is_floppy</td><td>1 of 3 cats</td><td>4 of 7 cats</td><td>0.0349</td></tr><tr><td>is_oval</td><td><b>0 of 2 cats</b> — pure</td><td>5 of 8 cats</td><td>0.2365</td></tr></tbody></table><p>The tree now has three ordinary binary questions to choose from and picks
+<code>is_pointy</code>. Nothing else about the algorithm changes — which is the entire point of
+one-hot encoding.</p><div class="callout warn"><span class="tag">Watch out</span><p>An honest wrinkle. Splitting three ways <em>at once</em> — one branch per value —
+scores a gain of <b>0.3635</b>, higher than any of the three binary splits. Multi-way splits almost
+always score higher, because more branches means smaller, purer groups. That is not the tree finding
+something better; it is the bias towards many-valued features. Keeping every split binary is what
+stops that bias from running away, and a two-level binary tree can reach the same partition
+anyway.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>One-hot on a 3-value feature produces three columns, but you could identify
+all three values with two columns (00, 01, 10). <b>Why use the redundant third?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because with two columns the tree can only ask “is bit 1 set?” — a question
+about an arbitrary encoding, not about the data. “Is it oval?” would no longer be a single available
+split; it would have to be reconstructed from a combination the tree may never find. The redundancy
+is the point: one-hot guarantees every <em>category</em> gets its own directly askable question, and
+for trees that matters more than the wasted column. (In linear models, where the redundancy causes
+collinearity, you do drop one.)</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Ordinal encoding unordered categories.</b> Mapping {red, green, blue} → {0,1,2}
 tells the model blue is bigger than red. For genuinely ordered categories (small &lt; medium &lt; large)
 ordinal encoding is correct and better.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>High-cardinality explosion.</b> A postcode feature with 10,000 values becomes
 10,000 columns. Use target encoding, hashing, or embeddings instead.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Fitting the encoder on train and test together.</b> If a category appears only in

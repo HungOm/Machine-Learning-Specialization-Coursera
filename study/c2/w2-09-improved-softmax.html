@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.9 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.9 · 15 min read</span></p>
 <h1><span class="secno">7.9</span>Improved implementation of softmax</h1>
 <p class="lede">Why `from_logits=True` exists. A short lesson about floating-point arithmetic that will save you from a class of bug that is invisible until it isn’t.</p>
 <div class="bookrail" title="Lesson 93 of 172 in the book"><i style="width:54%"></i></div>
@@ -261,7 +261,25 @@ negative or above 1. You must apply <code>tf.nn.softmax()</code> yourself before
 </ul>
 <p>The standard trick, which the framework applies for you: subtract the largest z before exponentiating.
 From Lesson 7 you know softmax is unchanged by adding a constant to every z, so this is free —
-<code>exp(z − max(z))</code> has a largest term of exactly <code>exp(0) = 1</code> and can never overflow.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Setting <code>from_logits=True</code> while leaving <code>activation='softmax'</code>.</b>
+<code>exp(z − max(z))</code> has a largest term of exactly <code>exp(0) = 1</code> and can never overflow.</p><h2><span class="ico">🧮</span>What actually goes wrong — run it and see</h2><p>Softmax on a well-behaved vector is fine:</p><pre><code>z = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>., <span class="tok-n">2</span>., <span class="tok-n">3</span>., <span class="tok-n">4</span>.])
+<span class="gterm" data-g="npexp-api">np.exp</span>(z) / np.exp(z).sum()        <span class="tok-c"># -&gt; [0.0321 0.0871 0.2369 0.6439]</span></code></pre><p>Now add 1000 to every score. Mathematically <b>nothing should change</b> — softmax
+only cares about differences between scores, and every difference is identical. In floating point:</p><pre><code>z = np.array([<span class="tok-n">1001</span>., <span class="tok-n">1002</span>., <span class="tok-n">1003</span>., <span class="tok-n">1004</span>.])
+np.exp(z) / np.exp(z).sum()        <span class="tok-c"># -&gt; [nan nan nan nan]     RuntimeWarning: overflow</span></code></pre><p>Every answer destroyed. <code>e¹⁰⁰⁴</code> is about 10⁴³⁶, and a 64-bit float stops at
+roughly 10³⁰⁸, so <code>np.exp</code> returns <code>inf</code> and <code>inf/inf</code> is
+<code>nan</code>. Subtract the largest score first and the identical formula returns
+<b>[0.0321, 0.0871, 0.2369, 0.6439]</b> — correct to the last digit.</p>
+<p>The second failure is quieter. The loss needs log(<var>a</var>), and if <var>a</var> has already
+been rounded to 1e−12 on its way through the exponential, then log of it is −27.63 — a number
+computed from almost no surviving precision. Passing <code>from_logits=True</code> lets TensorFlow
+keep the raw scores and rearrange log(e<sup>z</sup>/Σe<sup>z</sup>) algebraically before evaluating
+anything, so neither failure can occur.</p><div class="callout warn"><span class="tag">Watch out</span><p>The cost of the fix: <code>model.predict</code> now returns raw scores, not
+probabilities. They can be negative and will not sum to 1. Call
+<code>tf.nn.softmax(...)</code> yourself when you want probabilities.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>Subtracting the maximum score from every score changes the answer not at all.
+<b>Why is it exactly cancelling?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Write it out. Each numerator becomes e<sup>z−c</sup> = e<sup>z</sup>·e<sup>−c</sup>,
+and the denominator becomes Σe<sup>z</sup>·e<sup>−c</sup> = e<sup>−c</sup>Σe<sup>z</sup>. The
+factor e<sup>−c</sup> appears once above and once below, so it cancels — the ratio is untouched.
+Choosing <var>c</var> as the maximum simply guarantees the largest exponent is e⁰ = 1, so nothing
+can overflow.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Setting <code>from_logits=True</code> while leaving <code>activation='softmax'</code>.</b>
 Now softmax is applied twice. Training will “work” and the model will be quietly wrong. Change both or
 neither.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Reporting logits as confidences.</b> A logit of 8.2 is not 82%. Run it through
 softmax first, or your dashboard will lie to your users.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c22-09-improved-softmax#1"><summary>Why is log(1 + e^−z) better than −log(sigmoid(z)) when they are algebraically identical?</summary><div class="a"><p>Because the first never builds the intermediate value that rounds to exactly 1 or 0. Same maths, fewer chances to round.</p></div></details><details class="q" data-qid="c22-09-improved-softmax#2"><summary>With from_logits=True, what does model.predict return and how do you get probabilities?</summary><div class="a"><p>Raw logits. Apply <code>tf.nn.softmax(logits)</code> (or <code>tf.nn.sigmoid</code> for binary) to convert.</p></div></details><details class="q" data-qid="c22-09-improved-softmax#3"><summary>Softmax subtracts max(z) before exponentiating. Why is that safe?</summary><div class="a"><p>Because softmax depends only on differences between the z’s. Subtracting the same constant from all of them leaves every probability unchanged, while making the largest exponent 0.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://cs231n.github.io/linear-classify/#softmax" target="_blank" rel="noopener">CS231n — “Practical issues: numeric stability”</a><span class="d">The max-subtraction trick, written out with numbers.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html" target="_blank" rel="noopener">Goldberg (1991) — What Every Computer Scientist Should Know About Floating-Point Arithmetic</a><span class="d">The canonical reference. Long, but sections 1–2 explain every bug in this lesson.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://www.tensorflow.org/api_docs/python/tf/nn/softmax" target="_blank" rel="noopener">tf.nn.softmax</a><span class="d">What you call on logits at prediction time.</span></span></li></ul>

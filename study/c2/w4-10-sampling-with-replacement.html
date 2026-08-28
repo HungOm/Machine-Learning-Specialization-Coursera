@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.10 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.10 · 13 min read</span></p>
 <h1><span class="secno">9.10</span>Sampling with replacement</h1>
 <p class="lede">The trick that manufactures many different training sets out of the one you have.</p>
 <div class="bookrail" title="Lesson 126 of 172 in the book"><i style="width:73%"></i></div>
@@ -245,7 +245,22 @@ order — and identical trees.</p></div><h2><span class="ico">💻</span>In code
 trees = []
 <span class="tok-k">for</span> b <span class="tok-k">in</span> range(<span class="tok-n">100</span>):
     Xb, yb = bootstrap(X, y)
-    trees.append(train_tree(Xb, yb))</code></pre><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b><code>replace=False</code>.</b> You get a permutation of the original data, every
+    trees.append(train_tree(Xb, yb))</code></pre><h2><span class="ico">🧮</span>How much of the data does each tree actually see?</h2><p>Draw 10 examples with replacement from a set of 10. One such draw:</p><pre><code>[<span class="tok-n">8</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">1</span>, <span class="tok-n">8</span>, <span class="tok-n">8</span>, <span class="tok-n">5</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>]        <span class="tok-c"># 10 draws</span>
+unique -&gt; <span class="tok-n">5</span> of the <span class="tok-n">10</span> original examples
+<span class="tok-c"># example 8 appears 3 times, example 0 appears 3 times, and 3, 4, 6, 7, 9 never appear</span></code></pre><p>Half the data set is missing from that tree, and two examples are triple-weighted.
+That is not a flaw — it is the mechanism. Every tree gets a different distortion of the data, so
+every tree is a different model, and different models are what makes averaging worth anything.</p>
+<p>How much is missing on average? The chance a particular example survives one draw is
+(1 − 1/<var>m</var>), and there are <var>m</var> draws:</p><table class="data"><thead><tr><th>m</th><th>P(a given example is never drawn) = (1 − 1/m)<sup>m</sup></th></tr></thead><tbody><tr><td>10</td><td>0.3487</td></tr><tr><td>100</td><td>0.3660</td></tr><tr><td>1,000</td><td>0.3677</td></tr><tr><td>10,000</td><td>0.3679</td></tr><tr><td>→ ∞</td><td><b>1/e = 0.3679</b></td></tr></tbody></table><p>So for any reasonably sized data set, each bagged tree trains on about <b>63.2%</b>
+of the unique examples and never sees the other 36.8%. Those left-out examples have a name —
+<em>out-of-bag</em> — and because each is unseen by roughly a third of the trees, they provide a
+free validation estimate with no separate holdout set at all.</p><div class="explain"><span class="tag">Say it out loud</span><p>The fraction left out converges to 1/e — the same constant as in compound
+interest and in <var>e</var><sup><var>x</var></sup>. <b>Why does it appear here?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because (1 − 1/<var>m</var>)<sup><var>m</var></sup> <em>is</em> the definition
+of 1/<var>e</var> in the limit — the same expression that defines <var>e</var> as
+(1 + 1/<var>m</var>)<sup><var>m</var></sup>, with the sign flipped. Each of the <var>m</var> draws
+independently spares an example with probability (1 − 1/<var>m</var>), and multiplying <var>m</var>
+of those together is exactly that limit. It is not a coincidence about trees; it is what happens
+whenever you take <var>m</var> independent chances each of size 1/<var>m</var>.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b><code>replace=False</code>.</b> You get a permutation of the original data, every
 tree is identical, and the ensemble does nothing.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Sampling fewer than m.</b> Allowed (“subagging”), and it changes the bias/variance
 balance. The standard method draws exactly m.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c24-10-sampling-with-replacement#1"><summary>You bootstrap from 1000 examples. Roughly how many distinct examples are in one bag?</summary><div class="a"><p>About <b>632</b> — 63.2%. The other ~368 are duplicates of those already drawn.</p></div></details><details class="q" data-qid="c24-10-sampling-with-replacement#2"><summary>What are out-of-bag examples good for?</summary><div class="a"><p>Free validation. Each tree can be scored on the examples it never saw, giving an out-of-bag error estimate with no held-out set at all.</p></div></details><details class="q" data-qid="c24-10-sampling-with-replacement#3"><summary>Why must the bag be the same size as the original?</summary><div class="a"><p>So each tree sees a comparable amount of data. Smaller bags mean weaker trees; the standard bootstrap keeps size m and gets its variety purely from the duplication.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://projecteuclid.org/journals/annals-of-statistics/volume-7/issue-1/Bootstrap-Methods-Another-Look-at-the-Jackknife/10.1214/aos/1176344552.full" target="_blank" rel="noopener">Efron (1979) — Bootstrap Methods: Another Look at the Jackknife</a><span class="d">The original bootstrap paper. A statistical idea that predates its use in ML by seventeen years.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/ensemble.html#bagging" target="_blank" rel="noopener">scikit-learn — Bagging meta-estimator</a><span class="d"><code>BaggingClassifier</code> wraps <em>any</em> model, not just trees.</span></span></li></ul>
 <nav class="pager">

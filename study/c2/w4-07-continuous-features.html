@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.7 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.7 · 14 min read</span></p>
 <h1><span class="secno">9.7</span>Continuous valued features</h1>
 <p class="lede">Weight in pounds is not a category. The fix: turn “which value?” into “is it above a threshold?” and try every threshold.</p>
 <div class="bookrail" title="Lesson 123 of 172 in the book"><i style="width:72%"></i></div>
@@ -241,7 +241,22 @@ over neural networks, and one of the reasons they are so easy to use on messy re
 <li>Then compare that score against every other feature, as usual.</li>
 </ol>
 <p>A continuous feature therefore costs more to evaluate (m−1 gain calculations instead of 1) but is
-otherwise treated identically. Nothing about the rest of the algorithm changes.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Trying every real number.</b> Pointless — the gain only changes when the threshold
+otherwise treated identically. Nothing about the rest of the algorithm changes.</p><h2><span class="ico">🧮</span>The threshold sweep, in full</h2><p>Give the same ten animals a weight in pounds and the tree cannot ask “is weight = 1?”
+— it has to find a cut. So it sorts the values, tries the midpoint between each neighbouring pair,
+and scores every one:</p><table class="data"><thead><tr><th>threshold</th><th>left (≤)</th><th>right (>)</th><th>gain</th></tr></thead><tbody><tr><td>w ≤ 7.40</td><td>1 of 1 cats</td><td>4 of 9 cats</td><td>0.1080</td></tr><tr><td>w ≤ 8.00</td><td>2 of 2 cats</td><td>3 of 8 cats</td><td>0.2365</td></tr><tr><td>w ≤ 8.60</td><td>3 of 3 cats</td><td>2 of 7 cats</td><td>0.3958</td></tr><tr><td><b>w ≤ 9.00</b></td><td><b>4 of 4 cats</b></td><td>1 of 6 cats</td><td><b>0.6100</b> ← best</td></tr><tr><td>w ≤ 9.70</td><td>4 of 5 cats</td><td>1 of 5 cats</td><td>0.2781</td></tr><tr><td>w ≤ 10.60</td><td>5 of 6 cats</td><td><b>0 of 4 cats</b></td><td><b>0.6100</b> ← ties</td></tr><tr><td>w ≤ 13.00</td><td>5 of 7 cats</td><td>0 of 3 cats</td><td>0.3958</td></tr><tr><td>w ≤ 16.50</td><td>5 of 8 cats</td><td>0 of 2 cats</td><td>0.2365</td></tr><tr><td>w ≤ 19.00</td><td>5 of 9 cats</td><td>0 of 1 cats</td><td>0.1080</td></tr></tbody></table><p>Two things worth noticing. First, the winning threshold scores <b>0.6100</b> — more
+than twice ear shape’s 0.2781. A well-chosen continuous cut can easily beat every categorical
+feature, which is why you never bucket a continuous variable by hand before giving it to a tree.</p>
+<p>Second, w ≤ 9.00 and w ≤ 10.60 tie exactly. One isolates a pure group of cats, the other a pure
+group of non-cats, and entropy does not care which class a pure branch is pure in. Implementations
+break the tie by taking whichever comes first.</p>
+<p>The cost: with <var>m</var> examples there are up to <var>m</var> − 1 thresholds to score per
+feature, so this step is the reason tree training is dominated by sorting.</p><div class="explain"><span class="tag">Say it out loud</span><p>The gains rise to a peak and fall away symmetrically — 0.108, 0.237, 0.396,
+0.610, then back down through 0.396, 0.237, 0.108. <b>Why that shape?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the weights happen to separate the classes almost perfectly, so a
+threshold’s gain depends mostly on how <em>far it is from the true dividing line</em>. Cut far to
+one side and you peel off a tiny pure sliver — pure, but weighted by almost nothing, so the gain is
+small. Move towards the boundary and each cut peels off more while staying pure, so the gain grows.
+Past the boundary the same thing happens in reverse. The peak sits where the split matches the
+structure actually in the data — which is exactly what you want a gain to measure.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Trying every real number.</b> Pointless — the gain only changes when the threshold
 crosses a data point. Sorting and using midpoints reduces infinity to m−1 candidates.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming a single threshold captures the feature.</b> If cats are <em>medium</em>
 weight — heavier than kittens, lighter than dogs — one cut cannot express that. Two splits at different
 depths can.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c24-07-continuous-features#1"><summary>You have 100 examples with 100 distinct weights. How many thresholds are worth testing?</summary><div class="a"><p><b>99</b> — one between each pair of consecutive sorted values.</p></div></details><details class="q" data-qid="c24-07-continuous-features#2"><summary>Why do trees not need feature scaling?</summary><div class="a"><p>Because they only ever <em>compare</em> feature values against a threshold. Scaling preserves order, so it preserves every split the tree could make.</p></div></details><details class="q" data-qid="c24-07-continuous-features#3"><summary>Cats weigh 8–12 lb; everything else is under 6 or over 15. Can one threshold separate them?</summary><div class="a"><p>No. You need two: “> 6 lb?” and then “≤ 12 lb?”. Trees express intervals by stacking splits on the same feature at different depths.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/tree.html#mathematical-formulation" target="_blank" rel="noopener">scikit-learn — how splits are chosen</a><span class="d">The exact candidate-threshold procedure, in the docs.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://arxiv.org/abs/cs/9603103" target="_blank" rel="noopener">Quinlan (1996) — Improved Use of Continuous Attributes in C4.5</a><span class="d">The refinement that made continuous features work well in practice.</span></span></li></ul>

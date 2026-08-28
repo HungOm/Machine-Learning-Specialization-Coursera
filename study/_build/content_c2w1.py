@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 1 — Neural networks and forward propagation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 L = []
 
@@ -295,7 +295,7 @@ not a law. It is what you observe after training, not something you can rely on 
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-neural-network-layer", title="Neural network layer", mins=10, tag="core",
+    slug="04-neural-network-layer", title="Neural network layer", mins=13, tag="core",
     lede="The unit of construction. A layer is several neurons reading the same inputs and each producing "
          "one number — and the notation that goes with it.",
     body=(
@@ -341,6 +341,37 @@ opposite. Same inputs, opposite opinions — that variety is exactly what makes 
 <code>model.summary()</code> prints exactly these totals, and comparing it against your hand count is the
 fastest way to catch a wiring mistake.</p>"""
 
+        + h2("🧮", "One neuron, checked against Course 1")
+        + """<p>The first optional lab does something worth copying: it builds a single Keras neuron,
+sets its weights <em>by hand</em> to values you already know, and checks the answer against plain
+NumPy. First with no activation at all:</p>"""
+        + code("""
+linear_layer = tf.keras.layers.Dense(units=1, activation='linear')
+linear_layer.set_weights([np.array([[200]]), np.array([100])])   # w = 200, b = 100
+""")
+        + """<p>Feed it the two houses from Course 1 and it returns 200(1) + 100 = <b>300</b> and
+200(2) + 100 = <b>500</b> — the two prices, exactly. A neuron with no activation function
+<em>is</em> linear regression. Now add a sigmoid, with <var>w</var> = 2 and <var>b</var> = −4.5:</p>"""
+        + table(["x", "z = 2x − 4.5", "a = g(z)", "decision at 0.5", "the label"],
+                [["0", "−4.5", "0.0110", "0", "0"],
+                 ["1", "−2.5", "0.0759", "0", "0"],
+                 ["2", "−0.5", "0.3775", "0", "0"],
+                 ["3", "+1.5", "0.8176", "1", "1"],
+                 ["4", "+3.5", "0.9707", "1", "1"],
+                 ["5", "+5.5", "0.9959", "1", "1"]])
+        + """<p>Six for six. The boundary sits where <var>z</var> = 0, that is
+<var>x</var> = 4.5 / 2 = <b>2.25</b> — between the last 0 and the first 1. Notice the output never
+reaches 0 or 1; sigmoid only approaches them. 0.0110 means “almost certainly not”, and it is a
+probability, not a decision.</p>"""
+        + explain("""<p>Change <var>b</var> from −4.5 to −6 and the boundary moves to
+<var>x</var> = 3. Change <var>w</var> from 2 to 4 and the boundary stays at 2.25.
+<b>Why does one move it and the other not?</b></p>""",
+                  """<p>The boundary is wherever <var>z</var> = 0, i.e. <var>x</var> =
+−<var>b</var>/<var>w</var>. The bias shifts every <var>z</var> up or down by the same amount, so the
+crossing point slides. The weight controls how fast <var>z</var> changes per unit of <var>x</var> —
+it makes the S steeper, so the neuron becomes more decisive near the boundary, but the place where
+it is undecided does not move unless <var>b</var> moves with it.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Thinking neurons in the same layer talk to each other.</b> They don’t. Within a layer
 they are completely independent — that independence is exactly what lets us compute them all at once as a
@@ -376,7 +407,7 @@ layer 1. <var>a</var><sup>[2]</sup> = the whole of layer 2. The position of the 
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-more-complex-networks", title="More complex neural networks", mins=9, tag="notation",
+    slug="05-more-complex-networks", title="More complex neural networks", mins=12, tag="notation",
     lede="Four layers instead of two, and the one piece of notation you must be able to read fluently: "
          "a-superscript-square-bracket-l-subscript-j.",
     body=(
@@ -422,6 +453,33 @@ it is just the data sitting there.</p>"""
 hidden layers. When someone says “a 3-layer network”, it is always worth asking which they mean before
 you start reimplementing it.</p>""")
 
+        + h2("🧮", "The notation, on a network you have already seen")
+        + """<p>Abstract indices are hard to hold. Here they are pinned to the coffee-roasting
+network, with the actual numbers it produces for a roast at 200&nbsp;°C for 13.9 minutes:</p>"""
+        + table(["Written", "Said out loud", "Its actual value here"],
+                [["<var>a</var><sup>[0]</sup>", "“a layer zero”, i.e. the input <var>x</var>",
+                  "[−0.4671, 0.4159] — two numbers"],
+                 ["<var>a</var><sup>[1]</sup>", "“a layer one”",
+                  "[0.0034, 0.0000, 0.3612] — three numbers, one per unit"],
+                 ["<var>a</var><sub>3</sub><sup>[1]</sup>", "“a three, layer one”",
+                  "<b>0.3612</b> — the third unit of layer 1, a single number"],
+                 ["<var>a</var><sup>[2]</sup>", "“a layer two”", "[0.972] — one number"],
+                 ["<var>W</var><sup>[1]</sup>", "“W layer one”",
+                  "a (2, 3) matrix — 2 inputs, 3 units"],
+                 ["<var>w</var><sub>3</sub><sup>[1]</sup>", "“w three, layer one”",
+                  "[12.90, 10.81] — the <em>third column</em> of <var>W</var><sup>[1]</sup>"]])
+        + """<p>Three position markers, three different bracket styles, and they never mean the same
+thing. Square brackets above = which layer. A subscript = which unit inside that layer. Round
+brackets above (which you met in Course 1) = which training example.</p>"""
+        + explain("""<p><var>a</var><sub>3</sub><sup>[1]</sup> is a single number, but
+<var>w</var><sub>3</sub><sup>[1]</sup> is a list of two. <b>Why the difference</b>, when both carry
+the same “unit 3 of layer 1” label?</p>""",
+                  """<p>Because a unit <em>emits</em> one number and <em>consumes</em> as many as it
+has inputs. Unit 3 outputs a single activation, so <var>a</var><sub>3</sub><sup>[1]</sup> is scalar.
+But it needs one weight for every incoming value, and layer 1 has two inputs, so its weight vector
+has length 2. The length of <var>w</var> is set by the layer <em>before</em> it; the length of
+<var>a</var> is set by the layer it belongs to.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Writing <var>w</var><sub>j</sub><sup>[l]</sup> · <var>a</var><sub>j</sub><sup>[l−1]</sup>.</b>
 Wrong. The dot product is against the <em>whole</em> previous layer, not the matching-index unit. Unit 2 of
@@ -453,7 +511,7 @@ so is 64 → 128 → 64. Width is a design choice, not a rule.</p>""")
 
 # ============================================================ 6
 L.append(dict(
-    slug="06-forward-propagation", title="Inference: making predictions (forward propagation)", mins=11, tag="core",
+    slug="06-forward-propagation", title="Inference: making predictions (forward propagation)", mins=16, tag="core",
     lede="The complete prediction algorithm, start to finish. Handwritten digit recognition with a "
          "25 → 15 → 1 network — and the reason it is called “forward”.",
     body=(
@@ -495,6 +553,73 @@ at all. All the difficulty in neural networks lives in <em>finding</em> W and b 
                "click the squares — the hidden units and the output update instantly")
         + """<p>(The weights in that demo are hand-picked so it is readable, not trained — but the
 arithmetic and the direction of flow are exactly right.)</p>"""
+
+        + h2("🧮", "Reading a trained network")
+        + """<p>Everything above is mechanics. Here is the payoff. These are the weights the
+coffee-roasting network from the optional lab actually <em>learned</em> — and once you can read
+them, you can see what the hidden layer invented.</p>"""
+        + code("""
+W1 = np.array([[-8.93,  0.29, 12.90],      # two inputs (rows) x three units (columns)
+               [-0.10, -7.32, 10.81]])
+b1 = np.array([-9.82, -9.28, 0.96])
+
+W2 = np.array([[-31.18], [-27.59], [-32.56]])   # three inputs x one unit
+b2 = np.array([15.41])
+""")
+        + """<p>First, the input never reaches the network raw. The lab’s <code>Normalization</code>
+layer learned, from the 200 training roasts, a mean of <b>218.67 °C</b> and <b>13.43 min</b>, and a
+standard deviation of <b>39.96</b> and <b>1.13</b>. So a test roast of <b>200 °C for 13.9 minutes</b>
+arrives as</p>"""
+        + eq("""<var>x</var> <span class="op">=</span> <span class="paren">[</span>
+<span class="frac"><span>200 − 218.67</span><span>39.96</span></span> <span class="op">,</span>
+<span class="frac"><span>13.9 − 13.43</span><span>1.13</span></span>
+<span class="paren">]</span> <span class="op">=</span>
+<span class="paren">[</span> −0.4671 <span class="op">,</span> 0.4159 <span class="paren">]</span>""",
+             "the same roast, in the units the network was trained in")
+        + """<p>Now layer 1, one unit at a time. Unit 1 uses the <b>first column</b> of
+<var>W</var><sup>[1]</sup>, which is [−8.93, −0.10], and its own bias −9.82:</p>"""
+        + eq("""<var>z</var><sub>1</sub> <span class="op">=</span> (−0.4671)(−8.93)
+<span class="op">+</span> (0.4159)(−0.10) <span class="op">+</span> (−9.82)
+<span class="op">=</span> −5.69 &nbsp;→&nbsp;
+<var>a</var><sub>1</sub> <span class="op">=</span> <var>g</var>(−5.69) <span class="op">=</span> 0.0034""",
+             "one unit, by hand")
+        + """<p>Do the other two the same way and the whole layer falls out. Read the last column
+carefully — it is the interesting part:</p>"""
+        + table(["Unit", "Its column of W<sup>[1]</sup>", "z", "a = g(z)", "What it learned to detect"],
+                [["1", "−8.93, −0.10", "−5.69", "0.0034",
+                  "temperature too <b>low</b> — a big negative weight on temperature means z rises as temperature falls"],
+                 ["2", "0.29, −7.32", "−12.46", "0.0000",
+                  "duration too <b>short</b>"],
+                 ["3", "12.90, 10.81", "−0.57", "0.3612",
+                  "too hot <b>and</b> too long — both weights positive, so it fires when both are high: burnt"]])
+        + """<p>Three alarm bells, one for each way to ruin coffee. Nobody specified them. Gradient
+descent found them.</p>
+<p>Now look at <var>W</var><sup>[2]</sup>. Every weight is <b>negative</b> — −31, −28, −33 — and the
+bias is large and <b>positive</b>, +15.41. Read that out loud: <em>start optimistic, then subtract
+heavily if any alarm rings.</em></p>"""
+        + eq("""<var>z</var><sup>[2]</sup> <span class="op">=</span> (0.0034)(−31.18)
+<span class="op">+</span> (0.0000)(−27.59) <span class="op">+</span> (0.3612)(−32.56)
+<span class="op">+</span> 15.41 <span class="op">=</span> 3.54 &nbsp;→&nbsp;
+<var>a</var><sup>[2]</sup> <span class="op">=</span> 0.972""",
+             "all three alarms quiet, so the +15.41 survives — good roast")
+        + """<p>Watch it break. Change one thing: roast for <b>17 minutes</b> instead of 13.9.</p>"""
+        + table(["", "13.9 minutes", "17 minutes"],
+                [["<var>a</var><sup>[1]</sup>", "0.0034, 0.0000, 0.3612",
+                  "0.0026, 0.0000, <b>1.0000</b>"],
+                 ["<var>z</var><sup>[2]</sup>", "+3.54", "−17.23"],
+                 ["<var>a</var><sup>[2]</sup>", "<b>0.97</b> — good roast",
+                  "<b>0.00000003</b> — bad roast"]])
+        + """<p>One unit went from 0.36 to 1.00, and the answer inverted. The output neuron has learned
+what a logician would call a <b>NOR gate</b>: true only when every input is false. That is the whole
+argument for depth in one example — layer 1 invented three notions of <em>wrong</em>, and layer 2 does
+something a single logistic regression cannot do, which is combine them.</p>"""
+        + explain("""<p>The output layer’s weights came out all negative, with a large positive bias.
+<b>Why is that the right shape for this problem</b>, rather than an accident of one training run?</p>""",
+                  """<p>Because a good roast is the <em>absence</em> of every failure. There are three
+separate ways to ruin the beans and only one way to succeed, so the cheapest function to learn is
+“assume good, then veto”. The positive bias is the assumption. Each negative weight is one veto, and
+each is large enough (−28 or worse against a +15.41 bias) to overturn the assumption <b>on its own</b>
+— which is exactly right, since any single fault ruins the batch.</p>""")
 
         + h2("💻", "In code")
         + code("""
@@ -708,7 +833,7 @@ a valid-looking result instead of erroring. You get numbers, they’re just the 
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-building-a-network-sequential", title="Building a neural network (Sequential)", mins=9, tag="code",
+    slug="09-building-a-network-sequential", title="Building a neural network (Sequential)", mins=12, tag="code",
     lede="Stop calling layers by hand. Sequential wires them together, and three method calls — compile, "
          "fit, predict — do the rest.",
     body=(
@@ -756,6 +881,36 @@ p = model.predict(X_new)                    # forward propagation, for every row
         + """<p>Add <code>model.summary()</code> after building and you get a table of every layer, its
 output shape and its parameter count — the same numbers you hand-counted in Lesson 4. Get in the habit of
 reading it before you train anything.</p>"""
+
+        + h2("🧮", "What model.summary() actually prints")
+        + """<p>Build the coffee network and ask Keras to describe it:</p>"""
+        + code("""
+model = Sequential([
+    tf.keras.Input(shape=(2,)),
+    Dense(3, activation='sigmoid', name='layer1'),
+    Dense(1, activation='sigmoid', name='layer2'),
+])
+model.summary()      # -> Total params: 13
+""")
+        + """<p>Thirteen. You should be able to get to that number without running anything. The rule
+is: a layer with <var>s</var><sub>in</sub> inputs and <var>s</var><sub>out</sub> units has
+<var>s</var><sub>in</sub> × <var>s</var><sub>out</sub> weights and <var>s</var><sub>out</sub>
+biases.</p>"""
+        + table(["Layer", "W shape", "weights", "b shape", "biases", "total"],
+                [["layer1", "(2, 3)", "2 × 3 = 6", "(3,)", "3", "<b>9</b>"],
+                 ["layer2", "(3, 1)", "3 × 1 = 3", "(1,)", "1", "<b>4</b>"],
+                 ["", "", "", "", "", "<b>13</b>"]])
+        + """<p>This is worth practising because the exam-style questions ask it, and because a
+mismatch between the count you expect and the count Keras prints is the fastest way to catch a
+layer you sized wrongly. The Week 1 assignment’s 400 → 25 → 15 → 1 network, for instance, comes to
+(400×25 + 25) + (25×15 + 15) + (15×1 + 1) = 10,025 + 390 + 16 = <b>10,431</b>.</p>"""
+        + explain("""<p>Layer 1 has 2 inputs and 3 units, and gets 3 biases — not 2, and not 6.
+<b>Why is the bias count tied to the units rather than to the inputs?</b></p>""",
+                  """<p>Because the bias is added <em>once per unit</em>, after that unit has already
+summed all of its inputs. Each unit collapses however many inputs it has into one number
+<var>z</var>, and then shifts that single number by its own <var>b</var>. Inputs affect how many
+<em>weights</em> a unit needs; they have no say in how many biases it needs, which is always
+one.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Expecting <code>predict</code> to return 0s and 1s.</b> It returns probabilities.
@@ -889,7 +1044,7 @@ neuron needs the number.</p>""")
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-general-forward-prop", title="General implementation of forward propagation", mins=9, tag="core",
+    slug="11-general-forward-prop", title="General implementation of forward propagation", mins=13, tag="core",
     lede="Replace the copy-pasted neurons with one loop, then stack the loops into a network. This is the "
          "code you will write in the assignment.",
     body=(
@@ -937,6 +1092,39 @@ hardware.</p>"""
         + note("""<p>Capital <code>W</code> for matrices, lowercase <code>b</code> and <code>w</code> for
 vectors. This is standard maths convention and the course follows it exactly. It is a genuinely useful
 reading aid: capital letter → expect two dimensions.</p>""", "Naming convention")
+
+        + h2("🧮", "The whole coffee network, end to end")
+        + """<p>Ten lines, no TensorFlow, real trained weights — the entire model:</p>"""
+        + code("""
+def my_dense(a_in, W, b, g):
+    a_out = np.zeros(W.shape[1])
+    for j in range(W.shape[1]):
+        a_out[j] = g(np.dot(W[:, j], a_in) + b[j])
+    return a_out
+
+def my_sequential(x, W1, b1, W2, b2):
+    return my_dense(my_dense(x, W1, b1, sigmoid), W2, b2, sigmoid)
+
+W1 = np.array([[-8.93,  0.29, 12.90], [-0.10, -7.32, 10.81]])
+b1 = np.array([-9.82, -9.28, 0.96])
+W2 = np.array([[-31.18], [-27.59], [-32.56]])
+b2 = np.array([15.41])
+
+my_sequential(np.array([-0.4671, 0.4159]), W1, b1, W2, b2)   # -> [0.972]
+""")
+        + """<p>Run all 200 normalised training roasts through it and the network calls
+<b>43</b> of them good — and those 43 are exactly the 43 the data set labels good. It agrees with
+every single training example, 200 out of 200.</p>"""
+        + warn("""<p>Which is <em>not</em> a reason to celebrate. Perfect agreement on the data you
+trained on tells you almost nothing — a model that memorised the answers scores the same. Course 2
+Week 3 is entirely about why, and what to measure instead.</p>""")
+        + explain("""<p>The two <code>my_dense</code> calls are identical code, and neither knows
+which layer it is. <b>Why is that enough to build a network of any depth?</b></p>""",
+                  """<p>Because a layer’s only contract is: take a vector in, return a vector out.
+Nothing inside <code>my_dense</code> depends on where it sits — it reads the width it needs from
+<code>W.shape[1]</code>. So the output of one call is a legal input to the next, and a hundred-layer
+network is the same function called a hundred times. That interchangeability is exactly what
+<code>Sequential([...])</code> is exploiting.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Using <code>W.shape[0]</code>.</b> That is the number of <em>inputs</em>, not the
@@ -1044,7 +1232,7 @@ the extrapolation — is the professional norm. Be suspicious of anyone who has 
 
 # ============================================================ 13
 L.append(dict(
-    slug="13-vectorization", title="How neural networks are implemented efficiently", mins=9, tag="core",
+    slug="13-vectorization", title="How neural networks are implemented efficiently", mins=12, tag="core",
     lede="Why the for-loop version is fine for learning and useless in production, and what vectorisation "
          "actually buys you.",
     body=(
@@ -1089,6 +1277,26 @@ that shape is what matters.) The gap is not because NumPy is clever maths; it is
 interpreter overhead per element, while NumPy hands a contiguous block of memory to compiled code that uses
 SIMD instructions and multiple cores.</p>"""
 
+        + h2("⏱", "How much faster — measured, not asserted")
+        + """<p>One layer: 200 examples, 2 inputs, 3 units — the coffee network’s first layer for the
+whole training set. Timed on this machine with NumPy, averaged over 50 runs:</p>"""
+        + table(["Version", "Time per layer", "Relative"],
+                [["Python loop over examples and units", "762 µs", "1×"],
+                 ["<code>g(A @ W + b)</code>", "8.2 µs", "<b>93× faster</b>"]])
+        + """<p><code>np.allclose</code> confirms the two results are identical to floating-point
+precision. Same arithmetic, same answer, ninety-three times the speed.</p>
+<p>And this is the <em>small</em> case. The gap grows with size, and this measurement is CPU-only —
+the whole reason GPUs took over deep learning is that they widen it by another one to two orders of
+magnitude on large matrices.</p>"""
+        + explain("""<p>Both versions perform the same multiplications and the same additions —
+1,200 of each. <b>So where do the other 754 microseconds go?</b></p>""",
+                  """<p>Not into arithmetic. They go into Python: every trip round the loop
+re-dispatches the interpreter, re-checks types, and builds small temporary objects, and that
+overhead dwarfs the multiply itself. <code>@</code> hands the entire block to compiled BLAS in one
+call, which pays that cost once, keeps the data in cache-friendly order, and uses SIMD instructions
+that do several multiplications per clock. Vectorising does not reduce the maths — it removes the
+Python standing between you and it.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Vectorising before it works.</b> Write the loop, check the numbers, <em>then</em>
 vectorise and assert the two agree: <code>np.allclose(slow, fast)</code>. Debugging a wrong matmul with no
@@ -1125,7 +1333,7 @@ GPU exceeds the compute saved. GPUs win on <em>large</em> batches and <em>large<
 
 # ============================================================ 14
 L.append(dict(
-    slug="14-matrix-multiplication", title="Matrix multiplication", mins=10, tag="maths",
+    slug="14-matrix-multiplication", title="Matrix multiplication", mins=13, tag="maths",
     lede="The dot product, slowly. Two lists in, one number out — and the reason it is exactly the "
          "operation a neuron needs.",
     body=(
@@ -1175,6 +1383,34 @@ Positive means aligned, zero means perpendicular, negative means opposed. This i
 what a neuron is doing — <b>asking how much the input resembles the pattern stored in its weights</b>.</p>""",
                "The geometric meaning (optional but beautiful)")
 
+        + h2("🧮", "One row, by hand")
+        + """<p>Take the first roast from the training set, already normalised, and multiply it by
+the first layer’s weights. <var>x</var> is a row of 2 numbers; <var>W</var><sup>[1]</sup> is
+(2,&nbsp;3). The answer must be a row of 3 — one per unit.</p>"""
+        + eq("""<var>x</var> <span class="op">=</span> <span class="paren">[</span> −0.8346
+<span class="op">,</span> −0.6529 <span class="paren">]</span> &nbsp;&nbsp;&nbsp;
+<var>W</var><sup>[1]</sup> <span class="op">=</span> <span class="paren">[</span>
+−8.93 &nbsp; 0.29 &nbsp; 12.90 <span class="op">;</span>
+−0.10 &nbsp; −7.32 &nbsp; 10.81 <span class="paren">]</span>""",
+             "one example, three units")
+        + """<p>Each output number is one column of <var>W</var> paired with the whole of
+<var>x</var>. Three columns, so three separate small sums:</p>"""
+        + table(["Column", "The pairing", "= "],
+                [["1", "(−0.8346)(−8.93) + (−0.6529)(−0.10)", "<b>7.5183</b>"],
+                 ["2", "(−0.8346)(0.29) &nbsp;+ (−0.6529)(−7.32)", "<b>4.5372</b>"],
+                 ["3", "(−0.8346)(12.90) + (−0.6529)(10.81)", "<b>−17.8242</b>"]])
+        + """<p>Add the biases [−9.82, −9.28, 0.96] and squash, and you have that roast’s hidden
+layer: <b>[0.0910, 0.0086, 0.0000]</b>. Six multiplications and three additions — that is all a
+“matrix multiply” ever is. The word makes it sound like a new operation; it is bookkeeping for
+doing the same dot product once per column.</p>"""
+        + explain("""<p>The result took each column of <var>W</var> against the <em>whole</em> of
+<var>x</var>. <b>Why columns, and not rows?</b></p>""",
+                  """<p>Because a column of <var>W</var> is one unit’s complete set of weights — unit
+1 owns [−8.93, −0.10], one weight per input. To fire, a unit needs every input it has, so the pairing
+must run down its column and across all of <var>x</var>. Rows of <var>W</var> are the wrong slice
+entirely: a row is “what all three units think about input 1”, which no single unit ever needs on
+its own.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b><code>a * w</code> is not <code>np.dot(a, w)</code>.</b> The star multiplies
 element-wise and gives you back a list of the same length. <code>np.dot</code> multiplies <em>and sums</em>,
@@ -1210,7 +1446,7 @@ NumPy telling you there is nothing to pair the fourth element with.</p>""")
 
 # ============================================================ 15
 L.append(dict(
-    slug="15-matmul-rules", title="Matrix multiplication rules", mins=11, tag="maths",
+    slug="15-matmul-rules", title="Matrix multiplication rules", mins=14, tag="maths",
     lede="From one dot product to a whole grid of them. The shape rule — (m×n)(n×p) = (m×p) — and how to "
          "never get it wrong again.",
     body=(
@@ -1270,6 +1506,31 @@ exist. Order matters, always.</p>"""
 that gets summed away — which is precisely the weighted sum a neuron performs. The correspondence is not an
 analogy; it is the same arithmetic written in a different notation.</p>"""
 
+        + h2("🧮", "The rule, applied to this week’s shapes")
+        + """<p>The rule in one line: <b>(m × n) @ (n × k) → (m × k)</b>. The two inner numbers must
+match, and they disappear; the outer two survive. Every shape in this week obeys it:</p>"""
+        + table(["Expression", "Shapes", "Inner match?", "Result"],
+                [["<code>x @ W1</code>, one roast", "(1, 2) @ (2, 3)", "2 = 2 ✓", "(1, 3)"],
+                 ["<code>Xn @ W1</code>, all roasts", "(200, 2) @ (2, 3)", "2 = 2 ✓", "(200, 3)"],
+                 ["<code>A1 @ W2</code>", "(200, 3) @ (3, 1)", "3 = 3 ✓", "(200, 1)"],
+                 ["<code>W1 @ Xn</code>", "(2, 3) @ (200, 2)", "3 ≠ 200 ✗", "<b>error</b>"],
+                 ["assignment layer 1", "(1, 400) @ (400, 25)", "400 = 400 ✓", "(1, 25)"]])
+        + """<p>Read the middle column of the valid rows: 2 meets 2, then 3 meets 3, then 400 meets
+400. Those matched numbers are exactly the widths of the layers, which is why a network’s shapes
+form a chain — each layer’s output width becomes the next layer’s input width, and if any link
+breaks, NumPy tells you immediately.</p>
+<p>Note also that 200 never participates in a match. It rides along untouched from beginning to end,
+because it is the number of <em>examples</em>, and no layer cares how many examples you happen to
+be pushing through.</p>"""
+        + explain("""<p><code>Xn @ W1</code> is legal and <code>W1 @ Xn</code> is not, so matrix
+multiplication is not commutative. <b>Why should that be unsurprising</b>, given what the two sides
+mean?</p>""",
+                  """<p>Because the two operands play different roles. The left side is data — one row
+per example. The right side is the model — one column per unit. “Run these examples through this
+layer” and “run these weights through those examples” are not the same sentence, and only the first
+one means anything. The shape rule refusing the reverse is the arithmetic enforcing the
+grammar.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Multiplying in the wrong order to “fix” an error.</b> If the shapes do not match, one
 of your matrices is probably built the wrong way round. Swapping the operands hides the problem instead of
@@ -1306,7 +1567,7 @@ silent, expensive bug.</p>""")
 
 # ============================================================ 16
 L.append(dict(
-    slug="16-matmul-code", title="Matrix multiplication code", mins=9, tag="code",
+    slug="16-matmul-code", title="Matrix multiplication code", mins=13, tag="code",
     lede="The payoff: dense() with no loop at all. Two lines of NumPy that run a whole layer over a whole "
          "dataset.",
     body=(
@@ -1366,6 +1627,34 @@ def sequential(X):
 <p style="margin:12px 0 0">Six lines. That is a complete, working, fully vectorised neural network doing
 forward propagation over an entire dataset. Everything else this course adds is about <em>finding</em> the
 Ws and Bs.</p>""")
+
+        + h2("🧮", "All 200 roasts at once")
+        + """<p>Everything in this week converges on three lines. Here is the entire coffee network
+run over the whole training set — no loop over examples, no loop over units:</p>"""
+        + code("""
+A1 = sigmoid(Xn @ W1 + b1)    # (200,2) @ (2,3) + (3,)  ->  (200,3)
+A2 = sigmoid(A1 @ W2 + b2)    # (200,3) @ (3,1) + (1,)  ->  (200,1)
+yhat = (A2 >= 0.5).astype(int)
+""")
+        + """<p>Read the shapes as a chain: 200 rows survive from beginning to end, while the width
+changes 2 → 3 → 1 as each layer hands over. The inner numbers meet and vanish — 2 meets 2, 3 meets
+3 — which is the rule from the previous lesson doing real work.</p>"""
+        + table(["Roast", "Xn (normalised)", "A1 — the three detectors", "A2", "call"],
+                [["1", "−0.8346, −0.6529", "0.0909, 0.0086, 0.0000", "≈ 1.00", "good"],
+                 ["2", "+1.0323, −1.3851", "0.0000, 0.7611, 0.3326", "≈ 0.00", "bad"],
+                 ["3", "+0.3089, +0.8716", "0.0000, 0.0000, 1.0000", "≈ 0.00", "bad"]])
+        + """<p>Roast 2 trips the “duration too short” detector; roast 3 trips “too hot and too long”.
+Across all 200 the network calls <b>43</b> good. The bias vector <code>b1</code> has shape (3,) and
+is added to a (200, 3) result — NumPy <b>broadcasts</b> it down all 200 rows, which is why you never
+write a loop for it.</p>"""
+        + explain("""<p><code>Xn @ W1</code> works, but <code>W1 @ Xn</code> raises a shape error.
+<b>Why is the order not negotiable here?</b></p>""",
+                  """<p>Because matrix multiplication pairs the <em>columns</em> of the left operand
+with the <em>rows</em> of the right, so those two counts must match. Xn is (200, 2) and W1 is
+(2, 3): 2 meets 2, and the result is (200, 3). Reversed, you would be asking 3 to meet 200. The
+convention that examples are rows is what fixes the order — flip that convention and you would
+write <var>W</var><sup>T</sup><var>x</var> instead, which is why the same formula appears
+transposed in different textbooks.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Getting W the wrong way round.</b> If your W is stored as (units × n) — some texts do

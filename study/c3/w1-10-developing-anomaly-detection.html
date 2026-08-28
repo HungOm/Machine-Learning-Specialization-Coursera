@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.10 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.10 · 16 min read</span></p>
 <h1><span class="secno">10.10</span>Developing and evaluating an anomaly detection system</h1>
 <p class="lede">How to tune ε when you have almost no labelled anomalies — and why this half-supervised setup is not cheating.</p>
 <div class="bookrail" title="Lesson 139 of 172 in the book"><i style="width:81%"></i></div>
@@ -254,7 +254,25 @@ all scores 99.5% accuracy on a dataset that is 0.5% anomalies — and is worthle
 
     <span class="tok-k">return</span> best_epsilon, best_F1</code></pre><p>That is the second graded function in the assignment. Note the sweep: ε is searched over the
 range of observed p values, not over a fixed grid — the scale of p depends entirely on how many features
-you have.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Putting anomalies in the training set.</b> Then the model learns they are normal, and
+you have.</p><h2><span class="ico">🧮</span>Choosing ε, and what changes in 11 dimensions</h2><p>Sweep ε over 1,000 values and score each against the cross-validation set’s known
+anomalies. The assignment’s two data sets give very different answers:</p><table class="data"><thead><tr><th>Data set</th><th>features</th><th>cv anomalies</th><th>best ε</th><th>best F1</th></tr></thead><tbody><tr><td>servers, 2-D</td><td>2</td><td>9 of 307</td><td><b>8.99 × 10⁻⁵</b></td><td><b>0.875</b></td></tr><tr><td>servers, 11-D</td><td>11</td><td>10 of 100</td><td><b>1.38 × 10⁻¹⁸</b></td><td>0.615</td></tr></tbody></table><p>Two things to take from this. First, <b>ε is not a <span class="gterm" data-g="probability-f0">probability</span> you can reason about
+and it is not transferable</b>. It fell by fourteen orders of magnitude simply because p(x) is a
+product of eleven per-feature probabilities instead of two, and multiplying eleven numbers each well
+below 1 produces a very small number for <em>every</em> example, normal ones included. Never
+hand-pick ε; always sweep it.</p>
+<p>Second, F1 dropped from 0.875 to 0.615 on the harder set. That is the honest result: 11 features
+give more ways to be unusual, but also more ways for a normal server to look unusual by chance in
+one of them.</p>
+<p>At the chosen ε the 2-D model flags <b>6 of its 307 training servers</b> — about 2%. That is
+expected and correct. The training set was assumed normal, not certified normal, and a threshold
+tight enough to catch real anomalies will always clip a few ordinary points in the tails.</p><div class="explain"><span class="tag">Say it out loud</span><p>The cross-validation set contains <em>labelled</em> anomalies, yet the model
+is fitted on unlabelled data and no label is ever used in fitting. <b>What are those labels actually
+buying?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>One number: ε. Everything else — μ, σ² — comes from the unlabelled data, so
+the model of “normal” is built without supervision. But the model outputs a probability, and nothing
+in the data says how improbable is improbable enough. That single cut point is a decision about
+consequences, and the only way to set it defensibly is to check it against cases where you know the
+answer. It is a supervised choice bolted onto an unsupervised model — which is why nine labelled
+anomalies are enough, when nine would be hopeless for training a classifier.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Putting anomalies in the training set.</b> Then the model learns they are normal, and
 p(x) for an anomaly stops being small. Training must be normal-only.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Tuning ε on the test set.</b> Same optimistic-bias problem as everywhere else. ε is
 a <span class="gterm" data-g="hyperparameter-native">hyperparameter</span> — it belongs to cross-validation.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Reusing an old ε after changing the features.</b> Adding a feature multiplies p by
 another factor below 1, shifting the whole scale. Re-tune every time.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c31-10-developing-anomaly-detection#1"><summary>You have 10,000 normal and 20 anomalous examples. Propose a split.</summary><div class="a"><p>Train: 6000 normal. CV: 2000 normal + 10 anomalies. Test: 2000 normal + 10 anomalies. Anomalies never appear in training.</p></div></details><details class="q" data-qid="c31-10-developing-anomaly-detection#2"><summary>Your detector flags nothing and scores 99.8% accuracy. What are precision and recall?</summary><div class="a"><p>Recall = <b>0</b> — it caught nothing. Precision is undefined (0/0), reported as 0. The 99.8% is pure class imbalance.</p></div></details><details class="q" data-qid="c31-10-developing-anomaly-detection#3"><summary>Why is using labelled anomalies to choose ε not 'cheating'?</summary><div class="a"><p>Because they are used for evaluation and hyperparameter choice, not for fitting μ and σ. The learned model of normality never sees them — exactly like a cross-validation set in supervised learning.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics" target="_blank" rel="noopener">scikit-learn — precision, recall, F-measure</a><span class="d">The metrics from C2 W3, applied here.</span></span></li><li><span class="kind book">book</span><span><a href="https://info.deeplearning.ai/machine-learning-yearning-book" target="_blank" rel="noopener">Machine Learning Yearning</a><span class="d">The chapters on evaluation metrics and dev/test set design apply directly.</span></span></li></ul>

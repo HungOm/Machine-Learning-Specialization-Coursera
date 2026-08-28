@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.4 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.4 · 14 min read</span></p>
 <h1><span class="secno">10.4</span>The optimization objective</h1>
 <p class="lede">K-means is not a heuristic that happens to work. It is gradient-free minimisation of one specific cost, and both steps provably reduce it.</p>
 <div class="bookrail" title="Lesson 133 of 172 in the book"><i style="width:77%"></i></div>
@@ -239,7 +239,20 @@ else? Because the mean is <em>exactly</em> the point that minimises the sum of s
 of points. Differentiate Σ(x − μ)² with respect to μ, set it to zero, and μ = the average falls out.</p>
 <p>So the move step is not a heuristic — it is the exact solution to “where should this centroid go to
 minimise J, given these assignments?”. Using squared distance and using the mean are two halves of one
-decision.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming convergence means optimal.</b> J stops decreasing at a <em>local</em>
+decision.</p><h2><span class="ico">🧮</span>Watch J fall, and never rise</h2><p>The same run, scored after every iteration:</p><table class="data"><thead><tr><th>iteration</th><th>J (distortion)</th><th></th></tr></thead><tbody><tr><td>0</td><td>4.0868</td><td>starting positions</td></tr><tr><td>1</td><td>3.5479</td><td></td></tr><tr><td>2</td><td>3.3325</td><td></td></tr><tr><td>3</td><td>2.8775</td><td></td></tr><tr><td>4</td><td>1.5490</td><td>big move — a whole group changed hands</td></tr><tr><td>5</td><td>0.8975</td><td></td></tr><tr><td>6</td><td><b>0.8889</b></td><td>converged</td></tr><tr><td>7–9</td><td>0.8889</td><td>nothing moves again</td></tr></tbody></table><p>Every number is lower than the one above it, and then it stops dead. That is not luck
+and it is not approximately true — it is <b>guaranteed</b>. The assign step moves points to a nearer
+centroid, which can only shorten distances. The move step puts each centroid at the mean of its
+members, and the mean is by definition the point minimising summed squared distance to them. Neither
+step can increase J, so the sequence is non-increasing and bounded below by zero, so it must
+converge.</p><div class="callout warn"><span class="tag">Watch out</span><p>This is the single most useful debugging check you have. If your implementation
+ever prints a J larger than the previous one, you have a bug — almost always an assign step and a
+move step in the wrong order, or a centroid updated before all assignments were computed.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>J is guaranteed to stop falling, yet K-means is famous for finding bad
+answers. <b>How are both true at once?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because “cannot go up” is a much weaker promise than “ends up lowest”.
+The guarantee says you will reach a point where no single assign-or-move step improves anything —
+a <em>local</em> minimum. It says nothing about whether some completely different arrangement scores
+better. Convergence is about the algorithm running out of improvements available <em>from where it
+is</em>, and where it is was decided by the starting positions. That is precisely the gap the next
+lesson closes.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming convergence means optimal.</b> J stops decreasing at a <em>local</em>
 minimum. There is no guarantee it is the global one — which is exactly what the next lesson is about.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c31-04-kmeans-cost#1"><summary>Your J goes 5.2 → 4.1 → 4.4 → 3.9. What has gone wrong?</summary><div class="a"><p>J increased from 4.1 to 4.4, which is impossible. A bug — most likely the centroids are being updated inside the assignment loop instead of after it.</p></div></details><details class="q" data-qid="c31-04-kmeans-cost#2"><summary>What is J when K = m (one centroid per point)?</summary><div class="a"><p><b>Zero.</b> Every point is its own centroid, at distance 0. Which is why you cannot choose K by minimising J.</p></div></details><details class="q" data-qid="c31-04-kmeans-cost#3"><summary>Why does the move step use the mean rather than the median?</summary><div class="a"><p>Because J is a sum of <em>squared</em> distances, and the mean is the exact minimiser of that. (The median minimises absolute distances — a different cost, and a different algorithm.)</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://ieeexplore.ieee.org/document/1056489" target="_blank" rel="noopener">Lloyd (1982) — Least squares quantization in PCM</a><span class="d">The algorithm’s other name is “Lloyd’s algorithm”. Written in 1957, published 25 years later.</span></span></li><li><span class="kind book">book</span><span><a href="https://web.stanford.edu/~boyd/vmls/" target="_blank" rel="noopener">Boyd & Vandenberghe — Introduction to Applied Linear Algebra, ch. 4</a><span class="d">Free. A clean derivation of k-means as an optimisation problem.</span></span></li></ul>
 <nav class="pager">
 <a class="prev" href="../c3/w1-03-kmeans-algorithm.html"><span class="dir">‹ previous</span><span class="ttl">The K-means algorithm</span></a>

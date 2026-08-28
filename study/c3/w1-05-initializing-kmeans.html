@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.5 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 10 — Unsupervised Learning</span><span class="right">§&nbsp;10.5 · 13 min read</span></p>
 <h1><span class="secno">10.5</span>Initializing K-means</h1>
 <p class="lede">Where you drop the flags decides where you end up. The fix costs one for-loop and is worth every cycle.</p>
 <div class="bookrail" title="Lesson 134 of 172 in the book"><i style="width:78%"></i></div>
@@ -248,7 +248,20 @@ uniformly at random, pick the first at random and then pick each subsequent one 
 proportional to its squared distance from the nearest already-chosen centroid — so new centroids tend to
 land far away from existing ones.</p>
 <p>Arthur & Vassilvitskii proved this gives an expected result within O(<span class="gterm" data-g="logarithm-f0">log</span> K) of optimal, and in practice
-it <span class="gterm" data-g="convergence-native">converges</span> faster and to better solutions. It is scikit-learn’s default.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Running it once.</b> With K = 2 or 3 you will usually be fine. With K = 8 on real
+it <span class="gterm" data-g="convergence-native">converges</span> faster and to better solutions. It is scikit-learn’s default.</p><h2><span class="ico">🧮</span>Fifty random starts, measured</h2><p>Run the whole algorithm 50 times on the same 300 points, each time starting from
+three randomly chosen training examples, and record the final J:</p><table class="data"><thead><tr><th>Final J reached</th><th>how many of the 50 runs</th></tr></thead><tbody><tr><td><b>0.8889</b> — the good answer</td><td><b>43</b></td></tr><tr><td>≈ 2.855 – 2.861 — a bad local optimum</td><td>7</td></tr></tbody></table><p>Seven runs in fifty — about one in seven — converged to an arrangement more than
+<b>three times worse</b>, and each of those runs terminated perfectly happily, having genuinely run
+out of improvements. Nothing inside a single run can detect this. Its J stopped falling exactly as
+the theory promises.</p>
+<p>Hence the recipe, which is not a workaround but the standard method: run it 50 to 1,000 times,
+keep the run with the lowest J, throw the rest away. Here that costs 50× the compute and turns a
+14% chance of a bad answer into essentially zero.</p><div class="explain"><span class="tag">Say it out loud</span><p>Every one of those 50 runs converged correctly. <b>So why does taking the
+minimum J across runs give a better answer than any run could give on its own?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because J is comparable <em>between</em> runs even though no run can see
+outside itself. Each run reports an honest score for the arrangement it found, and those scores sit
+on the same scale, so the comparison is meaningful even when every individual run is blind. You are
+not improving the algorithm; you are sampling its outcomes and using the one number that lets you
+rank them. This works only because K-means has an explicit cost function — which is exactly why the
+previous lesson bothered to define one.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Running it once.</b> With K = 2 or 3 you will usually be fine. With K = 8 on real
 data, a single run is close to a coin flip.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Initialising at random coordinates rather than random data points.</b> A centroid
 placed in an empty region of space may attract no points at all.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c31-05-initializing-kmeans#1"><summary>Three runs give J = 0.42, 0.31, 0.44. Which clustering do you keep?</summary><div class="a"><p>The one with <b>J = 0.31</b>. Lowest distortion wins — no other criterion needed.</p></div></details><details class="q" data-qid="c31-05-initializing-kmeans#2"><summary>Why does the risk of a bad local optimum grow with K?</summary><div class="a"><p>More centroids means exponentially more ways to arrange them badly — two flags in one blob while another blob has none.</p></div></details><details class="q" data-qid="c31-05-initializing-kmeans#3"><summary>Would running 1000 times guarantee the global optimum?</summary><div class="a"><p>No. It makes it very likely, not certain. Finding the true global optimum of k-means is NP-hard.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf" target="_blank" rel="noopener">Arthur & Vassilvitskii (2007) — k-means++: The Advantages of Careful Seeding</a><span class="d">The initialisation everyone uses now, with the proof. Short and readable.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/clustering.html#k-means" target="_blank" rel="noopener">scikit-learn — k-means, including k-means++</a><span class="d">See <code>n_init</code> and <code>init</code>.</span></span></li></ul>
 <nav class="pager">

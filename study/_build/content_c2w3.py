@@ -3,6 +3,8 @@
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
                  quiz, links, code, h2, grid2, grid3, pretest, explain)
 
+SETUP = '<p class="tiny">The numbers on this page come from one reproducible experiment, used throughout the week: 60 points from <var>y</var> = 0.5<var>x</var>² − 2<var>x</var> + 3 plus Gaussian noise (σ = 1.5), split 36 train / 12 cross-validation / 12 test, fitted with polynomial features and ridge regression. The true function is a <b>quadratic</b> — remember that, because the sweep has to discover it.</p>'
+
 L = []
 
 # ============================================================ 1
@@ -74,7 +76,7 @@ themselves several times over.</p>""")
 
 # ============================================================ 2
 L.append(dict(
-    slug="02-evaluating-a-model", title="Evaluating a model", mins=10, tag="core",
+    slug="02-evaluating-a-model", title="Evaluating a model", mins=14, tag="core",
     lede="You cannot fix what you cannot measure. Split the data, and measure the error on the part the "
          "model has never seen.",
     body=(
@@ -122,6 +124,24 @@ The course is explicit about this and it is a common exam question.</p>""")
 “what fraction did it get wrong” is far easier to explain to a stakeholder, and for skewed data you will
 want precision and recall instead — Lesson 16.</p>"""
 
+        + h2("🧮", "One number is not enough — watch it fail")
+        + """<p>Fit the same data twice, once with a degree-2 polynomial and once with degree 10, and
+score both on the training set and on data neither has seen:</p>"""
+        + table(["Model", "J<sub>train</sub>", "J<sub>test</sub>", "verdict"],
+                [["degree 2", "0.665", "<b>0.909</b>", "close together — it generalises"],
+                 ["degree 10", "<b>0.520</b>", "1.473", "far apart — it memorised"]])
+        + """<p>Look only at the training column and degree 10 wins: 0.520 beats 0.665. It is the
+better model by the only number you can compute without holding data back — and it is the worse
+model. That gap is the entire reason this lesson exists.</p>""" + SETUP
+        + explain("""<p>The degree-10 model’s training error is genuinely lower. <b>Why is that not
+evidence that it fits the underlying pattern better?</b></p>""",
+                  """<p>Because it has enough freedom to fit the <em>noise</em> as well as the
+pattern, and noise is different in every sample. Extra parameters can only ever reduce training
+error — a degree-10 curve can bend through points a degree-2 curve must miss — so J<sub>train</sub>
+falls whether the extra bends are capturing something real or memorising this particular set of
+random wobbles. Held-out data is the only place where the difference between those two shows
+up.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Splitting after sorting.</b> If your data is ordered by price, date or class, the
 first 70% and the last 30% are different populations. <b>Shuffle before splitting</b> — unless the data is
@@ -160,7 +180,7 @@ whole dataset leaks test information into training. Fit the scaler on train only
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-model-selection", title="Model selection and train / cross-validation / test", mins=11, tag="core",
+    slug="03-model-selection", title="Model selection and train / cross-validation / test", mins=16, tag="core",
     lede="Why two sets are not enough, and the discipline of keeping one set genuinely untouched until "
          "the very end.",
     body=(
@@ -212,6 +232,32 @@ final = fit_polynomial(X_tr, y_tr, degree=best_d)
 print('honest error:', cost(final, X_te, y_te))    # touch the test set ONCE
 """)
 
+        + h2("🧮", "The full sweep, measured")
+        + """<p>Fit every degree from 1 to 10 and score each on train and on cross-validation:</p>"""
+        + table(["degree", "J<sub>train</sub>", "J<sub>cv</sub>", ""],
+                [["1", "3.876", "3.142", "underfitting — both high"],
+                 ["<b>2</b>", "0.665", "<b>1.120</b>", "<b>lowest J<sub>cv</sub> — chosen</b>"],
+                 ["3", "0.660", "1.149", ""],
+                 ["4", "0.641", "1.223", ""],
+                 ["5", "0.614", "1.475", "J<sub>cv</sub> now climbing"],
+                 ["7", "0.601", "1.485", ""],
+                 ["10", "<b>0.520</b>", "1.473", "best J<sub>train</sub>, and clearly overfitting"]])
+        + """<p>Read the two columns against each other. <b>J<sub>train</sub> falls the whole way
+down</b> — it never once gets worse, because more parameters can always fit the sample more closely.
+<b>J<sub>cv</sub> makes a U</b>: down to degree 2, then up. The bottom of that U is the answer, and
+the sweep found degree 2 — which is the degree the data was actually generated with.</p>
+<p>Now the part that matters. Having <em>used</em> cross-validation to choose, its 1.120 is no longer
+an honest estimate of future performance — it is the best of ten tries, and the best of ten tries is
+optimistic. So you report the test set, untouched until this moment: <b>J<sub>test</sub> =
+0.909</b>.</p>""" + SETUP
+        + explain("""<p>You could have picked the degree with the lowest test error directly and
+skipped cross-validation entirely. <b>What exactly would you have lost?</b></p>""",
+                  """<p>The ability to say how good the model is. Choosing with a set turns that set’s
+score into a best-of-ten, which is biased low for the same reason the highest of ten dice rolls
+is not the expected roll. You would still get a reasonable degree — but you would have no untouched
+data left, and no honest number to quote. The third split does not improve the model; it buys you
+a trustworthy estimate of it.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Reporting J<sub>cv</sub> as your final number.</b> You optimised against it, so it
 is biased low. The honest number is J<sub>test</sub>.</p>""")
@@ -251,7 +297,7 @@ stable, and standard in scikit-learn.</p>""")
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-bias-and-variance", title="Diagnosing bias and variance", mins=12, tag="core",
+    slug="04-bias-and-variance", title="Diagnosing bias and variance", mins=16, tag="core",
     lede="The central diagnostic of the whole course. Two numbers, three possible verdicts, and a decision "
          "you no longer have to guess.",
     body=(
@@ -300,6 +346,28 @@ this — very large networks often improve past the point the classical curve sa
 (“double descent”). The practical diagnostic in this lesson still works; the tidy U-shaped story is
 less universal than it looks.</p>""", "A note for the curious")
 
+        + h2("🧮", "Both diseases, in one table")
+        + """<p>Take three rows out of the degree sweep and read them as diagnoses:</p>"""
+        + table(["", "J<sub>train</sub>", "J<sub>cv</sub>", "gap", "diagnosis"],
+                [["degree 1", "3.876", "3.142", "≈ 0", "<b>high bias</b> — both bad, and equally bad"],
+                 ["degree 2", "0.665", "1.120", "0.46", "healthy"],
+                 ["degree 10", "0.520", "1.473", "<b>0.95</b>", "<b>high variance</b> — train fine, cv poor"]])
+        + """<p>The signature of <b>high bias</b> is that the two numbers agree <em>and are both
+high</em>. The model is not failing to generalise — it generalises its badness perfectly. Note that
+J<sub>cv</sub> is even slightly <em>lower</em> than J<sub>train</sub> in that row, which surprises
+people; with an underfitting model that is ordinary sampling noise, not a bug.</p>
+<p>The signature of <b>high variance</b> is a wide gap with a low J<sub>train</sub>. Degree 10 fits
+its own data better than degree 2 does, and does nearly a third worse on data it has not seen.</p>""" + SETUP
+        + explain("""<p>Suppose someone reports J<sub>train</sub> = 0.52 and stops there.
+<b>Why can that single number never distinguish these two diseases?</b></p>""",
+                  """<p>Because it measures the model against the only data it was allowed to
+optimise for, so it is a measure of <em>capacity</em>, not of correctness. A low J<sub>train</sub>
+is consistent with a superb model and with pure memorisation, and a high one is consistent with
+underfitting and with data that is simply noisy. The diagnosis lives entirely in the
+<em>relationship</em> between two numbers — J<sub>train</sub> against J<sub>cv</sub> for variance,
+and J<sub>train</sub> against a baseline for bias. One number carries no relationship, so it carries
+no diagnosis.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Assuming it must be one or the other.</b> A model can have high bias and high
 variance simultaneously — high J<sub>train</sub> <em>and</em> a big gap. It is rarer, and it means you have
@@ -335,7 +403,7 @@ humans score 14% on the same task, that is nearly perfect. Lesson 6 fixes this h
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-regularization-bias-variance", title="Regularization and bias/variance", mins=10, tag="core",
+    slug="05-regularization-bias-variance", title="Regularization and bias/variance", mins=14, tag="core",
     lede="λ is the same dial as model complexity, turned the other way. Choose it exactly the way you "
          "chose the degree.",
     body=(
@@ -394,6 +462,31 @@ print('chosen lambda:', best[0])
         + """<p>The doubling ladder (0, 0.01, 0.02, 0.04, …) is Andrew’s suggestion and a good one: λ acts
 multiplicatively, so equal <em>ratios</em> matter, not equal differences. Searching 0.1, 0.2, 0.3 wastes
 almost all your tries in one narrow region.</p>"""
+
+        + h2("🧮", "The λ sweep, measured")
+        + """<p>Keep the degree fixed at 10 — deliberately far too flexible — and vary λ instead:</p>"""
+        + table(["λ", "J<sub>train</sub>", "J<sub>cv</sub>", ""],
+                [["0", "0.520", "1.473", "no regularisation — high variance"],
+                 ["0.001", "0.595", "1.410", ""],
+                 ["0.01", "0.625", "1.327", ""],
+                 ["<b>0.1</b>", "0.650", "<b>1.230</b>", "<b>lowest J<sub>cv</sub> — chosen</b>"],
+                 ["1", "0.762", "1.349", "starting to over-constrain"],
+                 ["10", "1.477", "2.014", "high bias"],
+                 ["100", "2.398", "2.634", "badly underfitting"]])
+        + """<p>Compare this against the degree sweep and note that it is the <b>mirror image</b>. There,
+J<sub>train</sub> fell as complexity rose. Here, J<sub>train</sub> <em>rises</em> the whole way down,
+because λ is a penalty on fitting. Both times J<sub>cv</sub> makes a U and you take its bottom.</p>
+<p>Worth seeing: a degree-10 model with λ = 0.1 reaches J<sub>cv</sub> = 1.230, close to the
+degree-2 model’s 1.120 — the regularisation recovers most of what the excess flexibility cost.
+That is why the neural-network recipe is “build it too big, then regularise” rather than “agonise
+over the size”.</p>""" + SETUP
+        + explain("""<p>Raising λ makes J<sub>train</sub> worse at every single step. <b>Why is
+choosing a model with deliberately worse training error not self-defeating?</b></p>""",
+                  """<p>Because J<sub>train</sub> is not the goal — it is the thing being sacrificed.
+The λ term adds a cost for large weights, so the fit stops chasing the last few points and settles
+for a smoother curve. Smoother means the model changes less when the sample changes, which is
+precisely what lowers J<sub>cv</sub>. You are trading a quantity you do not care about for one you
+do, and the U-shape shows exactly where that trade turns bad.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Tuning λ on the test set.</b> λ is a model choice like any other — it belongs to the
@@ -499,7 +592,7 @@ can transcribe, an X-ray two radiologists disagree about. Insisting on 0% error 
 
 # ============================================================ 7
 L.append(dict(
-    slug="07-learning-curves", title="Learning curves", mins=11, tag="core",
+    slug="07-learning-curves", title="Learning curves", mins=16, tag="core",
     lede="Plot error against training-set size and you get the definitive answer to the most expensive "
          "question in ML: will more data help?",
     body=(
@@ -555,6 +648,35 @@ plt.plot(sizes, cv_errs,    label='J_cv')
 — only the training subset grows. And with small m the curve is noisy, so average over several random
 subsets if you can afford the compute.</p>""")
 
+        + h2("🧮", "Two learning curves, measured")
+        + """<p>Refit each model on the first 5, 10, 20 and 36 training points, scoring on the same
+cross-validation set every time:</p>"""
+        + table(["m", "degree 1 · J<sub>train</sub>", "degree 1 · J<sub>cv</sub>",
+                 "degree 4 · J<sub>train</sub>", "degree 4 · J<sub>cv</sub>"],
+                [["5", "7.098", "4.101", "<b>0.000</b>", "4.150"],
+                 ["10", "4.774", "3.644", "0.398", "1.690"],
+                 ["20", "2.993", "3.758", "0.569", "1.260"],
+                 ["36", "3.876", "3.142", "0.641", "1.223"]])
+        + """<p>Two completely different stories.</p>
+<p><b>Degree 1 (high bias).</b> The curves come together and then both flatten around 3–4. Going
+from 20 points to 36 moved J<sub>cv</sub> from 3.758 to 3.142. Doubling again would move it about as
+little. <b>More data will not help</b>, and this table is how you know before you spend a month
+collecting it.</p>
+<p><b>Degree 4 (high variance).</b> J<sub>train</sub> starts at <b>0.000</b> — five points, and a
+degree-4 curve passes through all of them exactly, which is memorisation with nothing left over.
+J<sub>cv</sub> at that moment is 4.150, worse than the underfitting model. Then watch the gap close:
+4.15 → 1.69 → 1.26 → 1.22 as data arrives. <b>More data is working</b>, though the returns are
+already flattening by 36.</p>""" + SETUP
+        + explain("""<p>At m = 5 the degree-4 model has a perfect training score and the
+<em>worst</em> cross-validation score on the table. <b>Why do those two facts arrive
+together?</b></p>""",
+                  """<p>Because they are the same fact. Five points and five free coefficients means
+the curve is fully determined — it must pass through every point, so the training error is zero by
+construction and carries no information about whether the fit is sensible. Whatever it does between
+and beyond those points is unconstrained, so it swings wildly, and the cross-validation set lands in
+exactly that unconstrained territory. A training error of zero is not a strong result; it is a sign
+that the data ran out before the parameters did.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Being surprised that J<sub>train</sub> goes up.</b> Everyone is, once. It is
 correct and expected.</p>""")
@@ -587,7 +709,7 @@ to say no to a data-collection project.</p>""")
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-what-to-try-revisited", title="Deciding what to try next, revisited", mins=8, tag="core",
+    slug="08-what-to-try-revisited", title="Deciding what to try next, revisited", mins=12, tag="core",
     lede="Back to the six options from Lesson 1 — but now you know which half of the list to read.",
     body=(
         pretest("""<p>You now know whether you have high bias or high variance. <b>Sort these into two piles: more data, more features, fewer features, bigger network, larger λ, smaller λ.</b></p>""",
@@ -620,6 +742,33 @@ until J<sub>train</sub> is close to the baseline.</li>
 <li><b>Re-diagnose after every change.</b> Fixing bias often creates variance — that is expected, and it
 means you are making progress, not going backwards.</li>
 </ol>"""
+
+        + h2("🧮", "The table, applied to three real cases")
+        + """<p>The fix table is only useful if you can pick the row. Here are three measured
+situations from this week’s experiment, and what each one actually calls for:</p>"""
+        + table(["Measured", "Diagnosis", "Do this", "Do NOT do this"],
+                [["J<sub>train</sub> 3.876, J<sub>cv</sub> 3.142",
+                  "high bias",
+                  "add features / raise the degree / lower λ",
+                  "collect more data — the curve says it is already flat"],
+                 ["J<sub>train</sub> 0.520, J<sub>cv</sub> 1.473",
+                  "high variance",
+                  "raise λ (0.1 took J<sub>cv</sub> to 1.230), or get more data",
+                  "add more features — that widens the gap"],
+                 ["J<sub>train</sub> 0.665, J<sub>cv</sub> 1.120",
+                  "healthy",
+                  "report J<sub>test</sub> and stop",
+                  "keep tuning against the cv set — you will start fitting it"]])
+        + """<p>Every row of the fix table sits on one side or the other, and half of them are
+actively wrong for any given problem. Getting more data is the most expensive action available and
+it is useless in row 1. That single distinction is what the week buys you.</p>""" + SETUP
+        + explain("""<p>Row 2 offers two fixes — more regularisation or more data — and the learning
+curve says both work. <b>How would you choose between them in practice?</b></p>""",
+                  """<p>By cost, because the diagnosis has already told you both are on the right
+side. Raising λ is a one-line change and a re-fit measured in seconds, so you try it first and read
+the U-shape. More data is weeks of work, so you spend it only when the λ sweep has been done and the
+learning curve shows J<sub>cv</sub> still falling at your current m. The order is not arbitrary:
+cheap interventions also tell you <em>how much</em> the expensive one might buy.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Collecting data to fix high bias.</b> The single most expensive mistake in this
@@ -1301,7 +1450,7 @@ what I predicted, recall = what was true.</p>""")
 
 # ============================================================ 17
 L.append(dict(
-    slug="17-precision-recall-tradeoff", title="Trading off precision and recall", mins=10, tag="core",
+    slug="17-precision-recall-tradeoff", title="Trading off precision and recall", mins=15, tag="core",
     lede="You cannot have both. The threshold is the dial, and where you set it is a decision about "
          "consequences, not about statistics.",
     body=(
@@ -1361,6 +1510,31 @@ chosen = max(ok) if ok else 0.0
 """)
         + warn("""<p>Pick the threshold on the <b>cross-validation</b> set, never the test set. It is a
 model choice like any other.</p>""")
+
+        + h2("🧮", "The whole trade-off, one threshold at a time")
+        + """<p>1,000 patients, 22 of them genuinely ill, and one model producing a probability for
+each. Nothing about the model changes below — only the number you compare its output to:</p>"""
+        + table(["threshold", "flagged", "TP", "FP", "FN", "precision", "recall", "F1"],
+                [["0.2", "467", "22", "445", "0", "0.05", "<b>1.00</b>", "0.090"],
+                 ["0.4", "112", "22", "90", "0", "0.20", "<b>1.00</b>", "0.328"],
+                 ["0.5", "53", "20", "33", "2", "0.38", "0.91", "0.533"],
+                 ["<b>0.6</b>", "20", "15", "5", "7", "0.75", "0.68", "<b>0.714</b>"],
+                 ["0.7", "10", "10", "0", "12", "<b>1.00</b>", "0.45", "0.625"],
+                 ["0.8", "4", "4", "0", "18", "<b>1.00</b>", "0.18", "0.308"]])
+        + """<p>Read precision and recall moving in opposite directions, all the way down. At 0.2 the
+model catches every ill patient — and flags 467 people to do it, so being flagged means almost
+nothing. At 0.8 every flag is correct and it misses 18 of the 22.</p>
+<p>F1 peaks in the middle, at 0.714. But notice what F1 is <em>not</em> doing: it does not know that
+missing a sick patient is worse than a false alarm. If it is, 0.5 is the better threshold despite
+its lower F1 — it catches 20 of 22 at the price of 33 unnecessary follow-ups. F1 compares
+algorithms; consequences choose thresholds.</p>"""
+        + explain("""<p>At threshold 0.7 precision is a perfect 1.00. <b>Why is that not the model
+performing at its best?</b></p>""",
+                  """<p>Because precision only asks about the cases the model chose to speak up on,
+and at 0.7 it speaks up ten times out of a thousand. Being right about ten easy cases while staying
+silent on twelve real ones is not accuracy, it is selectivity — and selectivity can always be made
+perfect by refusing to answer. That is exactly why precision is never quoted alone: recall is the
+number that counts what the silence cost.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Letting F1 make the decision for you.</b> F1 weights precision and recall equally,

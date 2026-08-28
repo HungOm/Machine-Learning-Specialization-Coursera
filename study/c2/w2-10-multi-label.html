@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.10 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.10 · 12 min read</span></p>
 <h1><span class="secno">7.10</span>Classification with multiple outputs (multi-label)</h1>
 <p class="lede">A short but genuinely confusable distinction: several answers can be true at once, so <span class="gterm" data-g="softmax-native">softmax</span> is the wrong tool.</p>
 <div class="bookrail" title="Lesson 94 of 172 in the book"><i style="width:55%"></i></div>
@@ -242,7 +242,17 @@ model = <span class="gterm" data-g="sequential-api">Sequential</span>([
 ])
 <span class="gterm" data-g="tfcompile-api">model.compile</span>(loss=BinaryCrossentropy())     <span class="tok-c"># binary loss, applied to all 3</span>
 
-<span class="tok-c"># Y has shape (m, 3): each row is something like [1, 0, 1]</span></code></pre><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using softmax for multi-label.</b> It forces the probabilities to compete. A photo
+<span class="tok-c"># Y has shape (m, 3): each row is something like [1, 0, 1]</span></code></pre><h2><span class="ico">🧮</span>The same three scores, two different questions</h2><p>Take one output layer with three units and scores <var>z</var> = [2.2, −2.2, 1.4].
+What you do to them next decides what the network is claiming:</p><table class="data"><thead><tr><th></th><th>unit 1 (car?)</th><th>unit 2 (bus?)</th><th>unit 3 (pedestrian?)</th><th>sum</th></tr></thead><tbody><tr><td><b>sigmoid</b> — multi-label</td><td>0.900</td><td>0.100</td><td>0.802</td><td><b>1.802</b></td></tr><tr><td><b>softmax</b> — multi-class</td><td>0.684</td><td>0.008</td><td>0.307</td><td><b>1.000</b></td></tr></tbody></table><p>The sigmoid row says: <em>almost certainly a car, almost certainly also a pedestrian,
+probably no bus.</em> Three independent yes/no answers, and there is no reason for them to add to
+anything in particular — a street can contain all three at once.</p>
+<p>The softmax row says: <em>if I must pick exactly one, it is the car.</em> The three now compete
+for a fixed budget of 1.0.</p><div class="explain"><span class="tag">Say it out loud</span><p>Unit 2’s score never changed, yet it fell from 0.100 to 0.008 — an eightfold
+drop. <b>Where did that probability go?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>To its rivals. Under sigmoid each unit is scored on its own merits, so unit 2
+is judged solely on <var>z</var> = −2.2 and gets 0.100 regardless of what the others scored. Under
+softmax the denominator is the sum over <em>all three</em>, so unit 2 is judged on how it compares —
+and next to a 2.2 and a 1.4 it looks far worse than it did alone. Nothing about the bus evidence
+changed; the question changed from “is there a bus?” to “is the bus the best answer?”.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using softmax for multi-label.</b> It forces the probabilities to compete. A photo
 containing both a car and a bus can then never score high on both — the model is structurally prevented
 from being right.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Thresholding all labels at 0.5.</b> Rare labels usually need a lower threshold.
 Week 3’s <span class="gterm" data-g="precisionrecall-native">precision</span>/recall lesson is how you choose one per label.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c22-10-multi-label#1"><summary>Tagging a news article with any of 20 topics. Which setup?</summary><div class="a"><p><b>Multi-label</b>: 20 sigmoid units and BinaryCrossentropy. An article can be about both politics and economics.</p></div></details><details class="q" data-qid="c22-10-multi-label#2"><summary>A model outputs [0.9, 0.8, 0.85]. Multi-class or multi-label?</summary><div class="a"><p><b>Multi-label</b> — they sum to 2.55, which softmax could never produce.</p></div></details><details class="q" data-qid="c22-10-multi-label#3"><summary>Why not just train three separate networks?</summary><div class="a"><p>You can, and sometimes should. But one shared network learns the common visual features once instead of three times: less data needed, less compute, usually better results.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/multiclass.html#multilabel-classification" target="_blank" rel="noopener">scikit-learn — multilabel classification</a><span class="d">Including how to score it, which is subtler than accuracy.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://arxiv.org/abs/2011.11197" target="_blank" rel="noopener">Liu et al. (2020) — The Emerging Trends of Multi-Label Learning</a><span class="d">A survey. If you end up doing this for real, the evaluation-metrics section is the useful part.</span></span></li></ul>

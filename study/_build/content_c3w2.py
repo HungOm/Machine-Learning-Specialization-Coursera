@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 2 — Recommender systems and PCA."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-making-recommendations", title="Making recommendations", mins=8, tag="intuition",
+    slug="01-making-recommendations", title="Making recommendations", mins=13, tag="intuition",
     lede="Probably the most commercially valuable algorithm in this specialization, and it starts with a "
          "table full of question marks.",
     body=(
@@ -43,6 +43,33 @@ this is the single most common bug in the assignment.</p>""")
 100,000,000 users and 50,000 items — five trillion cells, of which maybe 0.01% are filled.</p>
 <p>That extreme sparsity is not an obstacle to the method; it is the reason the method exists. If the
 matrix were full there would be nothing to predict.</p>"""
+
+        + h2("🧮", "How empty is the matrix, really?")
+        + """<p>The assignment’s MovieLens slice, counted:</p>"""
+        + table(["", "value"],
+                [["movies (n<sub>m</sub>)", "4,778"],
+                 ["users (n<sub>u</sub>)", "443"],
+                 ["cells in the matrix", "2,116,654"],
+                 ["cells that contain a rating", "<b>39,253</b>"],
+                 ["fraction filled", "<b>1.85%</b> — so 98.15% is empty"]])
+        + """<p>That is the problem in one number. You are asked to predict two million values from
+thirty-nine thousand, and the thirty-nine thousand are not spread evenly:</p>"""
+        + table(["", "min", "median", "max"],
+                [["ratings per user", "1", "31", "1,270"],
+                 ["ratings per movie", "1", "<b>2</b>", "198"]])
+        + """<p>The <em>median movie has two ratings</em>. Half the catalogue is known through one or
+two opinions. Any method that needs a decent sample per item is dead on arrival here, which is
+exactly why the algorithm has to borrow strength across users rather than treat each movie
+separately.</p>"""
+        + explain("""<p>98% of the matrix is missing, and the missing cells are not missing at
+random — people watch what they expect to like. <b>Why does that make “unrated” a bad substitute for
+“rated zero”?</b></p>""",
+                  """<p>Because a blank does not mean disliked, it overwhelmingly means unseen. If
+you filled the blanks with zeros you would be asserting two million strong negative opinions that
+nobody expressed, and since those fabricated cells outnumber the real ones fifty to one, they would
+dominate the cost function completely — the model would learn to predict “everyone hates
+everything”. That is why every formula this week carries the condition r(i,j) = 1, and why the
+vectorised version multiplies by R.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Treating a question mark as a 0.</b> “Has not watched it” is not the same as “rated
@@ -149,7 +176,7 @@ column for it.</p>"""
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-collaborative-filtering", title="The collaborative filtering algorithm", mins=12, tag="core",
+    slug="03-collaborative-filtering", title="The collaborative filtering algorithm", mins=16, tag="core",
     lede="The central idea of the week: if you do not have features, learn them. From the ratings. At the "
          "same time as everything else.",
     body=(
@@ -219,6 +246,30 @@ up and x down by the same factor and every prediction is unchanged). λ picks th
 </ul>
 <p>What you do <em>not</em> get is interpretability. The learned x₁ is not “romance” — it is whatever
 direction happened to explain the most variation. It is only meaningful up to rotation.</p>"""
+
+        + h2("🧮", "The cost function, evaluated")
+        + """<p>The lab gives you a small corner of the data — 5 movies, 4 users, 3 features — with
+known-good <var>X</var>, <var>W</var> and <var>b</var>, so you can check your implementation against
+a number rather than a feeling:</p>"""
+        + table(["λ", "J", "what it contains"],
+                [["0", "<b>13.67</b>", "squared error over rated cells only"],
+                 ["1.5", "<b>28.09</b>", "the same, plus (λ/2)(Σw² + Σx²)"]])
+        + """<p>Get 13.67 and your masking is right. Get 28.09 and your regularisation is right. If
+the first is wrong the second cannot be diagnosed, so fix them in that order.</p>
+<p>The most common wrong answer is larger than 13.67, and it means the sum ran over every cell
+instead of only the rated ones — the model being charged for failing to predict ratings nobody
+gave.</p>"""
+        + note("""<p>Notice that regularisation more than doubles the cost here. That is not a sign
+λ is too big; it is a sign the corner is tiny — 5 × 3 + 4 × 3 = 27 parameters against only a handful
+of ratings, so the penalty term is large relative to the error term. On the full 4,778 × 443
+problem the balance is completely different.</p>""")
+        + explain("""<p>The regularisation penalises <var>x</var> and <var>w</var> together, in one
+sum. <b>Why is it not a problem that a single λ controls both?</b></p>""",
+                  """<p>Because they enter the prediction symmetrically — it is
+<var>w</var>·<var>x</var>, and scaling <var>x</var> up while scaling <var>w</var> down by the same
+factor leaves every prediction identical. Without a penalty that symmetry is a free direction the
+optimiser can wander along forever; penalising both ends pins it down, and pinning it down is all
+one λ needs to do. Separate λs would let the same wandering resume at a different ratio.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Initialising everything to zero.</b> Then all gradients are symmetric and nothing
@@ -319,7 +370,7 @@ recording them as 0 poisons the model.</p>""")
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-mean-normalization", title="Mean normalization", mins=9, tag="core",
+    slug="05-mean-normalization", title="Mean normalization", mins=14, tag="core",
     lede="A brand-new user with zero ratings gets zero for everything — which is both useless and slightly "
          "insulting. One subtraction fixes it.",
     body=(
@@ -361,6 +412,37 @@ film. A new user is shown the generally-liked films, which is exactly the right 
 in Course 1: the cost surface becomes rounder and less elongated, so gradient descent takes a more direct
 path. This is a smaller effect than the cold-start fix, but it is free.</p>"""
 
+        + h2("🧮", "Worked on four real movies")
+        + """<p>Four of the most-rated films, three users who rated them, and a fourth user who has
+rated none of them:</p>"""
+        + table(["", "user A", "user B", "user C", "user D (new)", "movie mean"],
+                [["movie 1", "5.0", "3.5", "4.0", "—", "<b>4.167</b>"],
+                 ["movie 2", "5.0", "3.5", "3.5", "—", "<b>4.000</b>"],
+                 ["movie 3", "5.0", "3.5", "4.0", "—", "<b>4.167</b>"],
+                 ["movie 4", "5.0", "4.0", "5.0", "—", "<b>4.667</b>"]])
+        + """<p>Subtract each row’s mean from its rated cells and you get <var>Y</var><sub>norm</sub>:</p>"""
+        + table(["", "user A", "user B", "user C"],
+                [["movie 1", "+0.833", "−0.667", "−0.167"],
+                 ["movie 2", "+1.000", "−0.500", "−0.500"],
+                 ["movie 3", "+0.833", "−0.667", "−0.167"],
+                 ["movie 4", "+0.333", "−0.667", "+0.333"]])
+        + """<p>The numbers now say something better than “how many stars”: they say <em>how much
+above or below this film’s reputation</em>. User A is consistently generous, user B consistently
+harsh, and the model no longer has to spend parameters rediscovering that.</p>
+<p>Now user D. Every term for them is skipped, so regularisation drives their
+<var>w</var> and <var>b</var> to <b>0</b>, and the prediction is 0 + the movie mean:
+<b>4.167, 4.000, 4.167, 4.667</b>. Without normalisation the same reasoning gives 0 stars for
+everything — the worst possible first impression. With it, a brand-new user is shown the
+best-reviewed films, which is exactly right when you know nothing about them.</p>"""
+        + explain("""<p>The normalisation is per <em>movie</em> (each row), not per user. <b>Given
+that the problem being solved is a new user, why is the row the right choice?</b></p>""",
+                  """<p>Because the fallback has to be computable without any information about the
+person. A movie’s mean exists as soon as anyone has rated it, so it is available for a user who has
+done nothing — which is precisely the case that needs rescuing. A user’s mean requires that user to
+have rated something, so for the new user it does not exist at all, and normalising by it would
+solve every case except the one that was broken. (Per-user normalisation is a real technique — it
+handles harsh and generous raters — but it is a different problem.)</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Forgetting to add μ<sub>i</sub> back at prediction time.</b> Every prediction comes
 out centred around zero, and your top recommendations are meaningless.</p>""")
@@ -392,7 +474,7 @@ content-based features, which is Lesson 8 onward.</p>""")
 # ============================================================ 6
 L.append(dict(
     slug="06-tensorflow-collaborative", title="TensorFlow implementation of collaborative filtering",
-    mins=10, tag="code",
+    mins=14, tag="code",
     lede="Why you write the training loop by hand here, and how GradientTape does the calculus for a cost "
          "function Keras has never heard of.",
     body=(
@@ -437,6 +519,35 @@ def cofi_cost_func_v(X, W, b, Y, R, lambda_):
         + key("""<p><code>* R</code> is the whole trick. Multiplying elementwise by the 0/1 matrix R
 zeroes out every unrated cell <b>before</b> squaring, so the question marks contribute exactly nothing to
 the cost or to the gradient. One character does the job of the “sum only where r(i,j)=1” notation.</p>""")
+
+        + h2("🧮", "The real training run")
+        + """<p>4,778 movies × 443 users, 10 features, λ = 1, 200 Adam steps on the mean-normalised
+ratings:</p>"""
+        + table(["iteration", "J"],
+                [["0", "14,647.8"],
+                 ["20", "5,826.0"],
+                 ["40", "5,073.2"],
+                 ["100", "4,748.4"],
+                 ["160", "4,701.1"],
+                 ["199", "<b>4,687.7</b>"]])
+        + """<p>Most of the work happens in the first twenty steps — the cost falls by 60% before
+iteration 20 and by another 4% over the remaining 180. That shape is typical of Adam and is why
+200 iterations is enough here.</p>
+<p>The end result, in units you can feel: the model’s predictions on the 39,253 <em>known</em>
+ratings are off by <b>0.292 stars</b> on average.</p>"""
+        + warn("""<p>Which is a training-set number, and Course 2 Week 3 applies here in full. It
+tells you the optimiser worked. It does not tell you the recommendations are good — for that you
+would hold out ratings and predict them.</p>""")
+        + explain("""<p>Every other model this course has trained used <code>model.fit</code>. This
+one needs a hand-written loop with <code>GradientTape</code>. <b>What about collaborative filtering
+rules out the standard path?</b></p>""",
+                  """<p>That there is no input flowing through layers. <code>fit</code> assumes a
+model that maps X to y, so it can push examples forward and errors backward. Here
+<em>both</em> operands of the prediction are unknowns being learned simultaneously, and the “input”
+X is itself a parameter — there is nothing to feed in. <code>GradientTape</code> drops that
+assumption: it records whatever arithmetic you write and differentiates it with respect to whatever
+variables you name. Which means the same three lines will optimise any cost function you can express
+in code — a genuinely general tool that <code>fit</code> is a convenience wrapper around.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Computing the cost outside the <code>with</code> block.</b> Nothing is recorded, and
@@ -613,7 +724,7 @@ by construction. Deliberate diversity injection is a design decision, not an eme
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-deep-content-based", title="Deep learning for content-based filtering", mins=11, tag="core",
+    slug="09-deep-content-based", title="Deep learning for content-based filtering", mins=16, tag="core",
     lede="Two neural networks, two very different inputs, one shared output space — and a dot product at "
          "the end. This is the architecture behind modern recommenders and modern search alike.",
     body=(
@@ -671,6 +782,36 @@ is one matrix multiply, and fast. If instead the model took (user, item) jointly
 hidden layers, you would have to run a full forward pass per candidate item, which is hopeless at scale.</p>
 <p>Everything in the next lesson depends on this property.</p>"""
 
+        + h2("🧮", "Why both towers must end at the same width")
+        + """<p>Each tower ends with <code>tf.linalg.l2_normalize</code>, which rescales a vector to
+length 1. Take two 4-dimensional outputs (the real ones are 32-dimensional; the arithmetic is
+identical):</p>"""
+        + table(["", "raw output", "length", "after l2_normalize"],
+                [["<var>v</var><sub>u</sub> (a user)", "[1, 2, 2, 0]", "3.000", "[0.333, 0.667, 0.667, 0]"],
+                 ["<var>v</var><sub>m</sub> (film A)", "[2, 1, 2, 0]", "3.000", "[0.667, 0.333, 0.667, 0]"],
+                 ["<var>v</var><sub>m</sub> (film B)", "[0, 0, 1, 2]", "2.236", "[0, 0, 0.447, 0.894]"]])
+        + """<p>Now the predictions, which are just dot products:</p>"""
+        + table(["Pair", "dot product", "reading"],
+                [["user · film A", "<b>0.889</b>", "strong match"],
+                 ["user · film B", "0.298", "weak match"]])
+        + """<p>Because both vectors have length 1, the dot product is exactly the cosine of the angle
+between them, so it is pinned to the range −1 … +1 no matter what the towers output. That is what
+makes the two scores comparable — and it is why normalising matters: without it, a tower could
+inflate its outputs and win every comparison by being loud rather than by being right.</p>
+<p>The shared width is not a convention. A dot product pairs element 1 with element 1, element 2
+with element 2, and so on — it is undefined the moment the lengths differ. The two towers may take
+completely different inputs and have completely different hidden sizes, but their <em>final</em>
+layers must match, and mismatching them is the assignment’s most common error.</p>"""
+        + explain("""<p>The towers are trained jointly, from one prediction error, even though
+neither ever sees the other’s input. <b>How does the user tower learn anything about films?</b></p>""",
+                  """<p>Through the dot product, which is the only place the two ever meet. The error
+at the output is a single number, and the gradient of that number with respect to
+<var>v</var><sub>u</sub> depends on <var>v</var><sub>m</sub> — literally, the derivative of
+<var>v</var><sub>u</sub>·<var>v</var><sub>m</sub> with respect to <var>v</var><sub>u</sub>
+<em>is</em> <var>v</var><sub>m</sub>. So the film vector is exactly the message the user tower
+receives about films, and vice versa. The two towers negotiate a shared 32-dimensional language in
+which “what this person wants” and “what this film is” can be compared.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Mismatched output sizes.</b> A 32-unit user tower and a 64-unit item tower cannot
 be dotted. It is the one hard constraint, and it produces a shape error rather than a silent bug —
@@ -708,7 +849,7 @@ too.</p>""")
 
 # ============================================================ 10
 L.append(dict(
-    slug="10-large-catalogues", title="Recommending from a large catalogue", mins=9, tag="core",
+    slug="10-large-catalogues", title="Recommending from a large catalogue", mins=14, tag="core",
     lede="You cannot run a neural network on ten million items while somebody waits for a page to load. "
          "The answer is two stages: cheap and rough, then slow and accurate.",
     body=(
@@ -752,6 +893,31 @@ whether the final recommendations actually improve. When they stop improving, st
 overnight and stored in an approximate nearest-neighbour index. Retrieval then becomes a single index
 lookup rather than a model call. This is the payoff for the two-tower design in Lesson 9.</p>""",
                "Why the architecture made this possible")
+
+        + h2("🧮", "The arithmetic that forces two stages")
+        + """<p>Scoring every item for one user, on this course’s data set and at industrial scale:</p>"""
+        + table(["Catalogue", "network passes to score everything", "feasible in ~100 ms?"],
+                [["this assignment — 4,778 films", "4,778", "yes, comfortably"],
+                 ["a streaming service — 10⁵ titles", "100,000", "borderline"],
+                 ["a large marketplace — 10⁸ items", "100,000,000", "<b>no, by several orders</b>"]])
+        + """<p>And that is <em>per user, per page load</em>. The bottom row is not a tuning problem;
+no amount of hardware makes a hundred million forward passes fit in a page load.</p>
+<p>So the work is split. <b>Retrieval</b> assembles a few hundred plausible candidates using cheap
+lookups — items similar to the last few watched, the top items in each favourite genre, what is
+popular in the user’s country. No network runs. <b>Ranking</b> then runs the expensive model on
+those candidates only, perhaps 200 forward passes instead of 10⁸.</p>
+<p>The saving that makes it work: <var>v</var><sub>m</sub> for every item depends only on the item,
+so all 10⁸ of them are computed <em>offline</em> and cached. At request time the item tower does not
+run at all — only the user tower, once, followed by a few hundred dot products.</p>"""
+        + explain("""<p>Retrieval uses crude heuristics that the ranking model would easily beat.
+<b>Why is it not better to make retrieval smarter?</b></p>""",
+                  """<p>Because the two stages are judged on different things. Retrieval only has to
+avoid <em>missing</em> good items — anything it passes through gets properly evaluated a moment
+later, so its precision barely matters and its recall is everything. That job is well served by
+cheap, broad, diverse heuristics. Making retrieval smarter means making it slower, which forces it
+to consider fewer candidates, which costs recall — the one thing it exists to protect. The right
+tuning knob is the number of candidates, and you find it by measuring whether more candidates still
+improve the final recommendations.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Judging retrieval by precision.</b> Retrieval should be judged on <em>recall</em> —
@@ -1022,7 +1188,7 @@ not names. Interpreting them is your judgement, and it is easy to over-read.</p>
 
 # ============================================================ 14
 L.append(dict(
-    slug="14-pca-algorithm", title="The PCA algorithm", mins=11, tag="optional",
+    slug="14-pca-algorithm", title="The PCA algorithm", mins=16, tag="optional",
     lede="Pick the axis that keeps the most spread. That single sentence defines it — and it is not the "
          "same thing as linear regression.",
     body=(
@@ -1068,6 +1234,30 @@ label at all.</b> Different error, different problem, different answer.</p>""")
                  "you squash onto it and try to rebuild.</p>"))
         + """<p>These are the same optimisation problem written two ways — total variance is fixed, so
 whatever is not kept is exactly what is lost. Different textbooks lead with different halves.</p>"""
+
+        + h2("🧮", "PCA on two correlated features")
+        + """<p>Take two standardised features from the anomaly data set that correlate at
+<b>0.90</b> — they largely say the same thing. Compute the covariance matrix and its eigenvalues:</p>"""
+        + table(["Component", "eigenvalue", "variance explained"],
+                [["first", "<b>1.921</b>", "<b>95.1%</b>"],
+                 ["second", "0.099", "4.9%"]])
+        + """<p>The first axis comes out as <b>[0.704, 0.711]</b> — very nearly the 45° diagonal,
+which is exactly where you would draw a line through a cloud of points that rises at 45°. Project
+onto that one axis and you keep 95.1% of the variance while halving the number of features. The
+discarded direction is the perpendicular scatter about the diagonal, which was mostly noise.</p>"""
+        + warn("""<p>Now the honest counterexample. Run the same procedure on all 11 features of that
+data set and the variance explained comes out as 0.121, 0.113, 0.103, 0.100, 0.094 … — almost
+perfectly flat, needing <b>all 11</b> components to reach 95%. PCA compresses <em>correlated</em>
+features. When features are already independent there is no redundancy to remove, and PCA correctly
+tells you so by refusing to concentrate the variance anywhere.</p>""")
+        + explain("""<p>The first component landed on the diagonal rather than on either original
+axis. <b>Why is the direction of greatest variance the right thing to keep?</b></p>""",
+                  """<p>Because variance is where the differences between examples live. A direction
+along which every point has nearly the same value distinguishes nothing — drop it and you lose
+almost no ability to tell examples apart. The diagonal is where these points actually spread out,
+so a single number measuring position along it recovers most of what the two original numbers told
+you. “Greatest variance” and “most information about which point is which” are the same criterion,
+which is why the eigenvector of the largest eigenvalue is the axis to keep.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Skipping mean normalisation.</b> The first component then points from the origin

@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 6 — Neural Networks</span><span class="right">§&nbsp;6.11 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 6 — Neural Networks</span><span class="right">§&nbsp;6.11 · 13 min read</span></p>
 <h1><span class="secno">6.11</span>General implementation of forward propagation</h1>
 <p class="lede">Replace the copy-pasted neurons with one loop, then stack the loops into a network. This is the code you will write in the assignment.</p>
 <div class="bookrail" title="Lesson 79 of 172 in the book"><i style="width:46%"></i></div>
@@ -246,7 +246,30 @@ number wants to become a <b>loop counter</b>.</p></div><h2><span class="ico">�
 is, at its computational core, this function plus a great deal of engineering for speed, autodiff and
 hardware.</p><div class="callout "><span class="tag">Naming convention</span><p>Capital <code>W</code> for <span class="gterm" data-g="matrix-f0">matrices</span>, lowercase <code>b</code> and <code>w</code> for
 vectors. This is standard maths convention and the course follows it exactly. It is a genuinely useful
-reading aid: capital letter → expect two dimensions.</p></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using <code>W.shape[0]</code>.</b> That is the number of <em>inputs</em>, not the
+reading aid: capital letter → expect two dimensions.</p></div><h2><span class="ico">🧮</span>The whole coffee network, end to end</h2><p>Ten lines, no TensorFlow, real trained weights — the entire model:</p><pre><code><span class="tok-k">def</span> my_dense(a_in, W, b, g):
+    a_out = np.zeros(W.shape[<span class="tok-n">1</span>])
+    <span class="tok-k">for</span> j <span class="tok-k">in</span> range(W.shape[<span class="tok-n">1</span>]):
+        a_out[j] = g(np.dot(W[:, j], a_in) + b[j])
+    <span class="tok-k">return</span> a_out
+
+<span class="tok-k">def</span> my_sequential(x, W1, b1, W2, b2):
+    <span class="tok-k">return</span> my_dense(my_dense(x, W1, b1, sigmoid), W2, b2, sigmoid)
+
+W1 = <span class="gterm" data-g="nparray-api">np.array</span>([[-<span class="tok-n">8.93</span>,  <span class="tok-n">0.29</span>, <span class="tok-n">12.90</span>], [-<span class="tok-n">0.10</span>, -<span class="tok-n">7.32</span>, <span class="tok-n">10.81</span>]])
+b1 = np.array([-<span class="tok-n">9.82</span>, -<span class="tok-n">9.28</span>, <span class="tok-n">0.96</span>])
+W2 = np.array([[-<span class="tok-n">31.18</span>], [-<span class="tok-n">27.59</span>], [-<span class="tok-n">32.56</span>]])
+b2 = np.array([<span class="tok-n">15.41</span>])
+
+my_sequential(np.array([-<span class="tok-n">0.4671</span>, <span class="tok-n">0.4159</span>]), W1, b1, W2, b2)   <span class="tok-c"># -&gt; [0.972]</span></code></pre><p>Run all 200 normalised training roasts through it and the network calls
+<b>43</b> of them good — and those 43 are exactly the 43 the data set labels good. It agrees with
+every single <span class="gterm" data-g="trainingexample-native">training example</span>, 200 out of 200.</p><div class="callout warn"><span class="tag">Watch out</span><p>Which is <em>not</em> a reason to celebrate. Perfect agreement on the data you
+trained on tells you almost nothing — a model that memorised the answers scores the same. Course 2
+Week 3 is entirely about why, and what to measure instead.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>The two <code>my_dense</code> calls are identical code, and neither knows
+which layer it is. <b>Why is that enough to build a network of any depth?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because a layer’s only contract is: take a vector in, return a vector out.
+Nothing inside <code>my_dense</code> depends on where it sits — it reads the width it needs from
+<code>W.shape[1]</code>. So the output of one call is a legal input to the next, and a hundred-layer
+network is the same function called a hundred times. That interchangeability is exactly what
+<code><span class="gterm" data-g="sequential-api">Sequential</span>([...])</code> is exploiting.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using <code>W.shape[0]</code>.</b> That is the number of <em>inputs</em>, not the
 number of neurons. If your a_out comes out the wrong length, this is the first thing to check.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Passing x into every layer.</b> Layer 2 takes <code>a1</code>, not <code>x</code>. It
 is a one-character typo that produces perfectly valid-looking numbers and a completely broken network.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c21-11-general-forward-prop#1"><summary>W is (400, 25) and a_in is length 400. What does dense() return?</summary><div class="a"><p>A vector of length <b>25</b>. The loop runs 25 times, once per column.</p></div></details><details class="q" data-qid="c21-11-general-forward-prop#2"><summary>Why pre-allocate with np.zeros instead of building a list?</summary><div class="a"><p>You know the size in advance, so allocation is cheaper than growing a list — and the result is already a NumPy array of the right dtype.</p></div></details><details class="q" data-qid="c21-11-general-forward-prop#3"><summary>How would you change dense() to use <span class="gterm" data-g="relu-native">ReLU</span> instead of sigmoid?</summary><div class="a"><p>Pass the activation function as an argument: <code>def dense(a_in, W, b, g)</code>, then <code>a_out[j] = g(z)</code>. That is exactly what Keras’ <code>activation=</code> does.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://numpy.org/doc/stable/reference/generated/numpy.zeros.html" target="_blank" rel="noopener">numpy.zeros</a><span class="d">Note the <code>dtype</code> argument — defaults to float64, which matters for memory on large models.</span></span></li><li><span class="kind lab">lab</span><span><a href="../../C2%20-%20Advanced%20Learning%20Algorithms/week1/C2W1A1/C2_W1_Assignment.ipynb" target="_blank" rel="noopener">Week 1 assignment — my_dense()</a><span class="d">You write this function for marks. Then you write the vectorised version from Lesson 16.</span></span></li></ul>
 <nav class="pager">

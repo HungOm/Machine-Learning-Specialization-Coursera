@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 6 — Neural Networks</span><span class="right">§&nbsp;6.9 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 6 — Neural Networks</span><span class="right">§&nbsp;6.9 · 12 min read</span></p>
 <h1><span class="secno">6.9</span>Building a neural network (Sequential)</h1>
 <p class="lede">Stop calling layers by hand. Sequential wires them together, and three method calls — compile, fit, predict — do the rest.</p>
 <div class="bookrail" title="Lesson 77 of 172 in the book"><i style="width:45%"></i></div>
@@ -248,7 +248,23 @@ p = <span class="gterm" data-g="tfpredict-api">model.predict</span>(X_new)      
 model.add(Dense(3, activation='sigmoid'))
 model.add(Dense(1, activation='sigmoid'))</code></pre><p style='margin-top:8px'>Identical result. Handy when layers are built in a loop.</p></div></div><p>Add <code>model.summary()</code> after building and you get a table of every layer, its
 output shape and its parameter count — the same numbers you hand-counted in Lesson 4. Get in the habit of
-reading it before you train anything.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Expecting <code>predict</code> to return 0s and 1s.</b> It returns <span class="gterm" data-g="probability-f0">probabilities</span>.
+reading it before you train anything.</p><h2><span class="ico">🧮</span>What model.summary() actually prints</h2><p>Build the coffee network and ask Keras to describe it:</p><pre><code>model = Sequential([
+    tf.keras.Input(shape=(<span class="tok-n">2</span>,)),
+    Dense(<span class="tok-n">3</span>, activation=<span class="tok-s">&#x27;sigmoid&#x27;</span>, name=<span class="tok-s">&#x27;layer1&#x27;</span>),
+    Dense(<span class="tok-n">1</span>, activation=<span class="tok-s">&#x27;sigmoid&#x27;</span>, name=<span class="tok-s">&#x27;layer2&#x27;</span>),
+])
+model.summary()      <span class="tok-c"># -&gt; Total params: 13</span></code></pre><p>Thirteen. You should be able to get to that number without running anything. The rule
+is: a layer with <var>s</var><sub>in</sub> inputs and <var>s</var><sub>out</sub> units has
+<var>s</var><sub>in</sub> × <var>s</var><sub>out</sub> weights and <var>s</var><sub>out</sub>
+biases.</p><table class="data"><thead><tr><th>Layer</th><th>W shape</th><th>weights</th><th>b shape</th><th>biases</th><th>total</th></tr></thead><tbody><tr><td>layer1</td><td>(2, 3)</td><td>2 × 3 = 6</td><td>(3,)</td><td>3</td><td><b>9</b></td></tr><tr><td>layer2</td><td>(3, 1)</td><td>3 × 1 = 3</td><td>(1,)</td><td>1</td><td><b>4</b></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td><b>13</b></td></tr></tbody></table><p>This is worth practising because the exam-style questions ask it, and because a
+mismatch between the count you expect and the count Keras prints is the fastest way to catch a
+layer you sized wrongly. The Week 1 assignment’s 400 → 25 → 15 → 1 network, for instance, comes to
+(400×25 + 25) + (25×15 + 15) + (15×1 + 1) = 10,025 + 390 + 16 = <b>10,431</b>.</p><div class="explain"><span class="tag">Say it out loud</span><p>Layer 1 has 2 inputs and 3 units, and gets 3 biases — not 2, and not 6.
+<b>Why is the bias count tied to the units rather than to the inputs?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the bias is added <em>once per unit</em>, after that unit has already
+summed all of its inputs. Each unit collapses however many inputs it has into one number
+<var>z</var>, and then shifts that single number by its own <var>b</var>. Inputs affect how many
+<em>weights</em> a unit needs; they have no say in how many biases it needs, which is always
+one.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Expecting <code>predict</code> to return 0s and 1s.</b> It returns <span class="gterm" data-g="probability-f0">probabilities</span>.
 Thresholding is your job: <code>(p >= 0.5).astype(int)</code>.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Calling <code>fit</code> twice by accident.</b> Keras <em>continues</em> training from
 where it left off; it does not start over. Re-run the cell that builds the model if you want a clean start.</p></div><div class="callout warn"><span class="tag">Watch out</span><p><code>Sequential</code> can only express a straight line of layers. Anything with two
 inputs, two outputs or a skip connection needs the <a href="https://www.tensorflow.org/guide/keras/functional_api"

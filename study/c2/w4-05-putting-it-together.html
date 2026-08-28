@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.5 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.5 · 14 min read</span></p>
 <h1><span class="secno">9.5</span>Putting it together</h1>
 <p class="lede">The full algorithm, which turns out to be four lines — because it calls itself.</p>
 <div class="bookrail" title="Lesson 121 of 172 in the book"><i style="width:70%"></i></div>
@@ -256,7 +256,21 @@ absent: 0 cats, 4 not — <b>pure, leaf</b>.</li>
 <li>Every branch is pure. Done. Depth 2.</li>
 </ol>
 <p>On this toy dataset every leaf comes out pure, which is tidy but unusual. On real data you will hit a
-depth or purity limit long before that.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Recursing on the wrong subset.</b> The left branch must recurse on the left
+depth or purity limit long before that.</p><h2><span class="ico">🧮</span>The second level, computed</h2><p>Ear shape won the root with a gain of 0.2781. Now <b>throw away everything else</b>
+and treat the left branch as a brand-new problem: the five pointy-eared animals, four of which are
+cats.</p><table class="data"><thead><tr><th></th><th>value</th></tr></thead><tbody><tr><td>examples at this node</td><td>5 (indices 0, 3, 4, 5, 7)</td></tr><tr><td>p₁ at this node</td><td>4/5 = 0.8</td></tr><tr><td>H at this node</td><td>0.7219 — no longer 1.0, because the root split already tidied it</td></tr></tbody></table><p>Two features are left. Score them <em>on these five animals only</em>:</p><table class="data"><thead><tr><th>Split on</th><th>left branch</th><th>right branch</th><th>gain</th></tr></thead><tbody><tr><td><b>face shape</b></td><td>4 of 4 are cats — <b>pure</b></td><td>0 of 1 is a cat — <b>pure</b></td><td><b>0.7219</b> ← winner</td></tr><tr><td>whiskers</td><td>2 of 3 are cats</td><td>2 of 2 are cats</td><td>0.1710</td></tr></tbody></table><p>Face shape removes <em>all</em> the remaining entropy — 0.7219 of it, leaving 0.0000 —
+so both children are perfectly pure and become leaves. That branch of the tree is finished after two
+questions.</p>
+<p>Notice what changed: at the root, face shape was the <b>worst</b> feature, scoring 0.0349. Five
+animals later it is the best, scoring 0.7219. A feature is not good or bad in itself — it is good or
+bad <em>at a particular node</em>, given what the splits above it have already separated. That is
+why the algorithm re-scores every feature at every node instead of ranking them once.</p><div class="explain"><span class="tag">Say it out loud</span><p>Face shape went from the worst split available (0.0349) to the best (0.7219)
+without a single one of its own values changing. <b>Why?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because entropy is a property of the <em>group</em>, not of the feature. At the
+root, face shape cut across a 50/50 mix and produced two branches that were still nearly 50/50 —
+it separated nothing. After the ear split, the five remaining animals are already 80% cats, and
+within that smaller, more homogeneous group, face shape happens to align exactly with the one
+non-cat. The feature did not improve; the question it was being asked to answer got easier, because
+another feature had already removed the confusion it could not.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Recursing on the wrong subset.</b> The left branch must recurse on the left
 examples only. Passing the full set is an easy typo and produces infinite recursion.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>No depth limit.</b> Guaranteed <span class="gterm" data-g="overfitting-native">overfitting</span>, and on adversarial data, a stack
 overflow.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c24-05-putting-it-together#1"><summary>Why is the algorithm naturally recursive?</summary><div class="a"><p>Because each branch is a smaller instance of the identical problem: a set of examples needing a tree.</p></div></details><details class="q" data-qid="c24-05-putting-it-together#2"><summary>A node has 4 cats and 4 not, and every possible split gives gain 0. What now?</summary><div class="a"><p>Make it a leaf. No split separates anything, so predict the majority — here a tie, so either class, and accept 50% error on that node.</p></div></details><details class="q" data-qid="c24-05-putting-it-together#3"><summary>With max_depth = 1, what can the tree learn?</summary><div class="a"><p>A single question. That is a “decision stump” — <span class="gterm" data-g="bias-variance-native">high bias</span>, but it is exactly what boosting uses as its building block.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html" target="_blank" rel="noopener">sklearn.tree.DecisionTreeClassifier</a><span class="d">The production version. Read <code>max_depth</code>, <code>min_samples_leaf</code>, <code>criterion</code>.</span></span></li><li><span class="kind lab">lab</span><span><a href="../../C2%20-%20Advanced%20Learning%20Algorithms/week4/C2W4A1/C2_W4_Decision_Tree_with_Markdown.ipynb" target="_blank" rel="noopener">Week 4 assignment</a><span class="d">You write build_tree yourself, recursion and all.</span></span></li></ul>
 <nav class="pager">

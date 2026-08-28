@@ -352,7 +352,7 @@ with <em>gain ratio</em>; the practical fix is: never feed an ID column to a tre
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-putting-it-together", title="Putting it together", mins=9, tag="core",
+    slug="05-putting-it-together", title="Putting it together", mins=14, tag="core",
     lede="The full algorithm, which turns out to be four lines — because it calls itself.",
     body=(
         pretest("""<p>You can pick the best split. <b>Guess how the whole tree gets built from that</b> — and what tells you to stop.</p>""",
@@ -407,6 +407,35 @@ absent: 0 cats, 4 not — <b>pure, leaf</b>.</li>
 <p>On this toy dataset every leaf comes out pure, which is tidy but unusual. On real data you will hit a
 depth or purity limit long before that.</p>"""
 
+        + h2("🧮", "The second level, computed")
+        + """<p>Ear shape won the root with a gain of 0.2781. Now <b>throw away everything else</b>
+and treat the left branch as a brand-new problem: the five pointy-eared animals, four of which are
+cats.</p>"""
+        + table(["", "value"],
+                [["examples at this node", "5 (indices 0, 3, 4, 5, 7)"],
+                 ["p₁ at this node", "4/5 = 0.8"],
+                 ["H at this node", "0.7219 — no longer 1.0, because the root split already tidied it"]])
+        + """<p>Two features are left. Score them <em>on these five animals only</em>:</p>"""
+        + table(["Split on", "left branch", "right branch", "gain"],
+                [["<b>face shape</b>", "4 of 4 are cats — <b>pure</b>", "0 of 1 is a cat — <b>pure</b>",
+                  "<b>0.7219</b> ← winner"],
+                 ["whiskers", "2 of 3 are cats", "2 of 2 are cats", "0.1710"]])
+        + """<p>Face shape removes <em>all</em> the remaining entropy — 0.7219 of it, leaving 0.0000 —
+so both children are perfectly pure and become leaves. That branch of the tree is finished after two
+questions.</p>
+<p>Notice what changed: at the root, face shape was the <b>worst</b> feature, scoring 0.0349. Five
+animals later it is the best, scoring 0.7219. A feature is not good or bad in itself — it is good or
+bad <em>at a particular node</em>, given what the splits above it have already separated. That is
+why the algorithm re-scores every feature at every node instead of ranking them once.</p>"""
+        + explain("""<p>Face shape went from the worst split available (0.0349) to the best (0.7219)
+without a single one of its own values changing. <b>Why?</b></p>""",
+                  """<p>Because entropy is a property of the <em>group</em>, not of the feature. At the
+root, face shape cut across a 50/50 mix and produced two branches that were still nearly 50/50 —
+it separated nothing. After the ear split, the five remaining animals are already 80% cats, and
+within that smaller, more homogeneous group, face shape happens to align exactly with the one
+non-cat. The feature did not improve; the question it was being asked to answer got easier, because
+another feature had already removed the confusion it could not.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Recursing on the wrong subset.</b> The left branch must recurse on the left
 examples only. Passing the full set is an easy typo and produces infinite recursion.</p>""")
@@ -439,7 +468,7 @@ overflow.</p>""")
 
 # ============================================================ 6
 L.append(dict(
-    slug="06-one-hot-encoding", title="Using one-hot encoding of categorical features", mins=8, tag="core",
+    slug="06-one-hot-encoding", title="Using one-hot encoding of categorical features", mins=12, tag="core",
     lede="What to do when a feature has three values instead of two — and why this trick matters for "
          "neural networks too.",
     body=(
@@ -479,6 +508,31 @@ pd.get_dummies(df, columns=['ear'], dtype=int)
 # 3           0         0           1
 """)
 
+        + h2("🧮", "Encoded, and scored")
+        + """<p>Suppose ear shape has three values, not two: pointy, floppy, oval. One-hot turns one
+column into three 0/1 columns, exactly one of which is 1 per row. Score each:</p>"""
+        + table(["Encoded feature", "left branch (=1)", "right branch (=0)", "gain"],
+                [["is_pointy", "4 of 5 cats", "1 of 5 cats", "<b>0.2781</b>"],
+                 ["is_floppy", "1 of 3 cats", "4 of 7 cats", "0.0349"],
+                 ["is_oval", "<b>0 of 2 cats</b> — pure", "5 of 8 cats", "0.2365"]])
+        + """<p>The tree now has three ordinary binary questions to choose from and picks
+<code>is_pointy</code>. Nothing else about the algorithm changes — which is the entire point of
+one-hot encoding.</p>"""
+        + warn("""<p>An honest wrinkle. Splitting three ways <em>at once</em> — one branch per value —
+scores a gain of <b>0.3635</b>, higher than any of the three binary splits. Multi-way splits almost
+always score higher, because more branches means smaller, purer groups. That is not the tree finding
+something better; it is the bias towards many-valued features. Keeping every split binary is what
+stops that bias from running away, and a two-level binary tree can reach the same partition
+anyway.</p>""")
+        + explain("""<p>One-hot on a 3-value feature produces three columns, but you could identify
+all three values with two columns (00, 01, 10). <b>Why use the redundant third?</b></p>""",
+                  """<p>Because with two columns the tree can only ask “is bit 1 set?” — a question
+about an arbitrary encoding, not about the data. “Is it oval?” would no longer be a single available
+split; it would have to be reconstructed from a combination the tree may never find. The redundancy
+is the point: one-hot guarantees every <em>category</em> gets its own directly askable question, and
+for trees that matters more than the wasted column. (In linear models, where the redundancy causes
+collinearity, you do drop one.)</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Ordinal encoding unordered categories.</b> Mapping {red, green, blue} → {0,1,2}
 tells the model blue is bigger than red. For genuinely ordered categories (small &lt; medium &lt; large)
@@ -517,7 +571,7 @@ test, your encoder must already know how to handle it (<code>handle_unknown='ign
 
 # ============================================================ 7
 L.append(dict(
-    slug="07-continuous-features", title="Continuous valued features", mins=9, tag="core",
+    slug="07-continuous-features", title="Continuous valued features", mins=14, tag="core",
     lede="Weight in pounds is not a category. The fix: turn “which value?” into “is it above a threshold?” "
          "and try every threshold.",
     body=(
@@ -556,6 +610,37 @@ over neural networks, and one of the reasons they are so easy to use on messy re
 </ol>
 <p>A continuous feature therefore costs more to evaluate (m−1 gain calculations instead of 1) but is
 otherwise treated identically. Nothing about the rest of the algorithm changes.</p>"""
+
+        + h2("🧮", "The threshold sweep, in full")
+        + """<p>Give the same ten animals a weight in pounds and the tree cannot ask “is weight = 1?”
+— it has to find a cut. So it sorts the values, tries the midpoint between each neighbouring pair,
+and scores every one:</p>"""
+        + table(["threshold", "left (≤)", "right (>)", "gain"],
+                [["w ≤ 7.40", "1 of 1 cats", "4 of 9 cats", "0.1080"],
+                 ["w ≤ 8.00", "2 of 2 cats", "3 of 8 cats", "0.2365"],
+                 ["w ≤ 8.60", "3 of 3 cats", "2 of 7 cats", "0.3958"],
+                 ["<b>w ≤ 9.00</b>", "<b>4 of 4 cats</b>", "1 of 6 cats", "<b>0.6100</b> ← best"],
+                 ["w ≤ 9.70", "4 of 5 cats", "1 of 5 cats", "0.2781"],
+                 ["w ≤ 10.60", "5 of 6 cats", "<b>0 of 4 cats</b>", "<b>0.6100</b> ← ties"],
+                 ["w ≤ 13.00", "5 of 7 cats", "0 of 3 cats", "0.3958"],
+                 ["w ≤ 16.50", "5 of 8 cats", "0 of 2 cats", "0.2365"],
+                 ["w ≤ 19.00", "5 of 9 cats", "0 of 1 cats", "0.1080"]])
+        + """<p>Two things worth noticing. First, the winning threshold scores <b>0.6100</b> — more
+than twice ear shape’s 0.2781. A well-chosen continuous cut can easily beat every categorical
+feature, which is why you never bucket a continuous variable by hand before giving it to a tree.</p>
+<p>Second, w ≤ 9.00 and w ≤ 10.60 tie exactly. One isolates a pure group of cats, the other a pure
+group of non-cats, and entropy does not care which class a pure branch is pure in. Implementations
+break the tie by taking whichever comes first.</p>
+<p>The cost: with <var>m</var> examples there are up to <var>m</var> − 1 thresholds to score per
+feature, so this step is the reason tree training is dominated by sorting.</p>"""
+        + explain("""<p>The gains rise to a peak and fall away symmetrically — 0.108, 0.237, 0.396,
+0.610, then back down through 0.396, 0.237, 0.108. <b>Why that shape?</b></p>""",
+                  """<p>Because the weights happen to separate the classes almost perfectly, so a
+threshold’s gain depends mostly on how <em>far it is from the true dividing line</em>. Cut far to
+one side and you peel off a tiny pure sliver — pure, but weighted by almost nothing, so the gain is
+small. Move towards the boundary and each cut peels off more while staying pure, so the gain grows.
+Past the boundary the same thing happens in reverse. The peak sits where the split matches the
+structure actually in the data — which is exactly what you want a gain to measure.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Trying every real number.</b> Pointless — the gain only changes when the threshold
@@ -693,7 +778,7 @@ matters for time-series and price prediction, where tomorrow is often outside ye
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-using-multiple-trees", title="Using multiple decision trees", mins=8, tag="intuition",
+    slug="09-using-multiple-trees", title="Using multiple decision trees", mins=13, tag="intuition",
     lede="A single tree is fragile: change one example and the whole thing can rearrange. The fix is not a "
          "better tree — it is more trees.",
     body=(
@@ -728,6 +813,30 @@ Ensembles are averaging.</p>"""
 vote identically and you have gained nothing. That is why the next two lessons are about deliberately
 injecting randomness.</p>""")
 
+        + h2("🧮", "How unstable is one tree? Change a single label")
+        + """<p>This is worth doing rather than believing. Take the ten animals, flip <b>one</b>
+label, and recompute the root split:</p>"""
+        + table(["Dataset", "ear shape", "face shape", "whiskers", "root becomes"],
+                [["original", "<b>0.278</b>", "0.035", "0.125", "<b>ear shape</b>"],
+                 ["flip example 5", "0.125", "0.006", "<b>0.256</b>", "<b>whiskers</b>"],
+                 ["flip example 7", "0.125", "0.006", "<b>0.256</b>", "<b>whiskers</b>"]])
+        + """<p>One label out of ten — a single animal relabelled — and the tree asks a completely
+different first question. Everything below the root is then built on a different foundation, so the
+entire tree changes shape.</p>
+<p>That is what “high variance” means, made concrete. It is not that trees are inaccurate; the
+original tree fits its data perfectly. It is that the tree you get is a fact about <em>this
+sample</em> rather than about cats, and a slightly different sample would have produced a
+substantially different model. Averaging many trees built on many resamples is the direct answer to
+exactly this problem.</p>"""
+        + explain("""<p>A change at the root propagates through the whole tree, but a change deep in
+one branch usually does not. <b>Why is a tree so much more fragile at the top?</b></p>""",
+                  """<p>Because the algorithm is <em>greedy and sequential</em>: every node is chosen
+given the split above it, and never revisited. A different root sends different subsets down each
+side, so every subsequent question is being asked of a different group — the damage compounds with
+depth. A change deep down only affects the handful of examples that reached that node. This is also
+why trees cannot recover from a bad early split: nothing in the algorithm ever goes back and
+reconsiders it.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why is one deep decision tree high variance?",
@@ -751,7 +860,7 @@ injecting randomness.</p>""")
 
 # ============================================================ 10
 L.append(dict(
-    slug="10-sampling-with-replacement", title="Sampling with replacement", mins=8, tag="maths",
+    slug="10-sampling-with-replacement", title="Sampling with replacement", mins=13, tag="maths",
     lede="The trick that manufactures many different training sets out of the one you have.",
     body=(
         pretest("""<p>You have 10 examples and want many different training sets from them. <b>Guess how, without collecting more data.</b></p>""",
@@ -801,6 +910,37 @@ for b in range(100):
     trees.append(train_tree(Xb, yb))
 """)
 
+        + h2("🧮", "How much of the data does each tree actually see?")
+        + """<p>Draw 10 examples with replacement from a set of 10. One such draw:</p>"""
+        + code("""
+[8, 0, 1, 2, 1, 8, 8, 5, 0, 0]        # 10 draws
+unique -> 5 of the 10 original examples
+# example 8 appears 3 times, example 0 appears 3 times, and 3, 4, 6, 7, 9 never appear
+""")
+        + """<p>Half the data set is missing from that tree, and two examples are triple-weighted.
+That is not a flaw — it is the mechanism. Every tree gets a different distortion of the data, so
+every tree is a different model, and different models are what makes averaging worth anything.</p>
+<p>How much is missing on average? The chance a particular example survives one draw is
+(1 − 1/<var>m</var>), and there are <var>m</var> draws:</p>"""
+        + table(["m", "P(a given example is never drawn) = (1 − 1/m)<sup>m</sup>"],
+                [["10", "0.3487"],
+                 ["100", "0.3660"],
+                 ["1,000", "0.3677"],
+                 ["10,000", "0.3679"],
+                 ["→ ∞", "<b>1/e = 0.3679</b>"]])
+        + """<p>So for any reasonably sized data set, each bagged tree trains on about <b>63.2%</b>
+of the unique examples and never sees the other 36.8%. Those left-out examples have a name —
+<em>out-of-bag</em> — and because each is unseen by roughly a third of the trees, they provide a
+free validation estimate with no separate holdout set at all.</p>"""
+        + explain("""<p>The fraction left out converges to 1/e — the same constant as in compound
+interest and in <var>e</var><sup><var>x</var></sup>. <b>Why does it appear here?</b></p>""",
+                  """<p>Because (1 − 1/<var>m</var>)<sup><var>m</var></sup> <em>is</em> the definition
+of 1/<var>e</var> in the limit — the same expression that defines <var>e</var> as
+(1 + 1/<var>m</var>)<sup><var>m</var></sup>, with the sign flipped. Each of the <var>m</var> draws
+independently spares an example with probability (1 − 1/<var>m</var>), and multiplying <var>m</var>
+of those together is exactly that limit. It is not a coincidence about trees; it is what happens
+whenever you take <var>m</var> independent chances each of size 1/<var>m</var>.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b><code>replace=False</code>.</b> You get a permutation of the original data, every
 tree is identical, and the ensemble does nothing.</p>""")
@@ -832,7 +972,7 @@ balance. The standard method draws exactly m.</p>""")
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-random-forest", title="Random forest algorithm", mins=9, tag="core",
+    slug="11-random-forest", title="Random forest algorithm", mins=13, tag="core",
     lede="Bagging, plus one extra sprinkle of randomness that stops all the trees from making the same "
          "first move.",
     body=(
@@ -888,6 +1028,33 @@ feature reduced impurity across the whole forest. Treat it as a hint rather than
 towards high-cardinality features. <b>Permutation importance</b> is the more trustworthy version.</p>""",
                "A useful side effect")
 
+        + h2("🧮", "How many features does each node get to see?")
+        + """<p>Random forest adds one restriction to bagging: at every node, choose from a random
+subset of <var>k</var> features rather than all <var>n</var>. The usual choice is
+<var>k</var> = √<var>n</var>:</p>"""
+        + table(["features n", "k = √n", "fraction of features visible at a node"],
+                [["3", "1", "33%"],
+                 ["9", "3", "33%"],
+                 ["16", "4", "25%"],
+                 ["100", "10", "10%"],
+                 ["400", "20", "5%"]])
+        + """<p>With 100 features, each node sees ten. Nine times out of ten, the single strongest
+feature is <b>not available</b> — and that is deliberate.</p>
+<p>Recall from two lessons ago that ear shape wins the root by 0.278 against 0.125 and 0.035. Bagging
+alone resamples the rows, but ear shape is strong enough that it would still win the root in most
+resamples, so the trees would come out looking alike — and averaging near-identical models buys
+nothing. Forcing each node to ignore most features means some trees are <em>compelled</em> to build
+around whiskers instead, and discover whatever whiskers can contribute. Diversity is not a side
+effect here; it is the thing being manufactured.</p>"""
+        + explain("""<p>Hiding the best feature from most nodes makes every individual tree
+<em>worse</em>. <b>Why does the forest get better?</b></p>""",
+                  """<p>Because averaging only cancels errors that differ. If every tree makes the
+same mistake, the average makes it too, no matter how many trees you add — so the quantity that
+matters is not each tree’s accuracy but how <em>uncorrelated</em> their errors are. Trading a little
+individual accuracy for a lot of decorrelation is a good trade, and the arithmetic in the next
+lesson shows why: the spread of an average falls with the number of <em>independent</em> members,
+and near-duplicates do not count as members.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Setting <code>max_features</code> to all features.</b> Then it is plain bagging, the
 trees correlate, and you lose most of the benefit.</p>""")
@@ -925,7 +1092,7 @@ default and the cost is linear.</p>""")
 
 # ============================================================ 12
 L.append(dict(
-    slug="12-xgboost", title="XGBoost", mins=10, tag="core",
+    slug="12-xgboost", title="XGBoost", mins=15, tag="core",
     lede="Instead of making every tree from a random sample, make each new tree focus on what the previous "
          "ones got wrong. This is the algorithm that wins competitions.",
     body=(
@@ -987,6 +1154,34 @@ safe. A boosted forest of depth-20 trees usually overfits badly.</p>"""
         + key("""<p>On a table of numbers and categories, gradient-boosted trees are still the thing to
 beat. They win the large majority of tabular competitions on Kaggle, and neural networks have repeatedly
 failed to displace them on structured data.</p>""")
+
+        + h2("🧮", "Why averaging works at all — measured")
+        + """<p>Before boosting, the arithmetic that makes any ensemble worth building. Take
+<var>B</var> predictors whose errors are independent with a spread of 1.0, average them, and measure
+the spread of that average over 20,000 trials:</p>"""
+        + table(["B (predictors averaged)", "spread of the average", "1/√B"],
+                [["1", "1.0073", "1.0000"],
+                 ["5", "0.4443", "0.4472"],
+                 ["25", "0.2000", "0.2000"],
+                 ["100", "0.1007", "0.1000"]])
+        + """<p>The measurement tracks 1/√<var>B</var> exactly. Averaging 100 noisy models gives you
+a model ten times steadier than any one of them — from models that are individually no better.</p>
+<p>Two consequences follow directly from that square root. First, it is why <b>B ≈ 100</b> is the
+usual advice: going from 1 to 25 cuts the spread by 5×, while going from 100 to 400 buys only
+another 2× for four times the compute. Second, it is why the previous lesson works so hard on
+decorrelation — the <var>B</var> in that formula counts <em>independent</em> members, so a hundred
+near-identical trees behave like far fewer.</p>
+<p>Boosting then changes what the members are. Instead of resampling uniformly, each new tree is
+trained with more weight on the examples the previous trees got wrong — deliberate practice on the
+weak spots rather than more repetitions of the whole exam.</p>"""
+        + explain("""<p>Bagging’s trees can all be built at the same time; boosting’s cannot.
+<b>Why does the difference in <em>how</em> they choose examples force that?</b></p>""",
+                  """<p>Because boosting’s next tree is defined by the current ensemble’s mistakes,
+which do not exist until the previous trees are trained. Each round’s weights depend on the last
+round’s errors, so the sequence is inherently serial. Bagging draws every bootstrap sample straight
+from the original data, independently of any tree, so all <var>B</var> trees can train in parallel.
+That is a real practical trade: random forests parallelise almost perfectly, and boosting buys its
+usually-higher accuracy with a serial dependency.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>No early stopping.</b> Unlike a random forest, more boosting rounds <em>can</em>

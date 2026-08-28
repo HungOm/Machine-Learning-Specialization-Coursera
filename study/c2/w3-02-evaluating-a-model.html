@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 8 — Advice for Applying ML</span><span class="right">§&nbsp;8.2 · 10 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 8 — Advice for Applying ML</span><span class="right">§&nbsp;8.2 · 14 min read</span></p>
 <h1><span class="secno">8.2</span>Evaluating a model</h1>
 <p class="lede">You cannot fix what you cannot measure. Split the data, and measure the error on the part the model has never seen.</p>
 <div class="bookrail" title="Lesson 101 of 172 in the book"><i style="width:59%"></i></div>
@@ -237,7 +237,16 @@ machine learning.</p></div><h2><span class="ico">🔢</span>The maths, decoded</
 J<sub>train</sub> or J<sub>test</sub> when you report them. It is a training aid, not part of the score.
 The course is explicit about this and it is a common exam question.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Fit degree d, then measure on data it has never seen</span><span class="h">drag the degree up and watch the red test error diverge from the blue training error</span></div><div class="demo-body" data-anim="traintest"></div></div><h2><span class="ico">🔠</span>For classification, count mistakes instead</h2><div class="eq small"><span class="lbl">the fraction that is simply wrong</span><var>J</var><sub>test</sub> = <span class="frac"><span>number of misclassified test examples</span><span><var>m</var><sub>test</sub></span></span></div><p>You <em>can</em> report the cross-entropy loss on the test set, and sometimes should. But
 “what fraction did it get wrong” is far easier to explain to a stakeholder, and for skewed data you will
-want precision and recall instead — Lesson 16.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Splitting after sorting.</b> If your data is ordered by price, date or class, the
+want precision and recall instead — Lesson 16.</p><h2><span class="ico">🧮</span>One number is not enough — watch it fail</h2><p>Fit the same data twice, once with a degree-2 polynomial and once with degree 10, and
+score both on the training set and on data neither has seen:</p><table class="data"><thead><tr><th>Model</th><th>J<sub>train</sub></th><th>J<sub>test</sub></th><th>verdict</th></tr></thead><tbody><tr><td>degree 2</td><td>0.665</td><td><b>0.909</b></td><td>close together — it generalises</td></tr><tr><td>degree 10</td><td><b>0.520</b></td><td>1.473</td><td>far apart — it memorised</td></tr></tbody></table><p>Look only at the training column and degree 10 wins: 0.520 beats 0.665. It is the
+better model by the only number you can compute without holding data back — and it is the worse
+model. That gap is the entire reason this lesson exists.</p><p class="tiny">The numbers on this page come from one reproducible experiment, used throughout the week: 60 points from <var>y</var> = 0.5<var>x</var>² − 2<var>x</var> + 3 plus Gaussian noise (σ = 1.5), split 36 train / 12 cross-validation / 12 test, fitted with polynomial features and ridge regression. The true function is a <b>quadratic</b> — remember that, because the sweep has to discover it.</p><div class="explain"><span class="tag">Say it out loud</span><p>The degree-10 model’s training error is genuinely lower. <b>Why is that not
+evidence that it fits the underlying pattern better?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it has enough freedom to fit the <em>noise</em> as well as the
+pattern, and noise is different in every sample. Extra parameters can only ever reduce training
+error — a degree-10 curve can bend through points a degree-2 curve must miss — so J<sub>train</sub>
+falls whether the extra bends are capturing something real or memorising this particular set of
+random wobbles. Held-out data is the only place where the difference between those two shows
+up.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Splitting after sorting.</b> If your data is ordered by price, date or class, the
 first 70% and the last 30% are different populations. <b>Shuffle before splitting</b> — unless the data is
 a time series, in which case you must split by time and never shuffle.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Leakage.</b> If the same house appears in both sets (duplicated rows, or two
 photos of the same patient), your test score is fiction. De-duplicate by entity, not by row.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Scaling before splitting.</b> Computing the mean and standard deviation over the

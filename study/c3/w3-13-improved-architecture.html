@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 12 — Reinforcement Learning</span><span class="right">§&nbsp;12.13 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 12 — Reinforcement Learning</span><span class="right">§&nbsp;12.13 · 13 min read</span></p>
 <h1><span class="secno">12.13</span>Algorithm refinement: improved neural network architecture</h1>
 <p class="lede">Move the actions from the input side to the output side. Four times less compute, for free.</p>
 <div class="bookrail" title="Lesson 169 of 172 in the book"><i style="width:98%"></i></div>
@@ -243,7 +243,23 @@ q_network = Sequential([
     Dense(num_actions, activation=<span class="tok-s">&#x27;linear&#x27;</span>),                   <span class="tok-c"># 4 outputs, LINEAR</span>
 ])</code></pre><div class="callout warn"><span class="tag">Watch out</span><p>The output activation is <b>linear</b>, not sigmoid or <span class="gterm" data-g="softmax-native">softmax</span>. Q values are unbounded
 real numbers — they can be −200 or +140. Squashing them into 0…1 would destroy the information the Bellman
-equation depends on.</p></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using softmax on the output.</b> These are values, not <span class="gterm" data-g="probability-f0">probabilities</span>. They do not
+equation depends on.</p></div><h2><span class="ico">🧮</span>Counting the forward passes you save</h2><p>The naive design takes the state <em>and</em> the action as input and returns one
+number. The improved design takes only the state and returns one number per action:</p><table class="data"><thead><tr><th></th><th>naive: Q(s, a) → 1 output</th><th>improved: Q(s) → 4 outputs</th></tr></thead><tbody><tr><td>inputs</td><td>8 state + 4 one-hot action = 12</td><td>8</td></tr><tr><td>outputs</td><td>1</td><td>4</td></tr><tr><td>passes to evaluate one action</td><td>1</td><td>1 (read one output)</td></tr><tr><td>passes to find max<sub>a′</sub> Q(s′, a′)</td><td><b>4</b></td><td><b>1</b></td></tr></tbody></table><p>A factor of four, and it is not a micro-optimisation, because that max is not
+occasional. It appears in <em>every single target</em>:
+<var>y</var> = <var>R</var> + γ·max<sub>a′</sub> <var>Q̂</var>(<var>s</var>′, <var>a</var>′). Train
+on a <span class="gterm" data-g="minibatch-native">mini-batch</span> of 64 experiences and the naive version needs 256 forward passes to build 64 targets;
+the improved version needs 64.</p>
+<p>In code the change is one number — the width of the final layer — and the shape of the input:</p><pre><code>Dense(units=num_actions, activation=<span class="tok-s">&#x27;linear&#x27;</span>)     <span class="tok-c"># 4 outputs, not 1</span>
+
+max_qsa = tf.reduce_max(target_q_network(next_states), axis=-<span class="tok-n">1</span>)   <span class="tok-c"># one call, all actions</span></code></pre><p><code>reduce_max</code> along the last axis is the whole “try every action” step,
+vectorised away exactly as in Course 2 Week 1.</p><div class="explain"><span class="tag">Say it out loud</span><p>Both designs compute the same <var>Q</var> values. <b>Why does the improved
+one also tend to <em>learn</em> better, not merely faster?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the four outputs share every hidden layer. Whatever the network
+figures out about reading a state — “this tilt plus this velocity is dangerous” — is computed once
+and used by all four action-values, so evidence about one action improves the representation used to
+judge the others. In the naive design the action is just another input feature, and the network has
+to rediscover the same state-reading logic separately for each action’s corner of the input space.
+Shared structure means shared learning, which is the same argument that makes multi-output networks
+preferable to N separate binary classifiers.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Using softmax on the output.</b> These are values, not <span class="gterm" data-g="probability-f0">probabilities</span>. They do not
 sum to 1 and they must not be normalised against each other.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c33-13-improved-architecture#1"><summary>Why is one forward pass instead of four a big deal?</summary><div class="a"><p>Because it happens on every action choice <em>and</em> in every target computation — millions of times per training run. A 4× saving on the dominant cost.</p></div></details><details class="q" data-qid="c33-13-improved-architecture#2"><summary>Why linear activation on the output layer?</summary><div class="a"><p>Q values are unbounded real numbers. Any squashing function would clip them and break the Bellman relationship.</p></div></details><details class="q" data-qid="c33-13-improved-architecture#3"><summary>With the improved architecture, how do you compute max Q(s′, a′)?</summary><div class="a"><p>One forward pass on s′, then <code>np.max(...)</code> over the four outputs. No extra network calls at all.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://arxiv.org/abs/1511.06581" target="_blank" rel="noopener">Wang et al. (2015) — Dueling Network Architectures for Deep RL</a><span class="d">A further refinement: split the output into “how good is this state” and “how much better is each action”.</span></span></li></ul>
 <nav class="pager">
 <a class="prev" href="../c3/w3-12-learning-the-state-value-function.html"><span class="dir">‹ previous</span><span class="ttl">Learning the state-value function</span></a>

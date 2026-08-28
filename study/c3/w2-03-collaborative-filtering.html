@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.3 · 12 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.3 · 16 min read</span></p>
 <h1><span class="secno">11.3</span>The collaborative filtering algorithm</h1>
 <p class="lede">The central idea of the week: if you do not have features, learn them. From the ratings. At the same time as everything else.</p>
 <div class="bookrail" title="Lesson 144 of 172 in the book"><i style="width:84%"></i></div>
@@ -248,7 +248,21 @@ survives.</li>
 up and x down by the same factor and every prediction is unchanged). λ picks the smallest one.</li>
 </ul>
 <p>What you do <em>not</em> get is interpretability. The learned x₁ is not “romance” — it is whatever
-direction happened to explain the most variation. It is only meaningful up to rotation.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Initialising everything to zero.</b> Then all gradients are symmetric and nothing
+direction happened to explain the most variation. It is only meaningful up to rotation.</p><h2><span class="ico">🧮</span>The cost function, evaluated</h2><p>The lab gives you a small corner of the data — 5 movies, 4 users, 3 features — with
+known-good <var>X</var>, <var>W</var> and <var>b</var>, so you can check your implementation against
+a number rather than a feeling:</p><table class="data"><thead><tr><th>λ</th><th>J</th><th>what it contains</th></tr></thead><tbody><tr><td>0</td><td><b>13.67</b></td><td>squared error over rated cells only</td></tr><tr><td>1.5</td><td><b>28.09</b></td><td>the same, plus (λ/2)(Σw² + Σx²)</td></tr></tbody></table><p>Get 13.67 and your masking is right. Get 28.09 and your regularisation is right. If
+the first is wrong the second cannot be diagnosed, so fix them in that order.</p>
+<p>The most common wrong answer is larger than 13.67, and it means the sum ran over every cell
+instead of only the rated ones — the model being charged for failing to predict ratings nobody
+gave.</p><div class="callout "><span class="tag">Why this matters</span><p>Notice that regularisation more than doubles the cost here. That is not a sign
+λ is too big; it is a sign the corner is tiny — 5 × 3 + 4 × 3 = 27 parameters against only a handful
+of ratings, so the penalty term is large relative to the error term. On the full 4,778 × 443
+problem the balance is completely different.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>The regularisation penalises <var>x</var> and <var>w</var> together, in one
+sum. <b>Why is it not a problem that a single λ controls both?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because they enter the prediction symmetrically — it is
+<var>w</var>·<var>x</var>, and scaling <var>x</var> up while scaling <var>w</var> down by the same
+factor leaves every prediction identical. Without a penalty that symmetry is a free direction the
+optimiser can wander along forever; penalising both ends pins it down, and pinning it down is all
+one λ needs to do. Separate λs would let the same wandering resume at a different ratio.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Initialising everything to zero.</b> Then all gradients are symmetric and nothing
 ever differentiates. Initialise w and x to <b>small random values</b>, exactly as with neural
 networks.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Summing over all cells instead of the rated ones.</b> Your model learns that every
 unwatched film deserves a 0. Predictions collapse.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c32-03-collaborative-filtering#1"><summary>Why is it called “collaborative” filtering?</summary><div class="a"><p>Because users collectively supply the information that defines the items. Bob's ratings shape the movie features that improve Carol's predictions, even though they never interact.</p></div></details><details class="q" data-qid="c32-03-collaborative-filtering#2"><summary>100 users, 50 movies, 3 features. How many parameters?</summary><div class="a"><p>Users: 100 × (3 + 1) = 400. Movies: 50 × 3 = 150. <b>550 total</b>, learned from however many ratings exist.</p></div></details><details class="q" data-qid="c32-03-collaborative-filtering#3"><summary>Does the learned x₁ mean “romance”?</summary><div class="a"><p>No. It is whatever direction best explains the ratings. It may correlate with romance, and it has no guaranteed interpretation — the solution is only defined up to rotation.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://ieeexplore.ieee.org/document/5197422" target="_blank" rel="noopener">Koren, Bell & Volinsky (2009) — Matrix Factorization Techniques</a><span class="d">This algorithm is matrix factorisation: you are factorising Y ≈ X·Wᵀ. The paper explains the connection properly.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://dl.acm.org/doi/10.1145/1401890.1401944" target="_blank" rel="noopener">Koren (2008) — Factorization meets the neighborhood</a><span class="d">How the Netflix Prize was actually won: blending this with neighbourhood methods.</span></span></li><li><span class="kind lab">lab</span><span><a href="../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning/week2/C3W2/C3W2A1/C3_W2_Collaborative_RecSys_Assignment.ipynb" target="_blank" rel="noopener">Week 2 assignment 1</a><span class="d">In this repo. You write the vectorised cost function and train it on real MovieLens data.</span></span></li></ul>

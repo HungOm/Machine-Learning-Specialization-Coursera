@@ -7,7 +7,7 @@ L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-tensorflow-training", title="TensorFlow implementation of training", mins=9, tag="code",
+    slug="01-tensorflow-training", title="TensorFlow implementation of training", mins=13, tag="code",
     lede="Three lines of code, three ideas you already know from Course 1. This lesson is the map; the "
          "next one opens the box.",
     body=(
@@ -67,6 +67,38 @@ model.fit(X, Y, epochs=100)
 harder to write down by hand — and TensorFlow computes them for you. That is the <em>entire</em> service
 the framework provides.</p>""")
 
+        + h2("🧮", "The same three steps, counted")
+        + """<p>Here is the Week 2 assignment’s network, and what each of the three steps is actually
+responsible for:</p>"""
+        + code("""
+model = Sequential([                              # step 1
+    tf.keras.Input(shape=(400,)),
+    Dense(25, activation='relu',   name='L1'),
+    Dense(15, activation='relu',   name='L2'),
+    Dense(10, activation='linear', name='L3'),
+])
+model.compile(loss=SparseCategoricalCrossentropy(from_logits=True),   # step 2
+              optimizer=tf.keras.optimizers.Adam(1e-3))
+model.fit(X, y, epochs=40)                        # step 3
+""")
+        + table(["Step", "What it decides", "In numbers"],
+                [["1 · define the model", "how many unknowns there are",
+                  "(400×25+25) + (25×15+15) + (15×10+10) = <b>10,575</b> parameters"],
+                 ["2 · define the loss", "what “wrong” means for this problem",
+                  "one function; the only line that knows this is a 10-class problem"],
+                 ["3 · minimise it", "the actual values of all 10,575",
+                  "40 passes over 5,000 examples"]])
+        + """<p>Course 1 had you write all three by hand for two parameters. Nothing has changed except
+the count — and that the derivatives are now found by backpropagation instead of by you.</p>"""
+        + explain("""<p>Step 1 never mentions classification, and step 3 never mentions it either.
+<b>Why is the problem type visible only in step 2?</b></p>""",
+                  """<p>Because layers are just arithmetic — <var>g</var>(<var>a</var><var>W</var> +
+<var>b</var>) is the same operation whether you are predicting a price or a digit, and gradient
+descent only ever asks “which way is downhill”. The loss is the single place where you say what
+counts as an error, so it is the only place the answer’s <em>type</em> can enter. Swap
+<code>SparseCategoricalCrossentropy</code> for <code>MeanSquaredError</code> and the identical
+network becomes a regressor.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Believing the library because it is a library.</b> Andrew’s warning in this lesson is
 worth repeating: use frameworks, but know what they are doing. When your loss goes to NaN at epoch 3, only
@@ -102,7 +134,7 @@ only the loss, which is hard to interpret. Add it and you get a human-readable n
 
 # ============================================================ 2
 L.append(dict(
-    slug="02-training-details", title="Training details", mins=12, tag="core",
+    slug="02-training-details", title="Training details", mins=15, tag="core",
     lede="Opening the box: what the loss function actually is, why it is shaped the way it is, and what "
          "gradient descent does with it.",
     body=(
@@ -157,6 +189,28 @@ possible, so TensorFlow builds a <b>computation graph</b> and applies the chain 
 is what lessons 13–15 of this week explain, and why they are optional-but-worth-it.</p>""",
                "Where the derivatives come from")
 
+        + h2("🧮", "The loss, in numbers")
+        + """<p>The logistic loss is −log(<var>f</var>) when <var>y</var> = 1 and
+−log(1 − <var>f</var>) when <var>y</var> = 0. Abstract until you tabulate it:</p>"""
+        + table(["model says f =", "loss if the truth is y = 1", "loss if the truth is y = 0"],
+                [["0.90", "<b>0.105</b> — right and confident, nearly free", "2.303 — confidently wrong"],
+                 ["0.50", "0.693", "0.693 — a shrug costs the same either way"],
+                 ["0.10", "2.303 — confidently wrong", "<b>0.105</b>"],
+                 ["0.01", "<b>4.605</b> — certain and wrong", "0.010"]])
+        + """<p>Read the first column downwards. Being right costs almost nothing. Being wrong costs
+something. Being <em>certain</em> and wrong costs 4.6 — and it keeps climbing without limit as
+<var>f</var> → 0, because −log(0) is infinite. That asymmetry is the whole design: the loss is far
+more interested in punishing confident mistakes than in rewarding confident successes.</p>"""
+        + explain("""<p>A simpler-looking choice would be |<var>y</var> − <var>f</var>|, which is 0.9
+for the “certain and wrong” row instead of 4.605. <b>Why is the log version better for
+learning?</b></p>""",
+                  """<p>Two reasons, and both matter. First, |<var>y</var> − <var>f</var>| is bounded
+by 1 — a catastrophically wrong prediction is treated as barely worse than a mildly wrong one, so
+the model has little reason to fix it. The log is unbounded, so it does. Second, and decisively, the
+squared/absolute error paired with a sigmoid gives a cost surface with local minima, while the log
+loss gives a single bowl — which is what makes gradient descent reliable here at all. It is the same
+argument you met in Course 1 when logistic regression dropped squared error.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Loss vs cost.</b> Loss = one example. Cost = the average over the dataset. The course
 is careful about this and so are interviewers.</p>""")
@@ -195,7 +249,7 @@ two different settings.</p>""")
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-sigmoid-alternatives", title="Alternatives to the sigmoid activation", mins=10, tag="core",
+    slug="03-sigmoid-alternatives", title="Alternatives to the sigmoid activation", mins=14, tag="core",
     lede="ReLU, and why one strange-looking bent line replaced the elegant S-curve almost everywhere.",
     body=(
         pretest("""<p>Sigmoid squashes everything into 0…1. <b>Guess why that is a problem for a layer in the middle of a deep network</b>, even though it is fine at the output.</p>""",
@@ -244,6 +298,33 @@ That difference, multiplied across ten layers, is why ReLU won.</p>"""
                  "forever and never recovers.</li>"
                  "<li>Not zero-centred, and unbounded above.</li>"
                  "<li>Variants exist — Leaky ReLU, ELU, GELU — but plain ReLU remains the default.</li></ul>"))
+
+        + h2("🧮", "Why ReLU trains faster, in numbers")
+        + """<p>The argument is about <em>slopes</em>, because gradient descent moves in proportion to
+them. Here are both functions and both slopes:</p>"""
+        + table(["z", "relu = max(0,z)", "sigmoid", "slope of relu", "slope of sigmoid"],
+                [["−3", "0.0", "0.0474", "0", "<b>0.0452</b>"],
+                 ["−1", "0.0", "0.2689", "0", "0.1966"],
+                 ["&nbsp;0", "0.0", "0.5000", "0", "<b>0.2500</b> ← its best ever"],
+                 ["+1", "1.0", "0.7311", "<b>1</b>", "0.1966"],
+                 ["+3", "3.0", "0.9526", "<b>1</b>", "<b>0.0452</b>"]])
+        + """<p>Sigmoid’s slope never exceeds 0.25, and away from the middle it collapses. Now recall
+that backpropagation <em>multiplies</em> these slopes together, one per layer. Stack five sigmoid
+layers and the gradient reaching the first layer is scaled by</p>"""
+        + table(["Five layers of…", "gradient scaled by"],
+                [["sigmoid at its very best (0.25)", "0.25⁵ = <b>0.00098</b> — a 1,000× shrink"],
+                 ["sigmoid at |z| = 3 (0.0452)", "0.0452⁵ = <b>0.00000019</b> — effectively dead"],
+                 ["ReLU on the active side (1)", "1⁵ = <b>1</b> — untouched"]])
+        + """<p>That is the vanishing gradient problem in one table, and it is why the early layers of
+a deep sigmoid network barely learn at all. ReLU’s slope is exactly 1 wherever it is active, so the
+signal arrives at layer 1 undiminished.</p>"""
+        + explain("""<p>ReLU is flat for every negative <var>z</var>, so <em>its</em> slope is 0 there
+— seemingly the same flaw. <b>Why is that far less damaging than sigmoid’s two flat tails?</b></p>""",
+                  """<p>Because ReLU is flat in one region and perfectly steep in the other, and a
+unit sitting in the flat region is simply switched off for that example — other units, and the same
+unit on other examples, still pass a full-strength gradient. Sigmoid is flat at <em>both</em> ends,
+so a unit that is confidently anything is always attenuating, and every unit in every layer
+attenuates simultaneously. One is a switch; the other is a leak in every pipe at once.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Using sigmoid in hidden layers because it feels more “neural”.</b> It trains
@@ -645,7 +726,7 @@ a genuinely hard, separate problem.</p>""")
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-softmax-output-layer", title="Neural network with Softmax output", mins=9, tag="code",
+    slug="08-softmax-output-layer", title="Neural network with Softmax output", mins=13, tag="code",
     lede="Bolting softmax onto the end of a network: ten output units, one shared normalisation, and the "
          "code that trains it.",
     body=(
@@ -695,6 +776,28 @@ pred = np.argmax(p, axis=1)   # the index of the largest = the predicted class
 better version that gives the same answers with less rounding error. Andrew teaches it in this order
 deliberately: understand the honest version first, then the fast one.</p>""")
 
+        + h2("🧮", "The output layer of the digit network")
+        + """<p>The assignment’s last layer takes the 15 activations of layer 2 and produces 10
+scores:</p>"""
+        + table(["", "shape", "count"],
+                [["<var>W</var><sup>[3]</sup>", "(15, 10)", "150 weights"],
+                 ["<var>b</var><sup>[3]</sup>", "(10,)", "10 biases"],
+                 ["output <var>z</var><sup>[3]</sup>", "(1, 10)", "one score per digit"]])
+        + """<p>Ten units, one per class — and each one is an ordinary neuron with its own weights.
+What makes the layer a <em>softmax</em> layer is not the units, it is the single step applied to all
+ten scores together afterwards, which divides each by the total so they sum to 1.</p>
+<p>That coupling is the whole difference from everything before it. In every previous layer, unit 3
+could be computed without ever looking at unit 7. Here it cannot: <var>a</var><sub>3</sub> depends
+on <var>z</var><sub>7</sub> through the shared denominator. Push one score up and every other
+probability falls, whether or not its own score changed.</p>"""
+        + explain("""<p>Softmax is monotonic: the largest <var>z</var> always becomes the largest
+<var>a</var>. <b>So why compute it at prediction time at all?</b></p>""",
+                  """<p>For the <em>decision</em>, you needn’t — <code>np.argmax(z)</code> and
+<code>np.argmax(softmax(z))</code> always agree, which is exactly why the preferred implementation
+can leave the last layer linear and still classify correctly. You compute it when you want the
+<em>confidence</em>: “digit 3, and I am 0.97 sure” is a different and often more useful answer than
+“digit 3”, and a raw score of 4.2 is not interpretable on its own.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Forgetting <code>argmax</code>.</b> <code>predict</code> gives you ten probabilities,
 not a digit. <code>np.argmax(p, axis=1)</code> turns each row into the winning class index.</p>""")
@@ -727,7 +830,7 @@ useless question.</p>""")
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-improved-softmax", title="Improved implementation of softmax", mins=11, tag="core",
+    slug="09-improved-softmax", title="Improved implementation of softmax", mins=15, tag="core",
     lede="Why `from_logits=True` exists. A short lesson about floating-point arithmetic that will save you "
          "from a class of bug that is invisible until it isn’t.",
     body=(
@@ -793,6 +896,38 @@ negative or above 1. You must apply <code>tf.nn.softmax()</code> yourself before
 From Lesson 7 you know softmax is unchanged by adding a constant to every z, so this is free —
 <code>exp(z − max(z))</code> has a largest term of exactly <code>exp(0) = 1</code> and can never overflow.</p>"""
 
+        + h2("🧮", "What actually goes wrong — run it and see")
+        + """<p>Softmax on a well-behaved vector is fine:</p>"""
+        + code("""
+z = np.array([1., 2., 3., 4.])
+np.exp(z) / np.exp(z).sum()        # -> [0.0321 0.0871 0.2369 0.6439]
+""")
+        + """<p>Now add 1000 to every score. Mathematically <b>nothing should change</b> — softmax
+only cares about differences between scores, and every difference is identical. In floating point:</p>"""
+        + code("""
+z = np.array([1001., 1002., 1003., 1004.])
+np.exp(z) / np.exp(z).sum()        # -> [nan nan nan nan]     RuntimeWarning: overflow
+""")
+        + """<p>Every answer destroyed. <code>e¹⁰⁰⁴</code> is about 10⁴³⁶, and a 64-bit float stops at
+roughly 10³⁰⁸, so <code>np.exp</code> returns <code>inf</code> and <code>inf/inf</code> is
+<code>nan</code>. Subtract the largest score first and the identical formula returns
+<b>[0.0321, 0.0871, 0.2369, 0.6439]</b> — correct to the last digit.</p>
+<p>The second failure is quieter. The loss needs log(<var>a</var>), and if <var>a</var> has already
+been rounded to 1e−12 on its way through the exponential, then log of it is −27.63 — a number
+computed from almost no surviving precision. Passing <code>from_logits=True</code> lets TensorFlow
+keep the raw scores and rearrange log(e<sup>z</sup>/Σe<sup>z</sup>) algebraically before evaluating
+anything, so neither failure can occur.</p>"""
+        + warn("""<p>The cost of the fix: <code>model.predict</code> now returns raw scores, not
+probabilities. They can be negative and will not sum to 1. Call
+<code>tf.nn.softmax(...)</code> yourself when you want probabilities.</p>""")
+        + explain("""<p>Subtracting the maximum score from every score changes the answer not at all.
+<b>Why is it exactly cancelling?</b></p>""",
+                  """<p>Write it out. Each numerator becomes e<sup>z−c</sup> = e<sup>z</sup>·e<sup>−c</sup>,
+and the denominator becomes Σe<sup>z</sup>·e<sup>−c</sup> = e<sup>−c</sup>Σe<sup>z</sup>. The
+factor e<sup>−c</sup> appears once above and once below, so it cancels — the ratio is untouched.
+Choosing <var>c</var> as the maximum simply guarantees the largest exponent is e⁰ = 1, so nothing
+can overflow.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Setting <code>from_logits=True</code> while leaving <code>activation='softmax'</code>.</b>
 Now softmax is applied twice. Training will “work” and the model will be quietly wrong. Change both or
@@ -829,7 +964,7 @@ softmax first, or your dashboard will lie to your users.</p>""")
 
 # ============================================================ 10
 L.append(dict(
-    slug="10-multi-label", title="Classification with multiple outputs (multi-label)", mins=8, tag="core",
+    slug="10-multi-label", title="Classification with multiple outputs (multi-label)", mins=12, tag="core",
     lede="A short but genuinely confusable distinction: several answers can be true at once, so softmax is "
          "the wrong tool.",
     body=(
@@ -871,6 +1006,25 @@ model.compile(loss=BinaryCrossentropy())     # binary loss, applied to all 3
 # Y has shape (m, 3): each row is something like [1, 0, 1]
 """)
 
+        + h2("🧮", "The same three scores, two different questions")
+        + """<p>Take one output layer with three units and scores <var>z</var> = [2.2, −2.2, 1.4].
+What you do to them next decides what the network is claiming:</p>"""
+        + table(["", "unit 1 (car?)", "unit 2 (bus?)", "unit 3 (pedestrian?)", "sum"],
+                [["<b>sigmoid</b> — multi-label", "0.900", "0.100", "0.802", "<b>1.802</b>"],
+                 ["<b>softmax</b> — multi-class", "0.684", "0.008", "0.307", "<b>1.000</b>"]])
+        + """<p>The sigmoid row says: <em>almost certainly a car, almost certainly also a pedestrian,
+probably no bus.</em> Three independent yes/no answers, and there is no reason for them to add to
+anything in particular — a street can contain all three at once.</p>
+<p>The softmax row says: <em>if I must pick exactly one, it is the car.</em> The three now compete
+for a fixed budget of 1.0.</p>"""
+        + explain("""<p>Unit 2’s score never changed, yet it fell from 0.100 to 0.008 — an eightfold
+drop. <b>Where did that probability go?</b></p>""",
+                  """<p>To its rivals. Under sigmoid each unit is scored on its own merits, so unit 2
+is judged solely on <var>z</var> = −2.2 and gets 0.100 regardless of what the others scored. Under
+softmax the denominator is the sum over <em>all three</em>, so unit 2 is judged on how it compares —
+and next to a 2.2 and a 1.4 it looks far worse than it did alone. Nothing about the bus evidence
+changed; the question changed from “is there a bus?” to “is the bus the best answer?”.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Using softmax for multi-label.</b> It forces the probabilities to compete. A photo
 containing both a car and a bus can then never score high on both — the model is structurally prevented
@@ -903,7 +1057,7 @@ Week 3’s precision/recall lesson is how you choose one per label.</p>""")
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-advanced-optimization", title="Advanced optimization (Adam)", mins=10, tag="core",
+    slug="11-advanced-optimization", title="Advanced optimization (Adam)", mins=14, tag="core",
     lede="Gradient descent with one fixed step size is leaving performance on the table. Adam gives every "
          "parameter its own learning rate and adjusts it as it goes.",
     body=(
@@ -959,6 +1113,34 @@ model.compile(
 sensitive to α than plain gradient descent, but it is not immune: if training is unstable, try 1e-4; if it
 is painfully slow, try 1e-2.</p>"""
 
+        + h2("🧮", "Where a single learning rate fails")
+        + """<p>The clearest case is a cost bowl that is far steeper in one direction than another —
+which is what unscaled features produce. Take
+<var>J</var> = <var>w</var><sub>1</sub>² + 100<var>w</var><sub>2</sub>², starting at (1, 1). The
+second direction is 100 times steeper. Plain gradient descent must pick <em>one</em> α for both:</p>"""
+        + table(["Optimizer", "α", "after 200 steps", "final J"],
+                [["gradient descent", "0.011", "w₂ blows up to 6.9 × 10¹⁵", "<b>diverges</b>"],
+                 ["gradient descent", "0.010", "w₂ oscillates, stuck at 1.0", "100"],
+                 ["gradient descent", "0.005 (safe)", "w₁ still at 0.134 — barely moved", "0.018"],
+                 ["<b>Adam</b>", "0.05", "both at 0.0000", "<b>0.00000008</b>"]])
+        + """<p>Read the middle two rows together, because that is the trap. Any α above 0.01 makes
+the steep direction diverge, so α must be chosen small enough for <em>it</em> — and that same small
+α then starves the shallow direction, which crawls. One number cannot serve both.</p>
+<p>Adam keeps a running estimate of each parameter’s own gradient scale and divides by it, so every
+parameter effectively gets its own step size: large where the surface is flat, small where it is
+steep. It reached a cost eight orders of magnitude lower than the best hand-tuned single rate, with
+a starting α ten times larger.</p>"""
+        + note("""<p>This is also why Adam is not magic. On a well-scaled problem with a well-chosen
+α, plain gradient descent can beat it. Adam’s value is that it is <em>forgiving</em> — it removes
+most of the tuning, which matters far more in practice than the best case does.</p>""")
+        + explain("""<p>Adam is described as “an adaptive learning rate”, yet you still pass it an α.
+<b>What is that α doing, if the rate adapts?</b></p>""",
+                  """<p>It sets the scale, not the direction-by-direction size. Adam divides each
+gradient by its own recent magnitude, which makes every parameter’s raw step roughly ±1 — dimensionless.
+α then multiplies that normalised step, so it fixes how far “one step” goes overall while Adam keeps
+deciding how to split it between parameters. That is why Adam tolerates an α ten times larger here:
+α is no longer being forced to absorb the 100× difference in curvature.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Thinking Adam removes the need to tune α.</b> It reduces it a lot. It does not
 eliminate it. α still sets the overall scale of every step.</p>""")
@@ -997,7 +1179,7 @@ not the best in every case.</p>""")
 
 # ============================================================ 12
 L.append(dict(
-    slug="12-additional-layer-types", title="Additional layer types (convolutional)", mins=9, tag="intuition",
+    slug="12-additional-layer-types", title="Additional layer types (convolutional)", mins=13, tag="intuition",
     lede="Dense layers look at everything. Convolutional layers look at a small window — and that one "
          "restriction buys speed, less data, and less overfitting.",
     body=(
@@ -1045,6 +1227,30 @@ pixels matter to each other and position shouldn’t change what a thing is.</p>
 <var>a</var> = <var>g</var>(weighted sum + bias) — they differ only in <em>which</em> inputs are in the sum
 and <em>which</em> weights are shared.</p>"""
 
+        + h2("🧮", "Counting the parameters a convolution saves")
+        + """<p>Take the assignment’s 20 × 20 digit — 400 pixels — and give it a first hidden layer
+of the two kinds:</p>"""
+        + table(["Layer", "What each unit sees", "Parameters"],
+                [["<code>Dense(25)</code>", "all 400 pixels", "400 × 25 + 25 = <b>10,025</b>"],
+                 ["<code>Conv2D(8, (3,3))</code>", "a 3 × 3 window, slid over the image",
+                  "(3 × 3 + 1) × 8 = <b>80</b>"]])
+        + """<p>125 times fewer parameters, and the convolutional version usually does <em>better</em>
+on images. That combination is why convolution took over computer vision.</p>
+<p>The saving comes from <b>weight sharing</b>. A dense unit needs a separate weight for every pixel
+position, so it must learn “what an edge looks like” independently at each of the 400 locations. A
+convolutional filter has nine weights that are reused at every position — learn the edge once, and it
+is detected everywhere. Fewer parameters means less to fit, which means less overfitting and less
+data needed.</p>"""
+        + explain("""<p>Weight sharing is a hard constraint: it forbids the layer from treating the
+top-left corner differently from the centre. <b>Why is losing that freedom an advantage on images
+but not on, say, a table of customer records?</b></p>""",
+                  """<p>Because on an image the constraint is <em>true</em>. A vertical edge is a
+vertical edge wherever it appears, so a detector that works in the corner should work in the centre,
+and forcing that saves the model from relearning the same thing 400 times. On a table of customer
+records, column 3 is “age” and column 7 is “postcode” — they have nothing in common, adjacency means
+nothing, and sliding a window across them would impose a similarity that does not exist. The right
+architecture is the one whose built-in assumption matches the data.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Using a dense layer on large images.</b> A 1000×1000 RGB image into a 100-unit dense
 layer is 300 million weights in the first layer alone. It will not train, and it will overfit anything it
@@ -1082,7 +1288,7 @@ does manage to learn.</p>""")
 
 # ============================================================ 13
 L.append(dict(
-    slug="13-what-is-a-derivative", title="What is a derivative? (optional)", mins=9, tag="optional",
+    slug="13-what-is-a-derivative", title="What is a derivative? (optional)", mins=13, tag="optional",
     lede="Start of the optional back-propagation section. A derivative is one honest question: if I nudge "
          "this up a hair, how much does that change?",
     body=(
@@ -1125,6 +1331,30 @@ that.</p>""")
 <b>SymPy</b> can do it symbolically if you are curious — the optional lab uses it — and TensorFlow does it
 automatically for the actual network. The point of this lesson is to know what the machine is computing.</p>""",
                "You don’t have to do this by hand")
+
+        + h2("🧮", "The lab’s own experiment")
+        + """<p>The optional derivatives lab does not define a derivative — it measures one. Take
+<var>J</var> = <var>w</var>², sit at <var>w</var> = 3, nudge, and divide:</p>"""
+        + code("""
+J         = 3**2                     # 9
+J_epsilon = (3 + 0.001)**2           # 9.006001
+k = (J_epsilon - J) / 0.001          # 6.001
+""")
+        + table(["nudge ε", "(J(3+ε) − J(3)) / ε", "true derivative 2w"],
+                [["0.001", "6.001000", "6"],
+                 ["0.000001", "6.000001", "6"]])
+        + """<p>So the derivative of <var>w</var>² at <var>w</var> = 3 is <b>6</b>, and the sentence
+it stands for is: <em>if I increase w by a tiny amount, J increases by about six times as much.</em>
+That is the only fact gradient descent ever uses — it tells you which way is uphill, and by how much
+per unit of movement.</p>"""
+        + explain("""<p>Smaller ε gives a better answer, and ε = 0 gives the exact one.
+<b>Why can you not simply use a very tiny ε in code?</b></p>""",
+                  """<p>Because the numerator is a subtraction of two nearly equal numbers, and floats
+have finite precision. At ε = 10⁻¹⁵, J(3+ε) and J(3) agree in almost every stored digit, so the
+difference is built from the few noisy digits left — and dividing that noise by an equally tiny ε
+amplifies it. The error falls as ε shrinks, then rises again once cancellation dominates. This is
+exactly why real training uses backpropagation, which computes derivatives <em>symbolically</em>
+rather than by nudging.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Taking ε too small in code.</b> With floating point, ε = 10⁻¹⁵ makes
@@ -1240,7 +1470,7 @@ every intermediate activation has to be kept.</p>""")
 
 # ============================================================ 15
 L.append(dict(
-    slug="15-larger-network-example", title="Larger neural network example (optional)", mins=8, tag="optional",
+    slug="15-larger-network-example", title="Larger neural network example (optional)", mins=12, tag="optional",
     lede="Scaling the computation graph up to a real network, and the cost argument that makes training "
          "possible at all.",
     body=(
@@ -1281,6 +1511,32 @@ optimizer.apply_gradients(zip(grads, model.trainable_variables))
 """)
         + """<p>That is <code>model.fit()</code>, unrolled. Nothing else is hiding in there. Worth reading
 twice — once you can see the tape, the framework stops feeling like magic.</p>"""
+
+        + h2("🧮", "How much arithmetic is that, actually")
+        + """<p>The Week 2 network is 400 → 25 → 15 → 10. One forward pass costs one multiply-add per
+weight:</p>"""
+        + table(["Layer", "multiply-adds"],
+                [["400 → 25", "10,000"],
+                 ["25 → 15", "375"],
+                 ["15 → 10", "150"],
+                 ["<b>one example</b>", "<b>10,525</b>"]])
+        + """<p>Now the training run: 5,000 examples, 40 epochs.</p>"""
+        + eq("""10,525 <span class="op">×</span> 5,000 <span class="op">×</span> 40
+<span class="op">=</span> <b>2.1 billion</b>""", "multiply-adds, just for the forward passes")
+        + """<p>Backpropagation adds roughly two to three times that again, so the real figure is
+somewhere near six billion operations — for a network small enough to describe in four lines, on a
+data set that fits in memory. It finishes in under a minute, which is a fact about hardware, not
+about the problem being small.</p>
+<p>This is the arithmetic that made vectorisation non-negotiable, and it is the reason a matrix
+multiply that runs 93 times faster is not a micro-optimisation.</p>"""
+        + explain("""<p>Backpropagation computes a derivative for all 10,575 parameters, yet costs
+about the same as a <em>few</em> forward passes — not 10,575 of them. <b>Why?</b></p>""",
+                  """<p>Because it reuses shared work. Nudging one parameter at a time and re-running
+the network would indeed cost one forward pass each, and almost every one of those passes would
+recompute the same intermediate quantities. Backprop instead sweeps once from the output backwards,
+and at each step the quantity it already carries is exactly what every parameter in that layer
+needs. The total is proportional to the number of <em>connections traversed once</em>, which is one
+network’s worth — not to the number of parameters differentiated.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Memory, not speed, is usually the wall.</b> Every intermediate activation is kept for

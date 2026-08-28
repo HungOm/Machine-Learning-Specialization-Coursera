@@ -530,7 +530,10 @@ LABS = {
              ("scratch/09-collaborative-filtering.html", "From scratch: collaborative filtering")],
     watch="Write the loop version first and get it passing, then vectorize it. The lab "
           "explicitly supports doing it in that order, and the speed difference at the "
-          "end is worth seeing.",
+          "end is worth seeing. Use the lab's own check values as a gate: on the small "
+          "4x5 subset the cost is 13.67 with lambda_ = 0 and 28.09 with regularization. "
+          "Match those two numbers in the loop first, and the vectorized version then "
+          "only has to match your loop.",
     exercises=[
       E(1, "cofi_cost_func(X, W, b, Y, R, lambda_)",
         "Squared error over rated cells only, plus regularization on both X and W.",

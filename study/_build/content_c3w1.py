@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 1 — Clustering and anomaly detection."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -146,7 +146,7 @@ assignment mentions this explicitly.</p>""")
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-kmeans-algorithm", title="The K-means algorithm", mins=10, tag="core",
+    slug="03-kmeans-algorithm", title="The K-means algorithm", mins=14, tag="core",
     lede="The same two steps, written as maths and as code — with the notation that shows up in the "
          "assignment.",
     body=(
@@ -216,6 +216,28 @@ is given to you.</p>"""
 <code>X[i]</code> is shape (n,) and <code>centroids</code> is (K, n), so the subtraction produces (K, n)
 and the norm along axis 1 gives K distances. If you are unsure, print the shapes.</p>""")
 
+        + h2("🧮", "One real run, iteration by iteration")
+        + """<p>The assignment’s 300-point data set, started from the centroids the lab hands you —
+[3, 3], [6, 2], [8, 5]. Watch where they end up:</p>"""
+        + table(["", "centroid 0", "centroid 1", "centroid 2"],
+                [["start", "(3.00, 3.00)", "(6.00, 2.00)", "(8.00, 5.00)"],
+                 ["after 10 iterations", "(1.95, 5.03)", "(3.04, 1.02)", "(6.03, 3.00)"]])
+        + """<p>Cluster sizes at the end: <b>98, 102, 100</b> — a near-perfect three-way split of the
+300 points, which is a good sign that <var>K</var> = 3 matched the data. Nothing supervised
+happened; no label was ever supplied. The only inputs were the points, the number 3, and three
+starting positions.</p>
+<p>Note how far the centroids travelled. Centroid 0 started at (3, 3) — in the middle of what turned
+out to be cluster 1’s territory — and migrated to (1.95, 5.03). The starting positions do not have
+to be good. They have to be <em>different</em>.</p>"""
+        + explain("""<p>Both steps are simple, and neither one “knows” where the clusters are.
+<b>Why does alternating them find the clusters anyway?</b></p>""",
+                  """<p>Because each step improves the other’s input. Given fixed centroids, the best
+possible assignment is “join the nearest” — that is not a guess, it is optimal. Given fixed
+assignments, the best possible centroid is the mean of its members — also optimal. Neither step can
+solve the whole problem, but each one is exactly right given the other’s current answer, so
+alternating them can only ever improve the arrangement. The next lesson turns “can only improve”
+into a number you can watch.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("X has 300 points in 2-D and K = 5. What are the shapes of idx and centroids?",
@@ -239,7 +261,7 @@ and the norm along axis 1 gives K distances. If you are unsure, print the shapes
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-kmeans-cost", title="The optimization objective", mins=9, tag="maths",
+    slug="04-kmeans-cost", title="The optimization objective", mins=14, tag="maths",
     lede="K-means is not a heuristic that happens to work. It is gradient-free minimisation of one specific "
          "cost, and both steps provably reduce it.",
     body=(
@@ -281,6 +303,35 @@ of points. Differentiate Σ(x − μ)² with respect to μ, set it to zero, and 
 minimise J, given these assignments?”. Using squared distance and using the mean are two halves of one
 decision.</p>"""
 
+        + h2("🧮", "Watch J fall, and never rise")
+        + """<p>The same run, scored after every iteration:</p>"""
+        + table(["iteration", "J (distortion)", ""],
+                [["0", "4.0868", "starting positions"],
+                 ["1", "3.5479", ""],
+                 ["2", "3.3325", ""],
+                 ["3", "2.8775", ""],
+                 ["4", "1.5490", "big move — a whole group changed hands"],
+                 ["5", "0.8975", ""],
+                 ["6", "<b>0.8889</b>", "converged"],
+                 ["7–9", "0.8889", "nothing moves again"]])
+        + """<p>Every number is lower than the one above it, and then it stops dead. That is not luck
+and it is not approximately true — it is <b>guaranteed</b>. The assign step moves points to a nearer
+centroid, which can only shorten distances. The move step puts each centroid at the mean of its
+members, and the mean is by definition the point minimising summed squared distance to them. Neither
+step can increase J, so the sequence is non-increasing and bounded below by zero, so it must
+converge.</p>"""
+        + warn("""<p>This is the single most useful debugging check you have. If your implementation
+ever prints a J larger than the previous one, you have a bug — almost always an assign step and a
+move step in the wrong order, or a centroid updated before all assignments were computed.</p>""")
+        + explain("""<p>J is guaranteed to stop falling, yet K-means is famous for finding bad
+answers. <b>How are both true at once?</b></p>""",
+                  """<p>Because “cannot go up” is a much weaker promise than “ends up lowest”.
+The guarantee says you will reach a point where no single assign-or-move step improves anything —
+a <em>local</em> minimum. It says nothing about whether some completely different arrangement scores
+better. Convergence is about the algorithm running out of improvements available <em>from where it
+is</em>, and where it is was decided by the starting positions. That is precisely the gap the next
+lesson closes.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Assuming convergence means optimal.</b> J stops decreasing at a <em>local</em>
 minimum. There is no guarantee it is the global one — which is exactly what the next lesson is about.</p>""")
@@ -312,7 +363,7 @@ minimum. There is no guarantee it is the global one — which is exactly what th
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-initializing-kmeans", title="Initializing K-means", mins=9, tag="core",
+    slug="05-initializing-kmeans", title="Initializing K-means", mins=13, tag="core",
     lede="Where you drop the flags decides where you end up. The fix costs one for-loop and is worth "
          "every cycle.",
     body=(
@@ -360,6 +411,28 @@ land far away from existing ones.</p>
 <p>Arthur & Vassilvitskii proved this gives an expected result within O(log K) of optimal, and in practice
 it converges faster and to better solutions. It is scikit-learn’s default.</p>"""
 
+        + h2("🧮", "Fifty random starts, measured")
+        + """<p>Run the whole algorithm 50 times on the same 300 points, each time starting from
+three randomly chosen training examples, and record the final J:</p>"""
+        + table(["Final J reached", "how many of the 50 runs"],
+                [["<b>0.8889</b> — the good answer", "<b>43</b>"],
+                 ["≈ 2.855 – 2.861 — a bad local optimum", "7"]])
+        + """<p>Seven runs in fifty — about one in seven — converged to an arrangement more than
+<b>three times worse</b>, and each of those runs terminated perfectly happily, having genuinely run
+out of improvements. Nothing inside a single run can detect this. Its J stopped falling exactly as
+the theory promises.</p>
+<p>Hence the recipe, which is not a workaround but the standard method: run it 50 to 1,000 times,
+keep the run with the lowest J, throw the rest away. Here that costs 50× the compute and turns a
+14% chance of a bad answer into essentially zero.</p>"""
+        + explain("""<p>Every one of those 50 runs converged correctly. <b>So why does taking the
+minimum J across runs give a better answer than any run could give on its own?</b></p>""",
+                  """<p>Because J is comparable <em>between</em> runs even though no run can see
+outside itself. Each run reports an honest score for the arrangement it found, and those scores sit
+on the same scale, so the comparison is meaningful even when every individual run is blind. You are
+not improving the algorithm; you are sampling its outcomes and using the one number that lets you
+rank them. This works only because K-means has an explicit cost function — which is exactly why the
+previous lesson bothered to define one.</p>""")
+
         + h2("🕳", "Traps")
         + trap("""<p><b>Running it once.</b> With K = 2 or 3 you will usually be fine. With K = 8 on real
 data, a single run is close to a coin flip.</p>""")
@@ -391,7 +464,7 @@ placed in an empty region of space may attract no points at all.</p>""")
 
 # ============================================================ 6
 L.append(dict(
-    slug="06-choosing-k", title="Choosing the number of clusters", mins=9, tag="core",
+    slug="06-choosing-k", title="Choosing the number of clusters", mins=14, tag="core",
     lede="There is no correct K, and the popular method is worse than its reputation. The useful answer is "
          "less mathematical and more honest.",
     body=(
@@ -429,6 +502,35 @@ for.</b></p>""")
         + """<p>Both clusterings are correct. The choice is a trade between fit quality and manufacturing
 cost — a business decision that the data cannot make for you. Your job is to run both and present the
 trade-off honestly.</p>"""
+
+        + h2("🧮", "The elbow, on real data")
+        + """<p>Best-of-20 runs at each <var>K</var>, on the same 300 points:</p>"""
+        + table(["K", "J", "improvement over K−1"],
+                [["1", "6.5255", "—"],
+                 ["2", "3.0444", "3.48"],
+                 ["<b>3</b>", "<b>0.8889</b>", "<b>2.16</b>"],
+                 ["4", "0.7049", "0.18"],
+                 ["5", "0.5391", "0.17"],
+                 ["6", "0.4027", "0.14"],
+                 ["7", "0.3417", "0.06"]])
+        + """<p>Read the third column, not the second. Going 2 → 3 buys 2.16. Going 3 → 4 buys 0.18 —
+twelve times less. That collapse is the elbow, and here it is unmistakable, because the data really
+was built from three clusters.</p>"""
+        + warn("""<p>Do not take the clarity of this table as typical. It is clean because the data
+is synthetic and genuinely has three groups. On real data J almost always declines smoothly with no
+visible bend, and the elbow method gives you nothing. Note also the second column never stops
+falling — J at K = 7 is the lowest on the table. <b>Minimising J always chooses the largest K you
+allow</b>, right up to one cluster per point and J = 0, which is why J alone can never select
+K.</p>""")
+        + explain("""<p>J is the objective K-means minimises, yet you must not choose K by minimising
+it. <b>Why is the algorithm’s own cost function disqualified from this one decision?</b></p>""",
+                  """<p>Because J only measures fit, and K controls capacity. Adding a centroid can
+never make the fit worse — it can always sit on a point that was previously far from anything — so J
+is monotonically decreasing in K by construction, and comparing across K compares models of
+different sizes with a score that rewards size. It is the identical trap as choosing polynomial
+degree by training error in Course 2 Week 3. There the fix was held-out data; here there are no
+labels to hold out, so the fix has to come from outside the data entirely — from what the clusters
+are <em>for</em>.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Comparing J across different K values to pick K.</b> It is a valid comparison
@@ -530,7 +632,7 @@ matters as much as the model.</p>""")
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-gaussian-distribution", title="The Gaussian (normal) distribution", mins=11, tag="maths",
+    slug="08-gaussian-distribution", title="The Gaussian (normal) distribution", mins=15, tag="maths",
     lede="The bell curve, and the two numbers that define it completely. This is the only new maths in the "
          "anomaly-detection half of the week.",
     body=(
@@ -583,6 +685,30 @@ hill: lots of people near the middle, fewer as you go out, almost none at the ex
         + note("""<p>Statistics courses divide by (m−1) rather than m when estimating the variance, to make
 the estimator unbiased. Andrew uses m, and notes that with any reasonable amount of data the difference is
 negligible. Do not lose time on it.</p>""", "m or m−1?")
+
+        + h2("🧮", "Fitted to the real server data")
+        + """<p>The anomaly-detection assignment gives you 307 servers with two measurements each —
+throughput and latency. Fitting a Gaussian per feature is two lines, and here is what they
+return:</p>"""
+        + code("""
+mu  = X.mean(axis=0)                  # [14.1122, 14.9977]
+var = X.var(axis=0)                   # [ 1.8326,  1.7097]   -> sd [1.3537, 1.3076]
+""")
+        + """<p>So a typical server sits at about (14.1, 15.0), and “typical” means within roughly
+±1.35 on each axis. Those four numbers <em>are</em> the model — there is nothing else to it. The
+whole of training is one call to <code>mean</code> and one to <code>var</code>.</p>
+<p>What the numbers buy you is a scale. A server at throughput 14.1 is dead average. One at 17.5 is
+2.5 standard deviations out, which the Gaussian says should happen about once in 160 servers. One at
+20 is 4.4 out — about once in 200,000. The distribution turns “that looks high” into a
+probability.</p>"""
+        + explain("""<p>The whole model is a mean and a variance per feature. <b>Why is
+<code>var</code> doing more work here than <code>mean</code>?</b></p>""",
+                  """<p>Because the mean only says where the centre is, while the variance says how
+much distance <em>counts</em>. Move a point 3 units from the centre and its probability depends
+entirely on whether the spread is 1.35 or 13.5 — the same displacement is a once-in-a-thousand
+anomaly in the first case and utterly ordinary in the second. Anomaly detection is a statement about
+distance measured in standard deviations, so the variance is what sets the ruler, and a feature
+whose variance is badly estimated will either flag everything or nothing.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>p(x) is a density, not a probability.</b> It can exceed 1 when σ is small — that is
@@ -719,7 +845,7 @@ Gaussian (with a full covariance matrix) is the extension — at the cost of nee
 # ============================================================ 10
 L.append(dict(
     slug="10-developing-anomaly-detection", title="Developing and evaluating an anomaly detection system",
-    mins=11, tag="core",
+    mins=16, tag="core",
     lede="How to tune ε when you have almost no labelled anomalies — and why this half-supervised setup is "
          "not cheating.",
     body=(
@@ -776,6 +902,33 @@ def select_threshold(y_val, p_val):
         + """<p>That is the second graded function in the assignment. Note the sweep: ε is searched over the
 range of observed p values, not over a fixed grid — the scale of p depends entirely on how many features
 you have.</p>"""
+
+        + h2("🧮", "Choosing ε, and what changes in 11 dimensions")
+        + """<p>Sweep ε over 1,000 values and score each against the cross-validation set’s known
+anomalies. The assignment’s two data sets give very different answers:</p>"""
+        + table(["Data set", "features", "cv anomalies", "best ε", "best F1"],
+                [["servers, 2-D", "2", "9 of 307", "<b>8.99 × 10⁻⁵</b>", "<b>0.875</b>"],
+                 ["servers, 11-D", "11", "10 of 100", "<b>1.38 × 10⁻¹⁸</b>", "0.615"]])
+        + """<p>Two things to take from this. First, <b>ε is not a probability you can reason about
+and it is not transferable</b>. It fell by fourteen orders of magnitude simply because p(x) is a
+product of eleven per-feature probabilities instead of two, and multiplying eleven numbers each well
+below 1 produces a very small number for <em>every</em> example, normal ones included. Never
+hand-pick ε; always sweep it.</p>
+<p>Second, F1 dropped from 0.875 to 0.615 on the harder set. That is the honest result: 11 features
+give more ways to be unusual, but also more ways for a normal server to look unusual by chance in
+one of them.</p>
+<p>At the chosen ε the 2-D model flags <b>6 of its 307 training servers</b> — about 2%. That is
+expected and correct. The training set was assumed normal, not certified normal, and a threshold
+tight enough to catch real anomalies will always clip a few ordinary points in the tails.</p>"""
+        + explain("""<p>The cross-validation set contains <em>labelled</em> anomalies, yet the model
+is fitted on unlabelled data and no label is ever used in fitting. <b>What are those labels actually
+buying?</b></p>""",
+                  """<p>One number: ε. Everything else — μ, σ² — comes from the unlabelled data, so
+the model of “normal” is built without supervision. But the model outputs a probability, and nothing
+in the data says how improbable is improbable enough. That single cut point is a decision about
+consequences, and the only way to set it defensibly is to check it against cases where you know the
+answer. It is a supervised choice bolted onto an unsupervised model — which is why nine labelled
+anomalies are enough, when nine would be hopeless for training a classifier.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Putting anomalies in the training set.</b> Then the model learns they are normal, and
@@ -880,7 +1033,7 @@ pressure is precisely why fraud is usually anomaly detection rather than classif
 
 # ============================================================ 12
 L.append(dict(
-    slug="12-choosing-features", title="Choosing what features to use", mins=10, tag="core",
+    slug="12-choosing-features", title="Choosing what features to use", mins=14, tag="core",
     lede="Feature choice matters far more here than in supervised learning — because there is no label to "
          "tell the algorithm which features to ignore.",
     body=(
@@ -922,6 +1075,32 @@ example by hand</b> and ask what makes it unusual that your current features fai
 traffic, and the anomaly becomes obvious.</p>"""
         + key("""<p>This is <b>error analysis</b> (C2 W3 L11), applied to anomaly detection. Look at the
 examples you got wrong, and build the feature that would have caught them.</p>""")
+
+        + h2("🧮", "Making a feature Gaussian — measured")
+        + """<p>Take a heavily skewed feature, of the kind you get from counts and durations — most
+values small, a long tail to the right. <b>Skewness</b> measures the lopsidedness: 0 is a perfect
+bell, and anything above about 1 is badly lopsided. Try the usual transforms on 10,000 values:</p>"""
+        + table(["Transform", "skewness", ""],
+                [["<code>x</code> (raw)", "<b>+4.200</b>", "hopeless — a long right tail"],
+                 ["<code>np.sqrt(x)</code>", "+1.566", "better, still lopsided"],
+                 ["<code>x ** 0.25</code>", "+0.719", "close"],
+                 ["<code>np.log(x + 0.001)</code>", "<b>−0.031</b>", "essentially a perfect bell"]])
+        + """<p>The log wins here, and it usually does for counts and durations. The lesson is the
+<em>procedure</em>, not the answer: plot a histogram, try <code>log</code>, <code>sqrt</code> and a
+fractional power, and keep whichever looks most symmetric. The small constant inside the log exists
+only to keep zeros finite — <code>log(0)</code> is −∞ and would poison the whole product.</p>
+<p>Why bother: the algorithm’s only tool is a Gaussian, so feeding it a feature with a long right
+tail means it will place the mean too high, overestimate the spread, and treat genuinely extreme
+values as ordinary. Transforming the feature is not cosmetic — it is making the data match the one
+assumption the model has.</p>"""
+        + explain("""<p>Applying <code>log</code> to a feature does not change which examples are
+largest — the ordering is untouched. <b>So why does it change which examples get flagged?</b></p>""",
+                  """<p>Because the model does not rank examples, it scores them against a bell. What
+the log changes is the <em>spacing</em>: on the raw scale a handful of huge values sit enormously far
+from the crowd, which inflates the estimated variance so much that the bell becomes too wide to call
+anything unusual. Compressing the tail brings those points to a sane distance, the variance shrinks
+to reflect the bulk of the data, and now a genuinely extreme value stands out. Order is preserved;
+what changes is how many standard deviations each gap is worth.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Adding features that are noisy but not informative.</b> Every extra feature is

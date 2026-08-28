@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.9 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.9 · 16 min read</span></p>
 <h1><span class="secno">11.9</span>Deep learning for content-based filtering</h1>
 <p class="lede">Two neural networks, two very different inputs, one shared output space — and a dot product at the end. This is the architecture behind modern recommenders and modern search alike.</p>
 <div class="bookrail" title="Lesson 150 of 172 in the book"><i style="width:87%"></i></div>
@@ -243,7 +243,23 @@ trees.</p><h2><span class="ico">💰</span>Why the dot product is the point</h2>
 overnight, and store them. At request time you run the user tower once and do 50,000 dot products — which
 is one matrix multiply, and fast. If instead the model took (user, item) jointly and mixed them in the
 hidden layers, you would have to run a full forward pass per candidate item, which is hopeless at scale.</p>
-<p>Everything in the next lesson depends on this property.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Mismatched output sizes.</b> A 32-unit user tower and a 64-unit item tower cannot
+<p>Everything in the next lesson depends on this property.</p><h2><span class="ico">🧮</span>Why both towers must end at the same width</h2><p>Each tower ends with <code>tf.linalg.l2_normalize</code>, which rescales a vector to
+length 1. Take two 4-dimensional outputs (the real ones are 32-dimensional; the arithmetic is
+identical):</p><table class="data"><thead><tr><th></th><th>raw output</th><th>length</th><th>after l2_normalize</th></tr></thead><tbody><tr><td><var>v</var><sub>u</sub> (a user)</td><td>[1, 2, 2, 0]</td><td>3.000</td><td>[0.333, 0.667, 0.667, 0]</td></tr><tr><td><var>v</var><sub>m</sub> (film A)</td><td>[2, 1, 2, 0]</td><td>3.000</td><td>[0.667, 0.333, 0.667, 0]</td></tr><tr><td><var>v</var><sub>m</sub> (film B)</td><td>[0, 0, 1, 2]</td><td>2.236</td><td>[0, 0, 0.447, 0.894]</td></tr></tbody></table><p>Now the predictions, which are just dot products:</p><table class="data"><thead><tr><th>Pair</th><th>dot product</th><th>reading</th></tr></thead><tbody><tr><td>user · film A</td><td><b>0.889</b></td><td>strong match</td></tr><tr><td>user · film B</td><td>0.298</td><td>weak match</td></tr></tbody></table><p>Because both vectors have length 1, the dot product is exactly the cosine of the angle
+between them, so it is pinned to the range −1 … +1 no matter what the towers output. That is what
+makes the two scores comparable — and it is why normalising matters: without it, a tower could
+inflate its outputs and win every comparison by being loud rather than by being right.</p>
+<p>The shared width is not a convention. A dot product pairs element 1 with element 1, element 2
+with element 2, and so on — it is undefined the moment the lengths differ. The two towers may take
+completely different inputs and have completely different hidden sizes, but their <em>final</em>
+layers must match, and mismatching them is the assignment’s most common error.</p><div class="explain"><span class="tag">Say it out loud</span><p>The towers are trained jointly, from one prediction error, even though
+neither ever sees the other’s input. <b>How does the user tower learn anything about films?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Through the dot product, which is the only place the two ever meet. The error
+at the output is a single number, and the gradient of that number with respect to
+<var>v</var><sub>u</sub> depends on <var>v</var><sub>m</sub> — literally, the derivative of
+<var>v</var><sub>u</sub>·<var>v</var><sub>m</sub> with respect to <var>v</var><sub>u</sub>
+<em>is</em> <var>v</var><sub>m</sub>. So the film vector is exactly the message the user tower
+receives about films, and vice versa. The two towers negotiate a shared 32-dimensional language in
+which “what this person wants” and “what this film is” can be compared.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Mismatched output sizes.</b> A 32-unit user tower and a 64-unit item tower cannot
 be dotted. It is the one hard constraint, and it produces a shape error rather than a silent bug —
 mercifully.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Forgetting to normalise the raw features.</b> Age in years (0–100) and “average
 rating per genre” (0–5) on very different scales, straight into a network — the C2 W1 lesson applies here

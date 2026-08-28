@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.10 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.10 · 14 min read</span></p>
 <h1><span class="secno">11.10</span>Recommending from a large catalogue</h1>
 <p class="lede">You cannot run a neural network on ten million items while somebody waits for a page to load. The answer is two stages: cheap and rough, then slow and accurate.</p>
 <div class="bookrail" title="Lesson 151 of 172 in the book"><i style="width:88%"></i></div>
@@ -245,7 +245,22 @@ the ranker is.</p></div><h2><span class="ico">⚖️</span>Choosing the candidat
 advice is refreshingly concrete: run an offline experiment. Increase the candidate count and measure
 whether the final recommendations actually improve. When they stop improving, stop paying.</p><div class="callout "><span class="tag">Why the architecture made this possible</span><p>Because v<sub>m</sub> depends only on the item, all item embeddings can be computed
 overnight and stored in an approximate nearest-neighbour index. Retrieval then becomes a single index
-lookup rather than a model call. This is the payoff for the two-tower design in Lesson 9.</p></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Judging retrieval by precision.</b> Retrieval should be judged on <em>recall</em> —
+lookup rather than a model call. This is the payoff for the two-tower design in Lesson 9.</p></div><h2><span class="ico">🧮</span>The arithmetic that forces two stages</h2><p>Scoring every item for one user, on this course’s data set and at industrial scale:</p><table class="data"><thead><tr><th>Catalogue</th><th>network passes to score everything</th><th>feasible in ~100 ms?</th></tr></thead><tbody><tr><td>this assignment — 4,778 films</td><td>4,778</td><td>yes, comfortably</td></tr><tr><td>a streaming service — 10⁵ titles</td><td>100,000</td><td>borderline</td></tr><tr><td>a large marketplace — 10⁸ items</td><td>100,000,000</td><td><b>no, by several orders</b></td></tr></tbody></table><p>And that is <em>per user, per page load</em>. The bottom row is not a tuning problem;
+no amount of hardware makes a hundred million forward passes fit in a page load.</p>
+<p>So the work is split. <b>Retrieval</b> assembles a few hundred plausible candidates using cheap
+lookups — items similar to the last few watched, the top items in each favourite genre, what is
+popular in the user’s country. No network runs. <b>Ranking</b> then runs the expensive model on
+those candidates only, perhaps 200 forward passes instead of 10⁸.</p>
+<p>The saving that makes it work: <var>v</var><sub>m</sub> for every item depends only on the item,
+so all 10⁸ of them are computed <em>offline</em> and cached. At request time the item tower does not
+run at all — only the user tower, once, followed by a few hundred <span class="gterm" data-g="dot-product-f0">dot product</span>s.</p><div class="explain"><span class="tag">Say it out loud</span><p>Retrieval uses crude heuristics that the ranking model would easily beat.
+<b>Why is it not better to make retrieval smarter?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the two stages are judged on different things. Retrieval only has to
+avoid <em>missing</em> good items — anything it passes through gets properly evaluated a moment
+later, so its precision barely matters and its recall is everything. That job is well served by
+cheap, broad, diverse heuristics. Making retrieval smarter means making it slower, which forces it
+to consider fewer candidates, which costs recall — the one thing it exists to protect. The right
+tuning knob is the number of candidates, and you find it by measuring whether more candidates still
+improve the final recommendations.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Judging retrieval by precision.</b> Retrieval should be judged on <em>recall</em> —
 did the good items survive? Precision is the ranker’s job.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Forgetting to filter.</b> Already-watched, out-of-stock, region-blocked and
 age-inappropriate items must be removed. Usually after retrieval, before ranking.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c32-10-large-catalogues#1"><summary>Why not just run the full model on all 10 million items?</summary><div class="a"><p>10 million forward passes per request. Even at a microsecond each that is 10 seconds — and you have milliseconds.</p></div></details><details class="q" data-qid="c32-10-large-catalogues#2"><summary>Retrieval returns 100 candidates and the best possible item is not among them. Can ranking recover?</summary><div class="a"><p><b>No.</b> Ranking only reorders what it is given. This is why retrieval optimises recall.</p></div></details><details class="q" data-qid="c32-10-large-catalogues#3"><summary>How do you decide between 100 and 500 candidates?</summary><div class="a"><p>Offline experiment: raise the number, measure whether the final recommendations improve. When the improvement flattens, the extra compute is wasted.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind paper">paper</span><span><a href="https://dl.acm.org/doi/10.1145/2959100.2959190" target="_blank" rel="noopener">Covington et al. (2016) — YouTube recommendations</a><span class="d">Section 4 is candidate generation and ranking, described exactly as in this lesson.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://github.com/google-research/google-research/tree/master/scann" target="_blank" rel="noopener">ScaNN — Google’s approximate nearest-neighbour library</a><span class="d">What retrieval is actually built on at scale.</span></span></li></ul>
 <nav class="pager">
