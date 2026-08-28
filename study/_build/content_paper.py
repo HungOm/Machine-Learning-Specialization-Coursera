@@ -249,6 +249,49 @@ SHEETS = [
              "Bellman: Q(s,a) = R(s) + &gamma; max Q(s&prime;, a&prime;)",
              "&epsilon;-greedy as a coin flip before each move"],
       test="At which &gamma; does state 4 change its mind, and why is that the answer?"),
+
+ dict(c="C4", w=1, title="Sequences and embeddings",
+      draw="Two rows of word-boxes for the two sentences, and under both the SAME bag of counts.",
+      items=["the bag: {the: 2, bit: 1, dog: 1, man: 1} &mdash; written once, for both sentences",
+             "one-hot: a row of 0s with one 1, and <i>every pair dots to 0</i> beside it",
+             "the embedding table E, V rows by d columns, with one row ringed as a lookup",
+             "cos = a&middot;b / (&#8214;a&#8214;&#8214;b&#8214;), and [3,4]&middot;[4,3] = 24/25 = 0.96",
+             "the RNN loop: h&lt;t&gt; = g(W&#8341;h&lt;t&minus;1&gt; + W&#8339;x&lt;t&gt; + b)",
+             "0.4&#185;&#8309; = 1.1 &times; 10&#8315;&#8310; under an arrow spanning 15 steps"],
+      test="Name the two RNN failures, and say which one an LSTM fixes and which it cannot."),
+
+ dict(c="C4", w=2, title="Attention",
+      draw="A 3&times;3 grid, rows labelled q&#8321;q&#8322;q&#8323;, columns k&#8321;k&#8322;k&#8323;, "
+           "with an arrow off each row marked <i>sums to 1</i>.",
+      items=["softmax(QK&#7488; / &#8730;d&#8342;)V &mdash; written out once from memory",
+             "Q = XW&#7476;, K = XW&#7472;, V = XW&#7515; &mdash; three roles, one input",
+             "the four steps down the page: score &rarr; scale &rarr; softmax &rarr; mix",
+             "row 1 of the worked example: [0.4011, 0.1978, 0.4011]",
+             "&#8730;512 = 22.6 beside the words <i>why we divide</i>",
+             "the causal mask: a triangle of &minus;&infin; in the upper right"],
+      test="Why must the softmax be applied along rows, and what happens silently if it is not?"),
+
+ dict(c="C4", w=3, title="The transformer block",
+      draw="A vertical strip: two boxes on a line, each with a curved arrow leaving before it and "
+           "rejoining after it.",
+      items=["x = x + attention(layer_norm(x))",
+             "x = x + feed_forward(layer_norm(x))",
+             "&part;y/&part;x = 1 + f&prime;(x), with the 1 ringed",
+             "LN: (x &minus; &mu;)/&sigma;, and [1,3,5,7] &rarr; [&minus;1.34, &minus;0.45, 0.45, 1.34]",
+             "block params: attention 4d&sup2;, feed-forward 8d&sup2; &mdash; <i>twice</i>",
+             "GPT-2 small: 124 M, added up in four lines"],
+      test="Which single step in the block lets information move between positions?"),
+
+ dict(c="C4", w=4, title="Language models",
+      draw="A sentence with the last word covered, an arrow to a bar chart of candidate tokens, "
+           "and a dial marked T beside it.",
+      items=["L = &minus;&Sigma; log P(x&#8348; | x&#8249;&#8348;) &mdash; cross-entropy, again",
+             "perplexity = e to the loss, and p = 0.2 &rarr; ppl 5",
+             "p = softmax(logits / T), with T = 0.5 and T = 2 side by side",
+             "the three stages: pretrain &rarr; SFT &rarr; RLHF",
+             "two costs: compute O(T&sup2;), KV cache O(T)",
+             "three failures and their causes, in two columns"],
+      test="Give the mechanical account of what a model computes &mdash; and say where it stops."),
 ]
 
 # ---------------------------------------------------------- per-card prompts

@@ -2435,7 +2435,7 @@ def build():
     if n_paper:
         print("       + paper.html (%d week sheets)" % n_paper)
     if n_hours:
-        print("       + mastery.html (12 weeks, ~%d h budgeted)" % n_hours)
+        print("       + mastery.html (%d weeks, ~%d h budgeted)" % (len(weeks), n_hours))
     if n_sets:
         print("       + %d problem sets (%d problems)" % (n_sets, n_prob))
     if n_sc:
