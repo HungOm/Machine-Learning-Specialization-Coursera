@@ -498,7 +498,7 @@
   A.def('adam', function (root) {
     var c = A.canvas(root, 760, 340), ctx = c.ctx;
     var lr = 0.06, K = 18;   /* curvature ratio: makes a long narrow valley */
-    var bar = A.ctrls(root), ro = A.readout(root);
+    var bar = A.ctrls(root), log = A.log(root), ro = A.readout(root);
     A.slider(bar, { label: 'learning rate α', min: .005, max: .12, step: .005, value: lr,
       fmt: function (v) { return v.toFixed(3); }, on: function (v) { lr = v; reset(); } });
     A.button(bar, 'restart', function () { reset(); });
@@ -561,11 +561,9 @@
       A.txt(ctx, '● plain gradient descent', 90, 52, { size: 12, w: 700, fill: P.r });
       A.txt(ctx, '● Adam', 90, 70, { size: 12, w: 700, fill: P.g });
       var dGD = Math.hypot(gd.w[0], gd.w[1]), dAD = Math.hypot(ad.w[0], ad.w[1]);
-      A.txt(ctx, 'steps taken: ' + ad.t, 70, 292, { size: 12, mono: true, fill: P.faint });
-      A.txt(ctx, 'distance to minimum — GD: ' + dGD.toFixed(3) + '   Adam: ' + dAD.toFixed(3),
-        70, 312, { size: 12.5, mono: true, fill: P.soft });
-      A.txt(ctx, "Adam's own step size:  w₁ " + ad.lr[0].toFixed(3) + '   w₂ ' + ad.lr[1].toFixed(3),
-        70, 332, { size: 12.5, mono: true, fill: P.g });
+      log.set('step ' + ad.t + ':  dist to min \u2014 GD ' + dGD.toFixed(3) + ', Adam ' + dAD.toFixed(3) +
+        '   |   Adam step size: w\u2081 ' + ad.lr[0].toFixed(3) + ', w\u2082 ' + ad.lr[1].toFixed(3),
+        'w_i \u2212= \u03b1\u00b7(1/\u221av\u0302_i+\u03b5)\u00b7m\u0302_i    (m,v = running averages of the gradient and its square)');
       ro.set('Plain GD must use ONE α for both directions: big enough for w₁ makes it bounce in w₂.' +
         '\nAdam keeps a separate step size per parameter and grows it when the gradient is consistent — ' +
         'so it takes long strides along the valley floor and small careful ones across it.');

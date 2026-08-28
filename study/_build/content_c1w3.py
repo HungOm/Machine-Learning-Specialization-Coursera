@@ -99,7 +99,7 @@ Zero becomes exactly 0.5.</p>
             ' <var class="hl-b">+ b</var> &nbsp;&nbsp;→&nbsp;&nbsp; <var>f</var>(<var>x</var>) <span class="op">=</span> ',
             ('<var>g</var>(<var>z</var>) <span class="op">=</span> <span class="frac"><span>1</span><span>1 + <var>e</var><sup>−(<var>w⃗·x⃗</var>+<var>b</var>)</sup></span></span>',
              "sigmoid-squash", "the same squasher, z filled in"),
-        ], "the model — the old line, squashed — click any part")
+        ], "the model — the old line, squashed — hover or click any part")
         + decode([
             ("<var>z</var>", "“zee”", "The raw output of the linear part. Any number at all. Often called the <b>logit</b>."),
             ("<var>e</var>", "“Euler’s number”", "About 2.71828. Its properties make the derivative come out unusually tidy — that is why it, rather than some other base."),
@@ -189,7 +189,7 @@ line, and you already know how to draw it.</p>""")
             ('<var>g</var>(<var>z</var>) <span class="op">≥</span> 0.5', "sigmoid-squash", "the sigmoid"),
             ' &nbsp;↔&nbsp; <var class="hl-a"><var>z</var> <span class="op">≥</span> 0</var> &nbsp;↔&nbsp; ',
             ('<var>w⃗ · x⃗ + b</var> <span class="op">≥</span> 0', "dot-product-f0", "multiply matching entries, add them up"),
-        ], "predict 1 exactly when z ≥ 0 — click a part", small=True)
+        ], "predict 1 exactly when z ≥ 0 — hover or click a part", small=True)
         + decode([
             ("decision boundary", "“where it changes its mind”", "The set of x satisfying w·x + b = 0."),
             ("threshold 0.5", "“a choice, not a law”", "You can move it. Course 2 Week 3 shows when you should — for example when a missed cancer costs far more than a false alarm."),
@@ -290,7 +290,7 @@ distinction, and interviewers ask about it.</p>""")
             ' &nbsp;&nbsp; if <var>y</var> = 1<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ',
             ('<span class="op">−</span>log(1 <span class="op">−</span> <var>f</var>)', "logarithm-f0", "huge penalty if f is near 1"),
             ' &nbsp;&nbsp; if <var>y</var> = 0',
-        ], "the logistic loss — click a part")
+        ], "the logistic loss — hover or click a part")
         + """<p>Two cases, and only one is ever active for any given example. The next lesson looks at the
 shape of these curves in detail; the point here is simply that this loss makes J <b>convex</b> again, and
 gradient descent gets its guarantee back.</p>"""
@@ -446,7 +446,7 @@ multipliers is always <b>zero</b>, so one of the two terms always vanishes.</p>
             '<var>L</var>(<var>f</var>, <var>y</var>) <span class="op">=</span> ',
             ('<span class="op">−</span><var class="hl-a">y</var> log(<var>f</var>) <span class="op">−</span> (1 <span class="op">−</span> <var class="hl-a">y</var>) log(1 <span class="op">−</span> <var>f</var>)',
              "logloss-native", "the two-case trick, in one line"),
-        ], "the same loss, written without a case split — click it")
+        ], "the same loss, written without a case split — hover or click it")
         + """<p>Check both cases:</p>
 <ul>
 <li><b>y = 1:</b> −1·log(f) − (1−1)·log(1−f) = −log(f) − 0 = <b>−log(f)</b> ✓</li>
@@ -461,7 +461,7 @@ multipliers is always <b>zero</b>, so one of the two terms always vanishes.</p>
             ('<span class="paren">[</span> <var>y</var><sup>(<var>i</var>)</sup> log(<var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>))'
              ' <span class="op">+</span> (1 <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup>) log(1 <span class="op">−</span> <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>)) <span class="paren">]</span>',
              "logloss-native", "the two-case trick, in one line"),
-        ], "and the cost is the average over all m examples — click any part")
+        ], "and the cost is the average over all m examples — hover or click any part")
         + decode([
             ("binary cross-entropy", "“the standard name”", "What this loss is called everywhere outside this course. You will use it for every binary classifier in Course 2."),
             ("no 1/2", "“note its absence”", "The 1/2 in Week 1’s cost existed only to cancel the 2 from differentiating a square. There is no square here."),
@@ -559,7 +559,7 @@ compose them the messy bits cancel out perfectly.</p>""")
             (' <span class="paren">(</span> <var class="hl-a"><var>f</var>(<var>x⃗</var><sup>(<var>i</var>)</sup>)</var> <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup> <span class="paren">)</span>',
              "error-term", "predicted − actual"),
             ('<var>x</var><sub><var>j</var></sub><sup>(<var>i</var>)</sup>', "times-xi", "only in the wⱼ-derivative"),
-        ], "identical to Week 2 — except for what f is — click a part")
+        ], "identical to Week 2 — except for what f is — hover or click a part")
         + table(["", "Linear regression", "Logistic regression"],
                 [["the model f", "<code>w·x + b</code>", "<code>g(w·x + b)</code>"],
                  ["the cost J", "squared error", "log loss"],
@@ -869,7 +869,7 @@ model flattens into a straight line.</p>""")
             ' <span class="op">+</span> ',
             ('<span class="frac"><span><var class="hl-a">λ</var></span><span>2<var>m</var></span></span> <span class="big">Σ</span><sub><var>j</var>=1</sub><sup><var>n</var></sup> <var>w</var><sub><var>j</var></sub><sup>2</sup>',
              "reg-penalty", "the penalty term — keeps weights small"),
-        ], "fit the data … and keep the weights small — click any part")
+        ], "fit the data … and keep the weights small — hover or click any part")
         + decode([
             ("first term", "“the fit term”", "The original cost. Wants to match the data as closely as possible."),
             ("second term", "“the penalty term”", "Wants every weight near zero. These two pull in opposite directions."),
@@ -989,7 +989,7 @@ pushing them back up. A weight only stays large if it is genuinely earning its p
             ('<span class="frac"><span><var class="hl-a">λ</var></span><span><var>m</var></span></span><var>w</var><sub><var>j</var></sub>',
              "reg-penalty", "pulls wⱼ toward zero"),
             ' <span class="paren">]</span>',
-        ], "the regularised update — one extra term — click a part")
+        ], "the regularised update — one extra term — hover or click a part")
         + eqp([
             ('<var>w</var><sub><var>j</var></sub> <span class="op">:=</span>', "assign-op", "becomes, not equals"),
             ' ',
@@ -999,7 +999,7 @@ pushing them back up. A weight only stays large if it is genuinely earning its p
             ('<var>α</var>', "alpha-lr", "the learning rate"),
             (' <span class="frac"><span>1</span><span><var>m</var></span></span><span class="big">Σ</span>( <var>f</var> <span class="op">−</span> <var>y</var> )<var>x</var><sub><var>j</var></sub>',
              "error-term", "then step, as usual"),
-        ], "…which rearranges into: shrink first, then step — click a part")
+        ], "…which rearranges into: shrink first, then step — hover or click a part")
         + decode([
             ("(1 − αλ/m)", "“the shrink factor”", "A number just below 1. With α = 0.01, λ = 1, m = 50 it is 0.9998."),
             ("weight decay", "“the name for this”", "Because each iteration multiplies w by slightly less than 1, weights decay towards zero unless the data pushes back."),

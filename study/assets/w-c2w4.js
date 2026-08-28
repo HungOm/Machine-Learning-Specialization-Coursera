@@ -273,7 +273,8 @@
      ============================================================ */
   A.def('treebuild', function (root) {
     var c = A.canvas(root, 760, 340), ctx = c.ctx;
-    var ro = A.readout(root);
+    var log = A.log(root), ro = A.readout(root);
+    var GAIN_FORMULA = 'gain = H(root) \u2212 [ w_left\u00b7H(left) + w_right\u00b7H(right) ]';
     function render(t) {
       var P = A.pal(); c.clear(P.panel); t = t || 0;
       var step = Math.floor((t * .45) % 6);
@@ -316,6 +317,15 @@
         'every group is now 100% one class — stop',
         'done. the recursion ended because there was nothing left to separate'][step];
       A.txt(ctx, msg, 40, 320, { size: 12.5, w: 700, fill: P.a });
+      var logLine = [
+        'H(root) = ' + H(frac(CATS)).toFixed(4) + '  \u2192  split on ear shape, gain = ' + gain(CATS, 'E').toFixed(4),
+        'H(left) = ' + H(frac(sE.yes)).toFixed(4) + '   H(right) = ' + H(frac(sE.no)).toFixed(4),
+        'left branch:  split on face shape, gain = ' + gain(sE.yes, 'F').toFixed(4),
+        'right branch:  split on whiskers, gain = ' + gain(sE.no, 'W').toFixed(4),
+        'every leaf: H = 0.0000 (100% one class)',
+        'H = 0.0000 at every leaf \u2014 nothing left for the recursion to do'
+      ][step];
+      log.set(logLine, GAIN_FORMULA);
       /* the root box's top edge is at y=30 (56-26) — keep this caption clear above it */
       A.txt(ctx, 'recursion: the algorithm for a branch is the SAME algorithm as for the whole tree, on less data',
         40, 16, { size: 12, fill: P.faint });

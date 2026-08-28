@@ -168,13 +168,13 @@ sentences written in symbols.</p>""")
             ' <span class="op">arg min</span><sub><var>k</var></sub> ',
             ('‖ <var>x</var><sup>(<var>i</var>)</sup> <span class="op">−</span> <var class="hl-a">μ</var><sub><var>k</var></sub> ‖<sup>2</sup>',
              "sq-distance", "distance to each candidate centroid"),
-        ], "step 1 — assign every point to its nearest centroid — click a part")
+        ], "step 1 — assign every point to its nearest centroid — hover or click a part")
         + eqp([
             ('<var class="hl-a">μ</var><sub><var>k</var></sub> <span class="op">:=</span>', "assign-op", "becomes, not equals"),
             ' ',
             ('<span class="frac"><span>1</span><span>|<var>C</var><sub><var>k</var></sub>|</span></span>', "avg-factor", "the average"),
             ('<span class="big">Σ</span><sub><var>i</var> ∈ <var>C</var><sub><var>k</var></sub></sub> <var>x</var><sup>(<var>i</var>)</sup>', "sigma", "over this cluster's own points"),
-        ], "step 2 — move every centroid to the mean of its own points — click a part")
+        ], "step 2 — move every centroid to the mean of its own points — hover or click a part")
         + decode([
             ("arg min", "“the k that makes it smallest”", "Not the smallest distance itself — the <em>index</em> of whichever centroid is nearest."),
             ("‖ · ‖²", "“squared distance”", "(x₁−μ₁)² + (x₂−μ₂)² + … Squaring avoids a square root and makes the maths cleaner; it does not change which centroid is closest."),
@@ -281,7 +281,7 @@ down, and eventually stops.</p>""")
             ('<span class="big">Σ</span><sub><var>i</var>=1</sub><sup><var>m</var></sup>', "sigma", "for every point"),
             ('‖ <var>x</var><sup>(<var>i</var>)</sup> <span class="op">−</span> <var>μ</var><sub><var>c</var><sup>(<var>i</var>)</sup></sub> ‖<sup>2</sup>',
              "sq-distance", "distance to its own centroid, squared"),
-        ], "the distortion — average squared distance from each point to its own centroid — click a part")
+        ], "the distortion — average squared distance from each point to its own centroid — hover or click a part")
         + decode([
             ("<var>J</var>", "“the distortion”", "One number measuring how tight the clusters are. Smaller is tighter."),
             ("μ<sub>c<sup>(i)</sup></sub>", "“the centroid that x-i belongs to”", "A double subscript: c<sup>(i)</sup> is which cluster, and μ of that is its centre. Read it inside out."),
@@ -653,7 +653,7 @@ hill: lots of people near the middle, fewer as you go out, almost none at the ex
              "normal-dist-f0", "scales the curve to sum to 1"),
             ('<var>e</var><sup>−<span class="frac"><span>(<var>x</var> − <var class="hl-a">μ</var>)<sup>2</sup></span><span>2<var class="hl-b">σ</var><sup>2</sup></span></span></sup>',
              "exponential-f0", "falls off fast, away from μ"),
-        ], "the Gaussian / normal density — click a part")
+        ], "the Gaussian / normal density — hover or click a part")
         + decode([
             ("<var class='hl-a'>μ</var>", "“mu”, the mean", "Where the peak sits. Estimated from data as the plain average."),
             ("<var class='hl-b'>σ</var>", "“sigma”, the standard deviation", "How wide the hill is. Small σ = a tall narrow spike."),
@@ -670,7 +670,7 @@ hill: lots of people near the middle, fewer as you go out, almost none at the ex
             ('<span class="frac"><span>1</span><span><var>m</var></span></span>', "avg-factor", "the average"),
             ('<span class="big">Σ</span> (<var>x</var><sup>(<var>i</var>)</sup> <span class="op">−</span> <var>μ</var>)<sup>2</sup>',
              "variance-f0", "average squared distance from μ"),
-        ], "fitting it to data — just the average, and the average squared deviation — click a part", small=True)
+        ], "fitting it to data — just the average, and the average squared deviation — hover or click a part", small=True)
 
         + h2("🎬", "Watch it move")
         + demo("gaussian", "Drag μ and σ",
@@ -764,7 +764,7 @@ one way is common. Being slightly unusual in <em>five</em> ways at once is very 
             ' <span class="op">=</span> ',
             ('<span class="big">Π</span><sub><var>j</var>=1</sub><sup><var>n</var></sup>', "pi-notation", "multiply every feature's probability"),
             ' <var>p</var>(<var>x</var><sub><var>j</var></sub>; <var>μ</var><sub><var>j</var></sub>, <var>σ</var><sub><var>j</var></sub><sup>2</sup>)',
-        ], "multiply the per-feature probabilities together — click a part")
+        ], "multiply the per-feature probabilities together — hover or click a part")
         + decode([
             ("<span class='big'>Π</span>", "“product over j”", "Like Σ but multiplying instead of adding. Capital pi."),
             ("<var>p</var>(x<sub>j</sub>; μ<sub>j</sub>, σ<sub>j</sub>²)", "“the Gaussian for feature j”", "Each feature gets its own μ and σ, fitted independently. The semicolon means “parameterised by”."),

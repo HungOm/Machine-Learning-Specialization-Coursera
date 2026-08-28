@@ -163,7 +163,7 @@
   A.def('kmeansalgo', function (root) {
     var c = A.canvas(root, 760, 340), ctx = c.ctx;
     var K = 3, seed = 1, cents = initCents(K, seed), idx = assign(BLOBS, cents), it = 0, done = false;
-    var bar = A.ctrls(root), ro = A.readout(root);
+    var bar = A.ctrls(root), log = A.log(root), ro = A.readout(root);
     A.slider(bar, { label: 'K =', min: 1, max: 5, step: 1, value: K,
       fmt: function (v) { return v.toFixed(0); }, on: function (v) { K = v; reset(); } });
     A.button(bar, 'new random start', function () { seed++; reset(); });
@@ -201,11 +201,10 @@
         ctx.beginPath(); ctx.moveTo(x - 9, y - 9); ctx.lineTo(x + 9, y + 9);
         ctx.moveTo(x + 9, y - 9); ctx.lineTo(x - 9, y + 9); ctx.stroke(); ctx.restore();
       });
-      A.txt(ctx, 'iteration ' + it + (done ? '  ·  converged, nothing moved' : ''), 70, 300,
-        { size: 12.5, mono: true, w: 700, fill: done ? P.g : P.soft });
-      A.txt(ctx, 'J = ' + distortion(BLOBS, idx, cents).toFixed(4), 70, 322,
-        { size: 12.5, mono: true, fill: P.faint });
-      A.txt(ctx, 'shaded regions show which centroid owns which patch of space', 380, 322,
+      log.set('iter ' + it + (done ? ' \u00b7 converged, nothing moved' : '') +
+        ':  J = ' + distortion(BLOBS, idx, cents).toFixed(4),
+        'J = (1/m)\u03a3\u2016x\u207d\u2071\u207e \u2212 \u03bc_c\u207d\u2071\u207e\u2016\u00b2   (average squared distance to your own centroid)');
+      A.txt(ctx, 'shaded regions show which centroid owns which patch of space', 70, 322,
         { size: 11.5, fill: P.faint });
       ro.set('repeat until convergence:\n' +
         '  <b>for i = 1..m</b>:  c<sup>(i)</sup> := index of the centroid closest to x<sup>(i)</sup>\n' +

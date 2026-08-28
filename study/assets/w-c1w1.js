@@ -81,9 +81,10 @@
         var off = i < 2 ? Math.sin(t * 1.2 + i) * 6 : 0;
         A.dot(ctx, 44 + p[0] * 32 + 16 + off, 110 + p[1] * 32 + 16, 11, i < 2 ? P.a : P.b);
       });
-      A.txt(ctx, 'game ' + (10000 + game * 4137).toLocaleString(), 44, 262,
+      /* the supervised-learning box's bottom edge is at y=280 — keep clear of it */
+      A.txt(ctx, 'game ' + (10000 + game * 4137).toLocaleString(), 44, 248,
         { size: 11.5, mono: true, fill: P.faint });
-      A.txt(ctx, 'it ended up better than Samuel himself', 44, 280, { size: 11.5, w: 700, fill: P.a });
+      A.txt(ctx, 'eventually beat Samuel himself', 44, 266, { size: 11.5, w: 700, fill: P.a });
       /* the two branches */
       [['SUPERVISED learning', 'you are given the right answers', 'x → y', P.b,
         ['house size → price', 'email → spam or not', 'image → “is there a cat?”']],
@@ -818,7 +819,7 @@
   A.def('gdrunning', function (root) {
     var c = A.canvas(root, 760, 350), ctx = c.ctx;
     var alpha = 0.08, w = 40, b = 380, it = 0, hist = [];
-    var bar = A.ctrls(root), ro = A.readout(root);
+    var bar = A.ctrls(root), log = A.log(root), ro = A.readout(root);
     A.slider(bar, { label: 'α', min: .005, max: .16, step: .005, value: alpha,
       fmt: function (v) { return v.toFixed(3); }, on: function (v) { alpha = v; reset(); } });
     A.button(bar, 'restart', function () { reset(); });
@@ -881,8 +882,9 @@
         A.txt(ctx, 'J against iterations — it should fall on EVERY step', b3.x, b3.y - 6,
           { size: 11, fill: P.faint });
       }
-      A.txt(ctx, 'iteration ' + it + '   w = ' + w.toFixed(1) + '   b = ' + b.toFixed(1) +
-        '   J = ' + cost(w, b).toFixed(1), 60, 338, { size: 12.5, mono: true, w: 700, fill: P.a });
+      log.set('iter ' + it + ':  w = ' + w.toFixed(2) + '   b = ' + b.toFixed(2) +
+        '   J(w,b) = ' + cost(w, b).toFixed(2),
+        'w := w \u2212 \u03b1\u00b7(1/m)\u03a3(f(x)\u2212y)\u00b7x    b := b \u2212 \u03b1\u00b7(1/m)\u03a3(f(x)\u2212y)');
       ro.set('This is <b>batch</b> gradient descent: every single step uses all ' + M +
         ' training examples.' +
         '\nWatch the path: big strides down the steep sides of the valley, then a long slow crawl along ' +

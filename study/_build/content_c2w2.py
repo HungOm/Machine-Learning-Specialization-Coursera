@@ -154,7 +154,7 @@ whatever direction would have reduced the penalty.</p>""")
             '<var>L</var>(<var>f</var>, <var>y</var>) <span class="op">=</span> ',
             ('<span class="op">−</span><var>y</var> log(<var>f</var>) <span class="op">−</span> (1 <span class="op">−</span> <var>y</var>) log(1 <span class="op">−</span> <var>f</var>)',
              "logloss-native", "the two-case trick, in one line"),
-        ], "binary cross-entropy — the loss for ONE example — click it")
+        ], "binary cross-entropy — the loss for ONE example — hover or click it")
         + """<p>It looks like two terms, but only ever one is alive:</p>"""
         + table(["If the truth is…", "…the formula becomes", "Meaning"],
                 [["y = 1", "L = −log(f)", "f near 1 → loss ≈ 0. f near 0 → loss → ∞."],
@@ -178,7 +178,7 @@ whatever direction would have reduced the penalty.</p>""")
             ('<var class="hl-a">α</var>', "alpha-lr", "the learning rate"),
             (' <span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var><sub><var>j</var></sub><sup>[<var>l</var>]</sup></span></span>',
              "partial-f0", "the slope, at this weight"),
-        ], "repeat for every weight and every bias, over and over — click a part")
+        ], "repeat for every weight and every bias, over and over — hover or click a part")
         + decode([
             (":=", "“becomes”", "Assignment, not equality. The new w is computed from the old one."),
             ("<var class='hl-a'>α</var>", "“alpha”, the learning rate", "Step size. Too small → glacial. Too big → it overshoots and diverges."),
@@ -267,7 +267,7 @@ That’s the whole function. And on the positive side it never flattens.</p>""")
         + h2("🔢", "The maths, decoded")
         + eqp([
             ('<var>g</var>(<var>z</var>) <span class="op">=</span> max(0, <var>z</var>)', "relu-native", "0 below zero, unchanged above"),
-        ], "ReLU — rectified linear unit — click it")
+        ], "ReLU — rectified linear unit — hover or click it")
         + table(["z", "sigmoid(z)", "ReLU(z)", "sigmoid slope", "ReLU slope"],
                 [["−10", "0.00005", "0", "0.00005 — dead", "0 — dead"],
                  ["−1", "0.269", "0", "0.197", "0"],
@@ -461,19 +461,19 @@ allowed to <em>not</em> be straight. The activation function is the joint.</p>""
             '<var>a</var><sup>[1]</sup> = ',
             ('<var>W</var><sup>[1]</sup><var>x</var>', "matmul-f0", "whole layer, one multiply"),
             ' + <var>b</var><sup>[1]</sup>',
-        ], "layer 1, with a linear activation — click it", small=True)
+        ], "layer 1, with a linear activation — hover or click it", small=True)
         + eqp([
             '<var>a</var><sup>[2]</sup> = ',
             ('<var>W</var><sup>[2]</sup><var>a</var><sup>[1]</sup>', "matmul-f0", "whole layer, one multiply"),
             ' + <var>b</var><sup>[2]</sup> = <var>W</var><sup>[2]</sup>(',
             ('<var>W</var><sup>[1]</sup><var>x</var>', "matmul-f0", "whole layer, one multiply"),
             ' + <var>b</var><sup>[1]</sup>) + <var>b</var><sup>[2]</sup>',
-        ], "substitute layer 1 into layer 2 — click a part", small=True)
+        ], "substitute layer 1 into layer 2 — hover or click a part", small=True)
         + eqp([
             '<var>a</var><sup>[2]</sup> = ',
             ('<span class="hl-a">(<var>W</var><sup>[2]</sup><var>W</var><sup>[1]</sup>)</span>', "matmul-f0", "two matrices collapse into one"),
             '<var>x</var> + <span class="hl-a">(<var>W</var><sup>[2]</sup><var>b</var><sup>[1]</sup> + <var>b</var><sup>[2]</sup>)</span> = <var>W</var>′<var>x</var> + <var>b</var>′',
-        ], "multiply out — and it collapses to a single layer — click it")
+        ], "multiply out — and it collapses to a single layer — hover or click it")
         + """<p>The two matrices multiplied together are <em>just another matrix</em>. The two biases
 combined are <em>just another vector</em>. Your two-layer network is algebraically identical to a
 one-layer network. Add a hundred layers and it is <em>still</em> identical to a one-layer network.</p>"""
@@ -658,14 +658,14 @@ everything, the winner takes most of it and the others keep a little.</p>""")
             '<var>z</var><sub><var>j</var></sub> <span class="op">=</span> ',
             ("<var>w</var><sub><var>j</var></sub> · <var>x</var>", "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var>b</var><sub><var>j</var></sub> <span class="op">&nbsp;&nbsp;for&nbsp;&nbsp;</span> <var>j</var> <span class="op">=</span> 1 … <var>N</var>',
-        ], "step 1 — one score per class, exactly as before — click a part")
+        ], "step 1 — one score per class, exactly as before — hover or click a part")
         + eqp([
             '<var>a</var><sub><var>j</var></sub> <span class="op">=</span> ',
             ('<span class="frac"><span><var>e</var><sup><var>z</var><sub><var>j</var></sub></sup></span>'
              '<span><var>e</var><sup><var>z</var><sub>1</sub></sup> + <var>e</var><sup><var>z</var><sub>2</sub></sup> + … + <var>e</var><sup><var>z</var><sub><var>N</var></sub></sup></span></span>',
              "softmax-native", "turns scores into probabilities"),
             ' <span class="op">=</span> <var>P</var>(<var>y</var> = <var>j</var> | <var>x</var>)',
-        ], "step 2 — softmax — click it")
+        ], "step 2 — softmax — hover or click it")
         + decode([
             ("<var>e</var><sup><var>z</var></sup>", "“e to the z”", "Always positive, and it grows fast. It turns differences in z into ratios in a."),
             ("the denominator", "“the total”", "The same sum for every class — that is the shared budget everyone divides into."),
@@ -698,7 +698,7 @@ is exactly the behaviour you want from evidence.</p>"""
         + h2("🔢", "And the loss that goes with it")
         + eqp([
             ('<var>L</var> <span class="op">=</span> <span class="op">−</span>log(<var>a</var><sub><var>y</var></sub>)', "logarithm-f0", "huge penalty if the true class's probability is near 0"),
-        ], "sparse categorical cross-entropy — only the TRUE class’s probability is scored — click it")
+        ], "sparse categorical cross-entropy — only the TRUE class’s probability is scored — hover or click it")
         + """<p>That is the whole loss. If the true class is 3 and the model gave class 3 a probability of
 0.097, the loss is −log(0.097) = 2.33. If it had given class 3 a probability of 0.9, the loss would be
 0.105. The other nine probabilities never appear — but pushing a<sub>3</sub> up necessarily pushes the
@@ -760,7 +760,7 @@ of judges from one seat to ten, and then make those ten share out 100% between t
             ' → ',
             ('<span class="hl-a">10 softmax</span>', "softmax-native", "turns scores into probabilities"),
             ' → probabilities',
-        ], "the Week 2 assignment network — click a part", small=True)
+        ], "the Week 2 assignment network — hover or click a part", small=True)
         + """<p>Layers 1 and 2 are unchanged from a binary network. Only the output layer differs, in two
 ways: it has 10 units instead of 1, and its activation couples those 10 units together.</p>"""
         + decode([
@@ -866,13 +866,13 @@ never happens.</p>""")
             ('<var>a</var> = <span class="frac"><span>1</span><span>1 + <var>e</var><sup>−<var>z</var></sup></span></span>', "sigmoid-squash", "the squasher"),
             ' &nbsp;&nbsp;then&nbsp;&nbsp; ',
             ('<var>L</var> = −log(<var>a</var>)', "logarithm-f0", "huge penalty if a is near 0"),
-        ], "two steps — a gets rounded before log ever sees it — click a part", small=True)
+        ], "two steps — a gets rounded before log ever sees it — hover or click a part", small=True)
         + """<p>The stable route substitutes one into the other and simplifies, so <var>a</var> is never
 built at all:</p>"""
         + eqp([
             ('<var>L</var> = −log<span class="paren">(</span><span class="frac"><span>1</span><span>1 + <var>e</var><sup>−<var>z</var></sup></span></span><span class="paren">)</span> = log(1 + <var>e</var><sup>−<var>z</var></sup>)',
              "logarithm-f0", "same loss, one rounding step instead of two"),
-        ], "one step, algebraically identical, numerically far safer — click it")
+        ], "one step, algebraically identical, numerically far safer — hover or click it")
         + decode([
             ("logits", "“the raw z’s”", "The scores <em>before</em> any sigmoid or softmax. The word is standard everywhere in ML."),
             ("<code>from_logits=True</code>", "“I’ll give you z, not a”", "Tells Keras to do the squashing inside the loss, using the rearranged formula."),
@@ -1107,12 +1107,12 @@ it crawl along it. Adam maintains a separate step size per direction and gets bo
         + eqp([
             ('<var>m</var> <span class="op">←</span> <var>β</var><sub>1</sub><var>m</var> + (1−<var>β</var><sub>1</sub>)<var>g</var> &nbsp;&nbsp;&nbsp; <var>v</var> <span class="op">←</span> <var>β</var><sub>2</sub><var>v</var> + (1−<var>β</var><sub>2</sub>)<var>g</var><sup>2</sup>',
              "adam-moments", "recent direction and size"),
-        ], "two running averages, kept per parameter — click it", small=True)
+        ], "two running averages, kept per parameter — hover or click it", small=True)
         + eqp([
             '<var>w</var> <span class="op">←</span> <var>w</var> <span class="op">−</span> ',
             ('<span class="frac"><span><var class="hl-a">α</var> <var>m̂</var></span><span>√<span class="sqrt"><var>v̂</var></span> + <var>ε</var></span></span>',
              "adam-moments", "step shrinks where gradients are erratic"),
-        ], "the update — divide by how bumpy this parameter has been — click it")
+        ], "the update — divide by how bumpy this parameter has been — hover or click it")
         + decode([
             ("<var>g</var>", "“the gradient”", "∂J/∂w for this one parameter, right now."),
             ("<var>m</var>", "“momentum”", "A running average of recent gradients. If they keep pointing the same way, m grows — bigger steps."),
@@ -1329,7 +1329,7 @@ that.</p>""")
         + eqp([
             ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var></span></span>', "partial-f0", "the slope, at w"),
             ' <span class="op">≈</span> <span class="frac"><span><var>J</var>(<var>w</var> + <var>ε</var>) − <var>J</var>(<var>w</var>)</span><span><var>ε</var></span></span> <span class="op">&nbsp;as&nbsp;</span> <var>ε</var> <span class="op">→</span> 0',
-        ], "rise over run, with the run shrunk to almost nothing — click it")
+        ], "rise over run, with the run shrunk to almost nothing — hover or click it")
         + decode([
             ("∂", "“partial dee”", "Derivative with respect to <b>one</b> variable while the rest are held still. Curly ∂ = several variables about; straight d = only one."),
             ("<var>ε</var>", "“epsilon”", "A tiny nudge. 0.001, or smaller. The formula becomes exact as it shrinks to zero."),
@@ -1430,7 +1430,7 @@ multiplier.</p>""")
         + eqp([
             ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var></span></span>', "partial-f0", "the slope, at w"),
             ' <span class="op">=</span> <span class="frac"><span>∂<var>J</var></span><span>∂<var>d</var></span></span> <span class="op">·</span> <span class="frac"><span>∂<var>d</var></span><span>∂<var>a</var></span></span> <span class="op">·</span> <span class="frac"><span>∂<var>a</var></span><span>∂<var>c</var></span></span> <span class="op">·</span> <span class="frac"><span>∂<var>c</var></span><span>∂<var>w</var></span></span>',
-        ], "the chain rule — multiply the local slopes along the path — click it")
+        ], "the chain rule — multiply the local slopes along the path — hover or click it")
         + decode([
             ("computation graph", "“the wiring diagram”", "Every intermediate value is a node; every arrow is one elementary operation (× or + or exp)."),
             ("forward pass", "“left to right”", "Compute every node’s value and remember it. You need those values on the way back."),

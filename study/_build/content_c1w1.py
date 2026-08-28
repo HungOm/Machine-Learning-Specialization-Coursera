@@ -235,7 +235,7 @@ Those two numbers are the entire model.</p>""")
         + eqp([
             ('<var>f</var><sub><var>w</var>,<var>b</var></sub>(<var>x</var>)', "func-f", "apply the model to x"),
             ' <span class="op">=</span> <var class="hl-a">w</var><var>x</var> <span class="op">+</span> <var class="hl-b">b</var>',
-        ], "the model — a straight line — click it")
+        ], "the model — a straight line — hover or click it")
         + decode([
             ("<var>f</var>", "“f of x”", "The model. Give it an x, it returns a prediction. Sometimes written h (for hypothesis) in older material."),
             ("<var class='hl-a'>w</var>", "“w”, the weight or slope", "How much y goes up for each unit of x. Here: dollars per square foot."),
@@ -355,7 +355,7 @@ hundred times worse than being off by 1, not ten times worse.</p>""")
              ' <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup> <span class="paren">)</span>',
              "error-term", "predicted − actual"),
             ("<sup>2</sup>", "squared-term", "squared"),
-        ], "the squared error cost function — click any part")
+        ], "the squared error cost function — hover or click any part")
         + decode([
             ("<var>J</var>(<var>w</var>, <var>b</var>)", "“J of w and b”", "The cost. One number saying how wrong the whole line is. Written as a function of w and b because those are what you can change."),
             ("<span class='big'>Σ</span>", "“sum over i”", "A loop, written as a symbol: do the following for every training example and add up the results."),
@@ -678,7 +678,7 @@ meant to take.</p>
             ('<var class="hl-a">α</var>', "alpha-lr", "the learning rate"),
             (' <span class="frac"><span>∂<var>J</var>(<var>w</var>,<var>b</var>)</span><span>∂<var>b</var></span></span>',
              "partial-f0", "the slope, at b"),
-        ], "repeat until convergence — updating both simultaneously — click any part")
+        ], "repeat until convergence — updating both simultaneously — hover or click any part")
         + decode([
             ("=", "“becomes”, not “equals”", "This is assignment. In maths a = a − 1 is false; in code it is an instruction. Andrew writes := to be explicit."),
             ("<var class='hl-a'>α</var>", "“alpha”, the learning rate", "How big a step to take. A small positive number, usually between 0.001 and 1."),
@@ -958,7 +958,7 @@ no side valleys, no traps. Whichever fog-bound spot you start from, you always e
             (' <span class="paren">(</span> <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup> <span class="paren">)</span>',
              "error-term", "predicted − actual"),
             ('<var class="hl-a">· <var>x</var><sup>(<var>i</var>)</sup></var>', "times-xi", "only in the w-derivative"),
-        ], "the w derivative — click any part", small=True)
+        ], "the w derivative — hover or click any part", small=True)
         + eqp([
             ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>b</var></span></span>', "partial-f0", "the slope, at b"),
             ' <span class="op">=</span> ',
@@ -966,7 +966,7 @@ no side valleys, no traps. Whichever fog-bound spot you start from, you always e
             ('<span class="big">Σ</span>', "sigma", "for every example"),
             (' <span class="paren">(</span> <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup> <span class="paren">)</span>',
              "error-term", "predicted − actual"),
-        ], "the b derivative — identical, minus the x — click any part", small=True)
+        ], "the b derivative — identical, minus the x — hover or click any part", small=True)
         + """<p>The only difference is the <b>· x<sup>(i)</sup></b> on the end of the first one. That makes
 intuitive sense: a change in w affects a house with x = 4 four times as much as one with x = 1, so large-x
 examples pull harder on w. Changing b shifts every prediction by the same amount, so every example gets an

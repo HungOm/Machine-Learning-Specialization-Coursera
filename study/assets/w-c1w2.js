@@ -163,7 +163,7 @@
      4. Gradient descent for multiple linear regression
      ============================================================ */
   A.def('gdmulti', function (root) {
-    var c = A.canvas(root, 760, 330), ctx = c.ctx;
+    var c = A.canvas(root, 760, 360), ctx = c.ctx;
     var ro = A.readout(root);
     function render(t) {
       var P = A.pal(); c.clear(P.panel); t = t || 0;
@@ -190,10 +190,11 @@
       ].forEach(function (l, i) {
         A.txt(ctx, l, 570, 104 + i * 20, { size: 10.5, fill: P.faint });
       });
-      A.txt(ctx, 'in code, all of it is two lines:', 40, 262, { size: 12, fill: P.faint });
-      A.txt(ctx, 'w = w - alpha * (1/m) * np.dot(err, X)', 40, 286,
+      /* the b row's box ends at yb+36 = 274 — everything below starts clear of it */
+      A.txt(ctx, 'in code, all of it is two lines:', 40, 292, { size: 12, fill: P.faint });
+      A.txt(ctx, 'w = w - alpha * (1/m) * np.dot(err, X)', 40, 316,
         { size: 13, mono: true, w: 700, fill: P.g });
-      A.txt(ctx, 'b = b - alpha * (1/m) * np.sum(err)', 40, 308,
+      A.txt(ctx, 'b = b - alpha * (1/m) * np.sum(err)', 40, 338,
         { size: 13, mono: true, w: 700, fill: P.g });
       ro.set('There is an alternative for linear regression only: the <b>normal equation</b>, which solves ' +
         'for w and b in one shot with no iterations and no α.' +

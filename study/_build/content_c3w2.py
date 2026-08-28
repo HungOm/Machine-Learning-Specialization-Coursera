@@ -125,7 +125,7 @@ film she has not seen.</p>
             'predicted rating <span class="op">=</span> ',
             ('<var class="hl-b">w</var><sup>(<var>j</var>)</sup> <span class="op">·</span> <var class="hl-a">x</var><sup>(<var>i</var>)</sup>', "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var class="hl-b">b</var><sup>(<var>j</var>)</sup>',
-        ], "user j’s taste, dotted with movie i’s features — click it")
+        ], "user j’s taste, dotted with movie i’s features — hover or click it")
         + eqp([
             'min <span class="frac"><span>1</span><span>2</span></span> ',
             ('<span class="big">Σ</span><sub><var>i</var> : <var>r</var>(<var>i</var>,<var>j</var>)=1</sub>', "sigma", "for every movie user j rated"),
@@ -135,7 +135,7 @@ film she has not seen.</p>
             ' <span class="op">+</span> ',
             ('<span class="frac"><span>λ</span><span>2</span></span> <span class="big">Σ</span>( <var>w</var><sub><var>k</var></sub><sup>(<var>j</var>)</sup> )<sup>2</sup>',
              "reg-penalty", "keeps this user's weights small"),
-        ], "the cost for ONE user — this is just regularised linear regression — click a part")
+        ], "the cost for ONE user — this is just regularised linear regression — hover or click a part")
         + decode([
             ("<var class='hl-a'>x</var><sup>(<var>i</var>)</sup>", "“the features of movie i”", "Given to you in this lesson. A vector like [0.9, 0.0] meaning “very romantic, no action”."),
             ("<var class='hl-b'>w</var><sup>(<var>j</var>)</sup>", "“user j’s parameters”", "Learned. A vector the same length as x, saying how much this user cares about each feature."),
@@ -208,7 +208,7 @@ about romance or action</b>. It discovered that the ratings split that way.</p>"
             (' ( <var>w</var><sup>(<var>j</var>)</sup>·<var class="hl-a">x</var><sup>(<var>i</var>)</sup> + <var>b</var><sup>(<var>j</var>)</sup> − <var>y</var><sup>(<var>i</var>,<var>j</var>)</sup> )',
              "error-term", "predicted rating − actual rating"),
             ('<sup>2</sup>', "squared-term", "squared"),
-        ], "sum over every rating that actually exists — click a part")
+        ], "sum over every rating that actually exists — hover or click a part")
         + eqp([
             ' <span class="op">+</span> ',
             ('<span class="frac"><span>λ</span><span>2</span></span> <span class="big">Σ</span><sub><var>j</var></sub><span class="big">Σ</span><sub><var>k</var></sub>(<var>w</var><sub><var>k</var></sub><sup>(<var>j</var>)</sup>)<sup>2</sup>',
@@ -216,7 +216,7 @@ about romance or action</b>. It discovered that the ratings split that way.</p>"
             ' <span class="op">+</span> ',
             ('<span class="frac"><span>λ</span><span>2</span></span> <span class="big">Σ</span><sub><var>i</var></sub><span class="big">Σ</span><sub><var>k</var></sub>(<var class="hl-a">x</var><sub><var>k</var></sub><sup>(<var>i</var>)</sup>)<sup>2</sup>',
              "reg-penalty", "keeps every movie's features small"),
-        ], "…regularise the user parameters AND the movie features — click a part")
+        ], "…regularise the user parameters AND the movie features — hover or click a part")
         + decode([
             ("<var class='hl-a'>x</var> as a parameter", "“the features are learned too”", "The one change from last lesson, and the whole idea. x is no longer given — it is optimised."),
             ("the double sum", "“every existing rating, once”", "Summing over both i and j where r = 1 is the same as summing over every filled-in cell."),
@@ -230,7 +230,7 @@ about romance or action</b>. It discovered that the ratings split that way.</p>"
             ' ∂J/∂<var>w</var><sub><var>k</var></sub><sup>(<var>j</var>)</sup> &nbsp;&nbsp; <var>b</var><sup>(<var>j</var>)</sup> := <var>b</var><sup>(<var>j</var>)</sup> − α ∂J/∂<var>b</var><sup>(<var>j</var>)</sup> &nbsp;&nbsp; ',
             ('<var class="hl-a">x</var><sub><var>k</var></sub><sup>(<var>i</var>)</sup> :=', "assign-op", "becomes, not equals"),
             ' <var class="hl-a">x</var><sub><var>k</var></sub><sup>(<var>i</var>)</sup> − α ∂J/∂<var class="hl-a">x</var><sub><var>k</var></sub><sup>(<var>i</var>)</sup>',
-        ], "gradient descent updates all three, simultaneously — click a part", small=True)
+        ], "gradient descent updates all three, simultaneously — hover or click a part", small=True)
         + key("""<p>The third update is the new one. Gradient descent is now descending in <b>w, b and
 x</b> together. Nothing else about the machinery changes.</p>""")
 
@@ -393,12 +393,12 @@ recommendations — the generally well-liked films.</p>""")
         + eqp([
             ('<var>μ</var><sub><var>i</var></sub> <span class="op">=</span> average rating of movie <var>i</var>', "avg-factor", "the average"),
             ' &nbsp;&nbsp;→&nbsp;&nbsp; train on ( <var>y</var><sup>(<var>i</var>,<var>j</var>)</sup> <span class="op">−</span> <var>μ</var><sub><var>i</var></sub> )',
-        ], "step 1 — centre each row — click it", small=True)
+        ], "step 1 — centre each row — hover or click it", small=True)
         + eqp([
             'prediction <span class="op">=</span> ',
             ('<var>w</var><sup>(<var>j</var>)</sup>·<var>x</var><sup>(<var>i</var>)</sup>', "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var>b</var><sup>(<var>j</var>)</sup> <span class="op">+</span> <var class="hl-a">μ</var><sub><var>i</var></sub>',
-        ], "step 2 — add the mean back when predicting — click it")
+        ], "step 2 — add the mean back when predicting — hover or click it")
         + decode([
             ("μ<sub>i</sub>", "“the mean for movie i”", "Averaged over the users who <em>did</em> rate it — the question marks are skipped."),
             ("by row, not by column", "“per movie”", "Row normalisation helps new <b>users</b>. Column normalisation would help new <b>movies</b>, which is a different (and harder) problem."),
@@ -608,7 +608,7 @@ That is the entire “because you watched…” row.</p>""")
             ' <span class="op">=</span> ',
             ('<span class="big">Σ</span><sub><var>l</var></sub> ( <var>x</var><sub><var>l</var></sub><sup>(<var>k</var>)</sup> <span class="op">−</span> <var>x</var><sub><var>l</var></sub><sup>(<var>i</var>)</sup> )<sup>2</sup>',
              "sigma", "add up every feature's contribution"),
-        ], "squared distance between two feature vectors — smallest wins — click a part")
+        ], "squared distance between two feature vectors — smallest wins — hover or click a part")
         + decode([
             ("‖ · ‖²", "“squared distance”", "The same formula as in K-means. Distance in feature space is doing all the work again."),
             ("cosine similarity", "“the angle version”", "x·z / (‖x‖‖z‖). Often preferred, because it ignores magnitude and compares direction only."),
@@ -748,7 +748,7 @@ number, good match.</p>""")
             '<var class="hl-b">v</var><sub><var>u</var></sub> <span class="op">=</span> UserNN(<var>x</var><sub><var>u</var></sub>) &nbsp;&nbsp;&nbsp; <var class="hl-a">v</var><sub><var>m</var></sub> <span class="op">=</span> ItemNN(<var>x</var><sub><var>m</var></sub>) &nbsp;&nbsp;&nbsp; prediction <span class="op">=</span> ',
             ('<var class="hl-b">v</var><sub><var>u</var></sub> <span class="op">·</span> <var class="hl-a">v</var><sub><var>m</var></sub>',
              "dot-product-f0", "how well the two embeddings match"),
-        ], "two networks, one dot product — click it")
+        ], "two networks, one dot product — hover or click it")
         + decode([
             ("<var>x</var><sub><var>u</var></sub>", "“raw user features”", "Whatever you know: age, country, average rating per genre. Could be 50 numbers."),
             ("<var>v</var><sub><var>u</var></sub>", "“the user embedding”", "The network’s 32-number summary of that user. Learned."),
@@ -769,7 +769,7 @@ have the same number of units, so the dot product is defined.</p>""")
              "error-term", "predicted rating − actual rating"),
             ('<sup>2</sup>', "squared-term", "squared"),
             ' <span class="op">+</span> regularisation',
-        ], "the same shape of cost as before — and both networks are trained by it at once — click a part", small=True)
+        ], "the same shape of cost as before — and both networks are trained by it at once — hover or click a part", small=True)
         + """<p>Both towers are trained together, end to end, with one gradient. This is the “neural
 networks compose” advantage from C2 W4 L13 being cashed in: you could never do this with two decision
 trees.</p>"""

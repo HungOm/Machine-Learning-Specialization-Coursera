@@ -190,7 +190,7 @@ out?</b> And notice it is symmetric — all cats and all dogs are both perfectly
             ('<span class="op">−</span><var>p</var> log<sub>2</sub>(<var>p</var>)', "logarithm-f0", "log, base 2 → bits"),
             ' <span class="op">−</span> ',
             ('(1 <span class="op">−</span> <var>p</var>) log<sub>2</sub>(1 <span class="op">−</span> <var>p</var>)', "logarithm-f0", "the other class, same idea"),
-        ], "entropy — impurity of a group — click a part")
+        ], "entropy — impurity of a group — hover or click a part")
         + decode([
             ("<var>p</var>", "“p one”", "The fraction of the group that is the positive class. 4 cats out of 5 → p = 0.8."),
             ("log<sub>2</sub>", "“log base two”", "Base 2 makes H come out in <b>bits</b>, so a 50/50 group is exactly 1 — one coin flip of uncertainty."),
@@ -273,7 +273,7 @@ So you weight each bag by how many animals are in it.</p>""")
             'gain <span class="op">=</span> <var>H</var>(<var>p</var><sub>root</sub>) <span class="op">−</span> ',
             ('<span class="paren">(</span> <var class="hl-b">w</var><sup>left</sup><var>H</var>(<var>p</var><sup>left</sup>) <span class="op">+</span> <var class="hl-b">w</var><sup>right</sup><var>H</var>(<var>p</var><sup>right</sup>) <span class="paren">)</span>',
              "weighted-mean", "sized by how many examples went each way"),
-        ], "mess before, minus weighted mess after — click it")
+        ], "mess before, minus weighted mess after — hover or click it")
         + decode([
             ("<var>H</var>(<var>p</var><sub>root</sub>)", "“mess before”", "Entropy of the node you are about to split."),
             ("<var class='hl-b'>w</var><sup>left</sup>", "“the weight of the left branch”", "Fraction of the examples that go left. 4 of 10 → 0.4. <b>This is the bit people forget.</b>"),
@@ -704,12 +704,12 @@ that landed there. And when choosing a split, instead of asking “are these all
         + eqp([
             ('variance <span class="op">=</span> <span class="frac"><span>1</span><span><var>m</var></span></span> <span class="big">Σ</span> ( <var>y</var><sup>(<var>i</var>)</sup> <span class="op">−</span> <var>ȳ</var> )<sup>2</sup>',
              "variance-f0", "average squared distance from the mean"),
-        ], "how spread out the numbers in this node are — click it", small=True)
+        ], "how spread out the numbers in this node are — hover or click it", small=True)
         + eqp([
             'reduction <span class="op">=</span> var(root) <span class="op">−</span> ',
             ('<span class="paren">(</span> <var>w</var><sup>left</sup>var(left) <span class="op">+</span> <var>w</var><sup>right</sup>var(right) <span class="paren">)</span>',
              "weighted-mean", "sized by how many examples went each way"),
-        ], "exactly the information-gain formula, with variance swapped in — click it")
+        ], "exactly the information-gain formula, with variance swapped in — hover or click it")
         + decode([
             ("<var>ȳ</var>", "“y bar”", "The mean of all the y-values in this node — plain average, the bar just marks “the average of”."),
             ("(<var>y</var><sup>(i)</sup> − <var>ȳ</var>)²", "“squared distance from the mean”", "Same shape as the cost function from Course 1: how far each value sits from the average, squared so far-out values count more."),
@@ -891,7 +891,7 @@ a hundred slightly different training sets — without collecting any new data.<
             ' <span class="op">=</span> <span class="paren">(</span>1 <span class="op">−</span> <span class="frac"><span>1</span><span><var>m</var></span></span><span class="paren">)</span><sup><var>m</var></sup> <span class="op">→</span> ',
             ('<span class="frac"><span>1</span><span><var>e</var></span></span>', "exponential-f0", "the limit, as m grows"),
             ' <span class="op">≈</span> 0.368',
-        ], "as m grows, about 37% of examples are left out of each bag — click a part")
+        ], "as m grows, about 37% of examples are left out of each bag — hover or click a part")
         + decode([
             ("with replacement", "“put it back”", "The example can be drawn again. Without replacement you would just get a shuffle of the same set — useless here."),
             ("bootstrap sample", "“one new bag”", "A sample of size m drawn with replacement from a dataset of size m. Always the same size as the original."),

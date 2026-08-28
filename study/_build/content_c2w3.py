@@ -103,13 +103,13 @@ machine learning.</p>""")
             ('<span class="frac"><span>1</span><span>2<var>m</var><sub>train</sub></span></span>', "avg-factor", "the average"),
             ('<span class="big">Σ</span> ( <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) − <var>y</var><sup>(<var>i</var>)</sup> )<sup>2</sup>',
              "error-term", "predicted − actual, squared"),
-        ], "error on the examples it learned from — click a part", small=True)
+        ], "error on the examples it learned from — hover or click a part", small=True)
         + eqp([
             '<var>J</var><sub>test</sub> = ',
             ('<span class="frac"><span>1</span><span>2<var>m</var><sub>test</sub></span></span>', "avg-factor", "the average"),
             ('<span class="big">Σ</span> ( <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) − <var>y</var><sup>(<var>i</var>)</sup> )<sup>2</sup>',
              "error-term", "predicted − actual, squared"),
-        ], "error on examples it has never seen — the honest one — click a part", small=True)
+        ], "error on examples it has never seen — the honest one — hover or click a part", small=True)
         + decode([
             ("<var>J</var><sub>train</sub>", "“J train”", "How well it fits what it studied. Almost always optimistic."),
             ("<var>J</var><sub>test</sub>", "“J test”", "How well it does on fresh data. This is the number that matters."),
@@ -435,7 +435,7 @@ score.</p>""")
             ' <span class="op">+</span> ',
             ('<span class="frac"><span><var class="hl-a">λ</var></span><span>2<var>m</var></span></span> <span class="big">Σ</span><var>w</var><sub><var>j</var></sub><sup>2</sup>',
              "reg-penalty", "the penalty term — keeps weights small"),
-        ], "fit the data … and keep the weights small — click a part")
+        ], "fit the data … and keep the weights small — hover or click a part")
         + decode([
             ("<var class='hl-a'>λ</var>", "“lambda”", "The regularisation strength. How much you care about small weights relative to fitting the data."),
             ("Σ<var>w</var><sub>j</sub>²", "“the size of the weights”", "Large weights = a wiggly, extreme function. Penalising them keeps the model smooth."),
@@ -1430,7 +1430,7 @@ which is the correct verdict.</p>""")
             '&nbsp;&nbsp;&nbsp;&nbsp;',
             ('recall <span class="op">=</span> <span class="frac"><span>true positives</span><span>true positives + <span class="hl-r">false</span> negatives</span></span>',
              "precisionrecall-native", "of what was true, how much did I catch?"),
-        ], "both have TP on top — they differ in what goes wrong underneath — click a part")
+        ], "both have TP on top — they differ in what goes wrong underneath — hover or click a part")
         + decode([
             ("true positive", "“caught it”", "Predicted 1, actually 1. What you want."),
             ("false positive", "“false alarm”", "Predicted 1, actually 0. Cost: wasted tests, annoyed customers, lost trust."),
@@ -1455,7 +1455,7 @@ Accuracy = (15 + 70) / 100 = 0.85 — which sounds better than either, and tells
         + eqp([
             ('F<sub>1</sub> <span class="op">=</span> 2 <span class="op">·</span> <span class="frac"><span>P <span class="op">·</span> R</span><span>P + R</span></span>',
              "harmonic-mean", "leans toward whichever is worse"),
-        ], "one number, when you need to rank models — click it")
+        ], "one number, when you need to rank models — hover or click it")
         + """<p>F1 is the <b>harmonic</b> mean, and that choice is deliberate: it sits close to the smaller
 of the two numbers. Precision 1.0 with recall 0.01 gives F1 ≈ 0.02, not 0.5. It refuses to be impressed by
 a model that is excellent at one half and useless at the other.</p>"""

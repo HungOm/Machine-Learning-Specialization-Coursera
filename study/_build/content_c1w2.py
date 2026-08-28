@@ -29,13 +29,13 @@ negative because older houses are usually worth less.</p>
         + eqp([
             ('<var>f</var>(<var>x</var>)', "func-f", "apply the model to x"),
             ' <span class="op">=</span> <var>w</var><sub>1</sub><var>x</var><sub>1</sub> <span class="op">+</span> <var>w</var><sub>2</sub><var>x</var><sub>2</sub> <span class="op">+</span> <var>w</var><sub>3</sub><var>x</var><sub>3</sub> <span class="op">+</span> <var>w</var><sub>4</sub><var>x</var><sub>4</sub> <span class="op">+</span> <var>b</var>',
-        ], "one weight per feature, plus one bias — click it")
+        ], "one weight per feature, plus one bias — hover or click it")
         + eqp([
             '<var>f</var>(<var>x</var>) <span class="op">=</span> ',
             ('<var class="hl-a">w⃗</var> <span class="op">·</span> <var class="hl-b">x⃗</var>',
              "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var>b</var>',
-        ], "…written compactly as a dot product — click it")
+        ], "…written compactly as a dot product — hover or click it")
         + decode([
             ("<var>n</var>", "“n”", "The number of <b>features</b>. Four here. (m is still the number of examples.)"),
             ("<var>x</var><sub><var>j</var></sub>", "“x sub j”", "Feature j. x₁ = size, x₂ = bedrooms, and so on."),
@@ -321,7 +321,7 @@ each dial should move, then move them all at the same moment.</p>""")
             (' <span class="paren">(</span> <var>f</var>(<var>x⃗</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup> <span class="paren">)</span>',
              "error-term", "predicted − actual"),
             ('<var>x</var><sub><var>j</var></sub><sup>(<var>i</var>)</sup>', "times-xi", "only in the wⱼ-derivative"),
-        ], "for j = 1 … n, all simultaneously — click any part")
+        ], "for j = 1 … n, all simultaneously — hover or click any part")
         + eqp([
             ('<var>b</var> <span class="op">:=</span>', "assign-op", "becomes, not equals"),
             ' <var>b</var> <span class="op">−</span> ',
@@ -693,7 +693,7 @@ together. It literally cannot multiply two features, no matter how many iteratio
             '<var>x</var><sub>3</sub> <span class="op">=</span> <var>x</var><sub>1</sub> <span class="op">×</span> <var>x</var><sub>2</sub> &nbsp;&nbsp;→&nbsp;&nbsp; ',
             ('<var>f</var>(<var>x</var>)', "func-f", "apply the model to x"),
             ' <span class="op">=</span> <var>w</var><sub>1</sub><var>x</var><sub>1</sub> <span class="op">+</span> <var>w</var><sub>2</sub><var>x</var><sub>2</sub> <span class="op">+</span> <var class="hl-a"><var>w</var><sub>3</sub><var>x</var><sub>3</sub></var> <span class="op">+</span> <var>b</var>',
-        ], "invent a feature, then let the model weigh it — click it", small=True)
+        ], "invent a feature, then let the model weigh it — hover or click it", small=True)
         + decode([
             ("feature engineering", "“inventing better inputs”", "Using knowledge of the problem to construct features that make the pattern easy to express."),
             ("interaction term", "“a product of two features”", "x₁ × x₂. Captures “these two matter together”, which a sum cannot."),

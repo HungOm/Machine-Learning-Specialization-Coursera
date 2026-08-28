@@ -382,12 +382,12 @@ could take, and take whichever number is bigger. That is the whole decision.</p>
         + eqp([
             ('<var class="hl-a">Q</var>(<var>s</var>, <var>a</var>)', "q-function", "how good is this action"),
             ' <span class="op">=</span> the return if you start in <var>s</var>, take <var>a</var> once, then behave optimally',
-        ], "the state-action value function — click it", small=True)
+        ], "the state-action value function — hover or click it", small=True)
         + eqp([
             '<var>π</var>*(<var>s</var>) <span class="op">=</span> ',
             ('<span class="op">arg max</span><sub><var>a</var></sub>', "argmax-f0", "which action, not how good it is"),
             ' <var class="hl-a">Q</var>(<var>s</var>, <var>a</var>) &nbsp;&nbsp;&nbsp;&nbsp; <var>V</var>(<var>s</var>) <span class="op">=</span> <span class="op">max</span><sub><var>a</var></sub> <var class="hl-a">Q</var>(<var>s</var>, <var>a</var>)',
-        ], "and both the policy and the state value fall straight out of it — click it")
+        ], "and both the policy and the state value fall straight out of it — hover or click it")
         + decode([
             ("Q", "“Q”, or the Q-function", "Also called the optimal action-value function, and often written Q*."),
             ("“then behave optimally”", "“the circular bit”", "It refers to itself: Q is defined in terms of optimal behaviour, which is defined by Q. The Bellman equation (next lesson) is what makes this well-defined rather than circular."),
@@ -553,7 +553,7 @@ again.</p>""")
             ' ',
             ('<span class="op">max</span><sub><var>a</var>′</sub> <var class="hl-b">Q</var>(<var>s</var>′, <var>a</var>′)',
              "future-value", "best you can do next"),
-        ], "the Bellman equation — click any part")
+        ], "the Bellman equation — hover or click any part")
         + decode([
             ("<var class='hl-g'>R</var>(<var>s</var>)", "“the reward right now”", "What you collect for being in the state you are in. The <b>immediate</b> half."),
             ("<var>s</var>′", "“s prime”", "The state you land in after taking action a. Prime always means “next”."),
@@ -656,7 +656,7 @@ over all the ways it could turn out, weighted by how likely each one is.</p>""")
             ' <var class="hl-a">E</var><span class="paren">[</span> ',
             ('<span class="op">max</span><sub><var>a</var>′</sub> <var>Q</var>(<var>s</var>′, <var>a</var>′)', "future-value", "best you can do next"),
             ' <span class="paren">]</span>',
-        ], "the same equation, with an expectation around the future term — click a part")
+        ], "the same equation, with an expectation around the future term — hover or click a part")
         + decode([
             ("<var class='hl-a'>E</var>[ … ]", "“the expected value of”", "A weighted average over every possible next state, weighted by its probability."),
             ("expected return", "“the average over many attempts”", "Not what will happen on one run — what happens on average over very many runs."),
@@ -1130,7 +1130,7 @@ never gets corrected.</p>""")
             'with probability <span class="op">1 −</span> <var class="hl-a">ε</var>:&nbsp; take ',
             ('<span class="op">arg max</span><sub><var>a</var></sub> <var>Q</var>(<var>s</var>, <var>a</var>)', "argmax-f0", "the action with the highest Q"),
             ' &nbsp;&nbsp;·&nbsp;&nbsp; with probability <var class="hl-a">ε</var>:&nbsp; pick at random',
-        ], "the ε-greedy policy — click it", small=True)
+        ], "the ε-greedy policy — hover or click it", small=True)
         + decode([
             ("<var class='hl-a'>ε</var>", "“epsilon”", "The fraction of the time you deliberately ignore your own advice. Typically 0.01 to 1.0."),
             ("greedy", "“take the best you know”", "Exploitation. Slightly confusingly, this is the <em>1 − ε</em> part."),
@@ -1221,7 +1221,7 @@ better than full-batch, not merely faster.</p>""", "The noise is partly a featur
         + eqp([
             ('<var>W</var> <span class="op">:=</span>', "assign-op", "becomes, not equals"),
             ' <var class="hl-a">τ</var> <var>W</var><sub>new</sub> <span class="op">+</span> (1 <span class="op">−</span> <var class="hl-a">τ</var>) <var>W</var><sub>old</sub> &nbsp;&nbsp;&nbsp; with <var class="hl-a">τ</var> <span class="op">=</span> 0.01',
-        ], "blend, do not replace — click it")
+        ], "blend, do not replace — hover or click it")
         + decode([
             ("<var class='hl-a'>τ</var>", "“tau”", "How much of the new network to mix in. 0.01 is typical — 1% new, 99% old."),
             ("τ = 1", "“hard update”", "Replace outright. Fast, and prone to oscillation."),

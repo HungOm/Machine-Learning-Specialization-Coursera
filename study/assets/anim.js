@@ -98,6 +98,33 @@
     return { paint: paint, pause: function () { setPaused(true); } };
   };
 
+
+  /* ---------- log: a live numeric trace that replaces itself -----
+     For widgets that actually run an algorithm (not just animate a
+     diagram): a single line showing THIS step's real computed values.
+     Each .set() call overwrites the line rather than appending, so a
+     long-running loop never grows the page — it is a status line, not
+     a scrollback. .set()'s second argument, if given, is shown as a
+     tooltip on the line: the symbolic formula this step's numbers are
+     an instance of. ------------------------------------------------ */
+  A.log = function (root, opt) {
+    opt = opt || {};
+    var box = document.createElement('div');
+    box.className = 'alglog';
+    var line = document.createElement('span');
+    line.className = 'alglog-line';
+    box.appendChild(line);
+    root.appendChild(box);
+    return {
+      el: box,
+      set: function (html, formula) {
+        line.innerHTML = html;
+        box.title = formula || '';
+        box.classList.toggle('has-formula', !!formula);
+      }
+    };
+  };
+
   /* ---------- canvas ---------- */
   A.canvas = function (root, w, h) {
     var cv = document.createElement('canvas');

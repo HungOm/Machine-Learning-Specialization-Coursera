@@ -254,7 +254,7 @@ Flat ground gives zero.</p><p>Two hikers climb for 2 steps. One rises 6 inches; 
     + eqp([
         ("slope <span class=\"op\">=</span> <span class=\"frac\"><span>rise</span><span>run</span></span>", "slope-f0", "rise over run"),
         ' <span class="op">=</span> <span class="frac"><span>how far UP</span><span>how far ACROSS</span></span>',
-    ], "“rise over run” — click it")
+    ], "“rise over run” — hover or click it")
     + decode([
         ("rise", "“the rise”", "the change in y — how much it went up. Negative if it went down."),
         ("run", "“the run”", "the change in x — how far you moved across."),
@@ -478,7 +478,7 @@ machine-learning problem it represents.</p>"""
     + h2("🔤", "The symbol, and how to say it")
     + eqp([
         ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var></span></span>', "partial-f0", "the slope, at w"),
-    ], "“partial dee J by dee w”, or just “dee J dee w” — click it")
+    ], "“partial dee J by dee w”, or just “dee J dee w” — hover or click it")
     + decode([
         ("∂", "“partial” or “curly dee”", "a curly d. Its <b>only</b> job is to say “there are other variables, and they are being held still”."),
         ("<var>d</var> (straight)", "“dee”", "used when there is only one variable in the whole problem — the ordinary derivative from the last lesson."),
@@ -597,7 +597,7 @@ thing to add up” beside it.</p>
     + eqp([
         ('<span class="big">Σ</span><sub><var>i</var>=1</sub><sup><var>m</var></sup> <var>x</var><sub><var>i</var></sub>',
          "sigma", "add up every xᵢ"),
-    ], "“the sum, from i equals 1 to m, of x sub i” — click it")
+    ], "“the sum, from i equals 1 to m, of x sub i” — hover or click it")
     + decode([
         ("<span class='big'>Σ</span>", "“sum” (capital sigma)", "the instruction: <b>add up what follows</b>."),
         ("<var>i</var> = 1", "“i starts at one”", "the counter, and where it begins. Underneath."),
@@ -659,7 +659,7 @@ np.sum(errors ** 2)
         ('<span class="big">Σ</span><sub><var>i</var>=1</sub><sup><var>m</var></sup>', "sigma", "for every example"),
         ('( <var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) − <var>y</var><sup>(<var>i</var>)</sup> )', "error-term", "predicted − actual"),
         ('<sup>2</sup>', "squared-term", "squared"),
-    ], "click any part", small=True)
+    ], "hover or click any part", small=True)
     + """<p>Only one piece of that has not been pulled apart yet: <b>f(x<sup>(i)</sup>) − y<sup>(i)</sup></b>.
 That is not a special notation — it is exactly the f(x) from Lesson 1, applied once per example, minus
 the correct answer for that same example.</p>"""
@@ -725,7 +725,7 @@ lesson("08-pi-notation", "Π — multiplying them all", 6,
     + eqp([
         ('<span class="big">Π</span><sub><var>j</var>=1</sub><sup><var>n</var></sup> <var>p</var><sub><var>j</var></sub>',
          "pi-notation", "multiply every pⱼ"),
-    ], "“the product, from j equals 1 to n, of p sub j” — click it")
+    ], "“the product, from j equals 1 to n, of p sub j” — hover or click it")
     + decode([
         ("<span class='big'>Π</span>", "“product” (capital pi)", "multiply them all together."),
         ("lowercase <var>π</var>", "“pi”", "the <b>completely different</b> thing: 3.14159. Capital and lowercase are unrelated."),
@@ -772,7 +772,7 @@ number you can threshold on.</p>
 returns exactly zero. The standard fix uses a property of logarithms:</p>"""
     + eqp([
         ('log(<var>a</var> × <var>b</var>) = log(<var>a</var>) + log(<var>b</var>)', "logarithm-f0", "turns × into +"),
-    ], "so a product of many things becomes a sum of many things — click it", small=True)
+    ], "so a product of many things becomes a sum of many things — hover or click it", small=True)
     + """<p>Sums do not underflow. This is why you will see <code>np.sum(np.log(...))</code> all over real
 machine learning code where the formula on the page says Π.</p>"""
 
@@ -907,7 +907,7 @@ cherries £6.</p>
         ' <span class="op">=</span> ',
         ('<span class="big">Σ</span><sub><var>i</var></sub> <var>a<sub>i</sub>b<sub>i</sub></var>', "sigma", "one term per pair"),
         ' <span class="op">=</span> <var>a</var><sub>1</sub><var>b</var><sub>1</sub> + <var>a</var><sub>2</sub><var>b</var><sub>2</sub> + … + <var>a<sub>n</sub>b<sub>n</sub></var>',
-    ], "“a dot b” — click a part")
+    ], "“a dot b” — hover or click a part")
     + decode([
         ("·", "“dot”", "the dot product. <b>Not</b> ordinary multiplication — it includes the adding up."),
         ("<var>a</var><sup>T</sup><var>b</var>", "“a transpose b”", "the same thing, written the matrix way. You will see both."),
@@ -953,7 +953,7 @@ gives you back a <b>list</b>. <code>a @ b</code> multiplies <em>and adds</em> an
         ('<var>a⃗</var> · <var>b⃗</var>', "dot-product-f0", "multiply matching entries, add them up"),
         ' = |<var>a⃗</var>| |<var>b⃗</var>| ',
         ('cos <var>θ</var>', "cos", "how aligned the two directions are"),
-    ], "click a part", small=True)
+    ], "hover or click a part", small=True)
     + table(["The two arrows", "cos θ", "The dot product"],
             [["point the same way", "1", "<b>large positive</b>"],
              ["at a slight angle", "0.7", "smaller positive"],
@@ -1101,7 +1101,7 @@ one column.</p>
         ('(<var>m</var> × <var class="hl-a"><var>n</var></var>) × (<var class="hl-a"><var>n</var></var> × <var>p</var>)',
          "matmul-f0", "inner numbers must match"),
         ' <span class="op">=</span> (<var>m</var> × <var>p</var>)',
-    ], "the shape rule — the inner numbers must match, and they vanish — click it")
+    ], "the shape rule — the inner numbers must match, and they vanish — hover or click it")
     + decode([
         ("<var>A</var><var>B</var>", "“A B”", "matrix multiplication. Often written with no symbol at all between them."),
         ("<var>A</var> @ <var>B</var>", "“A at B”", "the Python operator for it."),
@@ -1153,7 +1153,7 @@ multiplication does:</p>"""
         ' × ',
         ('<var>W</var> (<var>n</var> features × <var>p</var> neurons)', "matrix-f0", "one column per neuron"),
         ' = <var>Z</var> (<var>m</var> examples × <var>p</var> neurons)',
-    ], "click a part", small=True)
+    ], "hover or click a part", small=True)
     + """<p>Cell Z[i, j] is “example i, as judged by neuron j”. The features dimension n gets summed away —
 which is exactly the weighted sum a neuron performs.</p>
 <p>So one matrix multiply runs <b>every example through every neuron simultaneously</b>. That is not an
@@ -1427,7 +1427,7 @@ loss function.</p>
 <p><b>Job two: turn multiplying into adding.</b></p>"""
     + eqp([
         ('log(<var>a</var> × <var>b</var>) = log(<var>a</var>) + log(<var>b</var>)', "logarithm-f0", "turns × into +"),
-    ], "click it", small=True)
+    ], "hover or click it", small=True)
     + """<p>Multiply four hundred probabilities together and floating point gives you zero. Add four hundred
 logs and you get a perfectly ordinary number. This is why anomaly detection code computes
 <code>np.sum(np.log(p))</code> where the formula on the page shows a Π.</p>
@@ -1584,7 +1584,7 @@ apart.</p>
         '&nbsp;&nbsp;&nbsp;&nbsp;',
         ('<var>σ</var><sup>2</sup> = <span class="frac"><span>1</span><span><var>m</var></span></span> <span class="big">Σ</span> ( <var>x</var><sup>(<var>i</var>)</sup> − <var>μ</var> )<sup>2</sup>',
          "variance-f0", "average squared distance from μ"),
-    ], "you can now read both of these — Σ is the loop, μ is the mean — click a part", small=True)
+    ], "you can now read both of these — Σ is the loop, μ is the mean — hover or click a part", small=True)
 
     + h2("🧮", "Worked by hand")
     + """<p>Take [2, 4, 4, 4, 5, 5, 7, 9]. Eight numbers.</p>

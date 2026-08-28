@@ -36,7 +36,7 @@ idea from neuroscience in the 1950s and it turned out to be a genuinely useful p
         + eqp([
             ('<var>a</var> <span class="op">=</span> <var class="hl-g">g</var><span class="paren">(</span><var>z</var><span class="paren">)</span> <span class="op">=</span> <span class="frac"><span>1</span><span>1 + <var>e</var><sup>−<var>z</var></sup></span></span>',
              "sigmoid-squash", "the squasher"),
-        ], "step 2 — squash it into 0…1 — click it")
+        ], "step 2 — squash it into 0…1 — hover or click it")
         + decode([
             ("<var>x</var>", "“the inputs”", "The numbers coming in — price, temperature, a pixel’s brightness. Whatever you measured."),
             ("<var>w</var>", "“the weights”", "How much this neuron trusts each input. Big positive = strong evidence for. Negative = evidence against. These are <b>learned</b>."),
@@ -136,12 +136,12 @@ the output unit sees <b>all three</b> hidden activations.</p>"""
             '<var class="hl-p">a</var><sup>[1]</sup> <span class="op">=</span> <span class="paren">[</span> <var>a</var><sub>1</sub><sup>[1]</sup>, <var>a</var><sub>2</sub><sup>[1]</sup>, <var>a</var><sub>3</sub><sup>[1]</sup> <span class="paren">]</span> <span class="op">where</span> <var>a</var><sub><var>j</var></sub><sup>[1]</sup> <span class="op">=</span> <var>g</var><span class="paren">(</span>',
             ('<var class="hl-b">w</var><sub><var>j</var></sub><sup>[1]</sup> · <var>x</var>', "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var class="hl-a">b</var><sub><var>j</var></sub><sup>[1]</sup><span class="paren">)</span>',
-        ], "hidden layer — three little questions — click a part")
+        ], "hidden layer — three little questions — hover or click a part")
         + eqp([
             '<var class="hl-g">a</var><sup>[2]</sup> <span class="op">=</span> <var>g</var><span class="paren">(</span>',
             ('<var class="hl-b">w</var><sub>1</sub><sup>[2]</sup> · <var class="hl-p">a</var><sup>[1]</sup>', "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var class="hl-a">b</var><sub>1</sub><sup>[2]</sup><span class="paren">)</span>',
-        ], "output layer — the big question, asked of the three answers — click it")
+        ], "output layer — the big question, asked of the three answers — hover or click it")
         + decode([
             ("<var>x</var>", "“the input vector”", "All four measured numbers in one list: [price, shipping, marketing, material]."),
             ("<sup>[1]</sup>", "“layer one”", "Square brackets on top always mean <b>which layer</b>. Never an exponent. Never a power."),
@@ -235,7 +235,7 @@ cheapest way to get the answers right.</p>""")
             ('<var>x</var> <span class="op">=</span> <span class="paren">[</span><var>x</var><sub>1</sub>, <var>x</var><sub>2</sub>, …, <var>x</var><sub>1,000,000</sub><span class="paren">]</span>',
              "vector-f0", "one long list of numbers"),
             ' <span class="op">,</span> each <var>x</var><sub><var>i</var></sub> <span class="op">∈</span> <span class="paren">[</span>0, 255<span class="paren">]</span>',
-        ], "a photo, flattened into one long vector — click it")
+        ], "a photo, flattened into one long vector — hover or click it")
         + decode([
             ("<var>x</var><sub><var>i</var></sub>", "“pixel i”", "Brightness of one tiny square. 0 = black, 255 = white. Colour images use three such numbers per square (red, green, blue)."),
             ("flatten", "“unroll”", "Reading the 2-D grid row by row into one long 1-D list, so a plain Dense layer can accept it."),
@@ -316,7 +316,7 @@ smile. Each judge holds up one score card. The layer’s output is the row of sc
         + eqp([
             ('<var class="hl-p">a</var><sup>[1]</sup> <span class="op">=</span> <span class="paren">[</span> <var>a</var><sub>1</sub><sup>[1]</sup> &nbsp; <var>a</var><sub>2</sub><sup>[1]</sup> &nbsp; <var>a</var><sub>3</sub><sup>[1]</sup> <span class="paren">]</span>',
              "vector-f0", "the layer's whole output"),
-        ], "collect them into one vector — this is what the layer outputs — click it")
+        ], "collect them into one vector — this is what the layer outputs — hover or click it")
         + decode([
             ("layer", "“a layer”", "A group of neurons that all receive the same input vector and each output one scalar."),
             ("<var>w</var><sub>2</sub><sup>[1]</sup>", "“w two, layer one”", "The weight <b>vector</b> of the second unit of layer 1. Same length as the input."),
@@ -426,7 +426,7 @@ That’s all the scary notation is — a seat number and a panel number.</p>""")
             ('<var class="hl-b">w</var><sub><var class="hl-b">j</var></sub><sup>[<var class="hl-p">l</var>]</sup> <span class="op">·</span> <var>a</var><sup>[<var class="hl-p">l</var>−1]</sup>',
              "dot-product-f0", "multiply matching entries, add them up"),
             ' <span class="op">+</span> <var class="hl-a">b</var><sub><var class="hl-b">j</var></sub><sup>[<var class="hl-p">l</var>]</sup><span class="paren">)</span>',
-        ], "the master equation of forward propagation — click it")
+        ], "the master equation of forward propagation — hover or click it")
         + """<p>Every single computation in every neural network in this course is one instance of that
 line. Memorise it. Say it out loud: “<em>the activation of unit j in layer l is g of: the weights of unit j
 in layer l, dotted with the whole output of the previous layer, plus the bias of unit j in layer l</em>”.</p>"""
@@ -534,11 +534,11 @@ second panel. The second hands 15 score cards to the last judge. The last judge 
             ' + <var>b</var><sup>[2]</sup>) &nbsp;→&nbsp; <var class="hl-g">a</var><sup>[3]</sup> = <var>g</var>(',
             ('<var>W</var><sup>[3]</sup><var class="hl-p">a</var><sup>[2]</sup>', "matmul-f0", "whole layer, one multiply"),
             ' + <var>b</var><sup>[3]</sup>)',
-        ], "three layers, in order — click a part")
+        ], "three layers, in order — hover or click a part")
         + eqp([
             ('<var>f</var>(<var>x</var>) = <var class="hl-g">a</var><sup>[3]</sup>', "func-f", "the model's output"),
             ' &nbsp;&nbsp;&nbsp; ŷ = <span class="paren">{</span> 1 if <var>a</var><sup>[3]</sup> ≥ 0.5, &nbsp; 0 otherwise',
-        ], "and finally a decision — click it")
+        ], "and finally a decision — hover or click it")
         + decode([
             ("forward", "“forward propagation”", "Computing layer 1, then 2, then 3, in that order. Also called <b>inference</b> — using a trained model rather than training one."),
             ("<var>f</var>(<var>x</var>)", "“f of x”", "The model’s output. For a binary classifier it is P(y = 1 | x), a probability."),
@@ -975,7 +975,7 @@ pair, add them all up, add neuron 2’s bias, squash. Done. Now do the same with
             ('<var>w</var><sub><var>j</var></sub> · <var>a</var><sub>in</sub>', "dot-product-f0", "multiply matching entries, add them up"),
             ' + <var>b</var><sub><var>j</var></sub> &nbsp;&nbsp; <var>a</var><sub>out</sub><span class="paren">[</span><var>j</var><span class="paren">]</span> = ',
             ('<var>g</var>(<var>z</var><sub><var>j</var></sub>)', "sigmoid-squash", "the squasher"),
-        ], "one neuron = one column of W — click a part")
+        ], "one neuron = one column of W — hover or click a part")
         + decode([
             ("<var>W</var>", "“capital W”", "The whole layer’s weights as one 2-D table. Rows = incoming features, columns = neurons."),
             ("<code>W[:, j]</code>", "“all rows, column j”", "NumPy slice notation: the colon means “everything”. This picks out neuron j’s weight vector."),
@@ -1368,7 +1368,7 @@ does — inputs are the quantities, weights are the prices, z is the total bill.
             ('<span class="big">Σ</span><sub><var>i</var></sub> <var>a</var><sub><var>i</var></sub><var>w</var><sub><var>i</var></sub>',
              "sigma", "one term per pair"),
             ' <span class="op">=</span> <var>a</var><sub>1</sub><var>w</var><sub>1</sub> + <var>a</var><sub>2</sub><var>w</var><sub>2</sub> + … + <var>a</var><sub><var>n</var></sub><var>w</var><sub><var>n</var></sub>',
-        ], "the dot product — click a part")
+        ], "the dot product — hover or click a part")
         + decode([
             ("·", "“dot”", "The dot product. Not ordinary multiplication — it includes the summing."),
             ("<span class='big'>Σ</span>", "“sum over i”", "A loop, written as a symbol. “Add up the following, for every i.”"),
@@ -1388,7 +1388,7 @@ reason it fits a neuron: many inputs arrive, exactly one z must come out.</p>"""
             '<var>A</var> = <span class="paren">[</span> 1 &nbsp; 2 &nbsp; 3 <span class="paren">]</span> &nbsp;&nbsp;(1×3)&nbsp;&nbsp;→&nbsp;&nbsp; ',
             ('<var>A</var><sup>T</sup> = <span class="paren">[</span> 1 ; 2 ; 3 <span class="paren">]</span> &nbsp;&nbsp;(3×1)',
              "transpose-f0", "rows become columns"),
-        ], "same three numbers, different orientation — click it", small=True)
+        ], "same three numbers, different orientation — hover or click it", small=True)
         + """<p>It appears constantly because matrix multiplication only works when the inner dimensions
 match. If you have a (3×1) and need a (1×3), transposing is how you get there. Nothing deeper is going on —
 it is shape plumbing.</p>"""
@@ -1479,11 +1479,11 @@ column.</p>""")
             '<var>Z</var><span class="paren">[</span><var>i</var>, <var>j</var><span class="paren">]</span> <span class="op">=</span> ',
             ('<span class="paren">(</span>row <var>i</var> of <var class="hl-a">A</var><span class="paren">)</span> <span class="op">·</span> <span class="paren">(</span>column <var>j</var> of <var class="hl-b">W</var><span class="paren">)</span>',
              "dot-product-f0", "multiply matching entries, add them up"),
-        ], "every cell is a dot product — click it")
+        ], "every cell is a dot product — hover or click it")
         + eqp([
             ('<span class="hl-a">(<var>m</var> × <var class="hl-p">n</var>)</span> <span class="op">×</span> <span class="hl-b">(<var class="hl-p">n</var> × <var>p</var>)</span> <span class="op">=</span> <span class="hl-g">(<var>m</var> × <var>p</var>)</span>',
              "matmul-f0", "inner numbers must match"),
-        ], "the shape rule — the inner numbers must match, and they disappear — click it")
+        ], "the shape rule — the inner numbers must match, and they disappear — hover or click it")
         + decode([
             ("<var>m</var>", "“rows of the first”", "Survives into the answer, as its rows."),
             ("<var class='hl-p'>n</var>", "“the inner dimension”", "Must be <b>identical</b> on both sides. It is what gets paired up and summed away — it never appears in the answer."),
@@ -1515,7 +1515,7 @@ exist. Order matters, always.</p>"""
             ' <span class="op">×</span> ',
             ('<span class="hl-b">W</span> <span class="paren">(</span><var>n</var> features × <var>p</var> neurons<span class="paren">)</span>', "matrix-f0", "one column per neuron"),
             ' <span class="op">=</span> <span class="hl-g">Z</span> <span class="paren">(</span><var>m</var> examples × <var>p</var> neurons<span class="paren">)</span>',
-        ], "one multiply = every example through every neuron — click a part", small=True)
+        ], "one multiply = every example through every neuron — hover or click a part", small=True)
         + """<p>Cell Z[i, j] is “example i, as judged by neuron j”. The features dimension n is the thing
 that gets summed away — which is precisely the weighted sum a neuron performs. The correspondence is not an
 analogy; it is the same arithmetic written in a different notation.</p>"""
