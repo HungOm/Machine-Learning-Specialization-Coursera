@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -261,8 +267,8 @@
 <p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.5 · 13 min read</span></p>
 <h1><span class="secno">2.5</span>Shape and axis</h1>
 <p class="lede">Most NumPy confusion is shape confusion. And `axis` has one rule that makes it click permanently.</p>
-<div class="bookrail" title="Lesson 24 of 203 in the book"><i style="width:12%"></i></div>
-<p class="bookrail-cap"><span>F0 · Week 2 · lesson 5 of 16</span><span class="r">24 of 203 · 12% of the book</span></p>
+<div class="bookrail" title="Lesson 24 of 208 in the book"><i style="width:12%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 2 · lesson 5 of 16</span><span class="r">24 of 208 · 12% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>An array reports its shape as <code>(100, 4)</code>. You call <code><span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span>0)</code>. <b>Guess how many numbers come back — 100, or 4?</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Commit before reading. Watch for what <em>axis</em> actually names: the direction that gets collapsed, not the one that survives.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p><b>Shape</b> says how the numbers are arranged: (3, 4) means 3 rows and 4 columns.</p>
 <p><b>Axis</b> says which direction to work in. Axis 0 goes <b>down</b> the rows; axis 1 goes
 <b>across</b> the columns.</p>

@@ -292,6 +292,17 @@ SHEETS = [
              "two costs: compute O(T&sup2;), KV cache O(T)",
              "three failures and their causes, in two columns"],
       test="Give the mechanical account of what a model computes &mdash; and say where it stops."),
+
+ dict(c="F0", w=3, title="The maths behind the curtain",
+      draw="A vector and its image under a matrix, with the two directions that do not turn drawn "
+           "as dashed lines through the origin.",
+      items=["Av = &lambda;v, and A[1,1] = [3,3] worked underneath it",
+             "the covariance eigenvalues 4.976 and 0.064, with 98.7% ringed",
+             "A = U&Sigma;V&#7488; &mdash; rotate, stretch, rotate",
+             "L(p) = p&#8311;(1&minus;p)&sup3; with a curve peaking at 0.7",
+             "&minus;log of it &rarr; &minus;y log f &minus; (1&minus;y) log(1&minus;f)",
+             "&part;L/&part;z = p &minus; y, with [0.6285, 0.2312, 0.1402] &minus; [1,0,0] under it"],
+      test="Which noise assumption gives you squared error, and which gives cross-entropy?"),
 ]
 
 # ---------------------------------------------------------- per-card prompts

@@ -24,7 +24,7 @@ PLAIN_MODULES = ["cards_plain_f0", "cards_plain_c1", "cards_plain_c2", "cards_pl
                  "cards_plain_c4"]
 
 PROBLEM_MODULES = [
-    "problems_f0w1", "problems_f0w2",
+    "problems_f0w1", "problems_f0w2", "problems_f0w3",
     "problems_c1w1", "problems_c1w2", "problems_c1w3",
     "problems_c2w1", "problems_c2w2", "problems_c2w3", "problems_c2w4",
     "problems_c3w1", "problems_c3w2", "problems_c3w3",
@@ -32,7 +32,7 @@ PROBLEM_MODULES = [
 ]
 
 MODULES = [
-    "content_f0w1", "content_f0w2",
+    "content_f0w1", "content_f0w2", "content_f0w3",
     "content_c1w1", "content_c1w2", "content_c1w3",
     "content_c2w1", "content_c2w2", "content_c2w3", "content_c2w4",
     "content_c3w1", "content_c3w2", "content_c3w3",

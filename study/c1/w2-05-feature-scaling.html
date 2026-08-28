@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -258,11 +264,11 @@
 <a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.5 · 20 min read</span></p>
-<h1><span class="secno">4.5</span>Feature scaling</h1>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Regression with Multiple Variables</span><span class="right">§&nbsp;5.5 · 20 min read</span></p>
+<h1><span class="secno">5.5</span>Feature scaling</h1>
 <p class="lede">A feature ranging 300–2000 next to one ranging 0–5 turns the cost bowl into a canyon. One division fixes it, and it is the highest-value line in this week.</p>
-<div class="bookrail" title="Lesson 53 of 203 in the book"><i style="width:26%"></i></div>
-<p class="bookrail-cap"><span>C1 · Week 2 · lesson 5 of 9</span><span class="r">53 of 203 · 26% of the book</span></p>
+<div class="bookrail" title="Lesson 58 of 208 in the book"><i style="width:28%"></i></div>
+<p class="bookrail-cap"><span>C1 · Week 2 · lesson 5 of 9</span><span class="r">58 of 208 · 28% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Size runs 300–2000. Bedrooms run 1–5. Both get a weight. <b>Guess what that 400× difference in range does to gradient descent.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Picture the bowl from Week 1, stretched long and thin. Watch for why the path zig-zags, and how one rescaling fixes it.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Imagine a see-saw where one child weighs 2000 kg and the other weighs 5 kg. Every tiny
 movement by the heavy child sends the light one flying, and the light child can barely move the see-saw at
 all.</p>

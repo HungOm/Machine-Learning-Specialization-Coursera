@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -258,11 +264,11 @@
 <a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part V</span><span class="d">·</span><span class="ch">Chapter 13 — Sequences, Embeddings and the Old Answers</span><span class="right">§&nbsp;13.5 · 12 min read</span></p>
-<h1><span class="secno">13.5</span>What RNNs tried</h1>
+<p class="runhead"><span class="part">Part V</span><span class="d">·</span><span class="ch">Chapter 14 — Sequences, Embeddings and the Old Answers</span><span class="right">§&nbsp;14.5 · 12 min read</span></p>
+<h1><span class="secno">14.5</span>What RNNs tried</h1>
 <p class="lede">The pre-2017 answer to sequences: read one item at a time and carry a running summary. Elegant, genuinely successful for a decade, and fatally limited in two ways.</p>
-<div class="bookrail" title="Lesson 177 of 203 in the book"><i style="width:87%"></i></div>
-<p class="bookrail-cap"><span>C4 · Week 1 · lesson 5 of 8</span><span class="r">177 of 203 · 87% of the book</span></p>
+<div class="bookrail" title="Lesson 182 of 208 in the book"><i style="width:88%"></i></div>
+<p class="bookrail-cap"><span>C4 · Week 1 · lesson 5 of 8</span><span class="r">182 of 208 · 88% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You must handle a sentence of any length with a fixed-size model. <b>Guess the obvious approach</b> — think about how you yourself read a long sentence.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for what has to be carried from word to word, and how much can fit in it.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Read the sentence one word at a time, and keep a <b>running summary</b> in your
 head. At each word, update the summary using the word you just read and the summary you already had.
 At the end, the summary is your understanding of the sentence.</p>

@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -258,11 +264,11 @@
 <a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 11 — Recommender Systems</span><span class="right">§&nbsp;11.13 · 9 min read</span></p>
-<h1><span class="secno">11.13</span>Reducing the number of features (PCA)</h1>
+<p class="runhead"><span class="part">Part IV</span><span class="d">·</span><span class="ch">Chapter 12 — Recommender Systems</span><span class="right">§&nbsp;12.13 · 9 min read</span></p>
+<h1><span class="secno">12.13</span>Reducing the number of features (PCA)</h1>
 <p class="lede">Start of the optional PCA section. Squash many features into two or three so a human can plot them and actually look.</p>
-<div class="bookrail" title="Lesson 154 of 203 in the book"><i style="width:76%"></i></div>
-<p class="bookrail-cap"><span>C3 · Week 2 · lesson 13 of 15</span><span class="r">154 of 203 · 76% of the book</span></p>
+<div class="bookrail" title="Lesson 159 of 208 in the book"><i style="width:76%"></i></div>
+<p class="bookrail-cap"><span>C3 · Week 2 · lesson 13 of 15</span><span class="r">159 of 208 · 76% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Fifty features, and you want to plot the data. <b>Guess how you would get from 50 dimensions to 2</b> without simply throwing 48 away.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the idea of a new axis that is a blend of old ones, chosen to keep as much spread as possible.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You measured every car’s length in centimetres <b>and</b> in inches. Two columns — but
 really one fact. If you know one, you know the other.</p>
 <p>Now a subtler one: length and width. Not identical, but they move together — big cars are big in both

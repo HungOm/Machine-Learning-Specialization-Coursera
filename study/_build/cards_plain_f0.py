@@ -255,4 +255,51 @@ P = {
   "Like a receipt: 4 apples at £1 each, plus 5 pears at £2 each — you add the LINE TOTALS, not the "
   "quantities or the prices alone."),
 
+"f0-eigen": plain(
+  "Multiplying by a matrix usually turns a vector AND stretches it. A few special directions do not "
+  "get turned at all — they only get longer or shorter. Those are the eigenvectors.",
+  [("A", "“the matrix”", "the transformation being applied"),
+   ("v", "“an eigenvector”", "a direction the matrix leaves pointing the same way"),
+   ("λ", "“lambda”", "the eigenvalue — how much that direction gets stretched")],
+  "Like stretching a rubber sheet: most arrows drawn on it swing round, but the ones along the pull do not."),
+
+"f0-pca-why": plain(
+  "PCA wants the direction the data spreads out most along. That is exactly what the biggest "
+  "eigenvector of the covariance matrix is — the eigenvalue IS the spread along it.",
+  [("covariance matrix", "—", "a small grid describing how the data is spread out"),
+   ("principal component", "—", "one of those special directions, biggest first"),
+   ("98.7%", "—", "4.976 ÷ (4.976 + 0.064) — how much spread the first one keeps")],
+  "This is the sentence Course 3 asked you to accept without explanation."),
+
+"f0-svd": plain(
+  "Any grid of numbers at all can be pulled apart into three simple steps: turn, stretch, turn. The "
+  "stretches come out sorted biggest first, so you can drop the small ones to compress it.",
+  [("U, V", "“U and V”", "the two turning steps"),
+   ("Σ", "“sigma”", "the stretching amounts, always sorted largest first"),
+   ("rank-k", "“rank k”", "keeping only the k biggest stretches")],
+  "A stack of transparencies ordered by importance: keep the first few, discard the rest."),
+
+"f0-mle": plain(
+  "Instead of asking “how wrong is my model”, ask “if my model were right, how likely was the data I "
+  "actually saw?” Then pick whatever makes the data most likely.",
+  [("likelihood", "“likelihood”", "how probable the observed data is, for a given guess"),
+   ("−log", "“negative log”", "makes multiplying into adding, and stops tiny numbers vanishing"),
+   ("MLE", "“M-L-E”", "maximum likelihood estimate — the guess at the peak")],
+  "A detective asking which suspect makes the evidence least surprising, rather than who looks guilty."),
+
+"f0-jacobian": plain(
+  "With one input and one output a derivative is one number. With several of each you need one number "
+  "per pair — arranged in a grid, with outputs down the side and inputs across the top.",
+  [("J", "“the Jacobian”", "the grid of all the partial derivatives"),
+   ("∂fᵢ/∂xⱼ", "“partial f-i by partial x-j”", "how much output i moves when input j is nudged"),
+   ("(m, n)", "—", "m outputs, n inputs — the shape tells you the function's signature")],
+  "A mixing desk: three sliders, two speakers, six answers, laid out as a table."),
+
+"f0-softmax-grad": plain(
+  "Softmax has an awkward derivative and the log has another. Put them together and both messes "
+  "cancel exactly, leaving “what you predicted minus what was true”. One subtraction.",
+  [("p", "“p”", "the predicted probabilities, from softmax"),
+   ("y", "“y”", "the true answer, as a 1 in the right slot and 0s elsewhere"),
+   ("p − y", "—", "the whole gradient. Negative for the true class, positive for the rest")],
+  "Two awkward gear ratios that happen to be reciprocals — in series they turn cleanly 1:1."),
 }

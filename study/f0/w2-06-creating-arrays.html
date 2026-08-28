@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -261,8 +267,8 @@
 <p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.6 · 7 min read</span></p>
 <h1><span class="secno">2.6</span>Creating arrays</h1>
 <p class="lede">Six ways to conjure numbers out of nothing, and the two whose end-points differ in a way nobody ever remembers.</p>
-<div class="bookrail" title="Lesson 25 of 203 in the book"><i style="width:12%"></i></div>
-<p class="bookrail-cap"><span>F0 · Week 2 · lesson 6 of 16</span><span class="r">25 of 203 · 12% of the book</span></p>
+<div class="bookrail" title="Lesson 25 of 208 in the book"><i style="width:12%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 2 · lesson 6 of 16</span><span class="r">25 of 208 · 12% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You need a array of 100 zeros to fill in a loop. <b>Guess why you would build it up-front rather than growing it as you go.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the shape argument, and for the habit of pre-allocating — it is how nearly every function in the labs starts.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Sometimes you need an array before you have any data — an empty box to fill in, or a row of
 evenly spaced numbers to draw a graph with.</p></div><h2><span class="ico">🔤</span>The six</h2><table class="data"><thead><tr><th>Call</th><th>Gives</th><th>Used for</th></tr></thead><tbody><tr><td><code><span class="gterm" data-g="npcreate-api">np.zeros</span>(5)</code></td><td>[0, 0, 0, 0, 0]</td><td>an empty box to fill in a loop</td></tr><tr><td><code><span class="gterm" data-g="npcreate-api">np.ones</span>(5)</code></td><td>[1, 1, 1, 1, 1]</td><td>a bias column, or a starting point</td></tr><tr><td><code><span class="gterm" data-g="nprange-api">np.arange</span>(5)</code></td><td>[0, 1, 2, 3, 4]</td><td>counting. <b>Stops before 5</b></td></tr><tr><td><code><span class="gterm" data-g="nprange-api">np.linspace</span>(0, 1, 5)</code></td><td>[0, 0.25, 0.5, 0.75, 1]</td><td>graph x-values. <b>Includes both ends</b></td></tr><tr><td><code><span class="gterm" data-g="npcreate-api">np.zeros</span>((2, 3))</code></td><td>a 2×3 grid of zeros</td><td>note the <b>double brackets</b></td></tr><tr><td><code><span class="gterm" data-g="nprandom-api">np.random.rand</span>(3)</code></td><td>3 random numbers in 0…1</td><td>initialising weights</td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Click each one and see what comes out</span><span class="h">watch the shape line underneath</span></div><div class="demo-body" data-anim="fcreate"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 

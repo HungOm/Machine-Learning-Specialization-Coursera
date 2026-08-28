@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -261,8 +267,8 @@
 <p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.1 · 8 min read</span></p>
 <h1><span class="secno">1.1</span>What a function is</h1>
 <p class="lede">The single most important idea in the whole specialization, and the one nobody stops to explain. A machine: number in, number out.</p>
-<div class="bookrail" title="Lesson 1 of 203 in the book"><i style="width:0%"></i></div>
-<p class="bookrail-cap"><span>F0 · Week 1 · lesson 1 of 19</span><span class="r">1 of 203 · 0% of the book</span></p>
+<div class="bookrail" title="Lesson 1 of 208 in the book"><i style="width:0%"></i></div>
+<p class="bookrail-cap"><span>F0 · Week 1 · lesson 1 of 19</span><span class="r">1 of 208 · 0% of the book</span></p>
 <div class="chopen"><span class="tag">Before this chapter</span><p class="hook">You are not starting with machine learning. You are starting with the vocabulary the courses assume you already have — and the reason lectures feel like a maths problem when they are really a <b>reading</b> problem.</p><table class="chgrid"><tbody><tr><td>Rests on</td><td>nothing at all — this is the beginning</td></tr><tr><td>You will be able to</td><td>read every symbol the three courses use, and say each one out loud</td></tr><tr><td>Leads to</td><td>Chapter 2 (the Python half) and then all of Course 1</td></tr></tbody></table></div><h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>A machine takes a number, doubles it, and adds one. You feed in <b>3</b> and get <b>7</b>. You feed in 3 again tomorrow. <b>What comes out — and how sure are you?</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Your certainty is the whole idea. Watch for the word that names “same input, same output, always” — it is the property everything else in this course is built on.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>A vending machine. You put a coin in one slot, and a chocolate bar comes out the other.
 Same coin, same chocolate bar, every time.</p>
 <p>A function is exactly that, with numbers. Put 3 in, get 7 out. Put 3 in again, get 7 again — always.</p>

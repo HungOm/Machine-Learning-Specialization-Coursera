@@ -74,6 +74,12 @@
 <a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
 <a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
 <a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
 <h4>C1 · W1 — Introduction to Machine Learning</h4>
 <a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
 <a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
@@ -258,12 +264,12 @@
 <a class="" data-slug-link="c44-07-where-to-go-next" href="../c4/w4-07-where-to-go-next.html"><span class="n">07</span>Where to go from here</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 9 — Decision Trees</span><span class="right">§&nbsp;9.1 · 9 min read</span></p>
-<h1><span class="secno">9.1</span>Decision tree model</h1>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 10 — Decision Trees</span><span class="right">§&nbsp;10.1 · 9 min read</span></p>
+<h1><span class="secno">10.1</span>Decision tree model</h1>
 <p class="lede">A completely different kind of model: no weights, no gradient descent, no calculus. Just a flowchart of yes/no questions — and on spreadsheet data it often wins.</p>
-<div class="bookrail" title="Lesson 117 of 203 in the book"><i style="width:58%"></i></div>
-<p class="bookrail-cap"><span>C2 · Week 4 · lesson 1 of 13</span><span class="r">117 of 203 · 58% of the book</span></p>
-<div class="chopen"><span class="tag">Before this chapter</span><p class="hook">A completely different shape of model — no gradient descent, no weights, no learning rate. It asks questions instead, and on spreadsheet-shaped data it often wins.</p><table class="chgrid"><tbody><tr><td>Rests on</td><td>§1.15 <span class="gterm" data-g="logarithm-f0">logarithms</span> · §1.17 <span class="gterm" data-g="variance-f0">variance</span> · §8.4 bias and variance</td></tr><tr><td>You will be able to</td><td>build a tree from entropy and information gain, and say when to prefer one over a network</td></tr><tr><td>Leads to</td><td>Course 3 — and, in practice, most tabular problems you meet</td></tr></tbody></table></div><h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Is it a cat? You may ask about ear shape, face shape and whiskers. <b>Write down the questions you would ask, in order</b> — and notice you just built the model.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the vocabulary: root, node, leaf. You already understand the structure; this is naming it.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You know that game where you guess an animal by asking questions? “Does it have pointy
+<div class="bookrail" title="Lesson 122 of 208 in the book"><i style="width:59%"></i></div>
+<p class="bookrail-cap"><span>C2 · Week 4 · lesson 1 of 13</span><span class="r">122 of 208 · 59% of the book</span></p>
+<div class="chopen"><span class="tag">Before this chapter</span><p class="hook">The first chapter with no y at all. Nobody supplies the answer and nobody can mark it — which is unfamiliar, and is the honest situation for most data in the world.</p><table class="chgrid"><tbody><tr><td>Rests on</td><td>§1.9 <span class="gterm" data-g="vector-f0">vectors</span> · §1.17 mean and <span class="gterm" data-g="variance-f0">variance</span> · §1.18 the <span class="gterm" data-g="normal-dist-f0">normal distribution</span></td></tr><tr><td>You will be able to</td><td>cluster with K-means and flag improbable examples with a Gaussian model</td></tr><tr><td>Leads to</td><td>Chapter 11, which learns features nobody labelled</td></tr></tbody></table></div><h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Is it a cat? You may ask about ear shape, face shape and whiskers. <b>Write down the questions you would ask, in order</b> — and notice you just built the model.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the vocabulary: root, node, leaf. You already understand the structure; this is naming it.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You know that game where you guess an animal by asking questions? “Does it have pointy
 ears?” Yes → “Is its face round?” Yes → “It’s a cat!”</p>
 <p>That’s the entire model. A list of questions arranged in a tree, where the answer to each question tells
 you which question to ask next, until you reach the bottom and give your answer.</p>

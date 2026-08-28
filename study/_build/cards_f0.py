@@ -294,4 +294,66 @@ W2 = deck("F0", 2, "Python, NumPy and pandas", [
       "f0/w2-16-functions.html"),
 ])
 
-DECKS = [W1, W2]
+W3 = deck("F0", 3, "The Maths Behind the Curtain", [
+    C("f0-eigen", "formula",
+      "What does %s say, and what makes those directions special?" % "<b>Av = λv</b>",
+      blk("<var>A</var><b>v</b> = <var>λ</var><b>v</b>")
+      + bullets(["<b>v</b> is an eigenvector — a direction the matrix does not <b>rotate</b>",
+                 "<var>λ</var> is the eigenvalue — how much that direction is stretched",
+                 "for these directions only, a whole matrix collapses to one number"])
+      + hint("A = [[2,1],[1,2]]: A[1,1] = [3,3] so λ = 3; A[1,−1] = [1,−1] so λ = 1."),
+      "f0/w3-01-eigenvectors.html"),
+
+    C("f0-pca-why", "concept",
+      "Why are the principal components the <b>eigenvectors of the covariance matrix</b>?",
+      "<p>Because each eigenvalue <b>is</b> the variance along its own eigenvector.</p>"
+      + bullets(["“find the direction of greatest variance” and “find the largest eigenvector of "
+                 "the covariance matrix” are therefore the same instruction",
+                 "covariance matrices are symmetric, so their eigenvalues are real and their "
+                 "eigenvectors perpendicular — which is why PCA is well behaved"])
+      + hint("Eigenvalues 4.976 and 0.064 → the first component keeps 98.7% of the variance."),
+      "f0/w3-01-eigenvectors.html"),
+
+    C("f0-svd", "formula",
+      "State the SVD, and say why it is more general than eigendecomposition.",
+      blk("<var>A</var> = <var>U</var> <var>Σ</var> <var>V</var><sup>T</sup>")
+      + bullets(["rotate (V<sup>T</sup>), stretch (Σ), rotate (U)",
+                 "works for <b>any</b> matrix — eigendecomposition needs a square one",
+                 "Σ is sorted largest first, so truncating to the top k gives the "
+                 "<b>provably best</b> rank-k approximation"])
+      + hint("Singular values squared and divided by n give exactly the covariance eigenvalues. "
+             "Real PCA uses SVD because forming the covariance matrix loses precision."),
+      "f0/w3-02-svd.html"),
+
+    C("f0-mle", "concept",
+      "State the maximum likelihood principle, and say what it derives.",
+      "<p>Choose the parameters that make the <b>data you actually observed</b> as probable as "
+      "possible.</p>"
+      + bullets(["assume Gaussian noise → you derive <b>squared error</b>",
+                 "assume a Bernoulli outcome → you derive <b>cross-entropy</b>",
+                 "take the negative log: products become sums, and nothing underflows"])
+      + hint("10 flips, 7 heads: L(p) = p⁷(1−p)³ peaks at p = 0.7. The loss function stops being a "
+             "convention and becomes a consequence of what you assumed."),
+      "f0/w3-03-maximum-likelihood.html"),
+
+    C("f0-jacobian", "distinguish",
+      "What is a Jacobian, and how does it relate to the gradient you already use?",
+      blk("<var>J<sub>ij</sub></var> = ∂<var>f<sub>i</sub></var>/∂<var>x<sub>j</sub></var>")
+      + bullets(["rows are <b>outputs</b>, columns are <b>inputs</b>",
+                 "ℝⁿ → ℝᵐ gives an m × n grid",
+                 "the <b>gradient is a Jacobian with one row</b>, because a cost has one output"])
+      + hint("The chain rule becomes matrix multiplication. Backprop evaluates that product right "
+             "to left, which keeps a row vector at every step instead of building huge matrices."),
+      "f0/w3-04-jacobian.html"),
+
+    C("f0-softmax-grad", "formula",
+      "What is ∂L/∂z for softmax with cross-entropy — and why is it so simple?",
+      blk("∂<var>L</var>/∂<var>z</var> = <b>p − y</b>")
+      + "<p>Softmax's derivative carries a factor of p<sub>y</sub>; the log in cross-entropy "
+        "contributes 1/p<sub>y</sub>. They cancel exactly.</p>"
+      + hint("z = [2, 1, 0.5] with true class 1 → p = [0.6285, 0.2312, 0.1402], so the gradient is "
+             "[−0.3715, 0.2312, 0.1402]. Same cancellation as sigmoid + log loss in C1 W3."),
+      "f0/w3-05-softmax-gradient.html"),
+])
+
+DECKS = [W1, W2, W3]
