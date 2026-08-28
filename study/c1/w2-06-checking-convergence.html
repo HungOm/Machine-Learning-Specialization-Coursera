@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.6 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.6 · 12 min read</span></p>
 <h1><span class="secno">4.6</span>Checking gradient descent for convergence</h1>
 <p class="lede">One plot, three lines of code, and it tells you whether your model is training, stuck, or broken.</p>
 <div class="bookrail" title="Lesson 54 of 172 in the book"><i style="width:31%"></i></div>
@@ -231,7 +231,21 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Your model has been training for ten minutes. <b>How would you know whether to stop, keep going, or that something is broken?</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the one plot that answers all three questions at once, and costs three lines to make.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>How do you know when to stop? Draw a graph of “how wrong am I?” against “how many steps
 have I taken”.</p>
 <p>If the line is falling, keep going. If it has gone flat, you are done. If it is going <b>up</b>,
-something is wrong — and you have just saved yourself a day.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three learning curves — click between them</span><span class="h">one healthy, two broken in different ways</span></div><div class="demo-body" data-anim="convergence"></div></div><h2><span class="ico">🔢</span>How to read the curve</h2><table class="data"><thead><tr><th>What you see</th><th>What it means</th><th>What to do</th></tr></thead><tbody><tr><td>falls smoothly, then flattens</td><td>healthy, and <span class="gterm" data-g="convergence-native">converged</span></td><td>stop — more iterations will not help</td></tr><tr><td>falls smoothly, still falling at the end</td><td>healthy, not finished</td><td>run for more iterations</td></tr><tr><td>oscillates up and down</td><td>α is too large</td><td>reduce α, typically by ×3 or ×10</td></tr><tr><td>increases steadily</td><td>α far too large, or a bug</td><td>try α = 0.0001. Still rising? It is a bug.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p><b>J must decrease on every single iteration.</b> If it ever goes up, either α is too
+something is wrong — and you have just saved yourself a day.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Roasting a joint of meat. You do not open the oven every ten seconds, and you do not walk away
+for three hours either. You check at sensible intervals and watch the temperature <em>trend</em> —
+rising steadily, good; stalled, something is wrong.</p>
+<p>The learning curve is that thermometer. One glance tells you whether to keep going, adjust, or
+stop.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Any iterative solver you have used — Newton–Raphson, a numerical optimiser, even Excel’s Goal
+Seek — has a <span class="gterm" data-g="convergence-native">convergence</span> criterion, and it is always the same shape: stop when the change per step
+falls below some ε.</p>
+<p>The value of ε is a judgement, not a fact. Too tight and you burn compute for invisible gains; too
+loose and you stop while the model is still improving.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>One line falling from top-left to bottom-right, then flattening.</p>
+<p>That shape is “healthy and finished”. Still descending at the right-hand edge means “not
+finished”. Sawtoothing up and down means α is too large. Climbing off the top means α is far too
+large, or the gradient is wrong. Four shapes, four diagnoses.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Training runs cost real money by the hour. Teams that do not plot this curve routinely do one of
+two expensive things: stop early and ship an undertrained model, or run for hours after the loss
+stopped moving.</p>
+<p>It is three lines of matplotlib and it is the cheapest diagnostic in the entire field.</p></div><p class="lens-fold">So the plot below is the one output you should generate for every training run you ever do.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three learning curves — click between them</span><span class="h">one healthy, two broken in different ways</span></div><div class="demo-body" data-anim="convergence"></div></div><h2><span class="ico">🔢</span>How to read the curve</h2><table class="data"><thead><tr><th>What you see</th><th>What it means</th><th>What to do</th></tr></thead><tbody><tr><td>falls smoothly, then flattens</td><td>healthy, and converged</td><td>stop — more iterations will not help</td></tr><tr><td>falls smoothly, still falling at the end</td><td>healthy, not finished</td><td>run for more iterations</td></tr><tr><td>oscillates up and down</td><td>α is too large</td><td>reduce α, typically by ×3 or ×10</td></tr><tr><td>increases steadily</td><td>α far too large, or a bug</td><td>try α = 0.0001. Still rising? It is a bug.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p><b>J must decrease on every single iteration.</b> If it ever goes up, either α is too
 large or the gradient is wrong. There is no third option, and that makes the diagnosis fast.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code>w, b, J_history = gradient_descent(X, y, w_init, b_init, alpha, num_iters)
 
 plt.plot(J_history)

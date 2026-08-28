@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.17 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.17 · 13 min read</span></p>
 <h1><span class="secno">1.17</span>Mean, variance and standard deviation</h1>
 <p class="lede">Where the middle is, and how spread out things are. Five steps, in order — and the reason step three squares everything.</p>
 <div class="bookrail" title="Lesson 17 of 172 in the book"><i style="width:10%"></i></div>
@@ -243,7 +243,23 @@ apart.</p>
 <li><b>Standard deviation:</b> √4 = <b>2</b></li>
 </ol>
 <p>So the typical distance from the middle is 2. Sanity check against the data: most values sit within 2
-of 5, and that is exactly what you see.</p><div class="explain"><span class="tag">Say it out loud</span><p>Variance squares each distance from the mean before averaging. <b>Why square rather than just take the distances?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Two reasons, and both matter. Distances above and below the mean would cancel to zero. And squaring makes far-out values dominate, which is what you want from a measure of spread — one value far away is more informative than several close ones.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Spread the points out and watch σ grow</span><span class="h">the shaded band is one standard deviation either side of the mean</span></div><div class="demo-body" data-anim="fstats"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+of 5, and that is exactly what you see.</p><div class="explain"><span class="tag">Say it out loud</span><p>Variance squares each distance from the mean before averaging. <b>Why square rather than just take the distances?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Two reasons, and both matter. Distances above and below the mean would cancel to zero. And squaring makes far-out values dominate, which is what you want from a measure of spread — one value far away is more informative than several close ones.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Two bus routes to work, both averaging 30 minutes.</p>
+<p>Route A is 28–32 minutes, every day. Route B is anywhere from 10 to 55. Same average, completely
+different journey — and you would leave far earlier for B. The average tells you where the middle is;
+the <em>spread</em> tells you whether the average is worth trusting.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Mean and standard deviation are the two numbers on every summary table you have ever read.</p>
+<p>The one thing worth being precise about: variance is in <em>squared</em> units — squared minutes,
+squared pounds — which is meaningless to a reader, so you take the square root to get back to real
+units. That is the only difference between variance and standard deviation, and it is why reports
+quote the latter.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A dartboard with two players’ throws marked.</p>
+<p>Both players average dead centre. One has a tight cluster; the other is scattered all around the
+board, missing left as often as right. Averaging their throws hides everything that matters about
+which player you would bet on. Variance is what you measure to tell them apart.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Every quality-control process on earth watches variance, not the mean. A factory whose bolts
+average exactly 10.00 mm but swing between 9.5 and 10.5 is producing scrap; one averaging 10.01 with
+a spread of 0.01 is producing <span class="gterm" data-g="precisionrecall-native">precision</span> parts.</p>
+<p>In this course the same pair of numbers does two jobs: they rescale features so gradient descent
+behaves (C1 W2), and they <em>are</em> the entire anomaly-detection model (C3 W1). Two numbers, both
+courses.</p></div><p class="lens-fold">So the two formulas below are “where is the middle” and “how far do things usually sit from
+it” — and the squaring in the second is only there to stop negatives cancelling positives.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Spread the points out and watch σ grow</span><span class="h">the shaded band is one standard deviation either side of the mean</span></div><div class="demo-body" data-anim="fstats"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2</span>, <span class="tok-n">4</span>, <span class="tok-n">4</span>, <span class="tok-n">4</span>, <span class="tok-n">5</span>, <span class="tok-n">5</span>, <span class="tok-n">7</span>, <span class="tok-n">9</span>])
 
 x<span class="gterm" data-g="npmean-api">.mean(</span>)      <span class="tok-c"># 5.0</span>

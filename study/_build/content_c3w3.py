@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 3 — Reinforcement learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-what-is-rl", title="What is reinforcement learning?", mins=9, tag="intuition",
+    slug="01-what-is-rl", title="What is reinforcement learning?", mins=13, tag="intuition",
     lede="The third kind of learning. Nobody tells you the right answer — you find out afterwards whether "
          "things went well.",
     body=(
@@ -22,6 +22,29 @@ them.</p>
 <p>That is reinforcement learning. And the hard part is the delay: the treat arrives after the sit, but
 which of the last twenty things the dog did actually earned it?</p>""")
 
+                + lenses(
+            """<p>Teaching a dog to sit.</p>
+<p>You cannot explain it, and you cannot demonstrate it with your own body. All you can do is wait for
+something in the right direction and reward it. The dog is not told what to do; it discovers what
+earns treats.</p>
+<p>Crucially, nobody ever supplies the correct answer — only whether what happened was good. That is
+the entire difference from everything in Courses 1 and 2.</p>""",
+            """<p>The formal frame is a Markov decision process, and if you have met operations research or optimal
+control you already know it: states, actions, transitions, rewards.</p>
+<p>The distinguishing feature is <b>delayed, sparse feedback</b>. A chess move is not right or wrong on
+its own; you learn something forty moves later, and the credit has to be spread backwards over
+everything that led there.</p>""",
+            """<p>A maze with cheese at the end and no map.</p>
+<p>You cannot see the exit and nobody tells you which turn was correct. You only learn anything at all
+when you reach the cheese — and then the problem is working out which of the hundred turns you took
+deserve the credit.</p>""",
+            """<p>Reinforcement learning is how a language model gets trained to be helpful rather than merely
+fluent: RLHF, where the reward comes from human preference judgements.</p>
+<p>Worth an honest caveat, and Andrew Ng makes it himself: RL gets research attention far out of
+proportion to its deployed use. It is finicky, simulation-hungry and hard to transfer to real hardware.
+Learn it for the framing, not because you will ship it next quarter.</p>""",
+            """So the reward signal below replaces the labelled answer — and everything else follows from that one
+substitution.""")
         + h2("🎬", "Watch it move")
         + demo("whatisrl", "Agent and environment, passing things back and forth",
                "actions go out, states and rewards come back")
@@ -144,7 +167,7 @@ against value — and that rule is the next lesson.</p>"""
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-the-return", title="The Return in reinforcement learning", mins=11, tag="maths",
+    slug="03-the-return", title="The Return in reinforcement learning", mins=15, tag="maths",
     lede="How to compare “a lot, later” against “a little, sooner”. One Greek letter does all the work.",
     body=(
         pretest("""<p>A reward of 100 now versus 100 in ten steps. <b>Should they count equally?</b> Commit, then guess how you would express your answer as a formula.</p>""",
@@ -170,6 +193,25 @@ value.</p>
             ("return", "“the total, discounted”", "The one quantity everything in RL is trying to maximise."),
         ])
 
+                + lenses(
+            """<p>Being offered £100 today or £100 in three years.</p>
+<p>Everyone takes today, and not only from impatience — the later money is less certain and less
+useful. If you had to say how much less, you would apply some discount per year. That discount is
+γ.</p>""",
+            """<p>This is net present value, unchanged. An economist discounting a cash flow and an RL agent
+discounting a reward are doing identical arithmetic with different words.</p>
+<p>γ has two jobs here: it encodes impatience, and it makes an infinite sum converge to a finite number.
+The second is the reason it is mathematically necessary, not merely psychologically reasonable.</p>""",
+            """<p>A row of stepping stones with money on each, fading as they recede.</p>
+<p>The coin two stones away is only worth γ² of its face value to you now. With γ = 0.5 a reward three
+steps out is worth an eighth. That fading is what makes an agent prefer a near, small reward over a
+distant, large one — and it is a dial you set.</p>""",
+            """<p>Choosing γ is a genuine design decision with consequences. Too low and the agent is myopic —
+grabbing immediate reward and ignoring the outcome. Too high and it will not commit to anything,
+because everything is worth waiting for.</p>
+<p>The lunar lander in this course uses 0.995, because landing is a long sequence where nearly all the
+reward arrives at the very end. The Mars rover uses 0.5, to make the arithmetic visible by hand.</p>""",
+            """So the geometric series below is a discounted cash flow, and γ is the interest rate you chose.""")
         + h2("🎬", "Watch it move")
         + demo("returns", "Left versus right from state 4",
                "drag γ from 0.1 to 0.99 and watch the better choice flip")

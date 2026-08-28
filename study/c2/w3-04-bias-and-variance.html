@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 8 — Advice for Applying ML</span><span class="right">§&nbsp;8.4 · 16 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 8 — Advice for Applying ML</span><span class="right">§&nbsp;8.4 · 20 min read</span></p>
 <h1><span class="secno">8.4</span>Diagnosing bias and variance</h1>
 <p class="lede">The central diagnostic of the whole course. Two numbers, three possible verdicts, and a decision you no longer have to guess.</p>
 <div class="bookrail" title="Lesson 103 of 172 in the book"><i style="width:60%"></i></div>
@@ -236,7 +236,22 @@ hopeless on anything new. You didn’t learn the subject, you learned the paper.
 <p>You can tell which one you are by comparing two scores: how you do on what you studied, and how you do
 on something fresh.</p></div><h2><span class="ico">🔢</span>The maths, decoded</h2><table class="data"><thead><tr><th>Symptom</th><th>J<sub>train</sub></th><th>J<sub>cv</sub></th><th>Verdict</th></tr></thead><tbody><tr><td>under-fitting</td><td><b>high</b></td><td>high (≈ J<sub>train</sub>)</td><td><b>high bias</b></td></tr><tr><td>just right</td><td>low</td><td>low (≈ J<sub>train</sub>)</td><td>good</td></tr><tr><td>over-fitting</td><td><b>low</b></td><td><b>much higher</b></td><td><b>high variance</b></td></tr><tr><td>both at once</td><td>high</td><td>much higher still</td><td>high bias <em>and</em> high variance</td></tr></tbody></table><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>bias</td><td>“under-fitting”</td><td>The model is too simple to represent the pattern. It is wrong even on data it has seen. Named for a systematic, repeatable error.</td></tr><tr><td><span class="gterm" data-g="variance-f0">variance</span></td><td>“over-fitting”</td><td>The model is so flexible it fits the noise. Re-train on a different sample and you get a wildly different model — hence “variance”.</td></tr><tr><td>J<sub>train</sub> high</td><td>“can’t even fit what it saw”</td><td>The tell-tale sign of bias. Nothing downstream will help until this is fixed.</td></tr><tr><td>J<sub>cv</sub> ≫ J<sub>train</sub></td><td>“the gap”</td><td>The tell-tale sign of variance. The size of the gap is the size of the problem.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p><b>J<sub>train</sub> tells you about bias. The gap between J<sub>train</sub> and
 J<sub>cv</sub> tells you about variance.</b> One sentence, and it is most of the diagnostic value of this
-entire week.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Degree 1 to 10, with the diagnosis underneath</span><span class="h">left: the fit. right: J_train and J_cv against model complexity</span></div><div class="demo-body" data-anim="biasvar"></div></div><p>Watch the two curves on the right. J<sub>train</sub> falls forever — a more complex model
+entire week.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Two apprentices failing at the same task, for opposite reasons.</p>
+<p>One has not learned enough — he gets it wrong in the workshop and wrong on site, equally. The other
+has learned the workshop <em>too</em> specifically: flawless on the bench he trained at, lost the
+moment anything differs.</p>
+<p>Both look like “bad apprentice”. Teaching them the same way would help one and harm the other,
+which is exactly why naming the difference matters.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is the bias–variance decomposition, and the diagnosis is mechanical: compare training error
+to validation error, and compare training error to a baseline of what is achievable.</p>
+<p>Two gaps, two diseases. Baseline-to-train is bias; train-to-validation is variance. Every remedy in
+the table belongs to exactly one of those gaps, which is what turns an intuition into a procedure.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two dartboards.</p>
+<p>The first has a tight cluster in the wrong place — consistent and consistently wrong, high bias. The
+second is scattered all over but averages to the bullseye — high variance. You fix a tight cluster by
+aiming differently; you fix scatter by steadying the hand. Different problems, different actions.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is the single most valuable week in the specialization for real work, because the wrong
+diagnosis is expensive in a specific way: “get more data” is the costliest action available and it
+does <b>nothing</b> for high bias.</p>
+<p>Teams have spent months collecting data for models that were never data-limited. Two numbers, read
+correctly, would have said so on day one.</p></div><p class="lens-fold">So the comparison below turns “the model is bad” into an instruction about what to do next.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Degree 1 to 10, with the diagnosis underneath</span><span class="h">left: the fit. right: J_train and J_cv against model complexity</span></div><div class="demo-body" data-anim="biasvar"></div></div><p>Watch the two curves on the right. J<sub>train</sub> falls forever — a more complex model
 can always fit the training data better. J<sub>cv</sub> falls, bottoms out, then climbs. The bottom of the
 J<sub>cv</sub> curve is the model you want, and it is nowhere near the bottom of the J<sub>train</sub>
 curve.</p><h2><span class="ico">🔬</span>Why J_train can never tell you on its own</h2><p>Degree 10 has the lowest training error of any model on the demo. It is also the worst

@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.16 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.16 · 12 min read</span></p>
 <h1><span class="secno">1.16</span>Probability basics</h1>
 <p class="lede">Four rules. They cover every <span class="gterm" data-g="probability-f0">probability</span> statement in the specialization, including the one that makes anomaly detection work.</p>
 <div class="bookrail" title="Lesson 16 of 172 in the book"><i style="width:9%"></i></div>
@@ -241,7 +241,22 @@ multiplying one is doing the real work in this specialization.</p></div><h2><spa
 <li>P(red or blue) = 0.3 + 0.7 = <b>1.0</b> — it must be one of them</li>
 </ul>
 <p>Now notice the third one. Two events that each looked reasonably likely combine into something under
-10%. Multiply five such things and you are at 0.00243.</p><div class="explain"><span class="tag">Say it out loud</span><p>All the outcomes had to add to 1. <b>Why exactly 1, rather than 100 or any other total?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because 1 means “the whole of what can happen”. Every possible outcome is somewhere in that whole, so the parts must exactly fill it — no more, since nothing else can occur, and no less, since something must.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ A bag of ten, and the four rules</span><span class="h">change how many are red and watch every number update</span></div><div class="demo-body" data-anim="fprob"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+10%. Multiply five such things and you are at 0.00243.</p><div class="explain"><span class="tag">Say it out loud</span><p>All the outcomes had to add to 1. <b>Why exactly 1, rather than 100 or any other total?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because 1 means “the whole of what can happen”. Every possible outcome is somewhere in that whole, so the parts must exactly fill it — no more, since nothing else can occur, and no less, since something must.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A weather forecast saying 70% chance of rain.</p>
+<p>It does not mean it will rain for 70% of the day, or over 70% of the county. It means: on a
+hundred days that looked like this one, it rained on about seventy of them. Probability is
+bookkeeping over things that have not happened yet — and that framing is the whole subject.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have run an A/B test, computed a conversion rate, or read a confidence interval, you have
+been doing this.</p>
+<p>The one idea worth carrying into this course is <b>conditional</b> probability — P(A given B).
+Every classifier this specialization builds outputs one: the probability of the label, <em>given</em>
+these features. Not “how common is spam”, but “how likely is spam given this particular email”.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A bag of a hundred marbles, seventy blue.</p>
+<p>Reach in without looking and the chance of blue is 0.7. Now imagine someone tells you the marble
+you have grabbed is heavy, and heavy marbles are mostly red — the probability changes even though the
+bag did not. That update, on new information, is exactly what a trained model performs.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Medical screening is where this gets serious. A test that is 99% accurate for a disease
+affecting 1 in 10,000 people will still produce far more false alarms than true finds — because the
+disease is so rare that the 1% error rate on the vast healthy majority swamps the true positives.</p>
+<p>Clinicians who get this wrong over-treat; patients who get it wrong panic. It is also precisely
+why Course 2 spends a week on <span class="gterm" data-g="precisionrecall-native">precision</span> and recall rather than accuracy.</p></div><p class="lens-fold">So the notation below is a way of writing down degrees of belief — and the conditional bar is the
+part that matters most.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ A bag of ten, and the four rules</span><span class="h">change how many are red and watch every number update</span></div><div class="demo-body" data-anim="fprob"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 <span class="tok-c"># probability estimated from data = just a mean of True/False</span>
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>])

@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.1 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.1 · 12 min read</span></p>
 <h1><span class="secno">3.1</span>What is machine learning?</h1>
 <p class="lede">The definition, the one big split that organises everything that follows, and why this is worth three courses of your time.</p>
 <div class="bookrail" title="Lesson 36 of 172 in the book"><i style="width:21%"></i></div>
@@ -233,7 +233,32 @@ delivery charge.” Every rule, written out by a person.</p>
 <p>Machine learning is different. You show it <b>examples</b> — a thousand houses and what each one sold
 for — and it works out the rule itself.</p>
 <p>That matters for problems where nobody can write the rule down. Nobody can explain, step by step, how
-they recognise their grandmother’s face. But everyone can supply examples.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The definition, and the two branches</span><span class="h">supervised on one side, unsupervised on the other — that split organises the whole specialization</span></div><div class="demo-body" data-anim="whatisml"></div></div><h2><span class="ico">🔢</span>Two definitions worth knowing</h2><p><b>Arthur Samuel, 1959:</b> “the field of study that gives computers the ability to learn
+they recognise their grandmother’s face. But everyone can supply examples.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A woman has sold fish at the same market stall for twenty years. A customer holds one up;
+she glances for two seconds and says <b>“about 1.4 kilos”</b> — right to within 50 grams, every time.
+Nobody taught her a formula. She has simply seen ten thousand fish, felt the weight in her hand, and
+watched the scale confirm or correct her.</p>
+<p>Put a brand-new vendor at the next stall. Same eyes, same hands, same fish — and wildly wrong
+guesses. The only difference between them is <b>exposure to examples where the true answer arrived
+right afterwards</b>. That is the whole of “training data”, felt in the hand before it is ever
+written down.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have ever fitted a trendline in a spreadsheet, or run an OLS regression in an
+econometrics or psychology course, <b>you have already done machine learning</b> — once, by hand, on
+a dataset small enough to see all at once.</p>
+<p>What changes at industrial scale is not the idea. It is that you cannot eyeball 400 variables the
+way you eyeballed one scatter plot, so the judgement “does this line fit well?” has to be handed to
+an algorithm that makes it patiently, thousands of times, adjusting a little each time.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A spreadsheet with two columns.</p>
+<p>The left column is <b>what you knew beforehand</b> — floor area, in square feet. The right column
+is <b>what actually happened</b> — the price it sold for. Four hundred rows of that <em>is</em> a
+training set. Not a metaphor for one: that is literally the object.</p>
+<p>Every problem in all three courses is this same ledger with different column headings. Pixels and
+a digit. A film and a rating. A patient and a diagnosis.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>In the 1990s a motor insurer priced your premium off four or five factors — age, postcode,
+claims history — because that is what a human underwriter could hold in a table and still reason
+about.</p>
+<p>A modern insurer prices the same policy off hundreds of signals, including braking patterns from a
+telematics box in your car. Two drivers with identical claims histories can now be quoted
+noticeably different premiums, and the entire difference is pattern-finding across data no human
+could hold in their head at once. That is the argument for why this field exists, rather than merely
+what it does.</p></div><p class="lens-fold">And now Tom Mitchell’s definition below is not a dry sentence to memorise — it is the shortest
+possible summary of the fish vendor.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The definition, and the two branches</span><span class="h">supervised on one side, unsupervised on the other — that split organises the whole specialization</span></div><div class="demo-body" data-anim="whatisml"></div></div><h2><span class="ico">🔢</span>Two definitions worth knowing</h2><p><b>Arthur Samuel, 1959:</b> “the field of study that gives computers the ability to learn
 without being explicitly programmed.” Samuel wrote a checkers program that played itself tens of thousands
 of times, learned which board positions tended to lead to wins, and ended up beating him.</p>
 <p>The interesting question that raises: if he had let it play only ten games instead of ten thousand,

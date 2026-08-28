@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.9 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.9 · 12 min read</span></p>
 <h1><span class="secno">1.9</span>Vectors</h1>
 <p class="lede">A list of numbers. That is it — and almost every object in machine learning is one.</p>
 <div class="bookrail" title="Lesson 9 of 172 in the book"><i style="width:5%"></i></div>
@@ -235,7 +235,22 @@ it at all — and every single formula still works identically.</p><p>A recipe i
 house, one email, one patient. And a <b><span class="gterm" data-g="matrix-f0">matrix</span></b> is the whole spreadsheet.</p></div><h2><span class="ico">🧮</span>Worked by hand</h2><p><span class="ov vec">x</span> = [3, 4]. Its length is found with <span class="gterm" data-g="pythagoras">Pythagoras</span> — because the arrow is the <span class="gterm" data-g="hypotenuse">hypotenuse</span> of a
 triangle 3 across and 4 up:</p>
 <p style="text-align:center">‖<span class="ov vec">x</span>‖ = √(3² + 4²) = √(9 + 16) = √25 = <b>5</b></p>
-<p>The same formula works with four hundred entries; you just square more things before adding them.</p><div class="explain"><span class="tag">Say it out loud</span><p>[3, 7] and [7, 3] contain the same two numbers. <b>Why are they nevertheless different vectors?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because position carries meaning. If slot 1 is square footage and slot 2 is bedrooms, swapping them describes a different house entirely. A vector is a list <em>plus</em> the agreement about what each slot means.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two numbers, drawn as an arrow</span><span class="h">drag them and watch the components and the length</span></div><div class="demo-body" data-anim="fvector"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+<p>The same formula works with four hundred entries; you just square more things before adding them.</p><div class="explain"><span class="tag">Say it out loud</span><p>[3, 7] and [7, 3] contain the same two numbers. <b>Why are they nevertheless different vectors?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because position carries meaning. If slot 1 is square footage and slot 2 is bedrooms, swapping them describes a different house entirely. A vector is a list <em>plus</em> the agreement about what each slot means.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A shopping list with quantities: 2 loaves, 1 milk, 6 eggs.</p>
+<p>You would never call that three separate facts — it is <em>one</em> order. It travels together, it
+gets priced together, and the order of the items is fixed by the list, not by chance. That is a
+vector: several numbers that belong to one thing and are always handled as a unit.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>A row in a database table. A record. A struct.</p>
+<p>One customer, with an age, a balance and a tenure — three numbers that only mean something
+together, in a fixed column order. You already know not to shuffle the columns of one row. A vector
+is that row, with arithmetic defined on it.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>An arrow drawn from the origin.</p>
+<p>Two numbers become an arrow on a page; three become an arrow in the room. Its <b>length</b> is how
+big the thing is, its <b>direction</b> is what kind of thing it is. Two customers with similar
+arrows are similar customers — and that single idea is what recommender systems in Course 3 run
+on.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>GPS trilateration is vector arithmetic and nothing else. Your phone knows its distance from four
+satellites, each at a known position vector, and solves for the one position consistent with all
+four.</p>
+<p>The same maths lands aircraft, aims telescopes and steers container ships. Long before machine
+learning, the vector was how navigation stopped being guesswork.</p></div><p class="lens-fold">So the bold letters and little arrows below are only saying “this is a whole row, not one
+number”.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two numbers, drawn as an arrow</span><span class="h">drag them and watch the components and the length</span></div><div class="demo-body" data-anim="fvector"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">3</span>, <span class="tok-n">4</span>])
 

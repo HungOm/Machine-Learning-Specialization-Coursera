@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 2 — Regression with multiple input variables."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -121,7 +121,7 @@ features in ways that need not correspond to anything you could change.</p>""")
 
 # ============================================================ 2
 L.append(dict(
-    slug="02-vectorization", title="Vectorization", mins=10, tag="code",
+    slug="02-vectorization", title="Vectorization", mins=14, tag="code",
     lede="Replace a loop with one function call. Shorter to write, faster to run, and the standard way "
          "every real ML codebase is written.",
     body=(
@@ -133,6 +133,28 @@ L.append(dict(
 machine built for exactly this job and get the total back in one go.</p>
 <p>Same answer. Far less typing, and far less waiting.</p>""")
 
+                + lenses(
+            """<p>Paying a hundred builders. You could hand each one a numbered envelope of cash, one at a time,
+walking the site all afternoon. Or you could send a single instruction to the bank and have all
+hundred paid at once.</p>
+<p>Identical money, identical people. The difference is entirely in how many separate trips someone
+had to make — and that is the whole of vectorisation.</p>""",
+            """<p>If you have written SQL, you already have the instinct: you do not fetch a million rows and loop
+over them in your application; you push the operation down to the engine and let it do the whole set
+at once.</p>
+<p><code>np.dot</code> is that same move. The loop still happens — but it happens in compiled code
+that was written for exactly this, instead of in the Python interpreter.</p>""",
+            """<p>A supermarket with one till open, versus twenty.</p>
+<p>The same customers, the same items scanned, the same total takings. What collapses is the queue.
+A CPU with SIMD instructions is a shop that can scan several items in one motion; a GPU is a shop
+with thousands of tills.</p>""",
+            """<p>This is not a micro-optimisation — it is the reason modern AI is economically possible at all.
+Training a large model with Python loops would take longer than the age of the universe. Training it
+with vectorised operations on a GPU takes weeks.</p>
+<p>The gap between those two facts is the entire hardware industry that grew up around machine
+learning.</p>""",
+            """So the timing comparison below is the difference between a technique that works and one that
+merely exists on paper.""")
         + h2("🎬", "Watch it move")
         + demo("vectorization", "The dot product forming, and the three ways to write it",
                "only the third one is worth writing")
@@ -394,7 +416,7 @@ exists so the term is not a surprise; not worth reaching for, because it general
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-feature-scaling", title="Feature scaling", mins=16, tag="core",
+    slug="05-feature-scaling", title="Feature scaling", mins=20, tag="core",
     lede="A feature ranging 300–2000 next to one ranging 0–5 turns the cost bowl into a canyon. One "
          "division fixes it, and it is the highest-value line in this week.",
     body=(
@@ -409,6 +431,30 @@ the size weight has an enormous effect while the bedroom weight barely matters �
 spends its time bouncing across the canyon instead of walking down it.</p>
 <p>Fix: make everyone roughly the same size before you start.</p>""")
 
+                + lenses(
+            """<p>A recipe calling for 2 kilos of flour and 3 grams of salt. Both numbers matter enormously, but
+a 10% error in the salt is invisible while a 10% error in the flour ruins the loaf — <em>because of
+the units they happen to be written in</em>, not because of what they do.</p>
+<p>A baker fixes this by measuring proportionally: baker’s percentages, everything expressed relative
+to the flour. Scaling features is the same move — put every ingredient on a comparable scale before
+you start reasoning about them.</p>""",
+            """<p>This is standardisation, and if you have computed a z-score you have done it: subtract the mean,
+divide by the standard deviation.</p>
+<p>The reason it matters computationally, though, is not statistical — it is geometric. Unequal
+feature scales stretch the cost surface into a long thin valley, and gradient descent handles valleys
+badly. Same arithmetic you know, deployed for a different reason.</p>""",
+            """<p>A canyon versus a bowl, seen from above as contour rings.</p>
+<p>Gradient descent always steps perpendicular to the contour it stands on. In a round bowl that
+points at the centre. In a long thin canyon it points across the narrow direction, so you zig-zag
+between the walls while barely advancing along the floor. Scaling turns the canyon back into a
+bowl.</p>""",
+            """<p>Measured on this site’s own data: the largest learning rate that does not diverge is
+<b>9.4 × 10⁻⁷</b> unscaled and <b>0.97</b> after standardising. A factor of a million, from four lines
+of arithmetic.</p>
+<p>That is not a tuning nicety. Without scaling, a model with a size feature in the thousands and a
+bedroom count in single digits is effectively untrainable by gradient descent.</p>""",
+            """So the three methods below all do the same job — make the features comparable — and the z-score is
+the default for the reason above.""")
         + h2("🎬", "Watch it move")
         + demo("featurescaling", "Turn scaling on and watch the bowl round out",
                "unscaled: a long thin canyon and a zig-zagging path. scaled: a circle and a direct walk")
@@ -519,7 +565,7 @@ un-scale the predictions before reporting them.</p>""")
 
 # ============================================================ 6
 L.append(dict(
-    slug="06-checking-convergence", title="Checking gradient descent for convergence", mins=8, tag="core",
+    slug="06-checking-convergence", title="Checking gradient descent for convergence", mins=12, tag="core",
     lede="One plot, three lines of code, and it tells you whether your model is training, stuck, or broken.",
     body=(
         pretest("""<p>Your model has been training for ten minutes. <b>How would you know whether to stop, keep going, or that something is broken?</b></p>""",
@@ -530,6 +576,26 @@ have I taken”.</p>
 <p>If the line is falling, keep going. If it has gone flat, you are done. If it is going <b>up</b>,
 something is wrong — and you have just saved yourself a day.</p>""")
 
+                + lenses(
+            """<p>Roasting a joint of meat. You do not open the oven every ten seconds, and you do not walk away
+for three hours either. You check at sensible intervals and watch the temperature <em>trend</em> —
+rising steadily, good; stalled, something is wrong.</p>
+<p>The learning curve is that thermometer. One glance tells you whether to keep going, adjust, or
+stop.</p>""",
+            """<p>Any iterative solver you have used — Newton–Raphson, a numerical optimiser, even Excel’s Goal
+Seek — has a convergence criterion, and it is always the same shape: stop when the change per step
+falls below some ε.</p>
+<p>The value of ε is a judgement, not a fact. Too tight and you burn compute for invisible gains; too
+loose and you stop while the model is still improving.</p>""",
+            """<p>One line falling from top-left to bottom-right, then flattening.</p>
+<p>That shape is “healthy and finished”. Still descending at the right-hand edge means “not
+finished”. Sawtoothing up and down means α is too large. Climbing off the top means α is far too
+large, or the gradient is wrong. Four shapes, four diagnoses.</p>""",
+            """<p>Training runs cost real money by the hour. Teams that do not plot this curve routinely do one of
+two expensive things: stop early and ship an undertrained model, or run for hours after the loss
+stopped moving.</p>
+<p>It is three lines of matplotlib and it is the cheapest diagnostic in the entire field.</p>""",
+            """So the plot below is the one output you should generate for every training run you ever do.""")
         + h2("🎬", "Watch it move")
         + demo("convergence", "Three learning curves — click between them",
                "one healthy, two broken in different ways")

@@ -204,6 +204,46 @@ def code(src, lang="python"):
 
 
 # ---------------------------------------------------------------- section
+def lenses(trade, bridge, object_, stakes, foldback):
+    """Five short views of one idea, before the formal treatment.
+
+    The site's default order is: plain words, then the maths. That works, but
+    it offers exactly ONE way in. A reader who has never met a formula and a
+    reader with an economics degree need different doors into the same room,
+    and neither door is the equation.
+
+    So each treated lesson gets five beats, in this fixed order:
+
+      trade    — a craft, market or kitchen scene, felt in the body. Assumes
+                 no formal education whatsoever.
+      bridge   — "you already know this under another name", aimed at someone
+                 schooled in an adjacent field (stats, econ, engineering).
+      object_  — ONE concrete thing to picture. Not a metaphor for the maths;
+                 a picture the maths is literally describing.
+      stakes   — a real deployed system where this idea costs or saves money,
+                 time or safety. Answers "why does this exist at all".
+      foldback — one closing line handing the reader back to the formal
+                 version, which now reads as the summary of all four.
+
+    This is ADDITIVE. It never replaces kid() — the plain-words opener stays
+    exactly where it is, the same way the review deck's plain-English layer
+    sits beside the formal answer rather than instead of it.
+
+    `object` is a builtin, hence the trailing underscore on the parameter.
+    """
+    beats = [("trade", "\U0001f527", "If you have never seen a formula", trade),
+             ("bridge", "\U0001f309", "If you know a neighbouring field", bridge),
+             ("object", "\U0001f441", "One thing to picture", object_),
+             ("stakes", "\u2696\ufe0f", "Where this really costs something", stakes)]
+    out = ['<div class="lenses">']
+    for cls, ico, tag, body in beats:
+        out.append('<div class="lens %s"><span class="tag"><span class="ico">%s</span>%s</span>%s</div>'
+                   % (cls, ico, tag, body))
+    out.append('<p class="lens-fold">%s</p>' % foldback)
+    out.append("</div>")
+    return "".join(out)
+
+
 def h2(icon, text, anchor=None):
     a = ' id="%s"' % anchor if anchor else ""
     return '<h2%s><span class="ico">%s</span>%s</h2>' % (a, icon, text)

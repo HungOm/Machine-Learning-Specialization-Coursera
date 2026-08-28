@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.2 · 10 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.2 · 14 min read</span></p>
 <h1><span class="secno">4.2</span>Vectorization</h1>
 <p class="lede">Replace a loop with one function call. Shorter to write, faster to run, and the standard way every real ML codebase is written.</p>
 <div class="bookrail" title="Lesson 50 of 172 in the book"><i style="width:29%"></i></div>
@@ -231,7 +231,23 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You could add up 100,000 products with a Python <code>for</code> loop, or one NumPy call. <b>Guess how much faster the second is — and why, given both do the same multiplications.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for where the speed actually comes from. It is not that NumPy loops faster; it is that it does not loop in Python at all.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You have to multiply 100 pairs of numbers and add up the results.</p>
 <p>You could do it one pair at a time, writing each answer down. Or you could hand the whole list to a
 machine built for exactly this job and get the total back in one go.</p>
-<p>Same answer. Far less typing, and far less waiting.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The <span class="gterm" data-g="dot-product-f0">dot product</span> forming, and the three ways to write it</span><span class="h">only the third one is worth writing</span></div><div class="demo-body" data-anim="vectorization"></div></div><h2><span class="ico">💻</span>The three versions</h2><pre><code><span class="tok-c"># 1. no vectorisation — unreadable, and hopeless when n = 100</span>
+<p>Same answer. Far less typing, and far less waiting.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Paying a hundred builders. You could hand each one a numbered envelope of cash, one at a time,
+walking the site all afternoon. Or you could send a single instruction to the bank and have all
+hundred paid at once.</p>
+<p>Identical money, identical people. The difference is entirely in how many separate trips someone
+had to make — and that is the whole of vectorisation.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have written SQL, you already have the instinct: you do not fetch a million rows and loop
+over them in your application; you push the operation down to the engine and let it do the whole set
+at once.</p>
+<p><code><span class="gterm" data-g="npdot-api">np.dot</span></code> is that same move. The loop still happens — but it happens in compiled code
+that was written for exactly this, instead of in the Python interpreter.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A supermarket with one till open, versus twenty.</p>
+<p>The same customers, the same items scanned, the same total takings. What collapses is the queue.
+A CPU with SIMD instructions is a shop that can scan several items in one motion; a GPU is a shop
+with thousands of tills.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is not a micro-optimisation — it is the reason modern AI is economically possible at all.
+Training a large model with Python loops would take longer than the age of the universe. Training it
+with vectorised operations on a GPU takes weeks.</p>
+<p>The gap between those two facts is the entire hardware industry that grew up around machine
+learning.</p></div><p class="lens-fold">So the timing comparison below is the difference between a technique that works and one that
+merely exists on paper.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The <span class="gterm" data-g="dot-product-f0">dot product</span> forming, and the three ways to write it</span><span class="h">only the third one is worth writing</span></div><div class="demo-body" data-anim="vectorization"></div></div><h2><span class="ico">💻</span>The three versions</h2><pre><code><span class="tok-c"># 1. no vectorisation — unreadable, and hopeless when n = 100</span>
 f = w[<span class="tok-n">0</span>]*x[<span class="tok-n">0</span>] + w[<span class="tok-n">1</span>]*x[<span class="tok-n">1</span>] + w[<span class="tok-n">2</span>]*x[<span class="tok-n">2</span>] + b
 
 <span class="tok-c"># 2. a for loop — readable, and slow</span>

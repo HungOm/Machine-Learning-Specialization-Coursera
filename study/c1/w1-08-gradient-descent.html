@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.8 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.8 · 13 min read</span></p>
 <h1><span class="secno">3.8</span>Gradient descent</h1>
 <p class="lede">The algorithm that finds the bottom of the bowl — and, with almost no changes, trains every model in this specialization including the neural networks.</p>
 <div class="bookrail" title="Lesson 43 of 172 in the book"><i style="width:25%"></i></div>
@@ -232,7 +232,30 @@
 bottom of a valley, and you can see about a metre in any direction.</p>
 <p>What do you do? Spin around slowly, work out which way is <b>most steeply downhill</b>, take one small
 step that way. Then do it again. And again.</p>
-<p>You never need a map. Just the ground under your feet.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two walkers, two starting points</span><span class="h">each finds a valley — and they are not the same valley</span></div><div class="demo-body" data-anim="gradientdescent"></div></div><h2><span class="ico">🔢</span>Why this is a big deal</h2><p>Gradient descent does not need to know where the minimum is. It only needs the <b>local
+<p>You never need a map. Just the ground under your feet.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>You taste the soup: too salty. You do not recalculate anything — you simply put in less salt
+next time, in the direction the last mistake pointed. Too bland? A touch more. Each attempt is one
+step, and the “gradient” is nothing more mysterious than <b>which way did the last correction
+help</b>.</p>
+<p>The step size matters in a way any cook has felt. Dump in a whole cup to fix blandness and you
+have overshot into inedible, then you over-correct back, forever. Add one grain at a time and you
+will get there eventually — on your deathbed.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have studied economics, you have met this under another name: <b>Walrasian
+tâtonnement</b>. An imagined auctioneer calls a price; if demand exceeds supply, nudge the price up a
+little; if supply exceeds demand, nudge it down; repeat until the market clears.</p>
+<p>That is gradient descent on the mismatch between supply and demand, written down by economists
+decades before computer scientists needed a name for it. If you understand how a market is modelled
+to find equilibrium, you already understand this algorithm — same iterative correction, different
+imbalance.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A hiking map with contour lines.</p>
+<p>The rule is exact on this picture: <b>step <span class="gterm" data-g="perpendicular">perpendicular</span> to the contour line you are standing on,
+towards wherever the neighbouring lines are packed closest.</b> Where the contours are near-circular
+that marches you straight at the centre. Where they are squashed into a long thin oval, it makes you
+bounce across the narrow axis instead of advancing along the long one — which is exactly the problem
+feature scaling fixes in Week 2.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>A greenhouse thermostat reads the temperature, compares it to the target, and nudges the heater
+up or down. Repeat forever.</p>
+<p>That is a real deployed control system, and it ran greenhouses, cruise control and central heating
+for decades before anyone said “machine learning”. Gradient descent is not an invention for training
+networks — it is the general mathematics underneath a whole family of things that quietly correct
+themselves towards a target.</p></div><p class="lens-fold">So the hiking-in-fog picture below is one telling of an idea that turns up wherever something has
+to steer itself towards a goal it cannot see all at once.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two walkers, two starting points</span><span class="h">each finds a valley — and they are not the same valley</span></div><div class="demo-body" data-anim="gradientdescent"></div></div><h2><span class="ico">🔢</span>Why this is a big deal</h2><p>Gradient descent does not need to know where the minimum is. It only needs the <b>local
 <span class="gterm" data-g="slope-f0">slope</span></b>. That is what makes it work in a million dimensions where you could never look at the surface at
 all — which is precisely the situation for a neural network.</p>
 <p>It is used for essentially every model in this specialization: linear regression, logistic regression,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 4 — Decision trees and tree ensembles."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 L = []
 
@@ -170,7 +170,7 @@ pure — a perfectly overfit tree. Always set <code>max_depth</code> or <code>mi
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-measuring-purity", title="Measuring purity (entropy)", mins=11, tag="maths",
+    slug="03-measuring-purity", title="Measuring purity (entropy)", mins=15, tag="maths",
     lede="Turning “how mixed up is this group?” into a single number between 0 and 1. The one genuinely "
          "new piece of maths this week.",
     body=(
@@ -200,6 +200,26 @@ out?</b> And notice it is symmetric — all cats and all dogs are both perfectly
             ("0 log 0", "“defined as 0”", "Mathematically it is a limit; in code you must special-case it or you get NaN."),
         ])
 
+                + lenses(
+            """<p>Sorting a drawer of mixed screws.</p>
+<p>A drawer that is all one size needs no thought — reach in blind and you have the right screw. A
+drawer half wood-screws and half machine-screws makes you look every time. Entropy is a number for
+exactly that: how much looking a group forces on you.</p>""",
+            """<p>This is Shannon entropy, from information theory, and it measures <b>surprise</b> — the average
+number of bits needed to convey which class an item is.</p>
+<p>All-one-class costs zero bits: you never need to be told. A fifty-fifty split costs exactly one bit
+per item, which is why the maximum is 1 and why the logarithm is base 2. The units are literally
+bits.</p>""",
+            """<p>An arch, upside down.</p>
+<p>Zero at both ends — all one class, or all the other — and peaking dead centre at a 50/50 mix. Note
+that H(0.8) and H(0.2) are identical: entropy measures how mixed, not which side wins.</p>""",
+            """<p>The same formula compresses your files. ZIP and JPEG work by spending fewer bits on predictable
+data and more on surprising data — which is Shannon’s result applied to storage rather than to
+splitting.</p>
+<p>A decision tree asking “which question most reduces entropy?” is asking “which question compresses
+my uncertainty most?”. The two fields are the same mathematics with different goals.</p>""",
+            """So the formula below is measuring surprise in bits, and the tree simply hunts for whichever question
+removes the most of it.""")
         + h2("🎬", "Watch it move")
         + demo("entropy", "A bag of twelve animals",
                "drag the mix and watch the curve — it peaks at 50/50 and is symmetric")

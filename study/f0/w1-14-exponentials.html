@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.14 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.14 · 12 min read</span></p>
 <h1><span class="secno">1.14</span>Exponentials and e</h1>
 <p class="lede">Why a number beginning 2.718 turns up in the sigmoid, in <span class="gterm" data-g="softmax-native">softmax</span>, and in every <span class="gterm" data-g="probability-f0">probability</span> formula in the specialization.</p>
 <div class="bookrail" title="Lesson 14 of 172 in the book"><i style="width:8%"></i></div>
@@ -232,7 +232,25 @@
 <p>“e to the power of z”, written e<sup>z</sup>, does two useful things: it is <b>always positive</b>, no
 matter what z is, and it <b>grows very fast</b> as z gets bigger.</p>
 <p>Those two properties are the entire reason it appears everywhere in this course.</p><p>Bacteria in a dish do this: each one splits into two, then each of <em>those</em> splits into two, and so on. The population does not creep up steadily — it explodes, doubling and doubling again. e<sup>z</sup> is the smooth, continuous version of exactly that runaway growth.</p></div><h2><span class="ico">🔤</span>The symbol, and how to say it</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td><var>e</var></td><td>“ee”</td><td>a fixed number ≈ 2.71828. Sometimes called Euler's number.</td></tr><tr><td><var>e</var><sup><var>z</var></sup></td><td>“e to the z”</td><td>e multiplied by itself z times. Also written exp(z).</td></tr><tr><td>exp(<var>z</var>)</td><td>“exp of z”</td><td>the same thing. What code calls it, because superscripts are hard to type.</td></tr><tr><td><var>e</var><sup>0</sup></td><td>“e to the zero”</td><td><b>= 1</b>. Anything to the power zero is 1.</td></tr><tr><td><var>e</var><sup>−<var>z</var></sup></td><td>“e to the minus z”</td><td>= 1 / e<sup>z</sup>. Tiny when z is big.</td></tr></tbody></table><h2><span class="ico">🧮</span>Worked by hand</h2><table class="data"><thead><tr><th>z</th><th>e^z</th><th>what to notice</th></tr></thead><tbody><tr><td>−10</td><td>0.000045</td><td>very negative → almost zero, but never quite</td></tr><tr><td>−1</td><td>0.368</td><td></td></tr><tr><td>0</td><td><b>1</b></td><td>always, for any base</td></tr><tr><td>1</td><td>2.718</td><td>e itself</td></tr><tr><td>10</td><td>22,026</td><td>very positive → enormous</td></tr></tbody></table><p>Never zero, never negative, and it climbs faster than anything polynomial. Those are the facts
-that matter.</p><div class="explain"><span class="tag">Say it out loud</span><p>Ten doublings reached 1024, not 20. <b>Why does repeated multiplication run away so much faster than repeated addition?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because each step is applied to the result of the last, so the amount added grows with the total. Adding 2 ten times adds 2 each time; doubling ten times adds 1, then 2, then 4, then 8 — the increment itself is compounding.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The curve, and the numbers at each point</span><span class="h">notice it never touches the bottom, however far left you go</span></div><div class="demo-body" data-anim="fexp"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+that matter.</p><div class="explain"><span class="tag">Say it out loud</span><p>Ten doublings reached 1024, not 20. <b>Why does repeated multiplication run away so much faster than repeated addition?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because each step is applied to the result of the last, so the amount added grows with the total. Adding 2 ten times adds 2 each time; doubling ten times adds 1, then 2, then 4, then 8 — the increment itself is compounding.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A rumour in a village. One person tells two, each of those tells two more. Day one: three
+people know. Day ten: over a thousand.</p>
+<p>Nothing in that process accelerated — each person did the same small thing. The <em>total</em>
+exploded because the growth was proportional to how much had already grown. That is <span class="gterm" data-g="exponential-f0">exponential</span>
+growth, and it is why it always feels slow right up until it does not.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Compound interest is the same formula with money in it. So is population growth, radioactive
+decay (with the sign flipped), and the charging curve of a capacitor.</p>
+<p>The number <var>e</var> is not arbitrary: it is what compound interest <span class="gterm" data-g="convergence-native">converges</span> to as you
+compound more and more often. Anyone who has computed continuously-compounded returns has already
+used it.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A sheet of paper folded in half, repeatedly.</p>
+<p>Seven folds and it is thicker than a book. Forty-two folds — if it were possible — and it reaches
+the Moon. The paper is not doing anything different on fold forty than on fold four; doubling simply
+outruns intuition. Hold that feeling, because it explains why <var>e</var><sup>z</sup> in softmax
+exaggerates score differences so aggressively.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Every epidemic model, every viral-growth <span class="gterm" data-g="projection">projection</span> and every server capacity plan is
+exponential arithmetic. Getting the exponent slightly wrong changes a forecast by orders of
+magnitude, which is precisely why early pandemic projections varied so wildly between teams using
+the same data.</p>
+<p>In this course the same function turns raw scores into probabilities — and the same explosive
+behaviour is what makes softmax numerically dangerous without the trick in C2 W2.</p></div><p class="lens-fold">So the curve below is not merely “steep” — it is steep in a way that gets steeper, and that is the
+property everything downstream depends on.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The curve, and the numbers at each point</span><span class="h">notice it never touches the bottom, however far left you go</span></div><div class="demo-body" data-anim="fexp"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 <span class="gterm" data-g="npexp-api">np.exp</span>(<span class="tok-n">0</span>)          <span class="tok-c"># 1.0</span>
 <span class="gterm" data-g="npexp-api">np.exp</span>(<span class="tok-n">1</span>)          <span class="tok-c"># 2.718281828...</span>
@@ -246,7 +264,7 @@ z = <span class="gterm" data-g="nparray-api">np.array</span>([-<span class="tok-
     <span class="tok-k">return</span> <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-z))</code></pre><div class="callout warn"><span class="tag">Watch out</span><p><code><span class="gterm" data-g="npexp-api">np.exp</span>(1000)</code> gives <code>inf</code> — the answer is too big for the computer
 to hold. This is <b>overflow</b>, and it is exactly the problem that softmax has to work around in Course
 2, Week 2 by subtracting the largest value first.</p></div><h2><span class="ico">🔬</span>What is actually happening</h2><p>Two questions worth answering.</p>
-<p><b>Why <span class="gterm" data-g="exponential-f0">exponentials</span> in softmax?</b> Because you need to turn scores that might be negative into
+<p><b>Why exponentials in softmax?</b> Because you need to turn scores that might be negative into
 positive numbers before you can call them probabilities. e<sup>z</sup> is always positive, and it preserves
 the ordering — bigger score in, bigger number out. Nothing else needs to be true.</p>
 <p><b>Why e specifically, and not 2 or 10?</b> Because e is the one base whose curve has <span class="gterm" data-g="slope-f0">slope</span> exactly

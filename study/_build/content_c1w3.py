@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 3 — Classification, logistic regression, regularisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
@@ -71,7 +71,7 @@ the boundary <em>most</em>.</p>""")
 
 # ============================================================ 2
 L.append(dict(
-    slug="02-logistic-regression", title="Logistic regression", mins=12, tag="core",
+    slug="02-logistic-regression", title="Logistic regression", mins=16, tag="core",
     lede="Take the same wx + b and squash it through the sigmoid. The output becomes a probability, and "
          "both problems from the last lesson disappear.",
     body=(
@@ -84,6 +84,28 @@ turns it into something between 0 and 1. Very negative becomes almost 0. Very po
 Zero becomes exactly 0.5.</p>
 <p>Now the output is a <b>chance</b>, which is exactly what you wanted all along.</p>""")
 
+                + lenses(
+            """<p>A door bouncer deciding entry. Everything about you feeds in — age, dress, sobriety, the length
+of the queue — and one binary decision comes out. But internally he is not thinking in binary: he is
+thinking “borderline”, “definitely fine”, “absolutely not”.</p>
+<p>That inner confidence, squashed into a scale from 0 to 1, is what logistic regression produces.
+The yes/no is only what happens at the very end, when a threshold is applied.</p>""",
+            """<p>You may know this as the <b>logit model</b> — it is the workhorse of epidemiology, credit
+scoring and political science, and it long predates machine learning.</p>
+<p>What the sigmoid is doing is mapping the whole real line onto (0, 1) so that a linear score can be
+read as a probability. In statistics that is expressed as modelling the log-odds linearly, which is
+the same statement written from the other end.</p>""",
+            """<p>A dimmer switch, not a light switch.</p>
+<p>Linear regression gives you a number that can run off in either direction forever. The sigmoid
+bends both ends of that line back, so however extreme the score, the output stays between fully off
+and fully on — and sits at exactly half-way when the score is zero.</p>""",
+            """<p>Credit scoring is logistic regression at industrial scale, and it is regulated precisely because
+it is interpretable: a bank can be required to say which factors moved a decision, and this model can
+answer.</p>
+<p>That auditability is why it survives in high-stakes settings where a neural network would be
+rejected — an argument for simple models that has nothing to do with accuracy.</p>""",
+            """So the S-shaped curve below is a confidence dial, and the threshold that turns it into a decision
+is a separate choice entirely.""")
         + h2("🎬", "Watch it move")
         + demo("logistic", "The sigmoid, and the sigmoid applied to tumour data",
                "drag w and b and watch the S-curve slide and steepen")
@@ -350,7 +372,7 @@ correction is applied precisely where the model is most badly wrong.</p>""")
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-logistic-loss", title="The logistic loss, in detail", mins=10, tag="maths",
+    slug="05-logistic-loss", title="The logistic loss, in detail", mins=14, tag="maths",
     lede="Two curves that between them encode a strong opinion: being confident and wrong should cost you "
          "enormously.",
     body=(
@@ -363,6 +385,27 @@ Say “55% sure” about the same tumour and you pay very little.</p>
 <p>The more confident you were, the more it costs when you turn out to be wrong. And if you were confident
 and <em>right</em>, you pay almost nothing.</p>""")
 
+                + lenses(
+            """<p>A weather forecaster who says “100% chance of sun” on a day it pours.</p>
+<p>That is a far worse failure than saying “60% chance” and being wrong, and everyone feels the
+difference instinctively. Confidence has to be paid for: if you claim certainty and are wrong, the
+penalty should be severe. If you hedge, you lose a little either way.</p>""",
+            """<p>This is the negative log-likelihood, and it is not an arbitrary choice — it is what
+<b>maximum likelihood estimation</b> produces for a Bernoulli outcome.</p>
+<p>In other words, minimising this loss means choosing the parameters that make the data you actually
+observed as probable as possible. The formula is a consequence of that principle, not a design
+decision someone made for convenience.</p>""",
+            """<p>A curve that dives towards negative infinity as the predicted probability approaches zero.</p>
+<p>Get it right with confidence and the cost is a hair above zero. Hedge at 0.5 and you pay 0.69
+every time. Be certain and wrong, and the cost runs away without limit. That vertical wall on the
+left is the entire mechanism.</p>""",
+            """<p>This is why calibrated probability matters in deployment. A medical model that says “90%
+likely malignant” must be right about nine times in ten when it says that, or clinicians cannot use
+the number at all.</p>
+<p>Log loss is what trains a model to be honest about its own uncertainty — accuracy alone would let
+it be confidently wrong for free.</p>""",
+            """So the values below are worth having a feel for: 0.69 is a shrug, and anything above about 3 is a
+confident mistake.""")
         + h2("🎬", "Watch it move")
         + demo("logloss", "Drag the prediction, switch the true answer",
                "the loss climbs towards infinity as you become confidently wrong")
@@ -658,7 +701,7 @@ The same form shows up again for softmax in Course 2.</p>""")
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-the-problem-of-overfitting", title="The problem of overfitting", mins=16, tag="core",
+    slug="08-the-problem-of-overfitting", title="The problem of overfitting", mins=20, tag="core",
     lede="The most important concept in applied machine learning, and the first place you meet it. A model "
          "that is perfect on your data and useless on anything else.",
     body=(
@@ -672,6 +715,29 @@ exam wrong. You are not confused — you are under-prepared. That is <b>underfit
 year’s. You didn’t learn the subject, you learned the paper. That is <b>overfitting</b>.</p>
 <p>The awkward part: both look like “the model is bad”, and they need <em>opposite</em> fixes.</p>""")
 
+                + lenses(
+            """<p>A student who memorises last year’s exam paper word for word.</p>
+<p>On that paper, perfect marks. On this year’s paper, which asks the same ideas in different words,
+he is lost — because he never learned the ideas, only the answers. Meanwhile a student who only
+skimmed the topic does badly on both.</p>
+<p>Those two failures are opposites, they look identical from the outside (“bad marks”), and they need
+opposite fixes. That is the whole lesson.</p>""",
+            """<p>If you have fitted a model in any field, you know this as the <b>bias–variance trade-off</b>,
+and the tell is the same everywhere: excellent in-sample fit, poor out-of-sample performance.</p>
+<p>Econometrics calls the extreme version overparameterisation; a curve through <em>n</em> points
+using <em>n</em> parameters explains everything and predicts nothing. The R² will be beautiful and
+the forecast will be worthless.</p>""",
+            """<p>Two lines drawn through the same scatter of dots.</p>
+<p>One is a gentle curve that misses every point slightly. The other visits every single point exactly
+— and to do so it swings wildly up and down between them. Ask both to predict a new point and the
+wiggly one is wrong by a mile. The wiggle <em>is</em> the overfitting, drawn.</p>""",
+            """<p>A hiring model trained on a company’s past hires learns the company’s past hiring habits,
+including the ones nobody would defend out loud. It fits the historical data superbly.</p>
+<p>Overfitting is not only a statistical failure; it is how a model ends up confidently reproducing
+patterns that were never meant to be a rule. Which is why the fix — regularisation — matters well
+beyond accuracy.</p>""",
+            """So the two words below, underfitting and overfitting, are worth learning as opposites, because
+every diagnostic in Course 2 is about telling them apart.""")
         + h2("🎬", "Watch it move")
         + demo("overfitting", "Three fits, and the same story for classification",
                "click between regression and classification — the pattern is identical")
@@ -840,7 +906,7 @@ observed symptom — and it works remarkably well.</p>"""
 # ============================================================ 10
 L.append(dict(
     slug="10-cost-function-with-regularization", title="The cost function with regularization",
-    mins=16, tag="maths",
+    mins=20, tag="maths",
     lede="Add one term that punishes large weights. λ decides how much it matters, and that single dial "
          "spans the whole range from overfit to underfit.",
     body=(
@@ -853,6 +919,28 @@ which means it will only use a big weight when a big weight really earns its kee
 <p>λ decides how loudly you say the second thing. Say it quietly and nothing changes. Shout it and the
 model flattens into a straight line.</p>""")
 
+                + lenses(
+            """<p>A packing list with a weight limit.</p>
+<p>You can take anything, but every item costs you against the allowance — so you take the umbrella
+only if you genuinely expect rain. The limit does not forbid anything; it forces each item to justify
+its place.</p>
+<p>Regularisation is a weight limit on the model’s parameters. Every feature can still be used, but
+each one now has to earn its coefficient.</p>""",
+            """<p>This is <b>ridge regression</b> — Hoerl and Kennard, 1970 — arriving in machine learning under a
+new name.</p>
+<p>Statisticians introduced it to handle collinear predictors, where ordinary least squares produces
+enormous, unstable coefficients that swing wildly with tiny changes in the data. Shrinking them
+trades a little bias for a large reduction in variance. Same cure, same reason, fifty years earlier.</p>""",
+            """<p>A curve on a leash.</p>
+<p>Without the leash it can lunge to reach every training point. With it, it can still move, but every
+metre of slack pulls back. Turn λ up and the leash shortens until the curve is dragged flat; turn it
+to zero and the leash is gone.</p>""",
+            """<p>Measured on the microchip dataset in this course: λ = 0 gives a mean weight magnitude of
+<b>3.14</b>; λ = 1 gives <b>0.56</b>; λ = 100 gives <b>0.017</b> and an accuracy collapse to 0.61.</p>
+<p>That last number is the honest half — regularisation is not free, and past a point it destroys the
+model. λ is a dial you tune against held-out data, not a switch you turn on.</p>""",
+            """So the extra term below is a price list, and λ is how expensive you have decided complexity should
+be.""")
         + h2("🎬", "Watch it move")
         + demo("regcost", "Drag λ from 0 to 10,000",
                "watch both the curve and the bar chart of weight sizes")

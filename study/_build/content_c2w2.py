@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 2 — Training, activations, softmax, optimisation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 L = []
 
@@ -443,7 +443,7 @@ boundary. If some outputs really should be 0, that’s a feature; if not, use li
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-why-activations", title="Why do we need activation functions?", mins=10, tag="maths",
+    slug="05-why-activations", title="Why do we need activation functions?", mins=14, tag="maths",
     lede="The three-line proof that a network with no activation function is just a very expensive straight "
          "line — and the picture of what non-linearity buys you.",
     body=(
@@ -510,6 +510,28 @@ a2, direct     # (array([32.]), array([32.])) -- identical, for any x
 
         + explain("""<p>Two linear layers collapsed to <code>6x + 2</code>. <b>Why does no amount of depth escape this?</b></p>""",
             """<p>Because a linear function of a linear function is linear, and that argument applies again to the result. Each collapse produces something of the same form, so it can be collapsed again — a hundred times if need be. Depth adds parameters and no new expressive power.</p>""")
+                + lenses(
+            """<p>Three translators in a row, each translating word-for-word with no interpretation.</p>
+<p>English → French → German → Russian. You could have hired one translator to go straight from
+English to Russian and got the identical result. The chain bought you nothing, because none of them
+added anything of their own.</p>
+<p>That is a network with no activation functions: however many layers, it collapses into one.</p>""",
+            """<p>Formally: the composition of linear maps is a linear map. Multiply matrices
+<var>W</var>₂(<var>W</var>₁<var>x</var>) and you can pre-multiply them into a single
+<var>W</var> — with fewer parameters and identical behaviour.</p>
+<p>Anyone with linear algebra can see immediately that depth without non-linearity is not merely
+inefficient, it is provably pointless. The activation function is what breaks that collapse.</p>""",
+            """<p>A stack of flat sheets of glass, versus a stack of lenses.</p>
+<p>Light through ten sheets of flat glass comes out going the same way it went in — you could have used
+one sheet. Each lens bends it, so ten lenses can do something no single lens can. The activation is
+the curvature.</p>""",
+            """<p>This is the reason the field stalled for decades. The 1969 critique of the perceptron showed a
+single linear layer cannot learn XOR, and without a workable way to train non-linear multi-layer
+networks the interest drained away — the first “AI winter”.</p>
+<p>The non-linearity is not a refinement. It is the difference between a model that can only draw
+straight lines and one that can, in principle, approximate anything.</p>""",
+            """So the three-line proof below is worth following once carefully — it justifies every hidden layer
+you will ever build.""")
         + h2("🎬", "Watch it move")
         + demo("relubuild", "Straight sticks vs. bent ones",
                "drag the slider to add ReLU units — each one adds exactly one kink")
@@ -636,7 +658,7 @@ you use N output units, not one.</p>""")
 
 # ============================================================ 7
 L.append(dict(
-    slug="07-softmax", title="Softmax", mins=12, tag="maths",
+    slug="07-softmax", title="Softmax", mins=16, tag="maths",
     lede="The generalisation of sigmoid to N classes. Two moves — exponentiate, then divide by the total — "
          "and every property you need follows from them.",
     body=(
@@ -676,6 +698,27 @@ everything, the winner takes most of it and the others keep a little.</p>""")
 the other outputs. Every other activation squashes its own z alone. That coupling is what makes the
 probabilities sum to 1.</p>""")
 
+                + lenses(
+            """<p>Dividing a bonus pot between four sales staff by performance.</p>
+<p>Everyone gets something, the whole pot is handed out, and the best performer gets the largest share.
+Two constraints — nothing negative, and it all adds to 100% — and those two are exactly what softmax
+enforces on a set of scores.</p>""",
+            """<p>This is the multinomial extension of the logistic function — in statistics, multinomial logistic
+regression. Where sigmoid produced one probability, softmax produces a full distribution over N
+categories.</p>
+<p>The exponential is not decoration: it guarantees positivity and it makes the result depend only on
+score <em>differences</em>, which is why adding a constant to every score changes nothing.</p>""",
+            """<p>A pie chart that redraws itself as you change the numbers.</p>
+<p>Push one score up and its slice grows — and everyone else’s shrinks, even though their own scores
+never moved. The pie is always exactly one pie. That forced competition is what makes softmax right
+for “pick one” and wrong for “tick all that apply”.</p>""",
+            """<p>Every language model, including the one writing this, ends in a softmax — over roughly 50,000
+possible next tokens, at every single step of generation.</p>
+<p>The temperature setting you may have seen in an API is a divisor applied to the scores just before
+this function. Low temperature sharpens the distribution towards the top choice; high temperature
+flattens it. That is the whole mechanism behind “creative” versus “deterministic” output.</p>""",
+            """So exponentiating and normalising below is the operation sitting at the end of nearly every
+classifier in production today.""")
         + h2("🎬", "Watch it move")
         + demo("softmax", "Raw scores → positive → shares of 1",
                "drag any z and watch every other probability move in response")
@@ -1079,7 +1122,7 @@ Week 3’s precision/recall lesson is how you choose one per label.</p>""")
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-advanced-optimization", title="Advanced optimization (Adam)", mins=14, tag="core",
+    slug="11-advanced-optimization", title="Advanced optimization (Adam)", mins=18, tag="core",
     lede="Gradient descent with one fixed step size is leaving performance on the table. Adam gives every "
          "parameter its own learning rate and adjusts it as it goes.",
     body=(
@@ -1095,6 +1138,29 @@ If I keep flip-flopping, take smaller ones.</b></p>
 <p>That’s Adam. And it does it separately for every single parameter — long strides along the flat
 direction, tiny careful ones across the steep one.</p>""")
 
+                + lenses(
+            """<p>Walking down an unfamiliar staircase in the dark. On the long even flights you lengthen your
+stride; on the bit where the steps are shallow and irregular you shorten right up.</p>
+<p>You do not consciously compute anything — you adjust your step by how the last few steps went. Adam
+does exactly this, per parameter, and its whole advantage is that it does not have to use one stride
+length for the whole staircase.</p>""",
+            """<p>If you have used a PID controller, the two terms will look familiar: Adam keeps a running average
+of the gradient (momentum, like the integral term) and of its squared magnitude (the scale it divides
+by).</p>
+<p>The second is the interesting one. Dividing by the recent magnitude makes each parameter’s step
+roughly dimensionless — which is why one learning rate can suit parameters whose gradients differ by
+orders of magnitude.</p>""",
+            """<p>A ball rolling down a long narrow valley, versus one on a marble.</p>
+<p>Plain gradient descent bounces wall to wall across the narrow direction, barely progressing along
+the floor. Adam is what happens when the ball learns that the side-to-side direction is not worth
+much travel and the along-the-valley direction is.</p>""",
+            """<p>Measured on this site’s ill-conditioned test problem: with the best hand-tuned single learning
+rate, gradient descent reaches a cost of <b>0.018</b>. Adam reaches <b>8 × 10⁻⁸</b> — eight orders of
+magnitude lower, starting from a rate ten times larger.</p>
+<p>The honest caveat: on a well-scaled problem with a well-chosen α, plain gradient descent can match
+it. Adam’s real value is that it is forgiving, which matters far more in practice than the best
+case.</p>""",
+            """So the two running averages below are all it keeps — and one extra argument is all it costs you.""")
         + h2("🎬", "Watch it move")
         + demo("adam", "Same valley, two walkers",
                "red = plain gradient descent, green = Adam. Try raising α and watch red start bouncing")

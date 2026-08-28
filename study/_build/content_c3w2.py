@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 2 — Recommender systems and PCA."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -176,7 +176,7 @@ column for it.</p>"""
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-collaborative-filtering", title="The collaborative filtering algorithm", mins=16, tag="core",
+    slug="03-collaborative-filtering", title="The collaborative filtering algorithm", mins=20, tag="core",
     lede="The central idea of the week: if you do not have features, learn them. From the ratings. At the "
          "same time as everything else.",
     body=(
@@ -192,6 +192,27 @@ formulas to fit the ratings. Nudge the film features to fit the ratings. Repeat.
 <p>That is why it is called <em>collaborative</em>: the users collaborate, without ever meeting, to tell
 the algorithm what the films are like.</p>""")
 
+                + lenses(
+            """<p>Two regulars at a bookshop who keep buying the same novels.</p>
+<p>The bookseller has never read any of them and could not tell you what genre they are. But she knows
+that when one of them likes something, the other usually does too — so when a new title lands well with
+the first, she puts it aside for the second.</p>
+<p>She is recommending without understanding the books at all. That is the whole trick.</p>""",
+            """<p>This is matrix factorisation: approximate a mostly-empty ratings matrix as the product of two
+much smaller ones — a taste vector per user and a feature vector per item.</p>
+<p>What makes it unusual is that <b>both</b> factors are unknown and learned simultaneously. In Courses
+1 and 2 the features were given and only the weights were learned; here the features are themselves
+parameters.</p>""",
+            """<p>A grid with 98% of the cells blank.</p>
+<p>Films down the side, people across the top, a handful of scattered ratings. The task is to fill in
+every blank from the few that are filled — and the only structure available is that similar people
+rate similar films similarly.</p>""",
+            """<p>On this course’s own MovieLens slice: 4,778 films × 443 users is 2.1 million cells, of which
+<b>39,253</b> are filled. That is 1.85%. The median film has been rated <b>twice</b>.</p>
+<p>Any method needing a decent sample per item is dead on arrival at those numbers, which is exactly why
+borrowing strength across users is not a clever optimisation but the only thing that works.</p>""",
+            """So the cost function below sums only over cells that actually contain a rating — and that one
+condition is the heart of it.""")
         + h2("🎬", "Watch it move")
         + demo("collabfilter", "Real gradient descent, running live",
                "orange cells are the model's predictions; the vectors on the right are features nobody labelled")

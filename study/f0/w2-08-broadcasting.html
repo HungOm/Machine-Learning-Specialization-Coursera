@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.8 · 14 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.8 · 18 min read</span></p>
 <h1><span class="secno">2.8</span>Broadcasting</h1>
 <p class="lede">How NumPy adds a (1,3) to a (2,3) without complaining. Enormously useful, and the source of some very quiet bugs.</p>
 <div class="bookrail" title="Lesson 27 of 172 in the book"><i style="width:16%"></i></div>
@@ -233,7 +233,22 @@ rows.</p>
 <p>Strictly the shapes do not match. NumPy does it anyway — it quietly <b>stretches</b> the single row
 down to cover both, and then adds.</p>
 <p>That stretching is called <span class="gterm" data-g="broadcasting-f0">broadcasting</span>.</p></div><h2><span class="ico">🔤</span>The rule</h2><p>Line the shapes up <b>from the right</b>. Two dimensions are compatible if they are
-<b>equal</b>, or if <b>one of them is 1</b>.</p><table class="data"><thead><tr><th>Shapes</th><th>Compatible?</th><th>Result</th></tr></thead><tbody><tr><td>(2, 3) and (1, 3)</td><td>✅ 3=3, then 2 vs 1 — the 1 stretches</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (3,)</td><td>✅ the (3,) is treated as (1,3)</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (2, 1)</td><td>✅ the 1 stretches across</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (2, 3)</td><td>✅ identical</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (3, 2)</td><td>❌ 3≠2 and neither is 1</td><td>ValueError</td></tr><tr><td>(3, 1) and (1, 3)</td><td>⚠️ both stretch</td><td><b>(3, 3)</b> — probably not what you wanted</td></tr></tbody></table><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The single row being copied down</span><span class="h">nothing is really copied in memory — but this is what it computes</span></div><div class="demo-body" data-anim="fbroadcast"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+<b>equal</b>, or if <b>one of them is 1</b>.</p><table class="data"><thead><tr><th>Shapes</th><th>Compatible?</th><th>Result</th></tr></thead><tbody><tr><td>(2, 3) and (1, 3)</td><td>✅ 3=3, then 2 vs 1 — the 1 stretches</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (3,)</td><td>✅ the (3,) is treated as (1,3)</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (2, 1)</td><td>✅ the 1 stretches across</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (2, 3)</td><td>✅ identical</td><td>(2, 3)</td></tr><tr><td>(2, 3) and (3, 2)</td><td>❌ 3≠2 and neither is 1</td><td>ValueError</td></tr><tr><td>(3, 1) and (1, 3)</td><td>⚠️ both stretch</td><td><b>(3, 3)</b> — probably not what you wanted</td></tr></tbody></table><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A single stamp, applied to every page of a stack of forms.</p>
+<p>You do not make two hundred copies of the stamp. You have one, and it gets pressed onto each page
+in turn. The bias in a neural network layer is exactly this: one short row of numbers, applied to
+every example, without ever being duplicated in memory.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have written SQL, this is a scalar joined against a table — one value meeting many rows,
+with no explicit loop.</p>
+<p>The rule that catches people is that shapes are matched <b>from the right</b>. A (2,3) array meets
+a (3,) array by comparing 3 with 3, not 2 with 2 — which is why a (2,) array fails against a (2,3)
+even though “two rows, two numbers” sounds like it ought to work.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A rubber stamp and a rolling pin.</p>
+<p>The stamp is your small array; the page is the big one. Broadcasting rolls the stamp along the
+page. Crucially, nothing is copied — NumPy just reads the same small array over and over, which is
+why the operation is free rather than merely convenient.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>On a large dataset the difference between broadcasting and an explicit loop of copies is the
+difference between a computation that fits in memory and one that does not. Materialising a
+(200000, 400) copy of a bias <span class="gterm" data-g="vector-f0">vector</span> would eat hundreds of megabytes for no reason.</p>
+<p>Every deep learning framework leans on this. It is not a NumPy convenience feature; it is load-
+bearing infrastructure.</p></div><p class="lens-fold">So the alignment rule below — compare from the right, a 1 stretches, anything else is an error —
+is the whole of it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The single row being copied down</span><span class="h">nothing is really copied in memory — but this is what it computes</span></div><div class="demo-body" data-anim="fbroadcast"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 Z = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>],
               [<span class="tok-n">4</span>, <span class="tok-n">5</span>, <span class="tok-n">6</span>]])          <span class="tok-c"># (2, 3)</span>
 b = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">10</span>, <span class="tok-n">20</span>, <span class="tok-n">30</span>])         <span class="tok-c"># (3,)</span>
@@ -274,7 +289,7 @@ stretched to match; anything else is an error. Nothing is copied in memory — N
 same value repeatedly, which is why broadcasting is free.</p><div class="explain"><span class="tag">Say it out loud</span><p>Shapes are aligned starting from the <em>right-hand</em> end, not the left.
 <b>Why is that the more useful convention?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the rightmost axis is almost always the one holding the features of a
 single item, and the leftmost is almost always “how many items”. Aligning from the right means a
-per-feature quantity — a bias <span class="gterm" data-g="vector-f0">vector</span> of length 3, a mean per column — automatically applies to every
+per-feature quantity — a bias vector of length 3, a mean per column — automatically applies to every
 row, however many rows there are. That is exactly the operation you want most often, so it is the
 one that needs no ceremony. Aligning from the left would make “one value per item” easy and “one
 value per feature” awkward, which is the rarer need.</p></div></details></div><h2><span class="ico">🔤</span>The words, decoded</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>broadcasting</td><td>“broadcasting”</td><td>Reusing a smaller array against a bigger one without copying it. Free, because nothing is duplicated in memory.</td></tr><tr><td>aligned from the right</td><td>“right-aligned”</td><td>Shapes are compared last-dimension-first. (2,3) against (3,) compares 3 with 3.</td></tr><tr><td>compatible</td><td>“compatible”</td><td>Two dimensions match if they are equal, or if one of them is <b>1</b>. A 1 stretches; anything else is an error.</td></tr><tr><td>degenerate axis</td><td>“an axis of length one”</td><td>A dimension of size 1 — the thing that gets stretched. <code>reshape(-1,1)</code> creates one deliberately.</td></tr></tbody></table><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>(3,1) + (1,3) giving a (3,3).</b> No error, nine numbers where you wanted three. The

@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.5 · 10 min read</span></p>
+<p class="runhead"><span class="part">Part III</span><span class="d">·</span><span class="ch">Chapter 7 — Neural Network Training</span><span class="right">§&nbsp;7.5 · 14 min read</span></p>
 <h1><span class="secno">7.5</span>Why do we need activation functions?</h1>
 <p class="lede">The three-line proof that a network with no activation function is just a very expensive straight line — and the picture of what non-linearity buys you.</p>
 <div class="bookrail" title="Lesson 89 of 172 in the book"><i style="width:52%"></i></div>
@@ -257,7 +257,23 @@ W_combined = W2 @ W1
 b_combined = W2 @ b1 + b2
 direct = layer(x, W_combined, b_combined)  <span class="tok-c"># one combined layer</span>
 
-a2, direct     <span class="tok-c"># (array([32.]), array([32.])) -- identical, for any x</span></code></pre><div class="explain"><span class="tag">Say it out loud</span><p>Two linear layers collapsed to <code>6x + 2</code>. <b>Why does no amount of depth escape this?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because a linear function of a linear function is linear, and that argument applies again to the result. Each collapse produces something of the same form, so it can be collapsed again — a hundred times if need be. Depth adds parameters and no new expressive power.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Straight sticks vs. bent ones</span><span class="h">drag the slider to add <span class="gterm" data-g="relu-native">ReLU</span> units — each one adds exactly one kink</span></div><div class="demo-body" data-anim="relubuild"></div></div><p>The left panel is any number of linear layers: always a line. On the right, each ReLU unit
+a2, direct     <span class="tok-c"># (array([32.]), array([32.])) -- identical, for any x</span></code></pre><div class="explain"><span class="tag">Say it out loud</span><p>Two linear layers collapsed to <code>6x + 2</code>. <b>Why does no amount of depth escape this?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because a linear function of a linear function is linear, and that argument applies again to the result. Each collapse produces something of the same form, so it can be collapsed again — a hundred times if need be. Depth adds parameters and no new expressive power.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Three translators in a row, each translating word-for-word with no interpretation.</p>
+<p>English → French → German → Russian. You could have hired one translator to go straight from
+English to Russian and got the identical result. The chain bought you nothing, because none of them
+added anything of their own.</p>
+<p>That is a network with no activation functions: however many layers, it collapses into one.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Formally: the composition of linear maps is a linear map. Multiply matrices
+<var>W</var>₂(<var>W</var>₁<var>x</var>) and you can pre-multiply them into a single
+<var>W</var> — with fewer parameters and identical behaviour.</p>
+<p>Anyone with linear algebra can see immediately that depth without non-linearity is not merely
+inefficient, it is provably pointless. The activation function is what breaks that collapse.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A stack of flat sheets of glass, versus a stack of lenses.</p>
+<p>Light through ten sheets of flat glass comes out going the same way it went in — you could have used
+one sheet. Each lens bends it, so ten lenses can do something no single lens can. The activation is
+the curvature.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is the reason the field stalled for decades. The 1969 critique of the perceptron showed a
+single linear layer cannot learn XOR, and without a workable way to train non-linear multi-layer
+networks the interest drained away — the first “AI winter”.</p>
+<p>The non-linearity is not a refinement. It is the difference between a model that can only draw
+straight lines and one that can, in principle, approximate anything.</p></div><p class="lens-fold">So the three-line proof below is worth following once carefully — it justifies every hidden layer
+you will ever build.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Straight sticks vs. bent ones</span><span class="h">drag the slider to add <span class="gterm" data-g="relu-native">ReLU</span> units — each one adds exactly one kink</span></div><div class="demo-body" data-anim="relubuild"></div></div><p>The left panel is any number of linear layers: always a line. On the right, each ReLU unit
 contributes one “knee” where its output stops being zero and starts rising. Enough knees, positioned and
 scaled by training, and you can trace any curve you like.</p><h2><span class="ico">🔬</span>Universal approximation, honestly stated</h2><p>The theorem (Cybenko 1989, Hornik 1991) says: a network with <b>one</b> hidden layer and
 enough units can approximate any continuous function on a bounded region, to any accuracy you like.</p><div class="callout warn"><span class="tag">Watch out</span><p>Read the small print. The theorem says such a network <em>exists</em>. It does not say

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C3 · Week 1 — Clustering and anomaly detection."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C3%20-%20Unsupervised%20Learning,%20Recommenders,%20Reinforcement%20Learning"
 L = []
@@ -87,7 +87,7 @@ first.</b></p>""")
 
 # ============================================================ 2
 L.append(dict(
-    slug="02-kmeans-intuition", title="K-means intuition", mins=9, tag="core",
+    slug="02-kmeans-intuition", title="K-means intuition", mins=13, tag="core",
     lede="Two steps, repeated until nothing changes. That really is the entire algorithm.",
     body=(
         pretest("""<p>Scatter 100 points and 3 flags on a playground. <b>Describe the two-step dance that would sort everyone into three sensible groups.</b></p>""",
@@ -101,6 +101,26 @@ L.append(dict(
 <p>Do it a few times and it stops changing — everyone is already at their nearest flag, and every flag is
 already in the middle. Done.</p>""")
 
+                + lenses(
+            """<p>Deciding where to put three ice-cream vans on a crowded beach.</p>
+<p>Park them anywhere. Everyone walks to their nearest van. Now move each van to the middle of its own
+queue — and because the vans moved, some people now have a different nearest van, so they switch.
+Repeat until nobody switches. That is K-means, run entirely by people walking.</p>""",
+            """<p>Unlike everything in Courses 1 and 2, there is no <var>y</var> here — no right answer to compare
+against. The algorithm alternates two steps, each of which is provably optimal <em>given</em> the
+other.</p>
+<p>That is coordinate descent: fix the assignments, solve for the centres; fix the centres, solve for
+the assignments. Neither step can increase the objective, which is why it always converges.</p>""",
+            """<p>Sand and magnets.</p>
+<p>Scatter iron filings, drop in three magnets, and each filing snaps to its nearest. Slide each magnet
+to the centre of its own pile and some filings jump to a different magnet. Settle. The final piles were
+never labelled — the structure was in the sand.</p>""",
+            """<p>This runs your photo library’s automatic albums and much of the customer segmentation behind
+marketing. It is also image compression: cluster a photo’s pixels into 16 colours and store the index
+instead of the colour, and the file shrinks roughly sixfold.</p>
+<p>The honest caveat is that <var>K</var> is your decision, not the data’s. The algorithm will happily
+find five clusters in data that has three.</p>""",
+            """So the two alternating steps below are the entire algorithm — assign, move, repeat.""")
         + h2("🎬", "Watch it move")
         + demo("kmeansintuition", "Assign, then move, then assign, then move",
                "press ‘step’ to go one half-step at a time")
@@ -745,7 +765,7 @@ response times, file sizes are all heavily skewed. Lesson 12 shows how to fix th
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-anomaly-detection-algorithm", title="The anomaly detection algorithm", mins=10, tag="core",
+    slug="09-anomaly-detection-algorithm", title="The anomaly detection algorithm", mins=14, tag="core",
     lede="One Gaussian per feature, multiplied together. Four steps, and the multiplication is where the "
          "power comes from.",
     body=(
@@ -772,6 +792,27 @@ one way is common. Being slightly unusual in <em>five</em> ways at once is very 
             ("independence", "“the assumption”", "The product formula assumes the features are statistically independent. They usually are not — and it works well anyway."),
         ])
 
+                + lenses(
+            """<p>A mechanic who knows what a healthy engine sounds like.</p>
+<p>He cannot list every possible fault — he has never heard most of them. What he has is a very precise
+sense of <em>normal</em>, and anything outside it makes him stop and listen. He detects faults he has
+never encountered, purely by knowing normal well.</p>""",
+            """<p>This is density estimation, and it is fundamentally different from classification: you model
+P(<var>x</var>) rather than P(<var>y</var> | <var>x</var>).</p>
+<p>Fit a Gaussian per feature, multiply the per-feature probabilities, and flag anything improbable.
+The multiplication is the key design choice — it means one sufficiently strange feature can condemn an
+example even when everything else looks ordinary.</p>""",
+            """<p>A dartboard of normal readings with a wide, fuzzy edge.</p>
+<p>Most points land in the dense middle. The threshold ε draws a contour around the crowd — inside is
+normal, outside is flagged. Move ε outward and you flag less; inward and you flag more, including
+some perfectly ordinary points in the tails.</p>""",
+            """<p>This is how credit-card fraud detection works, and why it must: fraudsters invent new methods
+constantly, so a classifier trained on last year’s fraud is trained on the wrong thing.</p>
+<p>Modelling <em>normal</em> catches novel attacks a classifier never could. That is the real reason to
+choose this over supervised learning — not the class imbalance, but the fact that future positives
+will not resemble past ones.</p>""",
+            """So p(x) < ε below is the whole decision rule, and the honest work is in choosing ε and choosing
+features.""")
         + h2("🎬", "Watch it move")
         + demo("anomalyalgo", "Two features, one product, one threshold",
                "drag ε and watch which points get flagged")

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 1 — Neural networks and forward propagation."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-neurons-and-the-brain", title="Neurons and the brain", mins=9, tag="intuition",
+    slug="01-neurons-and-the-brain", title="Neurons and the brain", mins=13, tag="intuition",
     lede="Where the name came from, why the brain analogy is much looser than the marketing suggests, "
          "and why a 1950s idea suddenly started working in 2012.",
     body=(
@@ -50,6 +50,29 @@ idea from neuroscience in the 1950s and it turned out to be a genuinely useful p
 <em>is</em> one logistic regression unit. A neural network is many of them wired together so that later
 ones can use earlier ones’ answers as their inputs.</p>""", "You have already built one of these")
 
+                + lenses(
+            """<p>A pub landlord deciding whether to serve one more round. Three regulars vouch for the customer.
+He does not weigh their opinions equally — he has known one for twenty years, one is a decent judge,
+one is himself three pints in. He adds up their word according to how much he trusts each, factors in
+his own mood tonight, and if the total clears his bar, he pours.</p>
+<p>Trust levels are weights. Tonight’s mood is the bias. Pouring or not is the activation. That is a
+neuron, complete.</p>""",
+            """<p>If you did logistic regression in Course 1, you have already built one of these — a neuron with
+a sigmoid activation is <b>exactly</b> logistic regression, same formula, same parameters.</p>
+<p>Nothing new is introduced here at all. What changes is that you now stack them, so later ones take
+earlier ones’ outputs as inputs — and that stacking is where all the extra power comes from.</p>""",
+            """<p>A row of people passing buckets at a fire.</p>
+<p>Each person takes from several hands, combines what they get, and passes one bucket on. Nobody in
+the chain sees the fire or the river — they only see their neighbours. A network is rows of these,
+and “forward propagation” is just water moving down the line.</p>""",
+            """<p>The brain analogy is worth being sceptical about, because it is load-bearing in a lot of public
+discussion and it is very thin. A real neuron is a living cell with chemistry, timing and thousands of
+connections we do not fully understand. This is three lines of arithmetic borrowed from a 1943
+cartoon of one.</p>
+<p>Saying “it works like the brain” in an interview is a red flag. Saying “it is a stack of logistic
+regressions with learned features” is a green one.</p>""",
+            """So the two steps below — weighted sum, then squash — are the entire unit that everything in
+Courses 2 and 3 is built from.""")
         + h2("🎬", "Watch it move")
         + demo("bio-vs-artificial", "Biological neuron vs. our maths copy",
                "signals arrive → get weighted → get summed → the neuron fires")
@@ -840,7 +863,7 @@ a valid-looking result instead of erroring. You get numbers, they’re just the 
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-building-a-network-sequential", title="Building a neural network (Sequential)", mins=12, tag="code",
+    slug="09-building-a-network-sequential", title="Building a neural network (Sequential)", mins=16, tag="code",
     lede="Stop calling layers by hand. Sequential wires them together, and three method calls — compile, "
          "fit, predict — do the rest.",
     body=(
@@ -873,6 +896,28 @@ p = model.predict(X_new)                    # forward propagation, for every row
             ("<code>predict</code>", "“infer”", "Forward propagation over a whole batch of examples at once. Returns an array with one row per input row."),
         ], head=("Piece", "Say it out loud", "What it does"))
 
+                + lenses(
+            """<p>A production line. Station one fits the base, station two adds the mechanism, station three
+boxes it. Each station only knows its own job and hands its output straight to the next.</p>
+<p>Nobody has to describe the whole factory to any one worker. You specify the stations, in order, and
+the line does the rest — which is precisely what <code>Sequential</code> is.</p>""",
+            """<p>This is function composition, and it is a pipeline in exactly the sense you know from shell
+scripts or scikit-learn: <code>f(g(h(x)))</code>, written as a list so it reads in the order it
+runs.</p>
+<p>The constraint is the same as any pipeline: each stage's output type must match the next stage's
+input. Here that type is a shape, which is why shapes chain — 400 meets 400, 25 meets 25.</p>""",
+            """<p>A stack of sieves with progressively finer mesh.</p>
+<p>Pour the raw material in at the top; each layer keeps and passes on something more refined than the
+one above. By the bottom you have one answer. The layer sizes — 400, 25, 15, 1 — are the mesh
+gradings.</p>""",
+            """<p>The parameter count is not trivia. The Week 1 assignment network holds <b>10,575</b> numbers, all
+learned. A modern language model holds hundreds of billions.</p>
+<p>Every one of those has to be stored, updated each step, and moved between memory and processor —
+which is why model size is quoted in the press, why GPU memory is the binding constraint on what you
+can train, and why the parameter count you can compute by hand here scales directly into an
+infrastructure bill.</p>""",
+            """So <code>model.summary()</code> below is worth reading carefully — the number it prints should
+match the one you computed yourself.""")
         + h2("🎬", "Watch it move")
         + demo("sequential", "Stacking layers",
                "the layers drop into place, and the shape of what flows between them")

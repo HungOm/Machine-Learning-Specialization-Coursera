@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.4 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.4 · 12 min read</span></p>
 <h1><span class="secno">1.4</span>Slope — rise over run</h1>
 <p class="lede">The steepness of a line, as a single number. Get this and gradient descent stops being mysterious, because gradient descent is entirely about slopes.</p>
 <div class="bookrail" title="Lesson 4 of 172 in the book"><i style="width:2%"></i></div>
@@ -238,7 +238,25 @@ Identical. m and w are both the slope; c and b are both where it crosses. Only t
 <li>slope = 6 / 2 = <b>3</b></li>
 </ul>
 <p>So every step right, the line climbs 3. Sanity check: from (1, 3), stepping one right should reach
-(2, 6). Does the line pass through there? Yes.</p><div class="explain"><span class="tag">Say it out loud</span><p>Both hills rose over the same 2 steps. <b>Why does dividing rise by run tell you anything a bare rise would not?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because steepness is a <em>rate</em>, not an amount. A rise of 6 means nothing until you say over how far. Dividing removes the distance, leaving only how much height each step buys — which is what lets two hills of different lengths be compared.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag the slope and the starting height</span><span class="h">the blue and green sides of the triangle are the run and the rise</span></div><div class="demo-body" data-anim="fslope"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+(2, 6). Does the line pass through there? Yes.</p><div class="explain"><span class="tag">Say it out loud</span><p>Both hills rose over the same 2 steps. <b>Why does dividing rise by run tell you anything a bare rise would not?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because steepness is a <em>rate</em>, not an amount. A rise of 6 means nothing until you say over how far. Dividing removes the distance, leaving only how much height each step buys — which is what lets two hills of different lengths be compared.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A wheelchair ramp. Building regulations in most countries cap it at about 1 in 12 — for every
+12 cm you travel forward, you may rise at most 1 cm. A joiner does not compute a <span class="gterm" data-g="derivative-f0">derivative</span>; he holds
+a spirit level and a tape, measures the rise and the run, and divides.</p>
+<p>Too steep and it is unusable and illegal. Too shallow and it will not reach the door. That single
+ratio — how much up, per how much along — is the entire idea, and it was a trade measurement
+centuries before it was a maths topic.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Every rate you already use is a slope. Miles per hour. Pounds per kilogram. Interest per year.
+Beats per minute.</p>
+<p>The word “per” <b>is</b> the division bar. When you say a car does 30 miles per gallon, you have
+computed rise over run: 30 is the slope of distance against fuel. Nothing about the concept changes
+when it moves onto a graph — only the picture does.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A staircase.</p>
+<p>Each step has a height (the rise) and a depth (the run). A staircase with tall shallow steps is
+steep and tiring; one with short deep steps is gentle. The ratio height ÷ depth is fixed for the
+whole staircase — and that fixed number is exactly what “slope” means. A straight line is a staircase
+with infinitely small steps.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Railways live or die on this number. A gradient steeper than about 1 in 40 and a normal freight
+locomotive cannot pull a full load up it without banking engines or a rack. Every railway route ever
+surveyed is a compromise between a longer, flatter path and a shorter, steeper one.</p>
+<p>The Victorians who surveyed those routes were doing calculus with theodolites and no calculus.
+Slope was worth money long before it was worth marks.</p></div><p class="lens-fold">So when the formula below writes rise over run, it is naming something you have used all your life
+without a symbol for it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag the slope and the starting height</span><span class="h">the blue and green sides of the triangle are the run and the rise</span></div><div class="demo-body" data-anim="fslope"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">3</span>])
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">3</span>, <span class="tok-n">9</span>])

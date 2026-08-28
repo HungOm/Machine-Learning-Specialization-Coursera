@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.11 · 8 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.11 · 12 min read</span></p>
 <h1><span class="secno">1.11</span>Matrices and shapes</h1>
 <p class="lede">A grid of numbers — and the shape tuple that causes more beginner errors than anything else in machine learning.</p>
 <div class="bookrail" title="Lesson 11 of 172 in the book"><i style="width:6%"></i></div>
@@ -239,7 +239,21 @@ features</b>. So a (1000, 4) matrix is 1000 houses, each described by 4 numbers.
 <li>M[2, 1] = <b>32</b> (third row, second column — counting from zero).</li>
 <li>M[1] = <b>[21, 22, 23, 24]</b> — a whole row.</li>
 <li>M[:, 1] = <b>[12, 22, 32]</b> — a whole column.</li>
-</ul><div class="explain"><span class="tag">Say it out loud</span><p><b>Why does shape get written rows-first, rather than whichever is larger?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it is a convention that has to be fixed before anything can be communicated, and every library follows it. The value is not in the choice but in everyone making the same one — <code>(100, 4)</code> then means 100 examples of 4 features to every reader and every function.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Change the shape, watch the indices</span><span class="h">the highlighted cell shows its own address</span></div><div class="demo-body" data-anim="fmatrix"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+</ul><div class="explain"><span class="tag">Say it out loud</span><p><b>Why does shape get written rows-first, rather than whichever is larger?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it is a convention that has to be fixed before anything can be communicated, and every library follows it. The value is not in the choice but in everyone making the same one — <code>(100, 4)</code> then means 100 examples of 4 features to every reader and every function.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A seating plan for a wedding. Ten tables, eight seats each — and the only sane way to write it
+down is a grid, because every guest has both a table <em>and</em> a seat.</p>
+<p>You would never say “guest 43”; you say “table 6, seat 3”. Two coordinates, because the thing
+genuinely has two dimensions. A matrix is a seating plan for numbers.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>A spreadsheet, or a database table: rows are records, columns are fields.</p>
+<p>The convention that trips people is which is which. In this course <b>rows are examples and
+columns are features</b> — one house per row, one measurement per column. Every shape error you will
+ever hit comes from losing track of that sentence.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A block of flats.</p>
+<p>Floors and flats-per-floor. “Third floor, second door” locates exactly one flat, and the building
+has a shape — 5 by 4 — that you can state without knowing anything about who lives there. Reading a
+matrix shape is reading the building, not the residents.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Every digital image on your phone is a matrix — a grid of brightness values, one per pixel, and
+a colour photo is three of them stacked. Cropping is taking a sub-grid; rotating is rearranging
+indices; brightening is adding a constant to every entry.</p>
+<p>When Course 2 flattens a 20×20 digit into a 400-long <span class="gterm" data-g="vector-f0">vector</span>, that is a matrix being unrolled — and
+it is why the assignment’s first layer has exactly 400 inputs.</p></div><p class="lens-fold">So the (rows, columns) shape below is the single most useful thing to keep in your head while
+reading any code in this course.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Change the shape, watch the indices</span><span class="h">the highlighted cell shows its own address</span></div><div class="demo-body" data-anim="fmatrix"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 M = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">11</span>, <span class="tok-n">12</span>, <span class="tok-n">13</span>, <span class="tok-n">14</span>],
               [<span class="tok-n">21</span>, <span class="tok-n">22</span>, <span class="tok-n">23</span>, <span class="tok-n">24</span>],
               [<span class="tok-n">31</span>, <span class="tok-n">32</span>, <span class="tok-n">33</span>, <span class="tok-n">34</span>]])

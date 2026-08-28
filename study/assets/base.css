@@ -195,6 +195,36 @@ hr { border: 0; border-top: 1px solid var(--line-soft); margin: 32px 0; }
   border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
   box-shadow: var(--shadow);
 }
+/* ---- four lenses on one idea, before the formal treatment ----
+   Stacked, never tabbed: a tab hides three of the four views behind a click,
+   and the whole point is that a reader takes whichever door fits them —
+   which they can only do if they can SEE all four. Also survives print and
+   reader mode, which a tab strip would not. */
+.lenses { margin: 18px 0; display: grid; gap: 10px; }
+.lens {
+  border-left: 4px solid var(--line); background: var(--bg-sunk);
+  border-radius: var(--radius-sm); padding: 13px 16px;
+}
+.lens .tag {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; margin-bottom: 6px; color: var(--ink-faint);
+}
+.lens .tag .ico { font-size: 13px; letter-spacing: 0; }
+.lens p:last-child { margin-bottom: 0; }
+.lens.trade  { border-color: var(--amber);  background: var(--amber-soft); }
+.lens.trade .tag  { color: var(--amber); }
+.lens.bridge { border-color: var(--blue);   background: var(--blue-soft); }
+.lens.bridge .tag { color: var(--blue); }
+.lens.object { border-color: var(--purple); background: var(--purple-soft); }
+.lens.object .tag { color: var(--purple); }
+.lens.stakes { border-color: var(--teal);   background: var(--teal-soft); }
+.lens.stakes .tag { color: var(--teal); }
+.lens-fold {
+  margin: 2px 0 0; padding-left: 17px; font-size: 13.5px;
+  color: var(--ink-soft); font-style: italic;
+}
+
 .callout {
   border-left: 4px solid var(--accent); background: var(--accent-soft);
   border-radius: var(--radius-sm); padding: 14px 16px; margin: 18px 0;

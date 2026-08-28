@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """C2 · Week 3 — Advice for applying machine learning."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 SETUP = '<p class="tiny">The numbers on this page come from one reproducible experiment, used throughout the week: 60 points from <var>y</var> = 0.5<var>x</var>² − 2<var>x</var> + 3 plus Gaussian noise (σ = 1.5), split 36 train / 12 cross-validation / 12 test, fitted with polynomial features and ridge regression. The true function is a <b>quadratic</b> — remember that, because the sweep has to discover it.</p>'
 
@@ -187,7 +187,7 @@ whole dataset leaks test information into training. Fit the scaler on train only
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-model-selection", title="Model selection and train / cross-validation / test", mins=16, tag="core",
+    slug="03-model-selection", title="Model selection and train / cross-validation / test", mins=20, tag="core",
     lede="Why two sets are not enough, and the discipline of keeping one set genuinely untouched until "
          "the very end.",
     body=(
@@ -216,6 +216,27 @@ influences anything.</p>""")
 the test set must be touched exactly once. The moment you say “hmm, let me try one more thing and check the
 test set again”, you have converted your test set into a second cross-validation set.</p>""")
 
+                + lenses(
+            """<p>Hiring, with three stages: sift the CVs, interview a shortlist, then check references on the one
+you want.</p>
+<p>You do not use the interviews to also decide the reference check — that would be circular. Each
+stage has one job, and the last one exists to give an honest answer about a decision already made.
+Train, cross-validation and test are those three stages.</p>""",
+            """<p>This is the multiple-comparisons problem wearing different clothes.</p>
+<p>Try ten models against one held-out set and pick the best, and that best score is the maximum of ten
+noisy draws — biased optimistically by construction. It is the same reason a p-value stops meaning
+what you think it means after ten tests. The third split is the fix.</p>""",
+            """<p>Three sealed envelopes.</p>
+<p>You open the first as often as you like — that is the training set. You open the second to compare
+your candidates. The third stays sealed until you have committed, and you open it exactly once. Open
+it twice and it is no longer a test set; it is a second validation set.</p>""",
+            """<p>This is the discipline behind every public ML leaderboard, and the reason serious competitions
+keep a private test set nobody can query. Without it, teams optimise against the public score and the
+winner is whoever overfitted the leaderboard hardest.</p>
+<p>The same failure happens quietly inside companies whenever a team tunes for months against one
+holdout and then reports that number to management as expected production performance.</p>""",
+            """So the 60/20/20 split below is not a convention — each of the three has a distinct job that the
+others cannot do.""")
         + h2("🎬", "Watch it move")
         + demo("splitcv", "Fit on train, choose on cross-validation, report on test",
                "each degree is fitted on TRAIN and scored on CV — the winner is only then measured on TEST")
@@ -304,7 +325,7 @@ stable, and standard in scikit-learn.</p>""")
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-bias-and-variance", title="Diagnosing bias and variance", mins=16, tag="core",
+    slug="04-bias-and-variance", title="Diagnosing bias and variance", mins=20, tag="core",
     lede="The central diagnostic of the whole course. Two numbers, three possible verdicts, and a decision "
          "you no longer have to guess.",
     body=(
@@ -335,6 +356,27 @@ on something fresh.</p>""")
 J<sub>cv</sub> tells you about variance.</b> One sentence, and it is most of the diagnostic value of this
 entire week.</p>""")
 
+                + lenses(
+            """<p>Two apprentices failing at the same task, for opposite reasons.</p>
+<p>One has not learned enough — he gets it wrong in the workshop and wrong on site, equally. The other
+has learned the workshop <em>too</em> specifically: flawless on the bench he trained at, lost the
+moment anything differs.</p>
+<p>Both look like “bad apprentice”. Teaching them the same way would help one and harm the other,
+which is exactly why naming the difference matters.</p>""",
+            """<p>This is the bias–variance decomposition, and the diagnosis is mechanical: compare training error
+to validation error, and compare training error to a baseline of what is achievable.</p>
+<p>Two gaps, two diseases. Baseline-to-train is bias; train-to-validation is variance. Every remedy in
+the table belongs to exactly one of those gaps, which is what turns an intuition into a procedure.</p>""",
+            """<p>Two dartboards.</p>
+<p>The first has a tight cluster in the wrong place — consistent and consistently wrong, high bias. The
+second is scattered all over but averages to the bullseye — high variance. You fix a tight cluster by
+aiming differently; you fix scatter by steadying the hand. Different problems, different actions.</p>""",
+            """<p>This is the single most valuable week in the specialization for real work, because the wrong
+diagnosis is expensive in a specific way: “get more data” is the costliest action available and it
+does <b>nothing</b> for high bias.</p>
+<p>Teams have spent months collecting data for models that were never data-limited. Two numbers, read
+correctly, would have said so on day one.</p>""",
+            """So the comparison below turns “the model is bad” into an instruction about what to do next.""")
         + h2("🎬", "Watch it move")
         + demo("biasvar", "Degree 1 to 10, with the diagnosis underneath",
                "left: the fit. right: J_train and J_cv against model complexity")
@@ -1407,7 +1449,7 @@ lose the ability to measure the disparity.</p>""")
 
 # ============================================================ 16
 L.append(dict(
-    slug="16-skewed-datasets", title="Error metrics for skewed datasets", mins=12, tag="core",
+    slug="16-skewed-datasets", title="Error metrics for skewed datasets", mins=16, tag="core",
     lede="When 99.5% of your labels are the same value, accuracy becomes a liar. Precision and recall are "
          "the replacement.",
     body=(
@@ -1441,6 +1483,28 @@ which is the correct verdict.</p>""")
         + key("""<p>Precision’s denominator is <b>what you predicted</b>. Recall’s denominator is <b>what
 was true</b>. If you can hold on to that one difference, you will never mix them up again.</p>""")
 
+                + lenses(
+            """<p>A smoke alarm that never goes off is right 99.9% of the time.</p>
+<p>Stated as accuracy that sounds excellent, and it is useless — because the thing it exists to detect
+is rare, and it detects none of it. Any measure that lets “do nothing” score highly is measuring the
+wrong thing.</p>""",
+            """<p>This is class imbalance, and it breaks accuracy the way a heavily skewed distribution breaks the
+mean.</p>
+<p>The replacements are precision (of what you flagged, how much was real) and recall (of what was
+real, how much you flagged). They pull against each other, and F1 is the harmonic mean — harmonic
+specifically because it refuses to be rescued by one good half.</p>""",
+            """<p>A two-by-two grid: predicted yes/no against actually yes/no.</p>
+<p>Precision reads one <em>column</em>; recall reads one <em>row</em>. They share the true-positive
+corner and differ in what they divide it by, which is the whole distinction and the reason the two
+are so easily confused.</p>""",
+            """<p>Cancer screening lives on this trade-off. Higher recall means fewer missed tumours and more
+healthy people put through anxious follow-ups; higher precision means fewer false alarms and more
+missed cases.</p>
+<p>There is no mathematically correct answer — it is a judgement about which harm is worse, made by
+clinicians and regulators, and then implemented as a threshold. The model supplies the probability;
+people supply the ethics.</p>""",
+            """So the two formulas below are worth memorising as “of what I flagged” and “of what was really
+there”.""")
         + h2("🎬", "Watch it move")
         + demo("confusion", "The confusion matrix, live",
                "400 patients, 5% actually ill — drag the threshold and watch all four numbers move")

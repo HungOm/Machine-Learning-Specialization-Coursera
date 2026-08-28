@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 2 — Python, NumPy and pandas."""
 from kit import (kid, key, warn, trap, note, card, eq, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 L = []
 
@@ -165,7 +165,7 @@ gives <code>NameError</code>.</p>""")
     ]))
 
 # ============================================================ 3
-lesson("03-lists-vs-arrays", "Lists vs NumPy arrays", 12,
+lesson("03-lists-vs-arrays", "Lists vs NumPy arrays", 16,
     "They look identical and behave nothing alike. This one distinction causes more beginner confusion "
     "than anything else in scientific Python.",
     pretest("""<p><code>[1, 2] + [3, 4]</code>. <b>Commit to an answer.</b> Then guess whether NumPy would agree with you.</p>""",
@@ -183,6 +183,26 @@ can safely mean “add the numbers”.</p>
              ["<code>x + 10</code>", "<b>TypeError</b>", "<code>[11,12,13]</code> — adds to each"],
              ["<code>x + y</code>", "<code>[1,2,3,4,5,6]</code> — glued", "<code>[5,7,9]</code> — added pairwise"]])
 
+        + lenses(
+        """<p>A shopping list and a bill are both columns of things, and they behave nothing alike.</p>
+<p>Photocopy the shopping list twice and you have two lists — more items, same prices. Double the
+bill and every figure on it changes. Same-looking column, completely different meaning of “times
+two”. Python has both objects, and does not warn you which one you are holding.</p>""",
+        """<p>This is the difference between a <b>container</b> and a <b>vector</b>.</p>
+<p>A list is a general container — it will hold strings, numbers and other lists, so <code>+</code>
+can only sensibly mean “join them”. An array claims to be a mathematical object, so <code>+</code>
+means “add the numbers”. The type is the promise; the operators follow from it.</p>""",
+        """<p>An egg box versus a set of weighing scales.</p>
+<p>Adding to an egg box means putting more eggs in. Adding to the scales means the reading goes up.
+Both accept things; only one does arithmetic. <code>[1,2,3] * 2</code> fills a bigger box;
+<code>np.array([1,2,3]) * 2</code> moves the needle.</p>""",
+        """<p>This silently wrong behaviour is one of the most common real bugs in beginner data code, because
+neither version raises an error. A model trained on a list-concatenated “doubled” dataset trains
+happily on six duplicated rows and reports a fine-looking loss.</p>
+<p>The habit that prevents it costs nothing: convert at the boundary, with
+<code>np.array(...)</code>, the moment data enters your maths.</p>""",
+        """So the table below is not pedantry about types — it is the difference between arithmetic and
+stacking.""")
     + h2("🎬", "Watch it move")
     + demo("flistarray", "The same operation, both ways",
            "click through — the list column is almost never what you wanted")
@@ -390,7 +410,7 @@ x[1:5].</p>""")
     ]))
 
 # ============================================================ 5
-lesson("05-shape-and-axis", "Shape and axis", 9,
+lesson("05-shape-and-axis", "Shape and axis", 13,
     "Most NumPy confusion is shape confusion. And `axis` has one rule that makes it click permanently.",
     pretest("""<p>An array reports its shape as <code>(100, 4)</code>. You call <code>.sum(axis=0)</code>. <b>Guess how many numbers come back — 100, or 4?</b></p>""",
     """<p>Commit before reading. Watch for what <em>axis</em> actually names: the direction that gets collapsed, not the one that survives.</p>""")
@@ -423,6 +443,28 @@ Shape (3,4) became (3,).</li>
 
     + explain("""<p>You passed <code>axis=0</code> and got one number per column. <b>Why does axis 0 produce column results rather than row results?</b></p>""",
         """<p>Because axis names the direction that gets <em>collapsed</em>, not the one that survives. Axis 0 runs down the rows, so summing along it consumes the rows and leaves one value per column. Reading it as “the axis I keep” is the source of nearly every mistake here.</p>""")
+        + lenses(
+        """<p>Describing a car park over the phone: “four levels, sixty spaces each.” Two numbers, and the
+listener knows the whole structure without seeing one space.</p>
+<p>Say it the other way round — sixty levels of four spaces — and you have described a completely
+different building. Shape is the order of those numbers, and the order is the meaning.</p>""",
+        """<p>Rows and columns, exactly as in any table you have used — with one convention this course never
+breaks: <b>rows are examples, columns are features</b>.</p>
+<p>The <code>axis=</code> argument is then answering “collapse which direction?”, and the useful
+mnemonic is that <b>the axis you name is the one that disappears</b>. <code>axis=0</code> collapses
+rows, leaving one number per feature — which is what almost every statistic you want actually
+is.</p>""",
+        """<p>A block of chocolate: 4 rows by 6 squares.</p>
+<p>Snap along the rows and you get 6 columns-worth. Snap along the columns and you get 4 rows-worth.
+Same bar, two different piles, and which you get depends entirely on which direction you snapped.
+<code>axis=</code> is the direction of the snap.</p>""",
+        """<p>Shape mismatch is far and away the most common runtime error in machine learning code — more
+than syntax errors, more than logic errors. Every practitioner develops the reflex of printing
+<code>.shape</code> before anything else when something breaks.</p>
+<p>The habit is worth building now: when a line fails, print the shape of every array on it. The
+answer is usually immediately obvious once the numbers are on screen.</p>""",
+        """So <code>(200, 2)</code> below reads as “two hundred examples, two features each” — and that
+sentence will debug more code than any other in this course.""")
     + h2("🎬", "Watch it move")
     + demo("fshape", "The two axes, and which one vanishes",
            "watch the output shape in each case")
@@ -653,7 +695,7 @@ multiply. Runs happily, gives wrong numbers.</p>""")
     ]))
 
 # ============================================================ 8
-lesson("08-broadcasting", "Broadcasting", 14,
+lesson("08-broadcasting", "Broadcasting", 18,
     "How NumPy adds a (1,3) to a (2,3) without complaining. Enormously useful, and the source of some "
     "very quiet bugs.",
     pretest("""<p>You subtract a 4-number array from a (100, 4) matrix. Shapes clearly do not match. <b>Guess whether NumPy errors — and whether it should.</b></p>""",
@@ -676,6 +718,27 @@ down to cover both, and then adds.</p>
              ["(2, 3) and (3, 2)", "❌ 3≠2 and neither is 1", "ValueError"],
              ["(3, 1) and (1, 3)", "⚠️ both stretch", "<b>(3, 3)</b> — probably not what you wanted"]])
 
+        + lenses(
+        """<p>A single stamp, applied to every page of a stack of forms.</p>
+<p>You do not make two hundred copies of the stamp. You have one, and it gets pressed onto each page
+in turn. The bias in a neural network layer is exactly this: one short row of numbers, applied to
+every example, without ever being duplicated in memory.</p>""",
+        """<p>If you have written SQL, this is a scalar joined against a table — one value meeting many rows,
+with no explicit loop.</p>
+<p>The rule that catches people is that shapes are matched <b>from the right</b>. A (2,3) array meets
+a (3,) array by comparing 3 with 3, not 2 with 2 — which is why a (2,) array fails against a (2,3)
+even though “two rows, two numbers” sounds like it ought to work.</p>""",
+        """<p>A rubber stamp and a rolling pin.</p>
+<p>The stamp is your small array; the page is the big one. Broadcasting rolls the stamp along the
+page. Crucially, nothing is copied — NumPy just reads the same small array over and over, which is
+why the operation is free rather than merely convenient.</p>""",
+        """<p>On a large dataset the difference between broadcasting and an explicit loop of copies is the
+difference between a computation that fits in memory and one that does not. Materialising a
+(200000, 400) copy of a bias vector would eat hundreds of megabytes for no reason.</p>
+<p>Every deep learning framework leans on this. It is not a NumPy convenience feature; it is load-
+bearing infrastructure.</p>""",
+        """So the alignment rule below — compare from the right, a 1 stretches, anything else is an error —
+is the whole of it.""")
     + h2("🎬", "Watch it move")
     + demo("fbroadcast", "The single row being copied down",
            "nothing is really copied in memory — but this is what it computes")
@@ -883,7 +946,7 @@ different answers. This is the expensive one.</p>""")
     ]))
 
 # ============================================================ 10
-lesson("10-aggregations", "sum, mean, max — along an axis", 12,
+lesson("10-aggregations", "sum, mean, max — along an axis", 16,
     "Collapsing a lot of numbers into fewer. The same axis rule from lesson 5, now doing real work.",
     pretest("""<p>A (100, 4) matrix of houses. You want the average of <em>each feature</em>. <b>Should the answer have 100 numbers or 4 — and which axis gives you that?</b></p>""",
     """<p>Four. Watch for how to get the axis right first time rather than by trial and error.</p>""")
@@ -904,6 +967,26 @@ everything at once.</p>""")
         ("no axis", "—", "collapse everything → a single number."),
     ], head=("Method", "Say it", "What it does"))
 
+        + lenses(
+        """<p>A teacher with a class register: thirty pupils down the side, five subjects across the top.</p>
+<p>“Average per pupil” and “average per subject” are different questions with different answers, from
+the same grid. One collapses across the row, one down the column. The grid does not tell you which
+you want — you have to say.</p>""",
+        """<p>This is <code>GROUP BY</code>, or a pivot table’s row-versus-column totals.</p>
+<p>Say it as <b>“the axis you name is the one that vanishes”</b>. <code>axis=0</code> makes the rows
+vanish, leaving one value per column — per feature. Since features are what you standardise and model,
+<code>axis=0</code> is what you want nearly every time in this course.</p>""",
+        """<p>A spreadsheet with a totals row at the bottom and a totals column on the right.</p>
+<p>The bottom row is <code>axis=0</code>: it collapsed every row into one number per column. The
+right-hand column is <code>axis=1</code>. Both are “sums” of the same table, and confusing them
+produces numbers of the wrong length — which is exactly the error you will see.</p>""",
+        """<p><code>X.mean(axis=0)</code> is the single most-typed line in this specialization. It computes the
+feature means for standardisation in Course 1, and it <em>is</em> half of the anomaly-detection model
+in Course 3.</p>
+<p>Get the axis backwards and nothing crashes — you get an array of the wrong length that may still
+broadcast, and a model that trains on nonsense. This is a silent-failure argument, which is why it
+earns its own lesson.</p>""",
+        """So the one sentence to keep is: name the axis you want to disappear.""")
     + h2("🎬", "Watch it move")
     + demo("faxis", "Pick a function and an axis",
            "watch the shape of the answer change")

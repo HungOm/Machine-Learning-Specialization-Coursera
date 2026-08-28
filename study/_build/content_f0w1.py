@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Foundations · Week 1 — The maths you actually need."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 L = []
 
@@ -240,7 +240,7 @@ defined. Authors redefine freely.</p>""")
     ]))
 
 # ============================================================ 4
-lesson("04-slope", "Slope — rise over run", 8,
+lesson("04-slope", "Slope — rise over run", 12,
     "The steepness of a line, as a single number. Get this and gradient descent stops being mysterious, "
     "because gradient descent is entirely about slopes.",
     pretest("""<p>Two hills. On the first you walk 2 steps forward and rise 6. On the second, 2 steps forward and rise 2. <b>How many times steeper is the first — and what single number would you use to say so?</b></p>""",
@@ -277,6 +277,30 @@ Identical. m and w are both the slope; c and b are both where it crosses. Only t
 
     + explain("""<p>Both hills rose over the same 2 steps. <b>Why does dividing rise by run tell you anything a bare rise would not?</b></p>""",
         """<p>Because steepness is a <em>rate</em>, not an amount. A rise of 6 means nothing until you say over how far. Dividing removes the distance, leaving only how much height each step buys — which is what lets two hills of different lengths be compared.</p>""")
+        + lenses(
+        """<p>A wheelchair ramp. Building regulations in most countries cap it at about 1 in 12 — for every
+12 cm you travel forward, you may rise at most 1 cm. A joiner does not compute a derivative; he holds
+a spirit level and a tape, measures the rise and the run, and divides.</p>
+<p>Too steep and it is unusable and illegal. Too shallow and it will not reach the door. That single
+ratio — how much up, per how much along — is the entire idea, and it was a trade measurement
+centuries before it was a maths topic.</p>""",
+        """<p>Every rate you already use is a slope. Miles per hour. Pounds per kilogram. Interest per year.
+Beats per minute.</p>
+<p>The word “per” <b>is</b> the division bar. When you say a car does 30 miles per gallon, you have
+computed rise over run: 30 is the slope of distance against fuel. Nothing about the concept changes
+when it moves onto a graph — only the picture does.</p>""",
+        """<p>A staircase.</p>
+<p>Each step has a height (the rise) and a depth (the run). A staircase with tall shallow steps is
+steep and tiring; one with short deep steps is gentle. The ratio height ÷ depth is fixed for the
+whole staircase — and that fixed number is exactly what “slope” means. A straight line is a staircase
+with infinitely small steps.</p>""",
+        """<p>Railways live or die on this number. A gradient steeper than about 1 in 40 and a normal freight
+locomotive cannot pull a full load up it without banking engines or a rack. Every railway route ever
+surveyed is a compromise between a longer, flatter path and a shorter, steeper one.</p>
+<p>The Victorians who surveyed those routes were doing calculus with theodolites and no calculus.
+Slope was worth money long before it was worth marks.</p>""",
+        """So when the formula below writes rise over run, it is naming something you have used all your life
+without a symbol for it.""")
     + h2("🎬", "Watch it move")
     + demo("fslope", "Drag the slope and the starting height",
            "the blue and green sides of the triangle are the run and the rise")
@@ -333,7 +357,7 @@ y₂ − y₁, then run must be x₂ − x₁. Mixing the order flips the sign.<
     ]))
 
 # ============================================================ 5
-lesson("05-derivatives", "What a derivative actually is", 10,
+lesson("05-derivatives", "What a derivative actually is", 14,
     "The slope of a curve at one exact point. This is the single piece of calculus the whole "
     "specialization runs on — and you need the meaning, not the rules.",
     pretest("""<p>Slope needs two points. A curve's steepness changes everywhere, and you only have <b>one</b> point. <b>How would you cheat?</b></p>""",
@@ -376,6 +400,30 @@ rather than memorise — is that the derivative of x² is <b>2x</b>. At x = 3: 2
 
     + explain("""<p>You slid the second point closer and the slope settled on a number. <b>Why does it settle rather than collapse into 0 ÷ 0?</b></p>""",
         """<p>Because both the rise and the run shrink <em>together</em>, at a fixed ratio. Their sizes vanish; their ratio does not. That is the whole trick of a limit — you never actually reach 0 ÷ 0, you watch where the ratio is heading.</p>""")
+        + lenses(
+        """<p>A car’s speedometer.</p>
+<p>The odometer tells you distance — a total. The speedometer tells you how fast that total is
+<em>changing</em> at this exact instant. Nobody computes it by taking two odometer readings an hour
+apart; the needle answers the question “right now, how quickly?” continuously.</p>
+<p>A derivative is a speedometer for any quantity at all. How fast is the cost falling, right at this
+setting of the dial? That is all it asks.</p>""",
+        """<p>If you have worked with time-series data, you already reach for this constantly: the derivative
+is the <b>rate of change</b>, the thing you get by differencing consecutive values.</p>
+<p>Month-on-month growth, marginal cost, velocity, acceleration, the slope of a fitted trend — all of
+them are derivatives, computed numerically instead of symbolically. Calculus is just the exact
+version of the differencing you already do by subtraction.</p>""",
+        """<p>A straight ruler laid against a curve so it just kisses it at one point.</p>
+<p>The curve bends; the ruler does not. But right at the touching point they agree perfectly on which
+direction things are heading. The slope of that ruler is the derivative at that point. Slide the
+touching point along the curve and the ruler tilts — which is why the derivative is itself a
+function, with a different value everywhere.</p>""",
+        """<p>Every anti-lock braking system computes derivatives thousands of times a second. It watches how
+fast each wheel’s speed is changing, and if one is decelerating far faster than the car as a whole,
+that wheel is locking up — so release the brake on it, immediately.</p>
+<p>The system never knows the road surface, the weather, or the car’s mass. It only knows rates of
+change, and that is enough to keep the car steerable in an emergency stop.</p>""",
+        """So the limit definition below is the formal way of asking the speedometer question — and every
+gradient in this specialization is one of these.""")
     + h2("🎬", "Watch it move")
     + demo("fderiv", "Shrink the gap and watch the two lines merge",
            "orange is the line through two points; green dashes are the true slope at the point")
@@ -581,7 +629,7 @@ purely a notice to the reader.</p>""")
     ]))
 
 # ============================================================ 7
-lesson("07-sigma-notation", "Σ — summation notation", 9,
+lesson("07-sigma-notation", "Σ — summation notation", 13,
     "The scariest-looking symbol in the course, and it is a for loop. Once you can read it, half the "
     "formulas in the specialization become ordinary.",
     pretest("""<p>A formula says <b>Σ</b> with <b>i=1</b> underneath and <b>m</b> on top. <b>Guess what it is telling a computer to do</b> — you have almost certainly written this in code without knowing the symbol.</p>""",
@@ -624,6 +672,28 @@ Once you can point to all three, you can unroll it — however unfamiliar what c
 
     + explain("""<p><b>Why does the letter under Σ matter, given the answer is just a total?</b></p>""",
         """<p>Because it names what changes on each pass. Without it, “add up x” cannot say <em>which</em> x — the i is the counter that steps through them, and it is also what lets the expression beside Σ refer to the current one.</p>""")
+        + lenses(
+        """<p>A shopkeeper cashing up at the end of the day. Thirty till receipts in a spike, and one job:
+add them all up.</p>
+<p>She does not need a symbol for that. But if she had to write the <em>instruction</em> down for
+someone else — “start at the first receipt, keep going to the last, add each one to the running
+total” — she would need some shorthand. Σ is that shorthand, and nothing more.</p>""",
+        """<p>It is a <code>for</code> loop written before programming existed.</p>
+<p>The letter underneath is the loop counter and where it starts. The number on top is where it
+stops. What follows is the body — the thing computed each time round and added to an accumulator.
+If you can read <code>total += x[i]</code>, you can read Σ; they are the same sentence in different
+alphabets.</p>""",
+        """<p>A supermarket receipt.</p>
+<p>A column of line items, and one bold number at the bottom. Σ is the instruction that turns the
+column into the bold number. Everything else about the notation — the letter, the limits — is just
+saying <em>which</em> column and <em>which</em> rows.</p>""",
+        """<p>Every cost function you will meet in three courses ends in a Σ, because every one of them asks
+the same question: how wrong were we, <b>added up over every example we have</b>.</p>
+<p>That is why this symbol is the single most load-bearing piece of notation in the specialization —
+by the site’s own count, more lessons depend on this one than on almost anything else. Not knowing it
+does not slow you down; it stops you.</p>""",
+        """So the formula below is a loop, and the three decorations around the Σ are only saying where it
+starts, where it stops, and what goes in the accumulator.""")
     + h2("🎬", "Watch it move")
     + demo("fsigma", "The symbol unrolling into a loop",
            "watch the running total build up one term at a time")
@@ -796,7 +866,7 @@ reinforcement learning). Three different meanings, one alphabet.</p>""")
     ]))
 
 # ============================================================ 9
-lesson("09-vectors", "Vectors", 8,
+lesson("09-vectors", "Vectors", 12,
     "A list of numbers. That is it — and almost every object in machine learning is one.",
     pretest("""<p>A house: 1400 sq ft, 3 beds, 2 floors, 18 years old. <b>Is [1400, 3, 2, 18] the same thing as [18, 2, 3, 1400]?</b> Commit to yes or no, and why.</p>""",
         """<p>Watch for the word “ordered”. It sounds trivial and it is the entire difference between a vector and a bag of numbers.</p>""")
@@ -826,6 +896,27 @@ triangle 3 across and 4 up:</p>
 
     + explain("""<p>[3, 7] and [7, 3] contain the same two numbers. <b>Why are they nevertheless different vectors?</b></p>""",
         """<p>Because position carries meaning. If slot 1 is square footage and slot 2 is bedrooms, swapping them describes a different house entirely. A vector is a list <em>plus</em> the agreement about what each slot means.</p>""")
+        + lenses(
+        """<p>A shopping list with quantities: 2 loaves, 1 milk, 6 eggs.</p>
+<p>You would never call that three separate facts — it is <em>one</em> order. It travels together, it
+gets priced together, and the order of the items is fixed by the list, not by chance. That is a
+vector: several numbers that belong to one thing and are always handled as a unit.</p>""",
+        """<p>A row in a database table. A record. A struct.</p>
+<p>One customer, with an age, a balance and a tenure — three numbers that only mean something
+together, in a fixed column order. You already know not to shuffle the columns of one row. A vector
+is that row, with arithmetic defined on it.</p>""",
+        """<p>An arrow drawn from the origin.</p>
+<p>Two numbers become an arrow on a page; three become an arrow in the room. Its <b>length</b> is how
+big the thing is, its <b>direction</b> is what kind of thing it is. Two customers with similar
+arrows are similar customers — and that single idea is what recommender systems in Course 3 run
+on.</p>""",
+        """<p>GPS trilateration is vector arithmetic and nothing else. Your phone knows its distance from four
+satellites, each at a known position vector, and solves for the one position consistent with all
+four.</p>
+<p>The same maths lands aircraft, aims telescopes and steers container ships. Long before machine
+learning, the vector was how navigation stopped being guesswork.</p>""",
+        """So the bold letters and little arrows below are only saying “this is a whole row, not one
+number”.""")
     + h2("🎬", "Watch it move")
     + demo("fvector", "Two numbers, drawn as an arrow",
            "drag them and watch the components and the length")
@@ -888,7 +979,7 @@ double bars is the length of a vector.</p>""")
     ]))
 
 # ============================================================ 10
-lesson("10-dot-product", "The dot product", 9,
+lesson("10-dot-product", "The dot product", 13,
     "Two lists in, one number out. It is what a neuron computes, what a recommender uses to match you to "
     "a film, and what matrix multiplication is made of.",
     pretest("""<p>Shopping list: 1 apple, 2 bananas, 3 cherries. Prices: £4, £5, £6. <b>Work out the bill.</b> Then: how many separate <em>kinds</em> of operation did you just perform?</p>""",
@@ -927,6 +1018,28 @@ That is not a convention — it is the reason NumPy raises an error.</p>"""
 
     + explain("""<p>You multiplied pairs, then added. <b>Why is the adding step there — why not stop at the list of products?</b></p>""",
         """<p>Because the question was “what is the total bill”, which is one number. Stopping early leaves you with per-item costs; summing collapses them into the single quantity you asked for. That collapse is why a neuron can take many inputs and emit one.</p>""")
+        + lenses(
+        """<p>A market stall totting up a sale. Three apples at 40p, two pears at 65p, one melon at £2.</p>
+<p>You do not add the quantities and you do not add the prices — you multiply <em>each</em> quantity
+by <em>its own</em> price, then add the line totals. £1.20 + £1.30 + £2.00 = £4.50. That is a dot
+product, and every shopkeeper on earth computes them all day without a name for it.</p>""",
+        """<p>In a spreadsheet this is <code>SUMPRODUCT</code>, and you have probably used it: one column of
+weights, one column of values, one number out.</p>
+<p>A weighted average, a portfolio return, a grade computed from weighted coursework — all dot
+products. In statistics it is the covariance kernel; in physics, work done. One operation, many
+professional dialects.</p>""",
+        """<p>Two columns of numbers, side by side, with a line drawn between each facing pair.</p>
+<p>Multiply along each line, then add the results down the page. One number falls out at the bottom.
+That picture — pair, multiply, add — is the whole operation, and it does not get more complicated
+when the columns are a million long.</p>""",
+        """<p>Every single neuron in every network in Courses 2 and 3 computes exactly one dot product, then
+squashes the answer. A model with ten million parameters is ten million weights sitting in dot
+products.</p>
+<p>This is why GPUs exist commercially. They are not general-purpose fast — they are specifically
+enormous parallel dot-product machines, and the entire economics of modern AI rests on that one
+operation being cheap.</p>""",
+        """So the formula below is a shop till, and the neuron in Course 2 is the same till with learned
+prices.""")
     + h2("🎬", "Watch it move")
     + demo("fdot", "Pair, multiply, add — and what the answer means geometrically",
            "drag the angle and watch the sign of the answer flip")
@@ -991,7 +1104,7 @@ keep <code>np.dot</code> for vectors.</p>""")
     ]))
 
 # ============================================================ 11
-lesson("11-matrices", "Matrices and shapes", 8,
+lesson("11-matrices", "Matrices and shapes", 12,
     "A grid of numbers — and the shape tuple that causes more beginner errors than anything else in "
     "machine learning.",
     pretest("""<p>You have 100 houses, each with 4 measurements. <b>Someone says “the shape is (100, 4)”. Which number is which — and how would you know if you had it backwards?</b></p>""",
@@ -1025,6 +1138,26 @@ features</b>. So a (1000, 4) matrix is 1000 houses, each described by 4 numbers.
 
     + explain("""<p><b>Why does shape get written rows-first, rather than whichever is larger?</b></p>""",
         """<p>Because it is a convention that has to be fixed before anything can be communicated, and every library follows it. The value is not in the choice but in everyone making the same one — <code>(100, 4)</code> then means 100 examples of 4 features to every reader and every function.</p>""")
+        + lenses(
+        """<p>A seating plan for a wedding. Ten tables, eight seats each — and the only sane way to write it
+down is a grid, because every guest has both a table <em>and</em> a seat.</p>
+<p>You would never say “guest 43”; you say “table 6, seat 3”. Two coordinates, because the thing
+genuinely has two dimensions. A matrix is a seating plan for numbers.</p>""",
+        """<p>A spreadsheet, or a database table: rows are records, columns are fields.</p>
+<p>The convention that trips people is which is which. In this course <b>rows are examples and
+columns are features</b> — one house per row, one measurement per column. Every shape error you will
+ever hit comes from losing track of that sentence.</p>""",
+        """<p>A block of flats.</p>
+<p>Floors and flats-per-floor. “Third floor, second door” locates exactly one flat, and the building
+has a shape — 5 by 4 — that you can state without knowing anything about who lives there. Reading a
+matrix shape is reading the building, not the residents.</p>""",
+        """<p>Every digital image on your phone is a matrix — a grid of brightness values, one per pixel, and
+a colour photo is three of them stacked. Cropping is taking a sub-grid; rotating is rearranging
+indices; brightening is adding a constant to every entry.</p>
+<p>When Course 2 flattens a 20×20 digit into a 400-long vector, that is a matrix being unrolled — and
+it is why the assignment’s first layer has exactly 400 inputs.</p>""",
+        """So the (rows, columns) shape below is the single most useful thing to keep in your head while
+reading any code in this course.""")
     + h2("🎬", "Watch it move")
     + demo("fmatrix", "Change the shape, watch the indices",
            "the highlighted cell shows its own address")
@@ -1270,7 +1403,7 @@ a (3,) has no second dimension to swap with. You need <code>.reshape(-1, 1)</cod
     ]))
 
 # ============================================================ 14
-lesson("14-exponentials", "Exponentials and e", 8,
+lesson("14-exponentials", "Exponentials and e", 12,
     "Why a number beginning 2.718 turns up in the sigmoid, in softmax, and in every probability formula "
     "in the specialization.",
     pretest("""<p>A rumour doubles every hour. After 10 hours, <b>roughly how many people know it if one person started?</b> Guess before calculating — most people guess far too low.</p>""",
@@ -1302,6 +1435,30 @@ that matter.</p>"""
 
     + explain("""<p>Ten doublings reached 1024, not 20. <b>Why does repeated multiplication run away so much faster than repeated addition?</b></p>""",
         """<p>Because each step is applied to the result of the last, so the amount added grows with the total. Adding 2 ten times adds 2 each time; doubling ten times adds 1, then 2, then 4, then 8 — the increment itself is compounding.</p>""")
+        + lenses(
+        """<p>A rumour in a village. One person tells two, each of those tells two more. Day one: three
+people know. Day ten: over a thousand.</p>
+<p>Nothing in that process accelerated — each person did the same small thing. The <em>total</em>
+exploded because the growth was proportional to how much had already grown. That is exponential
+growth, and it is why it always feels slow right up until it does not.</p>""",
+        """<p>Compound interest is the same formula with money in it. So is population growth, radioactive
+decay (with the sign flipped), and the charging curve of a capacitor.</p>
+<p>The number <var>e</var> is not arbitrary: it is what compound interest converges to as you
+compound more and more often. Anyone who has computed continuously-compounded returns has already
+used it.</p>""",
+        """<p>A sheet of paper folded in half, repeatedly.</p>
+<p>Seven folds and it is thicker than a book. Forty-two folds — if it were possible — and it reaches
+the Moon. The paper is not doing anything different on fold forty than on fold four; doubling simply
+outruns intuition. Hold that feeling, because it explains why <var>e</var><sup>z</sup> in softmax
+exaggerates score differences so aggressively.</p>""",
+        """<p>Every epidemic model, every viral-growth projection and every server capacity plan is
+exponential arithmetic. Getting the exponent slightly wrong changes a forecast by orders of
+magnitude, which is precisely why early pandemic projections varied so wildly between teams using
+the same data.</p>
+<p>In this course the same function turns raw scores into probabilities — and the same explosive
+behaviour is what makes softmax numerically dangerous without the trick in C2 W2.</p>""",
+        """So the curve below is not merely “steep” — it is steep in a way that gets steeper, and that is the
+property everything downstream depends on.""")
     + h2("🎬", "Watch it move")
     + demo("fexp", "The curve, and the numbers at each point",
            "notice it never touches the bottom, however far left you go")
@@ -1361,7 +1518,7 @@ about 88 in float32. Real libraries subtract the maximum first to avoid it.</p>"
     ]))
 
 # ============================================================ 15
-lesson("15-logarithms", "Logarithms", 8,
+lesson("15-logarithms", "Logarithms", 12,
     "The undo button for exponentials — and the reason a confidently wrong prediction costs a model so "
     "much.",
     pretest("""<p>Exponentials ask “what does this power give me?”. <b>Guess the opposite question</b> — and what it would be useful for if a probability came out as 0.001.</p>""",
@@ -1397,6 +1554,30 @@ lesson("15-logarithms", "Logarithms", 8,
 
     + explain("""<p>log turned 0.001 into about −6.9. <b>Why is that useful rather than merely different?</b></p>""",
         """<p>Because 0.001 and 0.0001 look nearly identical and are ten times apart; −6.9 and −9.2 are visibly apart. log converts ratios into distances, which is what makes a loss function able to distinguish “wrong” from “very wrong”.</p>""")
+        + lenses(
+        """<p>Sound. A whisper and a jet engine differ in energy by a factor of about a trillion, and no
+human scale can hold that.</p>
+<p>So we use decibels, which count <em>zeros</em> instead of quantities: every 10 dB is another
+tenfold. A log turns an unmanageable range into a walkable one. Earthquake magnitudes and pH do
+exactly the same thing, for exactly the same reason.</p>""",
+        """<p>A logarithm answers “what power?”. If you have ever read a log-scale chart — stock prices over
+fifty years, or anything spanning several orders of magnitude — you have used one.</p>
+<p>The property that matters here is that it turns multiplication into addition:
+log(<var>ab</var>) = log <var>a</var> + log <var>b</var>. That is why slide rules worked, and it is
+why probabilities — which multiply and rapidly underflow — get logged before a computer touches
+them.</p>""",
+        """<p>A ruler where the numbers are not evenly spaced: 1, 10, 100, 1000 sit at equal distances
+apart.</p>
+<p>On that ruler, multiplying by ten is a fixed step to the right, however big the number already is.
+Everything a logarithm does follows from that one picture — huge ranges become short walks, and
+multiplying becomes stepping.</p>""",
+        """<p>The loss function for every classifier in this specialization is a logarithm, and it is chosen
+deliberately: it makes a confidently wrong prediction cost enormously — approaching infinity — while
+a confidently right one costs almost nothing.</p>
+<p>That asymmetry is not decoration. It is the mechanism that stops a model shrugging its way to a
+mediocre answer, and it only exists because log(0) runs away to −∞.</p>""",
+        """So the formula below is asking “what power?”, and the wild behaviour near zero is the feature, not
+a flaw.""")
     + h2("🎬", "Watch it move")
     + demo("flog", "Drag p towards zero and watch the penalty climb",
            "the curve is the whole of cross-entropy loss")
@@ -1460,7 +1641,7 @@ something like [1e−15, 1 − 1e−15] first.</p>""")
     ]))
 
 # ============================================================ 16
-lesson("16-probability", "Probability basics", 8,
+lesson("16-probability", "Probability basics", 12,
     "Four rules. They cover every probability statement in the specialization, including the one that "
     "makes anomaly detection work.",
     pretest("""<p>A model outputs <b>0.7</b> for “this email is spam”. <b>What must the other possibility be — and what does that tell you about how all the outputs relate?</b></p>""",
@@ -1497,6 +1678,27 @@ multiplying one is doing the real work in this specialization.</p>""")
 
     + explain("""<p>All the outcomes had to add to 1. <b>Why exactly 1, rather than 100 or any other total?</b></p>""",
         """<p>Because 1 means “the whole of what can happen”. Every possible outcome is somewhere in that whole, so the parts must exactly fill it — no more, since nothing else can occur, and no less, since something must.</p>""")
+        + lenses(
+        """<p>A weather forecast saying 70% chance of rain.</p>
+<p>It does not mean it will rain for 70% of the day, or over 70% of the county. It means: on a
+hundred days that looked like this one, it rained on about seventy of them. Probability is
+bookkeeping over things that have not happened yet — and that framing is the whole subject.</p>""",
+        """<p>If you have run an A/B test, computed a conversion rate, or read a confidence interval, you have
+been doing this.</p>
+<p>The one idea worth carrying into this course is <b>conditional</b> probability — P(A given B).
+Every classifier this specialization builds outputs one: the probability of the label, <em>given</em>
+these features. Not “how common is spam”, but “how likely is spam given this particular email”.</p>""",
+        """<p>A bag of a hundred marbles, seventy blue.</p>
+<p>Reach in without looking and the chance of blue is 0.7. Now imagine someone tells you the marble
+you have grabbed is heavy, and heavy marbles are mostly red — the probability changes even though the
+bag did not. That update, on new information, is exactly what a trained model performs.</p>""",
+        """<p>Medical screening is where this gets serious. A test that is 99% accurate for a disease
+affecting 1 in 10,000 people will still produce far more false alarms than true finds — because the
+disease is so rare that the 1% error rate on the vast healthy majority swamps the true positives.</p>
+<p>Clinicians who get this wrong over-treat; patients who get it wrong panic. It is also precisely
+why Course 2 spends a week on precision and recall rather than accuracy.</p>""",
+        """So the notation below is a way of writing down degrees of belief — and the conditional bar is the
+part that matters most.""")
     + h2("🎬", "Watch it move")
     + demo("fprob", "A bag of ten, and the four rules",
            "change how many are red and watch every number update")
@@ -1556,7 +1758,7 @@ about <em>this</em> example given its features, not about a population.</p>""")
     ]))
 
 # ============================================================ 17
-lesson("17-mean-variance", "Mean, variance and standard deviation", 9,
+lesson("17-mean-variance", "Mean, variance and standard deviation", 13,
     "Where the middle is, and how spread out things are. Five steps, in order — and the reason step three "
     "squares everything.",
     pretest("""<p>Two classrooms both average 10 out of 20. In one, everyone scored 10. In the other, scores ran 0 to 20. <b>The average cannot tell them apart — what second number would?</b></p>""",
@@ -1600,6 +1802,28 @@ of 5, and that is exactly what you see.</p>"""
 
     + explain("""<p>Variance squares each distance from the mean before averaging. <b>Why square rather than just take the distances?</b></p>""",
         """<p>Two reasons, and both matter. Distances above and below the mean would cancel to zero. And squaring makes far-out values dominate, which is what you want from a measure of spread — one value far away is more informative than several close ones.</p>""")
+        + lenses(
+        """<p>Two bus routes to work, both averaging 30 minutes.</p>
+<p>Route A is 28–32 minutes, every day. Route B is anywhere from 10 to 55. Same average, completely
+different journey — and you would leave far earlier for B. The average tells you where the middle is;
+the <em>spread</em> tells you whether the average is worth trusting.</p>""",
+        """<p>Mean and standard deviation are the two numbers on every summary table you have ever read.</p>
+<p>The one thing worth being precise about: variance is in <em>squared</em> units — squared minutes,
+squared pounds — which is meaningless to a reader, so you take the square root to get back to real
+units. That is the only difference between variance and standard deviation, and it is why reports
+quote the latter.</p>""",
+        """<p>A dartboard with two players’ throws marked.</p>
+<p>Both players average dead centre. One has a tight cluster; the other is scattered all around the
+board, missing left as often as right. Averaging their throws hides everything that matters about
+which player you would bet on. Variance is what you measure to tell them apart.</p>""",
+        """<p>Every quality-control process on earth watches variance, not the mean. A factory whose bolts
+average exactly 10.00 mm but swing between 9.5 and 10.5 is producing scrap; one averaging 10.01 with
+a spread of 0.01 is producing precision parts.</p>
+<p>In this course the same pair of numbers does two jobs: they rescale features so gradient descent
+behaves (C1 W2), and they <em>are</em> the entire anomaly-detection model (C3 W1). Two numbers, both
+courses.</p>""",
+        """So the two formulas below are “where is the middle” and “how far do things usually sit from
+it” — and the squaring in the second is only there to stop negatives cancelling positives.""")
     + h2("🎬", "Watch it move")
     + demo("fstats", "Spread the points out and watch σ grow",
            "the shaded band is one standard deviation either side of the mean")

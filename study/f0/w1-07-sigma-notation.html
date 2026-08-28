@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.7 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 1 — The Maths You Actually Need</span><span class="right">§&nbsp;1.7 · 13 min read</span></p>
 <h1><span class="secno">1.7</span>Σ — summation notation</h1>
 <p class="lede">The scariest-looking symbol in the course, and it is a for loop. Once you can read it, half the formulas in the specialization become ordinary.</p>
 <div class="bookrail" title="Lesson 7 of 172 in the book"><i style="width:4%"></i></div>
@@ -241,7 +241,23 @@ Once you can point to all three, you can unroll it — however unfamiliar what c
 <p style="text-align:center"><b>Σ<sub>i=1</sub><sup>5</sup> x<sub>i</sub></b> = 3 + 1 + 4 + 1 + 5 = <b>14</b></p>
 <p>And a slightly harder one — the thing after Σ can be any expression:</p>
 <p style="text-align:center"><b>Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub>²</b> = 3² + 1² + 4² = 9 + 1 + 16 = <b>26</b></p>
-<p>Notice you square <em>each one first</em>, then add. Not add then square — that would be 8² = 64.</p><div class="explain"><span class="tag">Say it out loud</span><p><b>Why does the letter under Σ matter, given the answer is just a total?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it names what changes on each pass. Without it, “add up x” cannot say <em>which</em> x — the i is the counter that steps through them, and it is also what lets the expression beside Σ refer to the current one.</p></div></details></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The symbol unrolling into a loop</span><span class="h">watch the running total build up one term at a time</span></div><div class="demo-body" data-anim="fsigma"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
+<p>Notice you square <em>each one first</em>, then add. Not add then square — that would be 8² = 64.</p><div class="explain"><span class="tag">Say it out loud</span><p><b>Why does the letter under Σ matter, given the answer is just a total?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it names what changes on each pass. Without it, “add up x” cannot say <em>which</em> x — the i is the counter that steps through them, and it is also what lets the expression beside Σ refer to the current one.</p></div></details></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A shopkeeper cashing up at the end of the day. Thirty till receipts in a spike, and one job:
+add them all up.</p>
+<p>She does not need a symbol for that. But if she had to write the <em>instruction</em> down for
+someone else — “start at the first receipt, keep going to the last, add each one to the running
+total” — she would need some shorthand. Σ is that shorthand, and nothing more.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>It is a <code>for</code> loop written before programming existed.</p>
+<p>The letter underneath is the loop counter and where it starts. The number on top is where it
+stops. What follows is the body — the thing computed each time round and added to an accumulator.
+If you can read <code>total += x[i]</code>, you can read Σ; they are the same sentence in different
+alphabets.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A supermarket receipt.</p>
+<p>A column of line items, and one bold number at the bottom. Σ is the instruction that turns the
+column into the bold number. Everything else about the notation — the letter, the limits — is just
+saying <em>which</em> column and <em>which</em> rows.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Every cost function you will meet in three courses ends in a Σ, because every one of them asks
+the same question: how wrong were we, <b>added up over every example we have</b>.</p>
+<p>That is why this symbol is the single most load-bearing piece of notation in the specialization —
+by the site’s own count, more lessons depend on this one than on almost anything else. Not knowing it
+does not slow you down; it stops you.</p></div><p class="lens-fold">So the formula below is a loop, and the three decorations around the Σ are only saying where it
+starts, where it stops, and what goes in the accumulator.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The symbol unrolling into a loop</span><span class="h">watch the running total build up one term at a time</span></div><div class="demo-body" data-anim="fsigma"></div></div><h2><span class="ico">💻</span>In NumPy</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">3</span>, <span class="tok-n">1</span>, <span class="tok-n">4</span>, <span class="tok-n">1</span>, <span class="tok-n">5</span>])
 
 <span class="tok-c"># the literal translation</span>

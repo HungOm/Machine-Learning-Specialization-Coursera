@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 1 — Introduction, linear regression, gradient descent."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest, explain)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain, lenses)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-what-is-machine-learning", title="What is machine learning?", mins=8, tag="intuition",
+    slug="01-what-is-machine-learning", title="What is machine learning?", mins=12, tag="intuition",
     lede="The definition, the one big split that organises everything that follows, and why this is worth "
          "three courses of your time.",
     body=(
@@ -22,6 +22,37 @@ for — and it works out the rule itself.</p>
 <p>That matters for problems where nobody can write the rule down. Nobody can explain, step by step, how
 they recognise their grandmother’s face. But everyone can supply examples.</p>""")
 
+        + lenses(
+            """<p>A woman has sold fish at the same market stall for twenty years. A customer holds one up;
+she glances for two seconds and says <b>“about 1.4 kilos”</b> — right to within 50 grams, every time.
+Nobody taught her a formula. She has simply seen ten thousand fish, felt the weight in her hand, and
+watched the scale confirm or correct her.</p>
+<p>Put a brand-new vendor at the next stall. Same eyes, same hands, same fish — and wildly wrong
+guesses. The only difference between them is <b>exposure to examples where the true answer arrived
+right afterwards</b>. That is the whole of “training data”, felt in the hand before it is ever
+written down.</p>""",
+            """<p>If you have ever fitted a trendline in a spreadsheet, or run an OLS regression in an
+econometrics or psychology course, <b>you have already done machine learning</b> — once, by hand, on
+a dataset small enough to see all at once.</p>
+<p>What changes at industrial scale is not the idea. It is that you cannot eyeball 400 variables the
+way you eyeballed one scatter plot, so the judgement “does this line fit well?” has to be handed to
+an algorithm that makes it patiently, thousands of times, adjusting a little each time.</p>""",
+            """<p>A spreadsheet with two columns.</p>
+<p>The left column is <b>what you knew beforehand</b> — floor area, in square feet. The right column
+is <b>what actually happened</b> — the price it sold for. Four hundred rows of that <em>is</em> a
+training set. Not a metaphor for one: that is literally the object.</p>
+<p>Every problem in all three courses is this same ledger with different column headings. Pixels and
+a digit. A film and a rating. A patient and a diagnosis.</p>""",
+            """<p>In the 1990s a motor insurer priced your premium off four or five factors — age, postcode,
+claims history — because that is what a human underwriter could hold in a table and still reason
+about.</p>
+<p>A modern insurer prices the same policy off hundreds of signals, including braking patterns from a
+telematics box in your car. Two drivers with identical claims histories can now be quoted
+noticeably different premiums, and the entire difference is pattern-finding across data no human
+could hold in their head at once. That is the argument for why this field exists, rather than merely
+what it does.</p>""",
+            """And now Tom Mitchell’s definition below is not a dry sentence to memorise — it is the shortest
+possible summary of the fish vendor.""")
         + h2("🎬", "Watch it move")
         + demo("whatisml", "The definition, and the two branches",
                "supervised on one side, unsupervised on the other — that split organises the whole specialization")
@@ -214,7 +245,7 @@ about.</p>"""
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-linear-regression-model", title="The linear regression model", mins=14, tag="core",
+    slug="04-linear-regression-model", title="The linear regression model", mins=18, tag="core",
     lede="The first algorithm, and the simplest useful one there is: draw a straight line through the data.",
     body=(
         pretest("""<p>Dots on a graph: house size across, price up. You want to draw one straight line through them. <b>How many numbers do you need to pin down exactly which line it is?</b> Commit to a number.</p>""",
@@ -227,6 +258,29 @@ read off the price.</p>
 <p>A line needs exactly two numbers to describe it: <b>how steep it is</b> and <b>where it starts</b>.
 Those two numbers are the entire model.</p>""")
 
+        + lenses(
+            """<p>A plumber quotes you before starting: <b>“sixty quid to turn up, then forty an hour.”</b></p>
+<p>Two numbers, and you can now price any job before it happens. Three hours? 60 + 40×3 = £180. The
+call-out fee is the number that does not depend on the work at all; the hourly rate is how fast the
+bill climbs. Every straight-line model you will meet this course is a plumber’s quote with the words
+swapped out.</p>""",
+            """<p>This is <b>y = mx + c</b> from school algebra, with two letters renamed and one idea added.</p>
+<p>The renaming: <var>m</var> becomes <var>w</var> (“weight”), <var>c</var> becomes <var>b</var>
+(“bias”). The added idea: in algebra somebody hands you <var>m</var> and <var>c</var> and asks you to
+draw the line. Here <b>nobody hands them to you</b> — the whole subject is working out what they
+should be from data that will never sit exactly on any line.</p>""",
+            """<p>A ruler laid across a scatter of dots.</p>
+<p>You can slide the ruler up and down the page — that is <var>b</var> moving. You can pivot it —
+that is <var>w</var> changing. Those two motions are the <em>only</em> two things this model can do.
+Everything about training a linear model is choosing where to stop sliding and pivoting.</p>""",
+            """<p>A supermarket ordering bread for tomorrow. Order too few and you turn customers away; too many
+and it goes in the bin at closing. The forecast — yesterday’s sales, day of the week, weather —
+becomes a number of loaves, and both kinds of error cost real money every single day.</p>
+<p>A model that is simple enough for a manager to <em>argue with</em> (“why does rain reduce the
+order by thirty loaves?”) is often worth more than a more accurate one nobody can question. That
+readability is a real reason straight lines survive.</p>""",
+            """So the formula below has only two unknowns in it — and the rest of Week 1 is entirely about how to
+find them.""")
         + h2("🎬", "Watch it move")
         + demo("linreg", "Drag w and b until the line fits",
                "the red dashes are the errors — try to make them all small at once")
@@ -327,7 +381,7 @@ regularisation later — it is an offset, not a strength of dependence on anythi
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-cost-function-formula", title="The cost function formula", mins=11, tag="maths",
+    slug="05-cost-function-formula", title="The cost function formula", mins=15, tag="maths",
     lede="One number that says how badly the current line fits. Everything from here is about making that "
          "number small.",
     body=(
@@ -341,6 +395,33 @@ all up.</p>
 being too low on another. And it makes a big miss hurt much more than a small one — being off by 10 is a
 hundred times worse than being off by 1, not ten times worse.</p>""")
 
+        + lenses(
+            """<p>A machine cuts steel bolts to a target of 10.00 mm. A bolt at 10.02 mm still threads into its
+nut — mildly annoying, passes inspection. A bolt at 10.20 mm does not fail ten times worse: it jams
+the line, damages the tooling, and stops production for an hour.</p>
+<p>The cost of being wrong does not grow in step with how wrong you were. It grows <b>far faster</b>,
+because small errors get absorbed by tolerance and large ones cascade. Squaring the error is not a
+convenience someone chose to make the calculus tidy — it is often the honest shape of what mistakes
+actually cost.</p>""",
+            """<p>You already know this number. It is the <b>sum of squared residuals</b>, and minimising it over
+<var>w</var> and <var>b</var> is precisely the Ordinary Least Squares estimator from a first
+regression course.</p>
+<p>Machine learning did not invent this objective — Legendre published it in 1805. What changed is
+how you <em>solve</em> it: instead of the closed-form normal equations, you walk downhill towards the
+same answer. If you have ever computed R² by hand, you have already lived inside this lesson.</p>""",
+            """<p>An archery target whose rings are <b>not evenly spaced</b>.</p>
+<p>Near the bullseye the rings are packed tight together. A few centimetres out from centre and you
+cross several rings at once. That uneven spacing, drawn across every possible pair of
+(<var>w</var>, <var>b</var>), is the bowl this lesson is about — steep far from a good fit, and
+almost flat right next to the best one.</p>""",
+            """<p>A delivery company predicting arrival times. Five minutes late is a shrug. Fifty minutes late
+is a cancelled order, a support call, and a review that costs future customers as well as this
+one.</p>
+<p>The firm’s real cost is brutally back-loaded onto the big misses. A cost function that punishes
+large errors disproportionately is modelling something the business genuinely feels — which is why
+choosing it is a modelling decision, not a mathematical formality.</p>""",
+            """So when the formula below squares the error, read the square as a <em>claim about the world</em>,
+not a trick.""")
         + h2("🎬", "Watch it move")
         + demo("costformula", "The squared error, drawn as an actual square",
                "each example is highlighted in turn and its contribution computed")
@@ -580,7 +661,7 @@ along.</p>""")
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-gradient-descent", title="Gradient descent", mins=9, tag="core",
+    slug="08-gradient-descent", title="Gradient descent", mins=13, tag="core",
     lede="The algorithm that finds the bottom of the bowl — and, with almost no changes, trains every "
          "model in this specialization including the neural networks.",
     body=(
@@ -593,6 +674,35 @@ bottom of a valley, and you can see about a metre in any direction.</p>
 step that way. Then do it again. And again.</p>
 <p>You never need a map. Just the ground under your feet.</p>""")
 
+        + lenses(
+            """<p>You taste the soup: too salty. You do not recalculate anything — you simply put in less salt
+next time, in the direction the last mistake pointed. Too bland? A touch more. Each attempt is one
+step, and the “gradient” is nothing more mysterious than <b>which way did the last correction
+help</b>.</p>
+<p>The step size matters in a way any cook has felt. Dump in a whole cup to fix blandness and you
+have overshot into inedible, then you over-correct back, forever. Add one grain at a time and you
+will get there eventually — on your deathbed.</p>""",
+            """<p>If you have studied economics, you have met this under another name: <b>Walrasian
+tâtonnement</b>. An imagined auctioneer calls a price; if demand exceeds supply, nudge the price up a
+little; if supply exceeds demand, nudge it down; repeat until the market clears.</p>
+<p>That is gradient descent on the mismatch between supply and demand, written down by economists
+decades before computer scientists needed a name for it. If you understand how a market is modelled
+to find equilibrium, you already understand this algorithm — same iterative correction, different
+imbalance.</p>""",
+            """<p>A hiking map with contour lines.</p>
+<p>The rule is exact on this picture: <b>step perpendicular to the contour line you are standing on,
+towards wherever the neighbouring lines are packed closest.</b> Where the contours are near-circular
+that marches you straight at the centre. Where they are squashed into a long thin oval, it makes you
+bounce across the narrow axis instead of advancing along the long one — which is exactly the problem
+feature scaling fixes in Week 2.</p>""",
+            """<p>A greenhouse thermostat reads the temperature, compares it to the target, and nudges the heater
+up or down. Repeat forever.</p>
+<p>That is a real deployed control system, and it ran greenhouses, cruise control and central heating
+for decades before anyone said “machine learning”. Gradient descent is not an invention for training
+networks — it is the general mathematics underneath a whole family of things that quietly correct
+themselves towards a target.</p>""",
+            """So the hiking-in-fog picture below is one telling of an idea that turns up wherever something has
+to steer itself towards a goal it cannot see all at once.""")
         + h2("🎬", "Watch it move")
         + demo("gradientdescent", "Two walkers, two starting points",
                "each finds a valley — and they are not the same valley")
@@ -647,7 +757,7 @@ points — up in some directions, down in others — and gradient descent slides
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-implementing-gradient-descent", title="Implementing gradient descent", mins=15, tag="core",
+    slug="09-implementing-gradient-descent", title="Implementing gradient descent", mins=19, tag="core",
     lede="The update rule, and the one implementation detail that is easy to get wrong and hard to notice: "
          "simultaneous update.",
     body=(
@@ -661,6 +771,30 @@ you did. You have taken half a step of one kind and half of another, and it is n
 meant to take.</p>
 <p>So: both of you work out your step first. <b>Then</b> both of you move.</p>""")
 
+        + lenses(
+            """<p>Two people are adjusting one stage light together — one holds the brightness dial, the other
+the angle. The rule they agreed: <b>both look at the stage, then both turn.</b></p>
+<p>If instead the first turns her dial and the second looks at the <em>already-changed</em> stage
+before turning his, they are no longer correcting the same situation. It usually still ends up
+roughly right, which is exactly what makes the mistake so hard to catch. That is the simultaneous
+update, and the bug that shadows it.</p>""",
+            """<p>Anyone who has written a numerical solver knows this shape: you must not overwrite a state
+variable that a later line of the same step still needs to read.</p>
+<p>It is the identical hazard as updating an array in place while iterating over it, or a
+race condition between two writers. The fix is the same one every time — compute everything from the
+<b>old</b> state into temporaries, then commit them all at once.</p>""",
+            """<p>Two glasses of water and a jug.</p>
+<p>To make both glasses equal you measure <em>both</em> levels first, then pour. If you measure the
+first, pour, and only then measure the second, you have measured a world that your own pouring
+already changed. Right answer, wrong reason — and on a harder problem, wrong answer too.</p>""",
+            """<p>In 2012 a trading firm deployed an update to only seven of its eight servers. The eighth kept
+running old logic against a world the other seven had already changed, and the mismatch cost roughly
+$440 million in forty-five minutes.</p>
+<p>Not a gradient-descent bug — but exactly this class of bug: <b>part of a system acting on a state
+another part has already moved past.</b> Simultaneous update is a small, cheap instance of a
+discipline that gets very expensive to learn the hard way.</p>""",
+            """So the two lines below are deliberately written with temporaries — that is the whole point of
+them.""")
         + h2("🎬", "Watch it move")
         + demo("gdsteps", "The correct order, and the wrong one",
                "the numbers at the bottom show they genuinely differ")
@@ -828,7 +962,7 @@ linear regression, and it very much arises for deep networks.</p>"""
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-learning-rate", title="The learning rate", mins=16, tag="core",
+    slug="11-learning-rate", title="The learning rate", mins=20, tag="core",
     lede="The one hyperparameter in this week, and the one you will spend the most time on. Too small "
          "wastes days; too large produces NaN.",
     body=(
@@ -843,6 +977,30 @@ L.append(dict(
 step, higher still. You are now climbing out of the valley backwards, faster and faster.</li>
 </ul>""")
 
+        + lenses(
+            """<p>The shower tap. Turn it towards hot — still cold, so you turn further. Suddenly scalding, so
+you yank it back — now freezing. You are oscillating, and every turn is too big.</p>
+<p>Now the other extreme: a tap so stiff that each turn changes the water by a fraction of a degree.
+You will get to a comfortable shower eventually, long after you wanted to be out of it. Between those
+two failures is a turn size that gets you there in a few adjustments. That size is α.</p>""",
+            """<p>If you have tuned any feedback loop — a PID controller, a thermostat, an audio limiter — this
+is the proportional gain, and its failure modes are the ones you already know by feel: too much gain
+gives you ringing and instability, too little gives you a system that never quite arrives.</p>
+<p>Control engineers spent a century on this exact trade-off. The vocabulary differs; the picture on
+the oscilloscope does not.</p>""",
+            """<p>Four sketches of the same curve, J against iteration.</p>
+<p>One glides down and flattens — good. One is still visibly falling at the right edge — run it
+longer. One saws up and down — α too big. One climbs off the top of the chart — α far too big, or a
+bug in the gradient. You will diagnose more real problems from this one picture than from any other
+plot in the course.</p>""",
+            """<p>Training a large model is metered in GPU-hours, billed by the hour. A learning rate set too
+small does not fail — it silently costs three times as much compute for the same final model, and
+nobody notices because the loss curve looks perfectly healthy.</p>
+<p>A learning rate set too large fails loudly and cheaply, which is oddly the better outcome. This is
+why the practical advice is “take the largest α that still decreases J smoothly” — it is a cost
+decision as much as a numerical one.</p>""",
+            """So the four regimes below are worth recognising on sight, because you will be reading that plot
+for the rest of your career.""")
         + h2("🎬", "Watch it move")
         + demo("learningrate", "Drag α across three orders of magnitude",
                "watch the steps go from crawling, to smooth, to oscillating, to diverging")
