@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.11 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.11 · 16 min read</span></p>
 <h1><span class="secno">3.11</span>The learning rate</h1>
 <p class="lede">The one <span class="gterm" data-g="hyperparameter-native">hyperparameter</span> in this week, and the one you will spend the most time on. Too small wastes days; too large produces NaN.</p>
 <div class="bookrail" title="Lesson 46 of 172 in the book"><i style="width:27%"></i></div>
@@ -242,7 +242,24 @@ every single iteration <em>if the gradient is correct</em>. So:</p>
 <li>J now decreases → the gradient is fine, and your original α was too large.</li>
 <li>J still does not decrease → it is not α. There is a bug, most often a sign error in the gradient.</li>
 </ul>
-<p>This is a genuinely useful separation of concerns, and it takes one line to try.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming a small α is the safe choice.</b> It is safe and it may take a hundred
+<p>This is a genuinely useful separation of concerns, and it takes one line to try.</p><h2><span class="ico">🧮</span>The four regimes, measured</h2><p>Same start (<var>w</var> = <var>b</var> = 0), same data, twenty iterations, four
+values of α:</p><table class="data"><thead><tr><th>α</th><th>J after 1 step</th><th>J after 20 steps</th><th>regime</th></tr></thead><tbody><tr><td>0.0001</td><td>84,941.76</td><td>83,842.75</td><td><b>far too small</b> — 20 steps bought 1.4%</td></tr><tr><td>0.01</td><td>79,274.81</td><td>21,079.38</td><td>small — working, but slowly</td></tr><tr><td>0.1</td><td>36,731.25</td><td><b>10.98</b></td><td><b>good</b></td></tr><tr><td>0.8</td><td>257,800.00</td><td>3.7 × 10¹⁴</td><td><b>diverging</b></td></tr></tbody></table><p>Read the α = 0.8 row carefully. J after a single step is <b>larger than it started</b>
+— 257,800 against 85,000. The step overshot the valley and landed higher up the opposite wall, and
+each subsequent step overshoots further. Within twenty iterations the cost has reached 10¹⁴, and it
+will hit infinity shortly after.</p>
+<p>That gives you the debugging rule: <b>plot J against iteration, and if it ever rises, α is too
+big</b> — or there is a bug in the <span class="gterm" data-g="derivative-f0">derivative</span>. Those are the only two causes, and you can tell them
+apart by setting α to something tiny like 0.0001. If J still rises, the derivative is wrong; if it
+merely crawls, α was the problem.</p>
+<p>The practical search is to try α in multiples of roughly 3 — 0.001, 0.003, 0.01, 0.03, 0.1, 0.3 —
+and take the largest value that still decreases J smoothly.</p><div class="explain"><span class="tag">Say it out loud</span><p>Between α = 0.1 (works) and α = 0.8 (explodes) there is no gentle
+degradation — it does not simply get worse. <b>Why is the failure so sudden?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because it is a stability threshold, not a quality setting. Each step
+multiplies the distance-from-minimum by a factor that depends on α and the curvature. Below the
+threshold that factor is under 1, so errors shrink geometrically and you converge. Above it the
+factor exceeds 1, so errors <em>grow</em> geometrically and every step amplifies the last. There is
+no middle ground between a shrinking and a growing geometric sequence — which is why the useful
+advice is “largest α that still decreases J”, and why overshooting it is catastrophic rather than
+merely inefficient.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming a small α is the safe choice.</b> It is safe and it may take a hundred
 thousand iterations. Andrew’s advice is to find the largest α that still converges smoothly, then perhaps
 back off one notch.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Not scaling your features first.</b> The best α depends enormously on feature
 scale. Week 2 covers this, and it is the most common reason a “reasonable” α refuses to work.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c11-11-learning-rate#1"><summary>Your J values are 12, 45, 380, NaN. What is wrong?</summary><div class="a"><p>α is far too large — it is diverging. Reduce it by a factor of ten and try again.</p></div></details><details class="q" data-qid="c11-11-learning-rate#2"><summary>Your J values are 12.0, 11.98, 11.96, 11.94. What is wrong?</summary><div class="a"><p>Nothing is <em>wrong</em> — it is converging, glacially. α is too small. Increase it by a factor of three or ten.</p></div></details><details class="q" data-qid="c11-11-learning-rate#3"><summary>You set α = 0.0001 and J still does not decrease. What does that tell you?</summary><div class="a"><p>It is not the learning rate. There is a bug in the gradient computation — most often a sign error or a wrong index.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind lab">lab</span><span><a href="../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification/week2/Optional%20Labs/C1_W2_Lab03_Feature_Scaling_and_Learning_Rate_Soln.ipynb" target="_blank" rel="noopener">Optional lab: Feature Scaling and Learning Rate</a><span class="d">In this repo. Runs several α values and plots each J curve — exactly the experiment described here.</span></span></li><li><span class="kind paper">paper</span><span><a href="https://arxiv.org/abs/1506.01186" target="_blank" rel="noopener">Smith (2015) — Cyclical Learning Rates for Training Neural Networks</a><span class="d">The “LR range test”: sweep α upwards during a short run and read the best value off the curve. Standard practice now.</span></span></li></ul>

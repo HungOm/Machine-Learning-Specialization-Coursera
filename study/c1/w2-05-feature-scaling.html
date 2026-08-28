@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.5 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 4 — Regression with Multiple Variables</span><span class="right">§&nbsp;4.5 · 16 min read</span></p>
 <h1><span class="secno">4.5</span>Feature scaling</h1>
 <p class="lede">A feature ranging 300–2000 next to one ranging 0–5 turns the cost bowl into a canyon. One division fixes it, and it is the highest-value line in this week.</p>
 <div class="bookrail" title="Lesson 53 of 172 in the book"><i style="width:31%"></i></div>
@@ -251,7 +251,22 @@ than along it. So it zig-zags, and you must use a small α to stop it bouncing o
 the valley floor slower still.</p>
 <p>Scaled, the contours are near-circles. Perpendicular now points almost straight at the centre, and a
 much larger α is safe. Both effects pull in the same direction, which is why the speedup is often an order
-of magnitude rather than a few percent.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Scaling before splitting your data.</b> Computing μ over the whole dataset leaks
+of magnitude rather than a few percent.</p><h2><span class="ico">🧮</span>What scaling is worth — measured</h2><p>The lab’s <code>houses.txt</code>: 100 houses, four features, wildly different
+ranges.</p><table class="data"><thead><tr><th>feature</th><th>raw range</th><th>mean</th><th>sd</th></tr></thead><tbody><tr><td>size (sqft)</td><td>788 … 3,194</td><td>1,413.71</td><td>412.17</td></tr><tr><td>bedrooms</td><td>0 … 4</td><td>2.71</td><td>0.65</td></tr><tr><td>floors</td><td>1 … 2</td><td>1.38</td><td>0.49</td></tr><tr><td>age</td><td>12 … 107</td><td>38.65</td><td>25.79</td></tr></tbody></table><p>Size spans 2,406 units; floors spans 1. The cost bowl is therefore enormously
+stretched, and here is what that costs you — the largest learning rate that does not diverge, found
+by bisection:</p><table class="data"><thead><tr><th></th><th>largest usable α</th><th></th></tr></thead><tbody><tr><td>raw features</td><td><b>9.4 × 10⁻⁷</b></td><td>set by the size feature</td></tr><tr><td>after z-score scaling</td><td><b>0.966</b></td><td>about a million times larger</td></tr></tbody></table><p>A factor of a million. And with 100 iterations each: the unscaled run gets J from
+71,024 down to 1,565; the scaled run reaches <b>222</b> — seven times lower, in the same number of
+steps.</p>
+<p>The reason is that α must be small enough for the <em>steepest</em> direction or the whole thing
+diverges, and that one direction then dictates the pace for every other. Scaling makes all directions
+comparably steep, so a single α suits them all. (This is the same argument that Adam solves
+automatically in Course 2 Week 2.)</p><div class="explain"><span class="tag">Say it out loud</span><p>Scaling does not change the data’s information content, the best-fit line, or
+the minimum cost achievable. <b>So what exactly does it change?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>The shape of the path to that minimum, and therefore how many steps it takes.
+The optimum is the same point; the bowl around it is what gets reshaped, from a long thin canyon into
+something round. Gradient descent always steps perpendicular to the contours, and in a canyon that
+means bouncing across the narrow direction while creeping along the long one. Round contours point
+straight at the centre. You are not helping the model — you are helping the optimiser find
+it.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Scaling before splitting your data.</b> Computing μ over the whole dataset leaks
 test information into training. Split first, then fit the scaler on the training half.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Forgetting to scale at prediction time.</b> The model was trained on standardised
 inputs; feeding it a raw 2000 produces a wild answer. Keep the scaler and the model together — this is
 what <code>sklearn.pipeline.Pipeline</code> is for.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Scaling the target y.</b> Usually unnecessary, and if you do it, remember to

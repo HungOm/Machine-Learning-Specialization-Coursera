@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.10 · 7 min read</span></p>
+<p class="runhead"><span class="part">Part I</span><span class="d">·</span><span class="ch">Chapter 2 — Python, NumPy and pandas</span><span class="right">§&nbsp;2.10 · 12 min read</span></p>
 <h1><span class="secno">2.10</span>sum, mean, max — along an axis</h1>
 <p class="lede">Collapsing a lot of numbers into fewer. The same axis rule from lesson 5, now doing real work.</p>
 <div class="bookrail" title="Lesson 29 of 172 in the book"><i style="width:17%"></i></div>
@@ -249,7 +249,23 @@ one number per feature? You want the examples gone, so collapse axis 0.</p>
 <em>per example</em> → axis=1. Say the sentence out loud and the axis follows.</p>
 <p>There is a third useful trick above: <code>(preds == y).mean()</code>. The comparison makes an array of
 True/False, and True counts as 1 — so the mean of that array is the fraction that are True. That is
-accuracy, in one line, with no counting.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Guessing the axis and getting a plausible answer.</b> If X is square, both axes give a
+accuracy, in one line, with no counting.</p><h2><span class="ico">🧮</span>Worked by hand</h2><p>This is the single most misread argument in NumPy. Take:</p><pre><code>A = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>],
+              [<span class="tok-n">4</span>, <span class="tok-n">5</span>, <span class="tok-n">6</span>]])          <span class="tok-c"># shape (2, 3)</span></code></pre><table class="data"><thead><tr><th>call</th><th>result</th><th>shape</th><th>what happened</th></tr></thead><tbody><tr><td><code>A.sum()</code></td><td><code>21</code></td><td>scalar</td><td>everything, into one number</td></tr><tr><td><code>A.sum(axis=0)</code></td><td><code>[5 7 9]</code></td><td>(3,)</td><td><b>collapsed the rows</b> — one total per column</td></tr><tr><td><code>A.sum(axis=1)</code></td><td><code>[6 15]</code></td><td>(2,)</td><td><b>collapsed the columns</b> — one total per row</td></tr></tbody></table><p>Say it out loud as <b>“axis = the one that disappears”</b>. <code>axis=0</code> is the row
+axis, so the rows vanish and what is left is one number per column: 1+4 = 5, 2+5 = 7, 3+6 = 9. Almost
+everyone first reads <code>axis=0</code> as “do it to the rows” and gets the <span class="gterm" data-g="transpose-f0">transpose</span> of what they
+wanted.</p>
+<p>Since rows are usually examples and columns usually features, <code>axis=0</code> is what you want
+for per-feature statistics — <code>X.mean(axis=0)</code> is the mean of each feature, which is
+exactly what feature scaling and the anomaly-detection Gaussian both need.</p>
+<p><code>keepdims=True</code> keeps the collapsed axis at length 1 — <code>A.sum(axis=0,
+keepdims=True)</code> has shape <b>(1, 3)</b> instead of (3,) — which is what you use when the
+result has to broadcast back against the original.</p><div class="explain"><span class="tag">Say it out loud</span><p><code>X.mean(axis=0)</code> is the per-feature mean, and it is used everywhere in
+this course. <b>Why is it almost never <code>axis=1</code> you want?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because of how the data is laid out: one row per example, one column per feature.
+Averaging down a column asks “what is a typical value of this feature”, which is a meaningful
+statistic you can subtract or scale by. Averaging across a row asks “what is the average of this
+house’s size, bedroom count and age” — mixing square feet with counts with years, which is
+arithmetic without meaning. The convention that examples are rows is what makes <code>axis=0</code>
+the useful direction.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Guessing the axis and getting a plausible answer.</b> If X is square, both axes give a
 result of the same shape and you will not notice. Work it out rather than guessing.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Using <code>max</code> when you wanted <code>argmax</code>.</b> The score instead of
 the choice.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="f02-10-aggregations#1"><summary>X is (500, 8). You want the average of each feature. Which call?</summary><div class="a"><p><code>X.mean(axis=0)</code> → shape <b>(8,)</b>. The 500 examples collapse.</p></div></details><details class="q" data-qid="f02-10-aggregations#2"><summary>probs is (500, 10). How do you get the predicted class for each example?</summary><div class="a"><p><code>np.argmax(probs, axis=1)</code> → shape <b>(500,)</b>. One prediction per row.</p></div></details><details class="q" data-qid="f02-10-aggregations#3"><summary>What does (preds == y).mean() compute?</summary><div class="a"><p><b>Accuracy.</b> The comparison gives True/False, True counts as 1, so the mean is the fraction correct.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind docs">docs</span><span><a href="https://numpy.org/doc/stable/reference/routines.statistics.html" target="_blank" rel="noopener">NumPy — statistics routines</a><span class="d">The full list, all taking the same <code>axis</code> argument.</span></span></li></ul><h2 id="on-paper"><span class="ico">&#9998;</span>Put it on paper</h2><p>You remember this by drawing it, not by reading it. Shut this page first, try it from memory, and only then look back and fix what is wrong &mdash; the correcting is the part that sticks. <a href="../paper.html">Why this works &#8594;</a></p><div class="scribble"><span class="lbl">&#9998; on paper</span>One small grid, three answers around it: no axis, axis=0, axis=1. Write the shape of each answer beside it.</div>
 <nav class="pager">

@@ -214,7 +214,7 @@ about.</p>"""
 
 # ============================================================ 4
 L.append(dict(
-    slug="04-linear-regression-model", title="The linear regression model", mins=10, tag="core",
+    slug="04-linear-regression-model", title="The linear regression model", mins=14, tag="core",
     lede="The first algorithm, and the simplest useful one there is: draw a straight line through the data.",
     body=(
         pretest("""<p>Dots on a graph: house size across, price up. You want to draw one straight line through them. <b>How many numbers do you need to pin down exactly which line it is?</b> Commit to a number.</p>""",
@@ -278,6 +278,29 @@ def compute_model_output(x, w, b):
         + """<p>That loop is the honest, slow version. Week 2 replaces it with a single vectorised line —
 but it is worth writing this one once so the loop version is what you picture when you read the fast
 one.</p>"""
+
+        + h2("🧮", "The two houses, worked")
+        + """<p>The whole of Week 1 runs on two data points from the optional lab — a 1,000 sq ft
+house at $300k and a 2,000 sq ft house at $500k:</p>"""
+        + code("""
+x_train = np.array([1.0, 2.0])       # size, in 1000s of sqft
+y_train = np.array([300.0, 500.0])   # price, in $1000s
+""")
+        + """<p>Try <var>w</var> = 200, <var>b</var> = 100:</p>"""
+        + table(["x", "f = 200x + 100", "actual y", "error"],
+                [["1.0", "200(1) + 100 = <b>300</b>", "300", "<b>0</b>"],
+                 ["2.0", "200(2) + 100 = <b>500</b>", "500", "<b>0</b>"]])
+        + """<p>A perfect fit — the line passes exactly through both points. Which it must, because two
+points determine a straight line and this model has exactly two parameters. That is a warning as much
+as a result: a perfect fit here proves nothing about the model, only that it had enough freedom.
+Predict a 1,200 sq ft house and you get 200(1.2) + 100 = <b>340</b>, or $340k.</p>"""
+        + explain("""<p><var>w</var> = 200 and <var>b</var> = 100 both have units. <b>What are
+they, and why does that make the two numbers mean completely different things?</b></p>""",
+                  """<p><var>b</var> is in $1000s — the same units as the answer — so it is a price:
+$100k of house before any floor area exists. <var>w</var> is $1000s <em>per</em> 1000 sq ft, a rate:
+each extra 1,000 sq ft adds $200k. That is why <var>b</var> shifts the whole line up or down without
+tilting it, while <var>w</var> tilts it. It also explains why <var>b</var> is usually left out of
+regularisation later — it is an offset, not a strength of dependence on anything.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -459,7 +482,7 @@ on a line. Real data has noise, and the minimum of J sits well above zero. That 
 
 # ============================================================ 7
 L.append(dict(
-    slug="07-visualizing-the-cost-function", title="Visualizing the cost function", mins=10, tag="maths",
+    slug="07-visualizing-the-cost-function", title="Visualizing the cost function", mins=15, tag="maths",
     lede="Put b back in and J becomes a bowl in three dimensions. Seen from above, it becomes a contour "
          "map — and that map is the background of every picture for the rest of the course.",
     body=(
@@ -496,6 +519,34 @@ Their shape is set by the data: the more the feature values vary, the steeper J 
 the more squashed the ellipse becomes.</p>
 <p>That connection matters. The elongation of these rings is a direct consequence of your feature scaling,
 which is why Week 2 spends a whole lesson on it.</p>"""
+
+        + h2("🧮", "The bowl, in numbers")
+        + """<p>Hold <var>b</var> at 100 and walk <var>w</var> across the range, computing J each
+time on the two-house data:</p>"""
+        + table(["w", "J(w, 100)", ""],
+                [["0", "50,000", ""],
+                 ["100", "12,500", ""],
+                 ["150", "3,125", ""],
+                 ["<b>200</b>", "<b>0</b>", "the perfect fit"],
+                 ["250", "3,125", "same as 150"],
+                 ["300", "12,500", "same as 100"]])
+        + """<p>Perfectly symmetric about <var>w</var> = 200, and rising as the <em>square</em> of the
+distance from it: 50 away costs 3,125, 100 away costs 12,500 — four times as much for twice the
+distance. That is the signature of a parabola, and it comes directly from the squaring in the cost
+function.</p>
+<p>In two dimensions, that parabola becomes a bowl, and a contour plot is the bowl seen from above.
+Each ring joins the (w, b) pairs with equal cost — 3,125 is one ring, 12,500 a larger one. The rings
+are ellipses rather than circles because a step in <var>w</var> and a step in <var>b</var> do not
+cost the same amount, and how stretched they are is exactly the feature-scaling problem of
+Week 2.</p>"""
+        + explain("""<p>J(150, 100) and J(250, 100) are both 3,125, yet those two lines look nothing
+alike on the data plot. <b>Why does the cost refuse to distinguish them?</b></p>""",
+                  """<p>Because squaring throws away the sign of the error. One line sits below both
+points and the other above, so their errors are equal and opposite — and −50 squared is the same as
++50 squared. That symmetry is deliberate: a cost that could distinguish them would have to prefer
+overshooting to undershooting or vice versa, which is not something you want a fit to believe. It is
+also why the bowl has exactly one lowest point rather than a valley floor you could slide
+along.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -589,7 +640,7 @@ points — up in some directions, down in others — and gradient descent slides
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-implementing-gradient-descent", title="Implementing gradient descent", mins=10, tag="core",
+    slug="09-implementing-gradient-descent", title="Implementing gradient descent", mins=15, tag="core",
     lede="The update rule, and the one implementation detail that is easy to get wrong and hard to notice: "
          "simultaneous update.",
     body=(
@@ -645,6 +696,32 @@ def gradient_descent(x, y, w, b, alpha, num_iters):
         + """<p>In Python this happens to be safe because <code>dj_dw</code> and <code>dj_db</code> are
 both computed before either assignment. The bug appears when people restructure the loop and compute the
 gradients inside it, one at a time.</p>"""
+
+        + h2("🧮", "The first three steps, by hand")
+        + """<p>Start from <var>w</var> = 0, <var>b</var> = 0 with α = 0.01 on the two houses:</p>"""
+        + table(["iteration", "w", "b", "J", "∂J/∂w", "∂J/∂b"],
+                [["0", "0.0000", "0.0000", "85,000.0", "<b>−650.0</b>", "<b>−400.0</b>"],
+                 ["1", "6.5000", "4.0000", "79,274.8", "−627.8", "−386.3"],
+                 ["2", "12.7775", "7.8625", "73,935.3", "−606.3", "−373.0"],
+                 ["10", "55.8498", "34.3454", "42,325.5", "−458.9", "−281.9"]])
+        + """<p>Follow one line of arithmetic: at iteration 0 the derivative is −650, so
+<var>w</var> ← 0 − 0.01(−650) = <b>6.5</b>. The derivative is negative, so <var>w</var> goes
+<em>up</em> — the minus sign in the update rule is what turns “downhill” into the right
+direction.</p>
+<p>Now watch the derivative column shrink: 650 → 628 → 606 → 459. Nobody adjusted α; it is fixed at
+0.01 the whole way. The steps get smaller on their own because the surface flattens as you approach
+the bottom, and that is the single most important property of gradient descent — it decelerates
+automatically, so a constant learning rate does not overshoot at the end.</p>"""
+        + warn("""<p>Both parameters must be updated <b>simultaneously</b>, from the same old values.
+Computing the new <var>w</var> and then using it to compute the new <var>b</var> is the classic bug:
+it usually still converges, which is exactly what makes it hard to notice.</p>""")
+        + explain("""<p>The two derivatives at iteration 0 are −650 and −400 — different sizes.
+<b>Why does that mean w and b move by different amounts under the same α?</b></p>""",
+                  """<p>Because α is a single multiplier applied to each parameter’s own derivative,
+not a fixed step length. The derivative measures how much J responds to that parameter, and J is
+more sensitive to <var>w</var> here — x values of 1 and 2 multiply w’s influence — so w gets the
+larger correction. This is also the seed of the feature-scaling problem: when one feature’s scale
+dwarfs another’s, the derivatives differ by orders of magnitude, and one α cannot suit both.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Updating w, then recomputing the gradient before updating b.</b> Not gradient
@@ -744,7 +821,7 @@ linear regression, and it very much arises for deep networks.</p>"""
 
 # ============================================================ 11
 L.append(dict(
-    slug="11-learning-rate", title="The learning rate", mins=11, tag="core",
+    slug="11-learning-rate", title="The learning rate", mins=16, tag="core",
     lede="The one hyperparameter in this week, and the one you will spend the most time on. Too small "
          "wastes days; too large produces NaN.",
     body=(
@@ -787,6 +864,34 @@ every single iteration <em>if the gradient is correct</em>. So:</p>
 <li>J still does not decrease → it is not α. There is a bug, most often a sign error in the gradient.</li>
 </ul>
 <p>This is a genuinely useful separation of concerns, and it takes one line to try.</p>"""
+
+        + h2("🧮", "The four regimes, measured")
+        + """<p>Same start (<var>w</var> = <var>b</var> = 0), same data, twenty iterations, four
+values of α:</p>"""
+        + table(["α", "J after 1 step", "J after 20 steps", "regime"],
+                [["0.0001", "84,941.76", "83,842.75", "<b>far too small</b> — 20 steps bought 1.4%"],
+                 ["0.01", "79,274.81", "21,079.38", "small — working, but slowly"],
+                 ["0.1", "36,731.25", "<b>10.98</b>", "<b>good</b>"],
+                 ["0.8", "257,800.00", "3.7 × 10¹⁴", "<b>diverging</b>"]])
+        + """<p>Read the α = 0.8 row carefully. J after a single step is <b>larger than it started</b>
+— 257,800 against 85,000. The step overshot the valley and landed higher up the opposite wall, and
+each subsequent step overshoots further. Within twenty iterations the cost has reached 10¹⁴, and it
+will hit infinity shortly after.</p>
+<p>That gives you the debugging rule: <b>plot J against iteration, and if it ever rises, α is too
+big</b> — or there is a bug in the derivative. Those are the only two causes, and you can tell them
+apart by setting α to something tiny like 0.0001. If J still rises, the derivative is wrong; if it
+merely crawls, α was the problem.</p>
+<p>The practical search is to try α in multiples of roughly 3 — 0.001, 0.003, 0.01, 0.03, 0.1, 0.3 —
+and take the largest value that still decreases J smoothly.</p>"""
+        + explain("""<p>Between α = 0.1 (works) and α = 0.8 (explodes) there is no gentle
+degradation — it does not simply get worse. <b>Why is the failure so sudden?</b></p>""",
+                  """<p>Because it is a stability threshold, not a quality setting. Each step
+multiplies the distance-from-minimum by a factor that depends on α and the curvature. Below the
+threshold that factor is under 1, so errors shrink geometrically and you converge. Above it the
+factor exceeds 1, so errors <em>grow</em> geometrically and every step amplifies the last. There is
+no middle ground between a shrinking and a growing geometric sequence — which is why the useful
+advice is “largest α that still decreases J”, and why overshooting it is catastrophic rather than
+merely inefficient.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Assuming a small α is the safe choice.</b> It is safe and it may take a hundred
@@ -925,7 +1030,7 @@ gives m² in the denominator.</p>""")
 
 # ============================================================ 13
 L.append(dict(
-    slug="13-running-gradient-descent", title="Running gradient descent", mins=9, tag="core",
+    slug="13-running-gradient-descent", title="Running gradient descent", mins=14, tag="core",
     lede="Watching it actually work — the path across the contour map, the falling cost curve, and what "
          "“batch” means.",
     body=(
@@ -964,6 +1069,35 @@ plt.plot(J_history)
 plt.xlabel('iteration')
 plt.ylabel('J(w, b)')
 """)
+
+        + h2("🧮", "The whole run, start to finish")
+        + """<p>From <var>w</var> = <var>b</var> = 0, α = 0.01, on the two houses:</p>"""
+        + table(["iteration", "w", "b", "J"],
+                [["0", "0.00", "0.00", "85,000.00"],
+                 ["10", "55.85", "34.35", "42,325.53"],
+                 ["100", "184.39", "112.30", "92.22"],
+                 ["1,000", "194.91", "108.23", "3.42"],
+                 ["10,000", "<b>199.99</b>", "<b>100.01</b>", "<b>0.0000</b>"]])
+        + """<p>It converges to <var>w</var> = 200, <var>b</var> = 100 — the exact values the lesson
+on the model started from. Nobody told the algorithm those numbers; it found them from the data.</p>
+<p>Two things worth noticing. Most of the progress is early: 99.9% of the cost is gone by iteration
+100, and the remaining 9,900 iterations are polishing. And the path is not direct — look at
+<var>b</var> rising to 112.30 by iteration 100 and then coming back down to 100. Gradient descent
+follows the steepest direction at each point, which on an elliptical bowl means arcing across the
+valley rather than heading straight for the bottom.</p>
+<p>Prediction for a 1,200 sq ft house: 199.99(1.2) + 100.01 = <b>$340k</b>.</p>"""
+        + note("""<p>“Batch” gradient descent means every step uses <em>all</em> the training
+examples — both houses here, all 5,000 in a real problem. The alternatives (stochastic and
+mini-batch, which use one example or a few) are what neural networks use in Course 2, and the
+<code>epochs</code> argument you meet there is counting passes over the full set.</p>""")
+        + explain("""<p>By iteration 100 the cost is 92.2, already 99.9% of the way down. <b>Why does
+it then take a hundred times as many iterations to finish?</b></p>""",
+                  """<p>Because the step size is proportional to the gradient, and near the minimum
+the gradient is nearly zero. Far away the surface is steep and each step covers a lot of ground;
+close in it is almost flat, so each step is tiny — progress decays geometrically. This is a feature,
+not a defect: it is what lets a fixed α be aggressive at the start without overshooting at the end.
+It is also why you stop on a <em>convergence test</em> — J changing by less than some ε — rather
+than on a fixed iteration count.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

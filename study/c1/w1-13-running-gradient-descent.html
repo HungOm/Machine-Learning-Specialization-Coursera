@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.13 · 9 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.13 · 14 min read</span></p>
 <h1><span class="secno">3.13</span>Running gradient descent</h1>
 <p class="lede">Watching it actually work — the path across the contour map, the falling cost curve, and what “batch” means.</p>
 <div class="bookrail" title="Lesson 48 of 172 in the book"><i style="width:28%"></i></div>
@@ -240,7 +240,23 @@ Skipping it is how people spend two days on a problem that a glance would have d
 
 plt.plot(J_history)
 plt.xlabel(<span class="tok-s">&#x27;iteration&#x27;</span>)
-plt.ylabel(<span class="tok-s">&#x27;J(w, b)&#x27;</span>)</code></pre><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c11-13-running-gradient-descent#1"><summary>Why does the path bend sharply and then crawl?</summary><div class="a"><p>Because the cost bowl is elongated. Gradient descent moves fast down the steep direction and slowly along the shallow one. Feature scaling (Week 2) makes the bowl rounder and the path direct.</p></div></details><details class="q" data-qid="c11-13-running-gradient-descent#2"><summary>What does “batch” gradient descent mean?</summary><div class="a"><p>Every update uses all m training examples. The alternatives are stochastic (one at a time) and mini-batch (a small subset).</p></div></details><details class="q" data-qid="c11-13-running-gradient-descent#3"><summary>You plot J and it decreases for 100 iterations then flattens completely. What now?</summary><div class="a"><p>It has converged. Running longer will not help. If the fit is still poor, the problem is the model or the features — not the optimisation.</p></div></details></div><h2><span class="ico">🎓</span>That is Week 1</h2><p>You now have a complete, working machine learning algorithm: a model (f = wx + b), a way to
+plt.ylabel(<span class="tok-s">&#x27;J(w, b)&#x27;</span>)</code></pre><h2><span class="ico">🧮</span>The whole run, start to finish</h2><p>From <var>w</var> = <var>b</var> = 0, α = 0.01, on the two houses:</p><table class="data"><thead><tr><th>iteration</th><th>w</th><th>b</th><th>J</th></tr></thead><tbody><tr><td>0</td><td>0.00</td><td>0.00</td><td>85,000.00</td></tr><tr><td>10</td><td>55.85</td><td>34.35</td><td>42,325.53</td></tr><tr><td>100</td><td>184.39</td><td>112.30</td><td>92.22</td></tr><tr><td>1,000</td><td>194.91</td><td>108.23</td><td>3.42</td></tr><tr><td>10,000</td><td><b>199.99</b></td><td><b>100.01</b></td><td><b>0.0000</b></td></tr></tbody></table><p>It converges to <var>w</var> = 200, <var>b</var> = 100 — the exact values the lesson
+on the model started from. Nobody told the algorithm those numbers; it found them from the data.</p>
+<p>Two things worth noticing. Most of the progress is early: 99.9% of the cost is gone by iteration
+100, and the remaining 9,900 iterations are polishing. And the path is not direct — look at
+<var>b</var> rising to 112.30 by iteration 100 and then coming back down to 100. Gradient descent
+follows the steepest direction at each point, which on an elliptical bowl means arcing across the
+valley rather than heading straight for the bottom.</p>
+<p>Prediction for a 1,200 sq ft house: 199.99(1.2) + 100.01 = <b>$340k</b>.</p><div class="callout "><span class="tag">Why this matters</span><p>“Batch” gradient descent means every step uses <em>all</em> the training
+examples — both houses here, all 5,000 in a real problem. The alternatives (stochastic and
+mini-batch, which use one example or a few) are what neural networks use in Course 2, and the
+<code>epochs</code> argument you meet there is counting passes over the full set.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>By iteration 100 the cost is 92.2, already 99.9% of the way down. <b>Why does
+it then take a hundred times as many iterations to finish?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the step size is proportional to the gradient, and near the minimum
+the gradient is nearly zero. Far away the surface is steep and each step covers a lot of ground;
+close in it is almost flat, so each step is tiny — progress decays geometrically. This is a feature,
+not a defect: it is what lets a fixed α be aggressive at the start without overshooting at the end.
+It is also why you stop on a <em>convergence test</em> — J changing by less than some ε — rather
+than on a fixed iteration count.</p></div></details></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c11-13-running-gradient-descent#1"><summary>Why does the path bend sharply and then crawl?</summary><div class="a"><p>Because the cost bowl is elongated. Gradient descent moves fast down the steep direction and slowly along the shallow one. Feature scaling (Week 2) makes the bowl rounder and the path direct.</p></div></details><details class="q" data-qid="c11-13-running-gradient-descent#2"><summary>What does “batch” gradient descent mean?</summary><div class="a"><p>Every update uses all m training examples. The alternatives are stochastic (one at a time) and mini-batch (a small subset).</p></div></details><details class="q" data-qid="c11-13-running-gradient-descent#3"><summary>You plot J and it decreases for 100 iterations then flattens completely. What now?</summary><div class="a"><p>It has converged. Running longer will not help. If the fit is still poor, the problem is the model or the features — not the optimisation.</p></div></details></div><h2><span class="ico">🎓</span>That is Week 1</h2><p>You now have a complete, working machine learning algorithm: a model (f = wx + b), a way to
 score it (J), and a way to improve it (gradient descent). Everything in the remaining six weeks of Courses
 1 and 2 is a variation on those three pieces.</p>
 <p>Week 2 scales it up to many features and makes it fast. Week 3 changes the model and the cost so it can

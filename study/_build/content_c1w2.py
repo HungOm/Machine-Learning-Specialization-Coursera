@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """C1 · Week 2 — Regression with multiple input variables."""
 from kit import (kid, key, warn, trap, note, card, eq, eqp, decode, table, demo,
-                 quiz, links, code, h2, grid2, grid3, pretest)
+                 quiz, links, code, h2, grid2, grid3, pretest, explain)
 
 REPO = "../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification"
 L = []
 
 # ============================================================ 1
 L.append(dict(
-    slug="01-multiple-features", title="Multiple features", mins=9, tag="core",
+    slug="01-multiple-features", title="Multiple features", mins=14, tag="core",
     lede="Houses have more than a size. Four features instead of one, and the notation that keeps track "
          "of which is which.",
     body=(
@@ -62,6 +62,42 @@ move to a neural network.</p>"""
         + warn("""<p>Be careful about causal language. w₂ = 4 does <b>not</b> mean “adding a bedroom to your
 house raises its value by $4,000”. It means “among houses in this dataset, holding the other features
 fixed, an extra bedroom is <em>associated</em> with $4,000 more”. Correlation, not intervention.</p>""")
+
+        + h2("🧮", "Four features, one real prediction")
+        + """<p>The optional lab’s three-house data set, with four features each — size, bedrooms,
+floors, age — and the fitted parameters it hands you:</p>"""
+        + code("""
+X_train = np.array([[2104, 5, 1, 45],
+                    [1416, 3, 2, 40],
+                    [ 852, 2, 1, 35]])
+y_train = np.array([460., 232., 178.])
+
+w = np.array([0.39133535, 18.75376741, -53.36032453, -26.42131618])
+b = 785.1811367994083
+""")
+        + """<p>Predict the first house — a dot product plus b:</p>"""
+        + table(["term", "value"],
+                [["0.39133535 × 2104", "+823.37"],
+                 ["18.75376741 × 5", "+93.77"],
+                 ["−53.36032453 × 1", "−53.36"],
+                 ["−26.42131618 × 45", "−1188.96"],
+                 ["+ b", "+785.18"],
+                 ["<b>prediction</b>", "<b>460.00000</b>"]])
+        + """<p>Against an actual price of 460.0 — correct to five decimal places, and the other two
+houses match exactly too. Those weights were fitted to these three points, so this is a check that
+the arithmetic is right, not evidence the model is good.</p>"""
+        + warn("""<p>Do not read the weights as importance. Floors gets −53.36 and size gets 0.391,
+which does <em>not</em> mean floors matter 136 times more — the weights carry the features’ units.
+Size is measured in thousands of square feet worth of digits, floors in ones. Comparing weights is
+only meaningful after scaling, which is the next lesson but one.</p>""")
+        + explain("""<p>Age has weight −26.42, so older houses are predicted cheaper. <b>Why can you
+not conclude that ageing a house reduces its value by $26,420 a year?</b></p>""",
+                  """<p>Because the weight is a fit to three data points with four features — the
+model has more freedom than data, so it can fit any values whatsoever and the individual weights are
+not identified. More generally, even with plenty of data, a regression weight is a
+<em>partial association</em> given the other features in the model, not a causal effect. Older
+houses here also differ in size and floors, and the weights split the credit between correlated
+features in ways that need not correspond to anything you could change.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -162,7 +198,7 @@ NumPy. Be deliberate about it, especially when translating a formula from a lect
 
 # ============================================================ 3
 L.append(dict(
-    slug="03-why-vectorization-is-fast", title="Why vectorization is fast", mins=8, tag="core",
+    slug="03-why-vectorization-is-fast", title="Why vectorization is fast", mins=13, tag="core",
     lede="Not because NumPy is clever maths. Because it hands the whole array to hardware that can do "
          "many multiplications at the same instant.",
     body=(
@@ -207,6 +243,31 @@ w = w - 0.1 * d
 """)
         + """<p>With 16 parameters this hardly matters. With 100,000 — an entirely ordinary size for a
 neural network — it is the difference between practical and impossible.</p>"""
+
+        + h2("🧮", "Timed on ten million numbers")
+        + """<p>Two vectors of 10,000,000 elements, dot-producted both ways, measured on this
+machine:</p>"""
+        + table(["Version", "time", "relative"],
+                [["<code>for i in range(n): s += a[i]*b[i]</code>", "≈ 2,154 ms", "1×"],
+                 ["<code>np.dot(a, b)</code>", "<b>11.4 ms</b>", "<b>≈ 189× faster</b>"]])
+        + """<p>Two seconds against one hundredth of a second, for identical arithmetic — the same ten
+million multiplications and ten million additions happen either way.</p>
+<p>The difference is where the work is done. The loop runs in the Python interpreter, which for every
+single element re-checks types, looks up methods and builds a temporary object. <code>np.dot</code>
+hands the whole array to compiled code that pays none of that per element, reads memory in a
+cache-friendly order, and uses SIMD instructions that perform several multiplications per clock
+cycle.</p>
+<p>Now scale it up. A single gradient-descent step is a dot product; a real run is thousands of
+steps. At 189×, two seconds per step becomes eleven milliseconds — the difference between a model
+you can iterate on and one you cannot.</p>"""
+        + explain("""<p>The speedup comes from removing the loop, not from doing less arithmetic.
+<b>So why is <code>np.dot</code> on a 10-element array barely faster than a Python loop?</b></p>""",
+                  """<p>Because there is a fixed cost to entering NumPy at all — checking shapes and
+dtypes, and dispatching into the compiled routine — and it is paid once per call regardless of size.
+On 10 elements that overhead dominates and the loop is competitive. On 10 million it is invisible,
+amortised over every element. The lesson is that vectorisation pays in proportion to how much work
+each call does, which is why the goal is few large array operations rather than many small
+ones.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -333,7 +394,7 @@ exists so the term is not a surprise; not worth reaching for, because it general
 
 # ============================================================ 5
 L.append(dict(
-    slug="05-feature-scaling", title="Feature scaling", mins=11, tag="core",
+    slug="05-feature-scaling", title="Feature scaling", mins=16, tag="core",
     lede="A feature ranging 300–2000 next to one ranging 0–5 turns the cost bowl into a canyon. One "
          "division fixes it, and it is the highest-value line in this week.",
     body=(
@@ -390,6 +451,36 @@ the valley floor slower still.</p>
 <p>Scaled, the contours are near-circles. Perpendicular now points almost straight at the centre, and a
 much larger α is safe. Both effects pull in the same direction, which is why the speedup is often an order
 of magnitude rather than a few percent.</p>"""
+
+        + h2("🧮", "What scaling is worth — measured")
+        + """<p>The lab’s <code>houses.txt</code>: 100 houses, four features, wildly different
+ranges.</p>"""
+        + table(["feature", "raw range", "mean", "sd"],
+                [["size (sqft)", "788 … 3,194", "1,413.71", "412.17"],
+                 ["bedrooms", "0 … 4", "2.71", "0.65"],
+                 ["floors", "1 … 2", "1.38", "0.49"],
+                 ["age", "12 … 107", "38.65", "25.79"]])
+        + """<p>Size spans 2,406 units; floors spans 1. The cost bowl is therefore enormously
+stretched, and here is what that costs you — the largest learning rate that does not diverge, found
+by bisection:</p>"""
+        + table(["", "largest usable α", ""],
+                [["raw features", "<b>9.4 × 10⁻⁷</b>", "set by the size feature"],
+                 ["after z-score scaling", "<b>0.966</b>", "about a million times larger"]])
+        + """<p>A factor of a million. And with 100 iterations each: the unscaled run gets J from
+71,024 down to 1,565; the scaled run reaches <b>222</b> — seven times lower, in the same number of
+steps.</p>
+<p>The reason is that α must be small enough for the <em>steepest</em> direction or the whole thing
+diverges, and that one direction then dictates the pace for every other. Scaling makes all directions
+comparably steep, so a single α suits them all. (This is the same argument that Adam solves
+automatically in Course 2 Week 2.)</p>"""
+        + explain("""<p>Scaling does not change the data’s information content, the best-fit line, or
+the minimum cost achievable. <b>So what exactly does it change?</b></p>""",
+                  """<p>The shape of the path to that minimum, and therefore how many steps it takes.
+The optimum is the same point; the bowl around it is what gets reshaped, from a long thin canyon into
+something round. Gradient descent always steps perpendicular to the contours, and in a canyon that
+means bouncing across the narrow direction while creeping along the long one. Round contours point
+straight at the centre. You are not helping the model — you are helping the optimiser find
+it.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Scaling before splitting your data.</b> Computing μ over the whole dataset leaks
@@ -645,7 +736,7 @@ useless in production. Ask whether the feature would exist at prediction time.</
 
 # ============================================================ 9
 L.append(dict(
-    slug="09-polynomial-regression", title="Polynomial regression", mins=9, tag="core",
+    slug="09-polynomial-regression", title="Polynomial regression", mins=14, tag="core",
     lede="Feature engineering’s most useful special case: hand the model x², x³ or √x and a straight-line "
          "algorithm starts drawing curves.",
     body=(
@@ -699,6 +790,32 @@ starts fitting the noise.</p>
 <p>You will meet the honest way to choose in <b>Week 3</b> (overfitting, and what to do about it) and the
 rigorous way in <b>Course 2 Week 3</b> (a cross-validation set, and the bias/variance diagnostic). For
 now: try a few, and look at the fit.</p>"""
+
+        + h2("🧮", "Why scaling stops being optional")
+        + """<p>Polynomial regression is ordinary linear regression on engineered features — you add
+<var>x</var>², <var>x</var>³ and let the same algorithm fit them. But look at what that does to the
+ranges. For a size feature running to about 3,000:</p>"""
+        + table(["feature", "typical magnitude"],
+                [["<var>x</var>", "10³"],
+                 ["<var>x</var>²", "10⁷"],
+                 ["<var>x</var>³", "<b>10¹⁰</b>"]])
+        + """<p>Ten orders of magnitude between the first feature and the third. From the previous
+lesson, the largest usable α is set by the steepest direction — so <var>x</var>³ would force α down
+to something around 10⁻²⁰, at which point <var>x</var> would never move at all.</p>
+<p>So: with polynomial features, <b>scaling is not an optimisation, it is a precondition</b>. Without
+it gradient descent does not converge slowly, it does not converge.</p>
+<p>Which degree to pick is a question this course cannot yet answer honestly — the fit always
+improves on the training data as the degree rises. Course 2 Week 3 answers it with a
+cross-validation set.</p>"""
+        + explain("""<p>Adding <var>x</var>² and <var>x</var>³ lets the model draw curves, yet it is
+still called <em>linear</em> regression. <b>Linear in what?</b></p>""",
+                  """<p>In the <em>parameters</em>, not in <var>x</var>. The model is
+<var>w</var><sub>1</sub><var>x</var> + <var>w</var><sub>2</sub><var>x</var>² +
+<var>w</var><sub>3</sub><var>x</var>³ + <var>b</var> — every <var>w</var> appears to the first power
+and is multiplied by something known. That is the property the maths actually depends on: it makes
+the cost a bowl with one minimum, and the derivatives stay the same simple form. Once you accept
+that, <var>x</var>² is just another column of numbers and nothing in the algorithm needs to change —
+which is exactly the trick.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

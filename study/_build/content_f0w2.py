@@ -165,7 +165,7 @@ gives <code>NameError</code>.</p>""")
     ]))
 
 # ============================================================ 3
-lesson("03-lists-vs-arrays", "Lists vs NumPy arrays", 8,
+lesson("03-lists-vs-arrays", "Lists vs NumPy arrays", 12,
     "They look identical and behave nothing alike. This one distinction causes more beginner confusion "
     "than anything else in scientific Python.",
     pretest("""<p><code>[1, 2] + [3, 4]</code>. <b>Commit to an answer.</b> Then guess whether NumPy would agree with you.</p>""",
@@ -218,6 +218,30 @@ to text, which is a genuinely nasty surprise. The rigidity is the price of the s
     + key("""<p><b>For any maths, convert to an array first.</b> <code>np.array(my_list)</code>. One line,
 and the whole category of confusion goes away.</p>""")
 
+    + h2("🧮", "Worked by hand")
+    + """<p>The same two operations, on a list and on an array. This is the whole difference:</p>"""
+    + table(["expression", "result", "what it did"],
+            [["<code>[1,2,3] * 2</code>", "<code>[1, 2, 3, 1, 2, 3]</code>", "repeated the list"],
+             ["<code>np.array([1,2,3]) * 2</code>", "<code>[2 4 6]</code>", "<b>doubled each number</b>"],
+             ["<code>[1,2,3] + [4,5,6]</code>", "<code>[1, 2, 3, 4, 5, 6]</code>", "glued them end to end"],
+             ["<code>np.array([1,2,3]) + np.array([4,5,6])</code>", "<code>[5 7 9]</code>", "<b>added them elementwise</b>"]])
+    + """<p><code>+</code> and <code>*</code> mean completely different things depending on which type
+you are holding. Neither is wrong — a list is a container, so joining and repeating are natural; an
+array is a vector of numbers, so arithmetic is natural. But a list where you expected an array
+fails <em>silently</em>, giving six items instead of three rather than an error.</p>
+<p>And the speed. Doubling one million values:</p>"""
+    + table(["", "time"],
+            [["Python list, one at a time", "32.0 ms"],
+             ["NumPy array, all at once", "<b>1.7 ms</b> — about 19× faster"]])
+    + explain("""<p><code>np.array([1,2,3]) * 2</code> doubles every element, but
+<code>[1,2,3] * 2</code> repeats the list. <b>Why did NumPy choose the meaning it did?</b></p>""",
+              """<p>Because an array is meant to stand for a mathematical vector, and in maths
+2<b>v</b> means scaling the vector — every component doubled. Repetition is not an operation vectors
+have. Python’s list made the opposite choice because a list is a general sequence with no numeric
+meaning, so the only sensible reading of “times 2” is “twice as many”. The types disagree because
+they model different things, which is exactly why converting with <code>np.array(...)</code> at the
+boundary matters so much.</p>""")
+
     + h2("🕳", "Traps")
     + trap("""<p><b><code>my_list * 2</code> silently doing the wrong thing.</b> No error. You just get six
 elements where you expected three doubled ones.</p>""")
@@ -248,7 +272,7 @@ copies the whole thing each time, which is very slow. Build a list, then convert
     ]))
 
 # ============================================================ 4
-lesson("04-indexing-slicing", "Indexing and slicing", 9,
+lesson("04-indexing-slicing", "Indexing and slicing", 14,
     "How to grab one thing, or a run of things. The colon, and the off-by-one rule that catches "
     "absolutely everybody.",
     pretest("""<p><code>x = [10, 20, 30, 40]</code>. <b>What is <code>x[1:3]</code>?</b> Guess how many items come back before you count.</p>""",
@@ -304,6 +328,33 @@ one neuron per <em>column</em>. Knowing this notation is the difference between 
 being magic.</p>
 <p>One efficiency note: a basic slice is a <b>view</b>, not a copy — it points at the same memory. So
 changing a slice changes the original. If you need an independent copy, say <code>x[1:4].copy()</code>.</p>"""
+
+    + h2("🧮", "Worked by hand")
+    + """<p>Take <code>v = np.array([10, 20, 30, 40, 50])</code> and read every result:</p>"""
+    + table(["expression", "result", "why"],
+            [["<code>v[0]</code>", "<code>10</code>", "counting starts at <b>zero</b>"],
+             ["<code>v[-1]</code>", "<code>50</code>", "negative counts back from the end"],
+             ["<code>v[1:3]</code>", "<code>[20 30]</code>", "start included, <b>stop excluded</b>"],
+             ["<code>v[:3]</code>", "<code>[10 20 30]</code>", "missing start means “from the beginning”"],
+             ["<code>v[2:]</code>", "<code>[30 40 50]</code>", "missing stop means “to the end”"],
+             ["<code>v[::2]</code>", "<code>[10 30 50]</code>", "every second one"],
+             ["<code>v[::-1]</code>", "<code>[50 40 30 20 10]</code>", "reversed"]])
+    + """<p><code>v[1:3]</code> giving two elements rather than three is the one that catches
+everybody. The rule is that the stop index is where you <em>stop</em>, not the last one you take.
+Its compensation: <code>v[:3]</code> and <code>v[3:]</code> split the array with no overlap and
+nothing missing, and the length of <code>v[a:b]</code> is always just b − a.</p>
+<p>For a 2-D array <code>A = [[1,2,3],[4,5,6]]</code> the comma separates rows from columns:</p>"""
+    + table(["expression", "result", "shape"],
+            [["<code>A[0]</code>", "<code>[1 2 3]</code>", "(3,) — the first row"],
+             ["<code>A[:, 0]</code>", "<code>[1 4]</code>", "(2,) — the first column, <b>flattened to 1-D</b>"],
+             ["<code>A[:, 0:1]</code>", "<code>[[1], [4]]</code>", "<b>(2, 1)</b> — stays 2-D"]])
+    + explain("""<p><code>A[:, 0]</code> and <code>A[:, 0:1]</code> contain the same two numbers but
+have different shapes. <b>Why does NumPy treat them differently?</b></p>""",
+              """<p>Because a plain integer means “pick this one and remove that dimension”, while a
+slice means “take a range along this dimension and keep it”. <code>0</code> collapses the column
+axis away; <code>0:1</code> keeps an axis that happens to be one long. It matters constantly in this
+course, because a (2,) array and a (2,1) array broadcast differently — which is the source of a
+large share of shape bugs. When you need the column to stay a column, slice it.</p>""")
 
     + h2("🕳", "Traps")
     + trap("""<p><b>Expecting x[1:4] to include position 4.</b> It does not. Four positions would be
@@ -579,7 +630,7 @@ multiply. Runs happily, gives wrong numbers.</p>""")
     ]))
 
 # ============================================================ 8
-lesson("08-broadcasting", "Broadcasting", 9,
+lesson("08-broadcasting", "Broadcasting", 14,
     "How NumPy adds a (1,3) to a (2,3) without complaining. Enormously useful, and the source of some "
     "very quiet bugs.",
     pretest("""<p>You subtract a 4-number array from a (100, 4) matrix. Shapes clearly do not match. <b>Guess whether NumPy errors — and whether it should.</b></p>""",
@@ -638,6 +689,40 @@ forgotten <code>reshape</code>.</p>"""
     + key("""<p>When a result has a <b>surprising shape</b>, broadcasting is almost always what happened.
 Print the shapes of both operands and the culprit is immediately obvious.</p>""")
 
+    + h2("🧮", "Worked by hand")
+    + """<p><code>A</code> is (2, 3). Watch what NumPy does with a smaller partner:</p>"""
+    + code("""
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])          # (2, 3)
+
+A + np.array([10, 20, 30])         # (3,)   -> [[11, 22, 33],
+                                   #            [14, 25, 36]]
+
+A + np.array([[100], [200]])       # (2, 1) -> [[101, 102, 103],
+                                   #            [204, 205, 206]]
+
+A + np.array([1, 2])               # (2,)   -> ERROR
+""")
+    + table(["shapes", "aligned from the right", "verdict"],
+            [["(2,3) and (3,)", "3 vs 3 ✓, then nothing left to match", "<b>works</b> — the row is reused for every row"],
+             ["(2,3) and (2,1)", "3 vs 1 ✓ (1 stretches), 2 vs 2 ✓", "<b>works</b> — the column is reused for every column"],
+             ["(2,3) and (2,)", "3 vs <b>2</b> ✗", "<b>error</b>"]])
+    + """<p>The last one is the trap, and the error message names it exactly:
+<code>operands could not be broadcast together with shapes (2,3) (2,)</code>. It looks like it ought
+to work — there are two rows and two numbers — but shapes are matched <b>from the right</b>, so the
+2 is compared against the 3 columns, not against the 2 rows. Reshape it to (2, 1) and it works.</p>
+<p>Two dimensions are compatible when they are equal, or when one of them is 1. A dimension of 1 is
+stretched to match; anything else is an error. Nothing is copied in memory — NumPy just reads the
+same value repeatedly, which is why broadcasting is free.</p>"""
+    + explain("""<p>Shapes are aligned starting from the <em>right-hand</em> end, not the left.
+<b>Why is that the more useful convention?</b></p>""",
+              """<p>Because the rightmost axis is almost always the one holding the features of a
+single item, and the leftmost is almost always “how many items”. Aligning from the right means a
+per-feature quantity — a bias vector of length 3, a mean per column — automatically applies to every
+row, however many rows there are. That is exactly the operation you want most often, so it is the
+one that needs no ceremony. Aligning from the left would make “one value per item” easy and “one
+value per feature” awkward, which is the rarer need.</p>""")
+
     + h2("🕳", "Traps")
     + trap("""<p><b>(3,1) + (1,3) giving a (3,3).</b> No error, nine numbers where you wanted three. The
 most common quiet bug in NumPy.</p>""")
@@ -665,7 +750,7 @@ most common quiet bug in NumPy.</p>""")
     ]))
 
 # ============================================================ 9
-lesson("09-dot-in-code", "np.dot, matmul and @", 8,
+lesson("09-dot-in-code", "np.dot, matmul and @", 12,
     "Four ways to multiply arrays, two of which collapse and two of which do not. Choosing wrong is a "
     "silent bug.",
     pretest("""<p>Three ways to write the same thing: <code>np.dot(a,b)</code>, <code>np.matmul(a,b)</code>, <code>a @ b</code>. <b>Guess whether they always agree.</b></p>""",
@@ -716,6 +801,26 @@ that consistency matters.</p>
 <p>The genuinely dangerous case is when shapes happen to allow both <code>*</code> and <code>@</code>. Two
 (3,3) matrices, for instance. Both run, both give a (3,3), and only one is correct. Nothing warns you.</p>"""
 
+    + h2("🧮", "Worked by hand")
+    + """<p><code>p = [1,2,3]</code>, <code>q = [4,5,6]</code>. The dot product is
+1×4 + 2×5 + 3×6 = 4 + 10 + 18 = <b>32</b>. Four ways to write it, all giving 32:</p>"""
+    + table(["spelling", "result", "when to use it"],
+            [["<code>np.dot(p, q)</code>", "32", "explicit, works everywhere"],
+             ["<code>p @ q</code>", "32", "<b>the modern default</b> — reads well for matrices too"],
+             ["<code>(p * q).sum()</code>", "32", "shows the mechanism; slower on large arrays"],
+             ["<code>sum(a*b for a,b in zip(p,q))</code>", "32", "pure Python — for understanding only"]])
+    + warn("""<p>And the one that is <b>not</b> a dot product: <code>p * q</code> gives
+<code>[4 10 18]</code> — the three products, unsummed. A single missing <code>.sum()</code> turns a
+number into an array, and if the next line broadcasts happily you may not find out for a long
+while.</p>""")
+    + explain("""<p><code>p * q</code> and <code>p @ q</code> differ by one character and by the whole
+meaning. <b>What is the difference in one sentence, and why does <code>@</code> exist at all?</b></p>""",
+              """<p><code>*</code> pairs elements and stops; <code>@</code> pairs them and then adds
+them up, collapsing the axis. <code>@</code> exists because that collapse is the operation nearly all
+of linear algebra is built from — a dot product is one row against one column, and matrix
+multiplication is that repeated — and writing <code>.sum()</code> by hand every time is both noisy
+and slower, since the fused version never builds the intermediate array.</p>""")
+
     + h2("🕳", "Traps")
     + trap("""<p><b><code>*</code> where you meant <code>@</code>.</b> On square matrices both work and give
 different answers. This is the expensive one.</p>""")
@@ -741,7 +846,7 @@ different answers. This is the expensive one.</p>""")
     ]))
 
 # ============================================================ 10
-lesson("10-aggregations", "sum, mean, max — along an axis", 7,
+lesson("10-aggregations", "sum, mean, max — along an axis", 12,
     "Collapsing a lot of numbers into fewer. The same axis rule from lesson 5, now doing real work.",
     pretest("""<p>A (100, 4) matrix of houses. You want the average of <em>each feature</em>. <b>Should the answer have 100 numbers or 4 — and which axis gives you that?</b></p>""",
     """<p>Four. Watch for how to get the axis right first time rather than by trial and error.</p>""")
@@ -792,6 +897,37 @@ one number per feature? You want the examples gone, so collapse axis 0.</p>
 <p>There is a third useful trick above: <code>(preds == y).mean()</code>. The comparison makes an array of
 True/False, and True counts as 1 — so the mean of that array is the fraction that are True. That is
 accuracy, in one line, with no counting.</p>"""
+
+    + h2("🧮", "Worked by hand")
+    + """<p>This is the single most misread argument in NumPy. Take:</p>"""
+    + code("""
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])          # shape (2, 3)
+""")
+    + table(["call", "result", "shape", "what happened"],
+            [["<code>A.sum()</code>", "<code>21</code>", "scalar", "everything, into one number"],
+             ["<code>A.sum(axis=0)</code>", "<code>[5 7 9]</code>", "(3,)",
+              "<b>collapsed the rows</b> — one total per column"],
+             ["<code>A.sum(axis=1)</code>", "<code>[6 15]</code>", "(2,)",
+              "<b>collapsed the columns</b> — one total per row"]])
+    + """<p>Say it out loud as <b>“axis = the one that disappears”</b>. <code>axis=0</code> is the row
+axis, so the rows vanish and what is left is one number per column: 1+4 = 5, 2+5 = 7, 3+6 = 9. Almost
+everyone first reads <code>axis=0</code> as “do it to the rows” and gets the transpose of what they
+wanted.</p>
+<p>Since rows are usually examples and columns usually features, <code>axis=0</code> is what you want
+for per-feature statistics — <code>X.mean(axis=0)</code> is the mean of each feature, which is
+exactly what feature scaling and the anomaly-detection Gaussian both need.</p>
+<p><code>keepdims=True</code> keeps the collapsed axis at length 1 — <code>A.sum(axis=0,
+keepdims=True)</code> has shape <b>(1, 3)</b> instead of (3,) — which is what you use when the
+result has to broadcast back against the original.</p>"""
+    + explain("""<p><code>X.mean(axis=0)</code> is the per-feature mean, and it is used everywhere in
+this course. <b>Why is it almost never <code>axis=1</code> you want?</b></p>""",
+              """<p>Because of how the data is laid out: one row per example, one column per feature.
+Averaging down a column asks “what is a typical value of this feature”, which is a meaningful
+statistic you can subtract or scale by. Averaging across a row asks “what is the average of this
+house’s size, bedroom count and age” — mixing square feet with counts with years, which is
+arithmetic without meaning. The convention that examples are rows is what makes <code>axis=0</code>
+the useful direction.</p>""")
 
     + h2("🕳", "Traps")
     + trap("""<p><b>Guessing the axis and getting a plausible answer.</b> If X is square, both axes give a
@@ -901,7 +1037,7 @@ with more than one element is ambiguous” — a confusing message for a simple 
     ]))
 
 # ============================================================ 12
-lesson("12-reshape", "reshape, flatten and T", 7,
+lesson("12-reshape", "reshape, flatten and T", 12,
     "Rearranging the same numbers into a different grid — and the difference from transpose, which is not "
     "the same thing.",
     pretest("""<p>A 2×3 array reshaped to 3×2. <b>Six numbers in, six out — but are they in the same order, and does the data change?</b></p>""",
@@ -949,6 +1085,31 @@ just changes the note saying how to walk through them. That is why you can resha
              ["<code>.T</code>", "[[1,4],[2,5],[3,6]]", "mirrors positions"]])
     + """<p>Both are (3,2). The numbers are in different places. Using one where you meant the other gives
 no error and wrong answers — one of the harder bugs to spot, because the shape looks right.</p>"""
+
+    + h2("🧮", "Worked by hand")
+    + """<p>Start with six numbers in a flat line and rearrange them:</p>"""
+    + table(["call", "result", "shape"],
+            [["<code>np.arange(6)</code>", "<code>[0 1 2 3 4 5]</code>", "(6,)"],
+             ["<code>.reshape(2, 3)</code>", "<code>[[0 1 2], [3 4 5]]</code>", "(2, 3)"],
+             ["<code>.reshape(3, 2)</code>", "<code>[[0 1], [2 3], [4 5]]</code>", "(3, 2)"],
+             ["<code>.reshape(-1, 1)</code>", "a single column", "<b>(6, 1)</b>"],
+             ["<code>.reshape(1, -1)</code>", "a single row", "<b>(1, 6)</b>"],
+             ["<code>.reshape(4, 2)</code>", "<b>ERROR</b>", "6 numbers cannot fill 8 slots"]])
+    + """<p>Reshaping never changes the numbers or their order — it only changes where the row breaks
+fall. Read the elements left to right, top to bottom, and every version reads 0, 1, 2, 3, 4, 5.</p>
+<p>The <code>-1</code> means “work this one out for me”. <code>reshape(-1, 1)</code> is the most
+common thing you will write all course: it turns a flat list of labels into a column, which is the
+shape scikit-learn and Keras expect for <var>y</var>. And <code>X[i].reshape(1, 400)</code> is how
+you feed a single example to <code>model.predict</code>, which insists on a 2-D input even for one
+row.</p>"""
+    + explain("""<p>The total number of elements must be preserved, so <code>reshape(4,2)</code> on
+six numbers fails. <b>Why is that an error rather than NumPy padding or truncating?</b></p>""",
+              """<p>Because reshape is a relabelling, not a computation — it hands back a
+<em>view</em> of the very same memory, just with different instructions about where the rows break.
+There is nothing to pad with and nothing that could be dropped without silently destroying data.
+Failing loudly is the right behaviour: a shape mismatch here almost always means an earlier step
+produced the wrong number of things, and you want to find out at the reshape rather than three
+lines later.</p>""")
 
     + h2("🕳", "Traps")
     + trap("""<p><b>reshape when you meant transpose.</b> Same shape, different numbers, no error.</p>""")

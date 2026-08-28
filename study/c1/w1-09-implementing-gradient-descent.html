@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.9 · 10 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 3 — Introduction to Machine Learning</span><span class="right">§&nbsp;3.9 · 15 min read</span></p>
 <h1><span class="secno">3.9</span>Implementing gradient descent</h1>
 <p class="lede">The update rule, and the one implementation detail that is easy to get wrong and hard to notice: simultaneous update.</p>
 <div class="bookrail" title="Lesson 44 of 172 in the book"><i style="width:26%"></i></div>
@@ -243,7 +243,21 @@ first, then assign both. The sequential version is a different algorithm that ha
         b = b - alpha * dj_db
     <span class="tok-k">return</span> w, b</code></pre><p>In Python this happens to be safe because <code>dj_dw</code> and <code>dj_db</code> are
 both computed before either assignment. The bug appears when people restructure the loop and compute the
-gradients inside it, one at a time.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Updating w, then recomputing the gradient before updating b.</b> Not gradient
+gradients inside it, one at a time.</p><h2><span class="ico">🧮</span>The first three steps, by hand</h2><p>Start from <var>w</var> = 0, <var>b</var> = 0 with α = 0.01 on the two houses:</p><table class="data"><thead><tr><th>iteration</th><th>w</th><th>b</th><th>J</th><th>∂J/∂w</th><th>∂J/∂b</th></tr></thead><tbody><tr><td>0</td><td>0.0000</td><td>0.0000</td><td>85,000.0</td><td><b>−650.0</b></td><td><b>−400.0</b></td></tr><tr><td>1</td><td>6.5000</td><td>4.0000</td><td>79,274.8</td><td>−627.8</td><td>−386.3</td></tr><tr><td>2</td><td>12.7775</td><td>7.8625</td><td>73,935.3</td><td>−606.3</td><td>−373.0</td></tr><tr><td>10</td><td>55.8498</td><td>34.3454</td><td>42,325.5</td><td>−458.9</td><td>−281.9</td></tr></tbody></table><p>Follow one line of arithmetic: at iteration 0 the derivative is −650, so
+<var>w</var> ← 0 − 0.01(−650) = <b>6.5</b>. The derivative is negative, so <var>w</var> goes
+<em>up</em> — the minus sign in the update rule is what turns “downhill” into the right
+direction.</p>
+<p>Now watch the derivative column shrink: 650 → 628 → 606 → 459. Nobody adjusted α; it is fixed at
+0.01 the whole way. The steps get smaller on their own because the surface flattens as you approach
+the bottom, and that is the single most important property of gradient descent — it decelerates
+automatically, so a constant learning rate does not overshoot at the end.</p><div class="callout warn"><span class="tag">Watch out</span><p>Both parameters must be updated <b>simultaneously</b>, from the same old values.
+Computing the new <var>w</var> and then using it to compute the new <var>b</var> is the classic bug:
+it usually still converges, which is exactly what makes it hard to notice.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>The two derivatives at iteration 0 are −650 and −400 — different sizes.
+<b>Why does that mean w and b move by different amounts under the same α?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because α is a single multiplier applied to each parameter’s own derivative,
+not a fixed step length. The derivative measures how much J responds to that parameter, and J is
+more sensitive to <var>w</var> here — x values of 1 and 2 multiply w’s influence — so w gets the
+larger correction. This is also the seed of the feature-scaling problem: when one feature’s scale
+dwarfs another’s, the derivatives differ by orders of magnitude, and one α cannot suit both.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Updating w, then recomputing the gradient before updating b.</b> Not gradient
 descent. It may still reduce J, which is precisely why nobody notices.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Reading = as mathematical equality.</b> <code>w = w − α·∂J/∂w</code> is an
 instruction, not a claim.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c11-09-implementing-gradient-descent#1"><summary>w = 5, ∂J/∂w = 2, α = 0.1. What is the new w?</summary><div class="a"><p>5 − 0.1(2) = <b>4.8</b>. The positive slope means uphill is to the right, so w moves left.</p></div></details><details class="q" data-qid="c11-09-implementing-gradient-descent#2"><summary>Why must the updates be simultaneous?</summary><div class="a"><p>Because the gradient is defined at a specific point (w, b). Updating w first moves you to a different point, so b's step is computed from the wrong place.</p></div></details><details class="q" data-qid="c11-09-implementing-gradient-descent#3"><summary>What happens if α is negative?</summary><div class="a"><p>You would climb <em>uphill</em> and J would grow. α is always positive; the minus sign in the formula is what makes it descent.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind lab">lab</span><span><a href="../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification/week1/Optional%20Labs/C1_W1_Lab05_Gradient_Descent_Soln.ipynb" target="_blank" rel="noopener">Optional lab: Gradient Descent</a><span class="d">In this repo. Implements this loop and plots the path across the contour map.</span></span></li></ul>
 <nav class="pager">

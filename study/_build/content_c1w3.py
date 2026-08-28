@@ -244,7 +244,7 @@ right threshold when the two kinds of mistake cost the same, and they very often
 # ============================================================ 4
 L.append(dict(
     slug="04-cost-function-for-logistic-regression", title="Cost function for logistic regression",
-    mins=11, tag="maths",
+    mins=16, tag="maths",
     lede="Squared error worked beautifully in Week 1 and fails here. Understanding why is the point of this "
          "lesson.",
     body=(
@@ -293,6 +293,32 @@ gradient descent gets its guarantee back.</p>"""
         + key("""<p>Why a logarithm specifically? Two reasons, both good. It makes the overall cost convex.
 And it is the <b>negative log-likelihood</b> — the choice of w and b that makes the data you actually
 observed most probable. It is not an arbitrary trick; it falls out of statistics.</p>""")
+
+        + h2("🧮", "Watch squared error actually fail")
+        + """<p>The claim is that squared error, which worked perfectly for linear regression, breaks
+for logistic regression. Here it is failing. Six points, a sigmoid model, and gradient descent run
+from a deliberately poor start (<var>w</var> = −5, <var>b</var> = 10) for 3,000 steps:</p>"""
+        + table(["cost function used", "ends at", "final accuracy"],
+                [["squared error", "w = −9.30, b = 3.51", "<b>0.33</b> — worse than guessing"],
+                 ["log loss", "w = 7.11, b = −17.60", "<b>1.00</b> — solved"]])
+        + """<p>Same data, same start, same α, same number of steps. One gets there; the other is
+still stuck 3,000 iterations later.</p>
+<p>The mechanism is in the derivative. With squared error the gradient carries an extra factor of
+<var>g</var>′(<var>z</var>) = <var>g</var>(1 − <var>g</var>), and that factor collapses when the
+sigmoid saturates — at <var>z</var> = ±5 it is already about 0.007, at ±10 it is 0.00005. A badly
+placed model is <em>confidently</em> wrong, which is exactly where the gradient dies, so it receives
+almost no signal to correct itself.</p>
+<p>Log loss is built so that factor cancels. Its gradient is simply
+(<var>f</var> − <var>y</var>)<var>x</var> — no <var>g</var>′ anywhere — so a confidently wrong
+prediction produces a <em>large</em> correction rather than a vanishing one.</p>"""
+        + explain("""<p>The cure is a cost function whose derivative cancels the sigmoid’s slope.
+<b>Why is “confidently wrong should hurt most” the right principle to build in?</b></p>""",
+                  """<p>Because the model’s output is a probability, and a probability of 0.99
+attached to a wrong answer is a much more serious error than 0.51 attached to the same wrong answer —
+it means the model has learned something actively false, not merely that it is undecided. Squared
+error caps the penalty at 1 and, worse, flattens the gradient exactly there. Log loss sends the
+penalty to infinity as the prediction approaches certainty in the wrong direction, so the steepest
+correction is applied precisely where the model is most badly wrong.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -395,7 +421,7 @@ property.</p>"""
 
 # ============================================================ 6
 L.append(dict(
-    slug="06-simplified-cost-function", title="The simplified cost function", mins=8, tag="maths",
+    slug="06-simplified-cost-function", title="The simplified cost function", mins=13, tag="maths",
     lede="Two cases collapse into one line, using nothing more than the fact that y is always 0 or 1.",
     body=(
         pretest("""<p>Two formulas, one for y = 1 and one for y = 0. <b>Guess how you would collapse them into a single line with no <code>if</code></b>, given y is only ever 0 or 1.</p>""",
@@ -453,6 +479,30 @@ def compute_cost_logistic(X, y, w, b):
 implementations clip f into [1e−15, 1 − 1e−15], or rearrange the formula to avoid building f at all.
 Course 2 Week 2 lesson 9 covers this properly under the name <code>from_logits=True</code>.</p>""")
 
+        + h2("🧮", "Checking that one line really is two")
+        + """<p>The two-case loss and the one-line version are claimed to be identical. The way to
+believe it is to substitute both possible values of <var>y</var>:</p>"""
+        + table(["y", "−y log(f) − (1−y) log(1−f)", "collapses to"],
+                [["1", "−<b>1</b>·log(f) − <b>0</b>·log(1−f)", "<b>−log(f)</b>"],
+                 ["0", "−<b>0</b>·log(f) − <b>1</b>·log(1−f)", "<b>−log(1−f)</b>"]])
+        + """<p>Because <var>y</var> is only ever 0 or 1, one of the two terms is always multiplied by
+zero and vanishes. It is an <b>if-statement written as arithmetic</b>. The numbers:</p>"""
+        + table(["f", "loss if y = 1", "loss if y = 0"],
+                [["0.90", "<b>0.105</b>", "2.303"],
+                 ["0.50", "0.693", "0.693"],
+                 ["0.10", "2.303", "<b>0.105</b>"],
+                 ["0.01", "<b>4.605</b>", "0.010"]])
+        + """<p>The reason to bother: an <code>if</code> cannot be differentiated or vectorised, and a
+product can. This single expression is what lets the cost be written as one NumPy line over the whole
+data set, and it is why the derivative comes out as cleanly as it does in the next lesson.</p>"""
+        + explain("""<p>The trick relies entirely on <var>y</var> being exactly 0 or 1. <b>What breaks
+if y could be 0.5?</b></p>""",
+                  """<p>Neither term vanishes, so you get a blend — 0.5 of the y=1 loss plus 0.5 of the
+y=0 loss. Interestingly that is not nonsense: it is the cross-entropy between the true distribution
+and the predicted one, and it is exactly what soft labels and label smoothing use deliberately. So
+the formula generalises gracefully; what stops being true is the <em>reading</em> of it as “pick one
+of two cases”. With 0/1 labels it is a switch; in general it is a weighted average.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Show the combined formula reduces to −log(f) when y = 1.",
@@ -478,7 +528,7 @@ Course 2 Week 2 lesson 9 covers this properly under the name <code>from_logits=T
 
 # ============================================================ 7
 L.append(dict(
-    slug="07-gradient-descent-logistic", title="Gradient descent for logistic regression", mins=9, tag="core",
+    slug="07-gradient-descent-logistic", title="Gradient descent for logistic regression", mins=14, tag="core",
     lede="The update rule is character-for-character identical to linear regression. Only the meaning of f "
          "has changed — and that is genuinely all.",
     body=(
@@ -537,6 +587,40 @@ def compute_gradient_logistic(X, y, w, b):
         + """<p>Diff this against the linear regression version from Week 2 and exactly one line
 changes.</p>"""
 
+        + h2("🧮", "The identical formula, checked")
+        + """<p>The derivative of the logistic cost is:</p>"""
+        + eq("""<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var><sub>j</sub></span></span>
+<span class="op">=</span> <span class="frac"><span>1</span><span><var>m</var></span></span>
+<span class="op">Σ</span> <span class="paren">(</span><var>f</var>(<var>x</var><sup>(i)</sup>)
+<span class="op">−</span> <var>y</var><sup>(i)</sup><span class="paren">)</span>
+<var>x</var><sub>j</sub><sup>(i)</sup>""", "exactly what linear regression had")
+        + """<p>Character for character, this is the linear regression update from Week 1. Only
+<var>f</var> has changed — from <var>w</var>·<var>x</var> + <var>b</var> to
+<var>g</var>(<var>w</var>·<var>x</var> + <var>b</var>). Worked on the six-point data with
+<var>w</var> = [1, 1], <var>b</var> = −3:</p>"""
+        + table(["x", "y", "z", "f = g(z)", "f − y"],
+                [["[0.5, 1.5]", "0", "−1.0", "0.2689", "+0.2689"],
+                 ["[1.0, 1.0]", "0", "−1.0", "0.2689", "+0.2689"],
+                 ["[1.5, 0.5]", "0", "−1.0", "0.2689", "+0.2689"],
+                 ["[3.0, 0.5]", "1", "+0.5", "0.6225", "−0.3775"],
+                 ["[2.0, 2.0]", "1", "+1.0", "0.7311", "−0.2689"],
+                 ["[1.0, 2.5]", "1", "+0.5", "0.6225", "−0.3775"]])
+        + """<p>All six are classified correctly, yet every residual is substantial — the model is
+right but not confident, so gradient descent keeps pushing. Positive residuals pull the weights down,
+negative ones push them up, each in proportion to its own <var>x</var>.</p>"""
+        + warn("""<p>The formula being identical does <b>not</b> make the algorithms identical. The
+same expression means different things because <var>f</var> is different, J is a different function,
+and the two cannot be swapped. It is a lucky coincidence of the maths, not a shared
+implementation.</p>""")
+        + explain("""<p>Two quite different models and two quite different cost functions produce
+literally the same derivative. <b>Is that a coincidence?</b></p>""",
+                  """<p>No — it is designed. Log loss was chosen partly <em>because</em> its derivative
+cancels the sigmoid’s <var>g</var>′ factor, which is the same cancellation that rescued the previous
+lesson’s stuck gradient descent. Squared error paired with an identity function does the same thing
+for linear regression. Both are instances of a general pattern: pair the right loss with the right
+output function and the messy chain-rule factor disappears, leaving (prediction − target) × input.
+The same form shows up again for softmax in Course 2.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("What is the only difference between the two gradient computations?",
@@ -563,7 +647,7 @@ changes.</p>"""
 
 # ============================================================ 8
 L.append(dict(
-    slug="08-the-problem-of-overfitting", title="The problem of overfitting", mins=11, tag="core",
+    slug="08-the-problem-of-overfitting", title="The problem of overfitting", mins=16, tag="core",
     lede="The most important concept in applied machine learning, and the first place you meet it. A model "
          "that is perfect on your data and useless on anything else.",
     body=(
@@ -606,6 +690,34 @@ between and beyond them are nonsense.</p>
 <p>The model has spent its flexibility fitting the <b>noise</b> — the random scatter that will be different
 next time — rather than the <b>signal</b>. And it has no way of telling the difference, because both look
 identical in the training data.</p>"""
+
+        + h2("🧮", "Overfitting, on the microchip data")
+        + """<p>The Week 3 assignment’s second data set: 118 microchips, each with two test scores,
+pass or fail. Two features is not enough to separate them, so the assignment maps them up to degree 6
+— every product <var>x</var><sub>1</sub><sup>a</sup><var>x</var><sub>2</sub><sup>b</sup> up to total
+power 6:</p>"""
+        + table(["", "value"],
+                [["training examples", "118"],
+                 ["raw features", "2"],
+                 ["features after mapping", "<b>27</b>"]])
+        + """<p>Fit that with no regularisation and it reaches <b>83.9%</b> training accuracy, with a
+boundary that wanders in and out to capture individual points. The largest fitted weight is
+<b>7.454</b> and the average magnitude is <b>3.139</b> — large numbers, which is the fingerprint.</p>
+<p>Big weights are what a wiggly boundary is <em>made of</em>. To swing sharply near one training
+point, the model needs large coefficients on the high-order terms, so they nearly cancel over most
+of the space and then briefly dominate. That is why the next two lessons attack the weights directly
+rather than the boundary.</p>"""
+        + warn("""<p>83.9% is a <em>training</em> number, and this lesson is the reason not to trust
+it. Course 2 Week 3 supplies the tool that makes it measurable — a held-out set — which Course 1
+does not yet have.</p>""")
+        + explain("""<p>Overfitting is usually described as “too many features”, but 27 features on
+118 examples is not obviously too many. <b>What is the more precise condition?</b></p>""",
+                  """<p>That the model has enough flexibility to fit variation that will not recur.
+Counting features against examples is a rough proxy — what matters is how much the fitted function
+would <em>change</em> if you resampled the data. Degree-6 terms let the boundary bend sharply in
+regions containing one or two points, so those points determine the shape there, and a different
+sample would give a different shape. Regularisation works precisely because it attacks that
+flexibility without removing the features.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Judging a model by its training accuracy.</b> It is the one number that cannot
@@ -710,7 +822,7 @@ observed symptom — and it works remarkably well.</p>"""
 # ============================================================ 10
 L.append(dict(
     slug="10-cost-function-with-regularization", title="The cost function with regularization",
-    mins=11, tag="maths",
+    mins=16, tag="maths",
     lede="Add one term that punishes large weights. λ decides how much it matters, and that single dial "
          "spans the whole range from overfit to underfit.",
     body=(
@@ -767,6 +879,32 @@ regularise the intercept either. It is one of those conventions that is worth kn
 deep learning. Its sibling <b>L1</b> penalises Σ|w<sub>j</sub>| instead, and has the interesting property
 of driving some weights to <em>exactly</em> zero — performing feature selection automatically. That is
 called lasso, and it is not covered in this course.</p>""", "L2, and its sibling L1")
+
+        + h2("🧮", "What λ does to the weights — measured")
+        + """<p>Same 118 microchips, same 27 features, three values of λ:</p>"""
+        + table(["λ", "largest |w|", "mean |w|", "training accuracy"],
+                [["0", "<b>7.454</b>", "3.139", "0.839"],
+                 ["<b>1</b>", "2.020", "0.559", "<b>0.831</b>"],
+                 ["100", "<b>0.055</b>", "0.017", "<b>0.610</b>"]])
+        + """<p>Read the middle row against the top one. λ = 1 shrinks the average weight by a factor
+of <b>5.6</b> and costs 0.8 percentage points of training accuracy. That is the trade working
+exactly as intended: a far simpler function that fits the data almost as well, and which will
+generalise better precisely because it is less beholden to individual points.</p>
+<p>Now the bottom row. λ = 100 drives every weight to nearly zero — the largest is 0.055 — and
+accuracy collapses to 0.610, barely above the base rate. The model has been penalised into
+predicting essentially a constant. This is underfitting, produced deliberately, and it is why λ is
+something you tune rather than set.</p>"""
+        + note("""<p><var>b</var> is not penalised. Shrinking it towards zero would push predictions
+towards <var>g</var>(0) = 0.5 regardless of the data, which constrains the model without buying any
+smoothness — the wiggliness lives in the <var>w</var>s.</p>""")
+        + explain("""<p>Regularisation makes the training cost worse by construction, and here it made
+training accuracy worse too. <b>Why is that the right thing to want?</b></p>""",
+                  """<p>Because training accuracy is not the objective — it is the quantity being
+spent. What you actually want is performance on data you have not seen, and the only lever available
+is how much the fitted function is allowed to contort itself around individual training points. λ
+buys smoothness with training fit. The λ = 100 row shows the trade going too far, which is the
+honest half of the lesson: the penalty has no idea what a good model looks like, so the amount is
+your decision, made by measuring on held-out data.</p>""")
 
         + h2("🕳", "Traps")
         + trap("""<p><b>Regularising unscaled features.</b> The penalty treats all weights equally, so a

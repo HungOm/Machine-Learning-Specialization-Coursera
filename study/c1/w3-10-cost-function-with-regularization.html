@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Classification</span><span class="right">§&nbsp;5.10 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Classification</span><span class="right">§&nbsp;5.10 · 16 min read</span></p>
 <h1><span class="secno">5.10</span>The cost function with regularization</h1>
 <p class="lede">Add one term that punishes large weights. λ decides how much it matters, and that single dial spans the whole range from overfit to underfit.</p>
 <div class="bookrail" title="Lesson 67 of 172 in the book"><i style="width:39%"></i></div>
@@ -240,7 +240,22 @@ which is the actual problem. So convention leaves it alone.</p>
 regularise the intercept either. It is one of those conventions that is worth knowing is a convention.</p><div class="callout "><span class="tag">L2, and its sibling L1</span><p>This is <b>L2 regularisation</b>, also called ridge regression, or “weight decay” in
 deep learning. Its sibling <b>L1</b> penalises Σ|w<sub>j</sub>| instead, and has the interesting property
 of driving some weights to <em>exactly</em> zero — performing feature selection automatically. That is
-called lasso, and it is not covered in this course.</p></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Regularising unscaled features.</b> The penalty treats all weights equally, so a
+called lasso, and it is not covered in this course.</p></div><h2><span class="ico">🧮</span>What λ does to the weights — measured</h2><p>Same 118 microchips, same 27 features, three values of λ:</p><table class="data"><thead><tr><th>λ</th><th>largest |w|</th><th>mean |w|</th><th>training accuracy</th></tr></thead><tbody><tr><td>0</td><td><b>7.454</b></td><td>3.139</td><td>0.839</td></tr><tr><td><b>1</b></td><td>2.020</td><td>0.559</td><td><b>0.831</b></td></tr><tr><td>100</td><td><b>0.055</b></td><td>0.017</td><td><b>0.610</b></td></tr></tbody></table><p>Read the middle row against the top one. λ = 1 shrinks the average weight by a factor
+of <b>5.6</b> and costs 0.8 percentage points of training accuracy. That is the trade working
+exactly as intended: a far simpler function that fits the data almost as well, and which will
+generalise better precisely because it is less beholden to individual points.</p>
+<p>Now the bottom row. λ = 100 drives every weight to nearly zero — the largest is 0.055 — and
+accuracy collapses to 0.610, barely above the base rate. The model has been penalised into
+predicting essentially a constant. This is underfitting, produced deliberately, and it is why λ is
+something you tune rather than set.</p><div class="callout "><span class="tag">Why this matters</span><p><var>b</var> is not penalised. Shrinking it towards zero would push predictions
+towards <var>g</var>(0) = 0.5 regardless of the data, which constrains the model without buying any
+smoothness — the wiggliness lives in the <var>w</var>s.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>Regularisation makes the training cost worse by construction, and here it made
+training accuracy worse too. <b>Why is that the right thing to want?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because training accuracy is not the objective — it is the quantity being
+spent. What you actually want is performance on data you have not seen, and the only lever available
+is how much the fitted function is allowed to contort itself around individual training points. λ
+buys smoothness with training fit. The λ = 100 row shows the trade going too far, which is the
+honest half of the lesson: the penalty has no idea what a good model looks like, so the amount is
+your decision, made by measuring on held-out data.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Regularising unscaled features.</b> The penalty treats all weights equally, so a
 feature measured in millions naturally gets a tiny weight and is effectively exempt from the penalty.
 <b>Always scale before regularising.</b></p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Picking λ by looking at the training cost.</b> Increasing λ always increases the
 training error — that is the entire point. Choosing λ requires data the model was not fitted on, which is

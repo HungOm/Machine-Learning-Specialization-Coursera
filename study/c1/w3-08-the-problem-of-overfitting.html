@@ -223,7 +223,7 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Classification</span><span class="right">§&nbsp;5.8 · 11 min read</span></p>
+<p class="runhead"><span class="part">Part II</span><span class="d">·</span><span class="ch">Chapter 5 — Classification</span><span class="right">§&nbsp;5.8 · 16 min read</span></p>
 <h1><span class="secno">5.8</span>The problem of overfitting</h1>
 <p class="lede">The most important concept in applied machine learning, and the first place you meet it. A model that is perfect on your data and useless on anything else.</p>
 <div class="bookrail" title="Lesson 65 of 172 in the book"><i style="width:38%"></i></div>
@@ -240,7 +240,24 @@ exactly. The training error is zero. It is also wiggling violently between the p
 between and beyond them are nonsense.</p>
 <p>The model has spent its flexibility fitting the <b>noise</b> — the random scatter that will be different
 next time — rather than the <b>signal</b>. And it has no way of telling the difference, because both look
-identical in the training data.</p><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Judging a model by its training accuracy.</b> It is the one number that cannot
+identical in the training data.</p><h2><span class="ico">🧮</span>Overfitting, on the microchip data</h2><p>The Week 3 assignment’s second data set: 118 microchips, each with two test scores,
+pass or fail. Two features is not enough to separate them, so the assignment maps them up to degree 6
+— every product <var>x</var><sub>1</sub><sup>a</sup><var>x</var><sub>2</sub><sup>b</sup> up to total
+power 6:</p><table class="data"><thead><tr><th></th><th>value</th></tr></thead><tbody><tr><td><span class="gterm" data-g="trainingexample-native">training examples</span></td><td>118</td></tr><tr><td>raw features</td><td>2</td></tr><tr><td>features after mapping</td><td><b>27</b></td></tr></tbody></table><p>Fit that with no regularisation and it reaches <b>83.9%</b> training accuracy, with a
+boundary that wanders in and out to capture individual points. The largest fitted weight is
+<b>7.454</b> and the average magnitude is <b>3.139</b> — large numbers, which is the fingerprint.</p>
+<p>Big weights are what a wiggly boundary is <em>made of</em>. To swing sharply near one training
+point, the model needs large coefficients on the high-order terms, so they nearly cancel over most
+of the space and then briefly dominate. That is why the next two lessons attack the weights directly
+rather than the boundary.</p><div class="callout warn"><span class="tag">Watch out</span><p>83.9% is a <em>training</em> number, and this lesson is the reason not to trust
+it. Course 2 Week 3 supplies the tool that makes it measurable — a held-out set — which Course 1
+does not yet have.</p></div><div class="explain"><span class="tag">Say it out loud</span><p>Overfitting is usually described as “too many features”, but 27 features on
+118 examples is not obviously too many. <b>What is the more precise condition?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>That the model has enough flexibility to fit variation that will not recur.
+Counting features against examples is a rough proxy — what matters is how much the fitted function
+would <em>change</em> if you resampled the data. Degree-6 terms let the boundary bend sharply in
+regions containing one or two points, so those points determine the shape there, and a different
+sample would give a different shape. Regularisation works precisely because it attacks that
+flexibility without removing the features.</p></div></details></div><h2><span class="ico">🕳</span>Traps</h2><div class="callout trap"><span class="tag">Common trap</span><p><b>Judging a model by its training accuracy.</b> It is the one number that cannot
 distinguish a good model from a memoriser. You need data the model has never seen — the subject of Course
 2 Week 3.</p></div><div class="callout trap"><span class="tag">Common trap</span><p><b>Assuming more complex is better.</b> Extra capacity buys you the ability to overfit
 as readily as the ability to fit.</p></div><h2><span class="ico">✅</span>Check yourself</h2><div class="quiz"><details class="q" data-qid="c13-08-the-problem-of-overfitting#1"><summary>Your model gets 100% on training data and 60% on new data. Which problem?</summary><div class="a"><p><b>Overfitting</b> / high variance. It memorised rather than generalised.</p></div></details><details class="q" data-qid="c13-08-the-problem-of-overfitting#2"><summary>Your model gets 62% on training and 60% on new data. Which problem?</summary><div class="a"><p><b>Underfitting</b> / high bias. It cannot even fit the data it has seen, so more data will not help.</p></div></details><details class="q" data-qid="c13-08-the-problem-of-overfitting#3"><summary>Why does a degree-8 polynomial through 9 points have zero training error and still be bad?</summary><div class="a"><p>Because it has exactly enough freedom to pass through every point, so it fits the noise as faithfully as the signal. Between and beyond the points its predictions are wild.</p></div></details></div><h2><span class="ico">🔗</span>Go deeper</h2><ul class="links"><li><span class="kind lab">lab</span><span><a href="../../C1%20-%20Supervised%20Machine%20Learning%20-%20Regression%20and%20Classification/week3/Optional%20Labs/C1_W3_Lab08_Overfitting_Soln.ipynb" target="_blank" rel="noopener">Optional lab: Overfitting</a><span class="d">In this repo. Interactive — add data points and change the degree, and watch it happen.</span></span></li><li><span class="kind docs">docs</span><span><a href="https://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html" target="_blank" rel="noopener">scikit-learn — underfitting vs overfitting</a><span class="d">The canonical figure, with runnable code.</span></span></li></ul>
