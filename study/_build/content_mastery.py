@@ -96,6 +96,18 @@ WEEKS = {
  "c33": dict(hard="A new vocabulary and a moving target: the labels are made by the model itself.",
    one="The six-state rover. Get V* = [100, 50, 25, 12.5, 20, 40] solid and the rest follows.",
    skip="Nothing. The lunar lander takes real time to train &mdash; start it early."),
+ "c41": dict(hard="Everything is a sequence now, and order carries meaning that a bag of numbers loses.",
+   one="An embedding is a learned lookup table. Nothing more mystical than that.",
+   skip="Skim the RNN history if you are impatient &mdash; but read <b>why</b> it failed."),
+ "c42": dict(hard="Three names (query, key, value) for three uses of the same input. That is the whole hump.",
+   one="Attention is a weighted average, and softmax picks the weights. You already know both halves.",
+   skip="Nothing. This is the week the rest of modern AI is built on."),
+ "c43": dict(hard="A lot of machinery arrives at once &mdash; residuals, norms, heads, positions.",
+   one="Each piece fixes one specific failure. Learn the failure and the fix is obvious.",
+   skip="The exact layer-norm formula. Know what it does and why it is there."),
+ "c44": dict(hard="Scale changes behaviour in ways the small examples cannot show you.",
+   one="A language model is next-token prediction. Everything else is layered on top of that one job.",
+   skip="Nothing, but treat the numbers as illustrative &mdash; they date fast."),
 }
 
 BUDGET_NOTE = """

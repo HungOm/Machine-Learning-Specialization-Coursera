@@ -1358,6 +1358,7 @@ ol.work details.wf[open] > summary { margin-bottom: 3px; }
 .maplegend i[data-p="II"]  { background: var(--blue); }
 .maplegend i[data-p="III"] { background: var(--purple); }
 .maplegend i[data-p="IV"]  { background: var(--green); }
+.maplegend i[data-p="V"]   { background: var(--teal); }
 #map-prog-legend { padding-left: 13px; border-left: 1px solid var(--line-soft); transition: opacity .15s; }
 #map-prog-legend.off { opacity: .3; }
 #map-prog-legend i.pr-dim  { background: var(--ink-faint); opacity: .35; }

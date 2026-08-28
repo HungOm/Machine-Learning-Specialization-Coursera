@@ -19,14 +19,16 @@ ROOT = os.path.dirname(HERE)                      # study/
 sys.path.insert(0, HERE)
 
 # order matters: it defines the pagination chain
-CARD_MODULES = ["cards_f0", "cards_c1", "cards_c2", "cards_c3"]
-PLAIN_MODULES = ["cards_plain_f0", "cards_plain_c1", "cards_plain_c2", "cards_plain_c3"]
+CARD_MODULES = ["cards_f0", "cards_c1", "cards_c2", "cards_c3", "cards_c4"]
+PLAIN_MODULES = ["cards_plain_f0", "cards_plain_c1", "cards_plain_c2", "cards_plain_c3",
+                 "cards_plain_c4"]
 
 PROBLEM_MODULES = [
     "problems_f0w1", "problems_f0w2",
     "problems_c1w1", "problems_c1w2", "problems_c1w3",
     "problems_c2w1", "problems_c2w2", "problems_c2w3", "problems_c2w4",
     "problems_c3w1", "problems_c3w2", "problems_c3w3",
+    "problems_c4w1", "problems_c4w2", "problems_c4w3", "problems_c4w4",
 ]
 
 MODULES = [
@@ -34,10 +36,12 @@ MODULES = [
     "content_c1w1", "content_c1w2", "content_c1w3",
     "content_c2w1", "content_c2w2", "content_c2w3", "content_c2w4",
     "content_c3w1", "content_c3w2", "content_c3w3",
+    "content_c4w1", "content_c4w2", "content_c4w3", "content_c4w4",
 ]
 
 COURSE_TITLE = {
     "F0": "Foundations",
+    "C4": "Attention and Transformers",
     "C2": "Advanced Learning Algorithms",
     "C3": "Unsupervised Learning, Recommenders, RL",
     "C1": "Supervised Machine Learning",
@@ -315,6 +319,7 @@ not drawn by hand &mdash; a lesson that uses a cross-referenced term is joined t
       <span><i data-p="II"></i>Supervised</span>
       <span><i data-p="III"></i>Neural nets</span>
       <span><i data-p="IV"></i>Unsup &#183; RL</span>
+      <span><i data-p="V"></i>Transformers</span>
     </span>
     <span class="maplegend" id="map-prog-legend">
       <span><i class="pr-dim"></i>not yet read</span>
@@ -579,6 +584,7 @@ PARTS = [
     ("C1", "II",  "Supervised Learning"),
     ("C2", "III", "Neural Networks & Practice"),
     ("C3", "IV",  "Unsupervised, Recommenders, RL"),
+    ("C4", "V",   "Attention & Transformers"),
 ]
 PART_OF = {c: (roman, title) for c, roman, title in PARTS}
 

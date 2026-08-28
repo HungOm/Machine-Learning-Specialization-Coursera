@@ -191,4 +191,75 @@ TERMS = [
          "the signal Adam uses to shrink that parameter's effective step size.",
       more_href="c2/w2-11-advanced-optimization.html",
       more_label="C2 W2 · Advanced optimization (Adam)"),
+
+ dict(key="attn-context", label="c", say="“the context vector”",
+      gist="What the model actually reads at this step: a blend of every input position, mixed in "
+           "whatever proportions it decided are relevant right now.",
+      body="<p>Recomputed <b>fresh for every output position</b>. That is the entire point — a fixed "
+           "summary would force one compromise for the whole output, while this lets the model look "
+           "somewhere different for each word it produces.</p>"
+           "<div class='gq'>c = 0.7·h&lt;3&gt; + 0.2·h&lt;4&gt; + 0.1·(everything else)</div>"
+           "<p>Mostly position 3, a glance at 4, a trace of the rest.</p>",
+      ml="In a transformer this is the output of one attention head, and there are several running "
+         "in parallel, each free to attend to something different.",
+      more_href="c4/w1-07-the-bottleneck.html", more_label="C4 W1 · The bottleneck"),
+
+ dict(key="attn-weight", label="α_t", say="“alpha t”",
+      gist="How much of position t goes into the blend. All of them are positive and together they "
+           "add to exactly 1.",
+      body="<p>They come from a <b>softmax</b>, which is what guarantees both properties. Because "
+           "softmax is differentiable, the model can be trained on <em>where to look</em> — with a "
+           "hard pick-the-best there would be no gradient at all.</p>"
+           "<div class='gq'>scores [2.1, 0.3, 0.5] → α = [0.75, 0.12, 0.13]</div>",
+      ml="Plotting these weights is how attention maps are drawn — the pictures showing which source "
+         "word each translated word looked at.",
+      more_href="c2/w2-07-softmax.html", more_label="C2 W2 · Softmax"),
+
+ dict(key="attn-value", label="h&lt;t&gt;", say="“h at t”",
+      gist="The content stored at position t — the thing being averaged, as opposed to the weight "
+           "saying how much of it to take.",
+      body="<p>Keeping one of these per position, instead of only the final one, is the whole fix for "
+           "the bottleneck. Nothing is compressed away; the model chooses what to read at the moment "
+           "it needs it.</p>",
+      ml="In Week 2 this becomes the <b>value</b> vector, and it separates from the thing used to "
+         "compute the weights — which turns out to matter.",
+      more_href="c4/w1-05-rnn-idea.html", more_label="C4 W1 · What RNNs tried"),
+
+ dict(key="attn-qkv", label="Q, K, V", say="“queries, keys and values”",
+      gist="Three learned views of the same input: what each position is <b>looking for</b>, what it "
+           "<b>advertises</b>, and what it <b>hands over</b> if chosen.",
+      body="<p>All three are the input multiplied by its own learned matrix — "
+           "Q = XW<sub>Q</sub>, K = XW<sub>K</sub>, V = XW<sub>V</sub>. Keeping the key separate "
+           "from the value matters: what makes a word easy to <em>find</em> is not the same as what "
+           "makes it useful to <em>read</em>.</p>"
+           "<div class='gq'>a library: your request (Q) · the catalogue card (K) · the book (V)</div>",
+      ml="When all three come from one sequence it is <b>self-attention</b>. When Q comes from one "
+         "and K, V from another it is <b>cross-attention</b> — the 2014 translation setup.",
+      more_href="c4/w2-02-query-key-value.html", more_label="C4 W2 · Query, key, value"),
+
+ dict(key="attn-scores", label="QK&#7488; / √d&#8342;", say="“Q K transpose over root d k”",
+      gist="Every query dotted with every key, then shrunk. The result is a T × T grid saying how "
+           "relevant each position is to each other position.",
+      body="<p>The transpose only exists to line the shapes up so the dot products happen. The "
+           "division is the important part: dot products of longer vectors are bigger on average, "
+           "and oversized scores saturate the softmax into a hard one-hot with no usable "
+           "gradient.</p>"
+           "<div class='gq'>d&#8342; = 512 → unscaled scores have a spread of about 22.6</div>"
+           "<p>Which is √512 — measured, and exactly as the theory predicts.</p>",
+      ml="This T × T grid is also where attention's cost comes from: it grows with the <b>square</b> "
+         "of the sequence length.",
+      more_href="c4/w2-05-why-scale.html", more_label="C4 W2 · Why divide by √d"),
+
+ dict(key="softmax-fn", label="softmax", say="“soft max”",
+      gist="Turns a row of raw scores into weights that are all positive and add up to exactly 1 — "
+           "so they can be used as mixing proportions.",
+      body="<p>Exponentiate everything, then divide by the total. The exponential guarantees "
+           "positivity and exaggerates differences, so a clearly-best score gets a "
+           "disproportionately large share.</p>"
+           "<div class='gq'>[1, 0, 0] → [0.576, 0.212, 0.212]</div>"
+           "<p>In attention it is applied to each <b>row</b> independently — each position gets its "
+           "own recipe.</p>",
+      ml="Exactly the function from C2 W2, doing a new job. Softmaxing the wrong axis is the single "
+         "most common attention bug, and it fails silently.",
+      more_href="c2/w2-07-softmax.html", more_label="C2 W2 · Softmax"),
 ]
