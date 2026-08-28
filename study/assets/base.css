@@ -25,6 +25,8 @@
   --amber-soft:  #f8eed6;
   --red:         #a8322c;
   --red-soft:    #f8e2e0;
+  --teal:        #147d70;
+  --teal-soft:   #dcf1ec;
 
   --radius: 12px;
   --radius-sm: 8px;
@@ -59,6 +61,8 @@
     --amber-soft:  #33280f;
     --red:         #f08a83;
     --red-soft:    #351a19;
+    --teal:        #5cd6c5;
+    --teal-soft:   #123430;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
 }
@@ -85,6 +89,8 @@
   --amber-soft:  #33280f;
   --red:         #f08a83;
   --red-soft:    #351a19;
+  --teal:        #5cd6c5;
+  --teal-soft:   #123430;
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
 }
 
@@ -493,6 +499,7 @@ details.q .a p:last-child { margin-bottom: 0; }
 .srs-kind.k-trap { background: var(--red-soft); color: var(--red); }
 .srs-kind.k-code { background: var(--amber-soft); color: var(--amber); }
 .srs-kind.k-number { background: var(--bg-sunk); color: var(--ink-soft); }
+.srs-kind.k-drill { background: var(--teal-soft); color: var(--teal); }
 .srs-week { font-size: 12px; color: var(--ink-faint); }
 .srs-status { margin-left: auto; font-size: 11px; font-family: var(--mono); color: var(--ink-faint); }
 .srs-front { font-size: 19px; line-height: 1.5; font-weight: 600; }
@@ -1321,6 +1328,11 @@ ol.work details.wf[open] > summary { margin-bottom: 3px; }
 .maplegend i[data-p="II"]  { background: var(--blue); }
 .maplegend i[data-p="III"] { background: var(--purple); }
 .maplegend i[data-p="IV"]  { background: var(--green); }
+#map-prog-legend { padding-left: 13px; border-left: 1px solid var(--line-soft); transition: opacity .15s; }
+#map-prog-legend.off { opacity: .3; }
+#map-prog-legend i.pr-dim  { background: var(--ink-faint); opacity: .35; }
+#map-prog-legend i.pr-flat { background: var(--ink-faint); }
+#map-prog-legend i.pr-ring { background: var(--ink-faint); box-shadow: 0 0 0 2px var(--green); }
 #conceptmap { display: block; width: 100%; height: min(62vh, 520px);
   touch-action: none; cursor: grab; }
 .mapfoot { padding: 10px 14px; border-top: 1px solid var(--line-soft);

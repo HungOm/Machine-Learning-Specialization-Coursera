@@ -285,6 +285,7 @@ MAPPAGE = """<!doctype html>
 <script>window.GLOSS_UP="";</script>
 <script src="assets/gloss-data.js"></script>
 <script src="assets/gloss.js"></script>
+<script src="assets/meta.js"></script>
 </head>
 <body data-slug="__map__">
 <header class="topbar">
@@ -315,6 +316,12 @@ not drawn by hand &mdash; a lesson that uses a cross-referenced term is joined t
       <span><i data-p="III"></i>Neural nets</span>
       <span><i data-p="IV"></i>Unsup &#183; RL</span>
     </span>
+    <span class="maplegend" id="map-prog-legend">
+      <span><i class="pr-dim"></i>not yet read</span>
+      <span><i class="pr-flat"></i>read</span>
+      <span><i class="pr-ring"></i>mastered</span>
+    </span>
+    <button class="btn primary" id="map-progress" title="show what you have actually read and mastered" aria-pressed="true">my progress</button>
     <button class="btn" id="map-reset" title="reset view">reset</button>
   </div>
   <canvas id="conceptmap"></canvas>
@@ -772,6 +779,7 @@ six months. Cards you find easy come back rarely; cards you fumble come back tom
 
 <div id="card-area"></div>
 <div id="forecast"></div>
+<div id="srs-stuck"></div>
 
 <div class="srs-tools">
   <label>new cards per day <input type="number" id="srs-newperday" min="0" max="60" step="1"></label>

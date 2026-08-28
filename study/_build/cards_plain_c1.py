@@ -335,4 +335,30 @@ P = {
    ("weight decay", "—", "the name for this, used in every modern ML library")],
   "Like a slow puncture: constant tiny leak, so you only stay inflated if you keep pumping."),
 
+
+"c1w1-drill-cost": plain(
+  "Plug two guesses (w=100, b=100) into the line, see how far off each prediction was, square those "
+  "misses so they cannot cancel out, and average them. That single number is J.",
+  [("f(1), f(2)", "“f of one”, “f of two”", "what the line predicts for each house"),
+   ("J", "“jay”", "the badness score this guess earns")],
+  "Compare it to the PERFECT guess (w=200, b=100), which scores exactly 0 — 12,500 tells you this "
+  "guess is a long way from perfect, not that it is hopeless."),
+
+"c1w2-drill-zscore": plain(
+  "Take a house's size, subtract the average size, then divide by how spread-out sizes usually are. "
+  "The answer says how many \u2018typical wobbles\u2019 this house is from average.",
+  [("&mu;", "“mew”", "the average value of this feature"),
+   ("&sigma;", "“sigma”", "the typical spread — how much sizes usually vary"),
+   ("z", "“zee”", "the rescaled value: how many spreads above or below average")],
+  "Like a school grade curve: a z-score of \u22120.47 means \u2018a little below the class average\u2019, "
+  "regardless of what units the original number was in."),
+
+"c1w3-drill-sigmoid": plain(
+  "Weigh the input, add the bias, and you get a raw score z. Squash that raw score through the "
+  "S-shaped sigmoid curve, and out comes a number between 0 and 1 you can read as a probability.",
+  [("z", "“zee”", "the raw, unsquashed score \u2014 can be any number"),
+   ("g(z)", "“g of z”", "the sigmoid function \u2014 squashes z into 0\u20261")],
+  "z=1.5 is a fair way into \u2018probably yes\u2019 territory, and the squashed answer, 0.818, confirms "
+  "it: about an 82% chance of being class 1."),
+
 }

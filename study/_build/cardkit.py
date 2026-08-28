@@ -15,6 +15,7 @@ KINDS = {
     "trap":      ("Trap", "what goes wrong?"),
     "code":      ("Code", "what does this line do?"),
     "number":    ("Number", "recall the value"),
+    "drill":     ("Drill", "plug in the numbers and compute it"),
 }
 
 

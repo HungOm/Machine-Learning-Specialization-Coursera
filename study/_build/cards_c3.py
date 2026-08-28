@@ -105,6 +105,12 @@ W1 = deck("C3", 1, "Unsupervised Learning", [
       + hint("Feature choice matters far more here than in supervised learning, because there is no y to "
              "tell the algorithm which features to ignore."),
       "c3/w1-12-choosing-features.html"),
+    C("c3w1-drill-gaussian", "drill",
+      "&mu; = 0, &sigma; = 1, x = 0. Compute p(x) — the standard normal density at its own mean.",
+      blk("<var>p</var>(0) = 1 / &radic;(2&pi;) &middot; <var>e</var><sup>0</sup> = 1 / 2.507 = <b>0.399</b>")
+      + hint("This is the PEAK of the standard bell curve — the highest density it ever reaches, right "
+             "at the mean. Move away from &mu; and p(x) only ever gets smaller."),
+      "c3/w1-08-gaussian-distribution.html"),
 ])
 
 W2 = deck("C3", 2, "Recommender Systems", [
@@ -395,6 +401,14 @@ W3 = deck("C3", 3, "Reinforcement Learning", [
       + hint("The hype exceeds the deployed reality — and the ideas still matter, because RLHF is "
              "quietly the biggest deployed application of RL that exists."),
       "c3/w3-16-state-of-rl.html"),
+    C("c3w3-drill-return", "drill",
+      "&gamma; = 0.5. A reward of 100 arrives 3 steps from now, with 0 reward along the way. Compute the return.",
+      blk("Return = <var>R</var>&#8321; + &gamma;<var>R</var>&#8322; + &gamma;&sup2;<var>R</var>&#8323; "
+          "= 0 + 0 + (0.5)&sup2;(100)")
+      + blk("= 0.25 &times; 100 = <b>25</b>")
+      + hint("Each extra step away halves the value again — this is exactly why the Mars rover chooses the "
+             "closer, smaller reward once the discount has eaten enough of the far one."),
+      "c3/w3-03-the-return.html"),
 ])
 
 DECKS = [W1, W2, W3]

@@ -553,4 +553,32 @@ P = {
   "Tree splits are yes/no decisions with no useful slope, so you cannot chain trees the way you "
   "chain networks. That single property is why deep learning scaled."),
 
+
+"c2w1-drill-forwardprop": plain(
+  "A neuron weighs each input by how much it trusts it, adds a starting bias, and squashes the total "
+  "into 0\u20261 with the sigmoid curve. Two inputs, two weights, one bias, one squash.",
+  [("w", "“double-you”", "how much this neuron trusts each input"),
+   ("b", "“bee”", "the neuron's default mood before seeing any input"),
+   ("z", "“zee”", "the raw weighted total, before squashing"),
+   ("a", "“ay”", "the squashed output \u2014 what the neuron actually passes on")],
+  "z came out negative, so after squashing a landed below 0.5 \u2014 this neuron stays quiet."),
+
+"c2w2-drill-softmax": plain(
+  "Turn four raw scores into four probabilities that add up to 1. Bigger raw scores get "
+  "disproportionately bigger shares \u2014 exponentiating stretches the gaps apart before sharing "
+  "out the total.",
+  [("e", "“e”", "Euler's number, about 2.718 \u2014 the base every score gets raised to"),
+   ("a\u2084", "“a four”", "the share of probability given to the 4th, largest score")],
+  "Score 4 was only 4 times bigger than score 1, but ends up with about 20 times more of the "
+  "probability \u2014 softmax rewards the leader more than it looks like it should."),
+
+"c2w4-drill-entropy": plain(
+  "Ask: how mixed is this group? All-one-class is perfectly tidy (entropy 0). A dead-even 50/50 mix "
+  "is the messiest it can be (entropy 1). 8 cats out of 10 sits closer to tidy than messy.",
+  [("p", "“pee”", "the fraction belonging to one class \u2014 here, 0.8 are cats"),
+   ("H", "“aitch”", "the entropy \u2014 the messiness score, from 0 to 1"),
+   ("log\u2082", "“log base two”", "a log using 2 instead of 10 \u2014 keeps the answer between 0 and 1")],
+  "Think of it as a measure of surprise: guessing the class of a random animal from this group is "
+  "fairly easy (low surprise), because most of them are cats."),
+
 }

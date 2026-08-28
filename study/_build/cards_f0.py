@@ -167,6 +167,11 @@ W1 = deck("F0", 1, "The Maths You Actually Need", [
       + hint("Classification uses <code>np.argmax(probs, axis=1)</code>; K-means uses argmin over "
              "distances; RL policies are argmax over actions."),
       "f0/w1-19-min-max-argmax.html"),
+    C("f0-drill-dotprod", "drill",
+      "Compute the dot product: <b>a</b> = [1, 2, 3], <b>b</b> = [4, 5, 6].",
+      blk("<var>a</var>·<var>b</var> = 1(4) + 2(5) + 3(6) = 4 + 10 + 18 = <b>32</b>")
+      + hint("Pair up, multiply, add. Same recipe for a vector of 3 numbers or 3 million."),
+      "f0/w1-10-dot-product.html"),
 ])
 
 W2 = deck("F0", 2, "Python, NumPy and pandas", [

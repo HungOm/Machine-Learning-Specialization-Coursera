@@ -115,6 +115,13 @@ W1 = deck("C1", 1, "Introduction to Machine Learning", [
       + hint("Course 2 makes the model a neural network. Course 3 changes the cost. The structure never "
              "changes."),
       "c1/w1-13-running-gradient-descent.html"),
+    C("c1w1-drill-cost", "drill",
+      "x = [1, 2], y = [300, 500], w = 100, b = 100. Compute J(w, b).",
+      blk("f(1) = 200, f(2) = 300 &nbsp;&rarr;&nbsp; errors −100, −200")
+      + blk("J = <span class='fr'><span>1</span><span>2(2)</span></span> ( 100² + 200² ) = "
+            "<span class='fr'><span>1</span><span>4</span></span> (50,000) = <b>12,500</b>")
+      + hint("The perfect fit (w=200, b=100) gives J=0 exactly — this is what \u201calmost right\u201d costs."),
+      "c1/w1-05-cost-function-formula.html"),
 ])
 
 W2 = deck("C1", 2, "Regression with Multiple Variables", [
@@ -215,6 +222,12 @@ W2 = deck("C1", 2, "Regression with Multiple Variables", [
         "of x changes nothing about the algorithm.</p>"
       + hint("But it makes feature scaling <b>mandatory</b>: if x is 1–1000 then x³ is 1–10⁹."),
       "c1/w2-09-polynomial-regression.html"),
+    C("c1w2-drill-zscore", "drill",
+      "A feature has &mu; = 218.67, &sigma; = 39.96. A house has x = 200. What is its z-score?",
+      blk("<var>z</var> = (200 − 218.67) / 39.96 = −18.67 / 39.96 = <b>−0.47</b>")
+      + hint("Negative means below average — this house is a bit smaller than typical, by about half a "
+             "standard deviation."),
+      "c1/w2-05-feature-scaling.html"),
 ])
 
 W3 = deck("C1", 3, "Classification", [
@@ -343,6 +356,12 @@ W3 = deck("C1", 3, "Classification", [
       + hint("This is the <code>weight_decay</code> argument in every modern optimiser — AdamW, "
              "<code>kernel_regularizer=l2(0.01)</code>, all of it."),
       "c1/w3-11-regularized-gradient-descent.html"),
+    C("c1w3-drill-sigmoid", "drill",
+      "w = 1, b = 0, x = 1.5. Compute z, then g(z).",
+      blk("<var>z</var> = 1(1.5) + 0 = 1.5")
+      + blk("<var>g</var>(1.5) = 1 / (1 + <var>e</var><sup>−1.5</sup>) = 1 / (1 + 0.223) = <b>0.818</b>")
+      + hint("Above 0.5, so this example is classified y&#770; = 1 — and fairly confidently."),
+      "c1/w3-02-logistic-regression.html"),
 ])
 
 DECKS = [W1, W2, W3]

@@ -123,6 +123,12 @@ W1 = deck("C2", 1, "Neural Networks", [
                "keep improving"])
       + hint("The maths is from 1958 and 1986. Nothing about it changed."),
       "c2/w1-13-vectorization.html"),
+    C("c2w1-drill-forwardprop", "drill",
+      "One neuron: w = [2, −1], b = 0.5, x = [1, 3]. Compute z, then a (sigmoid).",
+      blk("<var>z</var> = 2(1) + (−1)(3) + 0.5 = 2 − 3 + 0.5 = −0.5")
+      + blk("<var>a</var> = <var>g</var>(−0.5) = 1 / (1 + <var>e</var><sup>0.5</sup>) = <b>0.378</b>")
+      + hint("Below 0.5 — this neuron does not fire. Same two-step recipe at every unit in every layer."),
+      "c2/w1-04-neural-network-layer.html"),
 ])
 
 W2 = deck("C2", 2, "Neural Network Training", [
@@ -268,6 +274,14 @@ W2 = deck("C2", 2, "Neural Network Training", [
       + hint("Same reason as Course 1 Week 3: the sigmoid and the log loss are a matched pair whose "
              "derivatives cancel cleanly."),
       "c2/w2-02-training-details.html"),
+    C("c2w2-drill-softmax", "drill",
+      "z = [1, 2, 3, 4]. Compute the softmax output for the largest score, a&#8324;.",
+      blk("<var>e</var><sup>1</sup>+<var>e</var><sup>2</sup>+<var>e</var><sup>3</sup>+<var>e</var><sup>4</sup> "
+          "= 2.72+7.39+20.09+54.60 = 84.79")
+      + blk("<var>a</var><sub>4</sub> = <var>e</var><sup>4</sup> / 84.79 = 54.60 / 84.79 = <b>0.644</b>")
+      + hint("z=4 is only 4× z=1, but its probability comes out 20× larger — exponentiating exaggerates "
+             "the gap. The other three probabilities are 0.032, 0.087, 0.237."),
+      "c2/w2-07-softmax.html"),
 ])
 
 W3 = deck("C2", 3, "Advice for Applying ML", [
@@ -541,6 +555,12 @@ W4 = deck("C2", 4, "Decision Trees", [
         "chain several networks and train the whole stack with one gradient. You cannot do that with "
         "trees.</p>",
       "c2/w4-13-trees-vs-neural-networks.html"),
+    C("c2w4-drill-entropy", "drill",
+      "A node has 10 examples, 8 of one class. Compute its entropy H.",
+      blk("<var>p</var> = 8/10 = 0.8")
+      + blk("<var>H</var> = −0.8 log&#8322;(0.8) − 0.2 log&#8322;(0.2) = 0.258 + 0.464 = <b>0.722</b>")
+      + hint("Compare to H(0.5) = 1.0 (maximally mixed) and H(1.0) = 0 (pure). 0.722 is fairly pure."),
+      "c2/w4-03-measuring-purity.html"),
 ])
 
 DECKS = [W1, W2, W3, W4]

@@ -21,14 +21,44 @@
 
     var foot = document.getElementById('mapfoot');
     var reset = document.getElementById('map-reset');
+    var progBtn = document.getElementById('map-progress');
+    var progLegend = document.getElementById('map-prog-legend');
     var N = data.nodes, E = data.edges;
     var W = 0, H = 0, panX = 0, panY = 0, drag = false, lx = 0, ly = 0;
     var hot = -1, pin = -1;
+    var showProgress = true;
 
     function css(v) {
       return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
     }
     function colorOf(n) { return css(PART_COLOR[n.part] || '--ink-faint'); }
+
+    /* ---------- progress overlay: read/mastered, from the SAME localStorage
+       every other page on this site already reads. A node with no cards of
+       its own (a pure intuition lesson) can only ever be "read", never
+       "mastered" — there is nothing to test recall of. ---------- */
+    var MATURE_DAYS = 21;
+    function rd(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
+    function computeStatus() {
+      var status = {};
+      var M = window.META;
+      if (!M) return status;
+      var doneByFile = rd('mls-study-progress-v1');
+      var srsCards = (rd('mls-srs-v1').cards) || {};
+      var doneMap = {};
+      M.lessons.forEach(function (L) { doneMap[L.f] = !!doneByFile[L.s]; });
+      N.forEach(function (n) {
+        var ids = (M.cardsByLesson || {})[n.f] || [];
+        var read = !!doneMap[n.f];
+        if (!ids.length) { status[n.f] = read ? 'read' : 'unread'; return; }
+        var mature = ids.filter(function (id) {
+          var c = srsCards[id]; return c && c.reps && c.ivl >= MATURE_DAYS;
+        }).length;
+        status[n.f] = mature === ids.length ? 'mastered' : (read ? 'read' : 'unread');
+      });
+      return status;
+    }
+    var STATUS = computeStatus();
 
     /* --- layout: x = reading order, y = spread within the chapter --- */
     var chapters = {};
@@ -99,10 +129,19 @@
 
       N.forEach(function (n, i) {
         var p = pos(n), on = i === sel, near = nb && (nb.up[i] || nb.down[i]);
-        cx.globalAlpha = sel >= 0 ? (on || near ? 1 : .22) : 1;
+        var baseAlpha = sel >= 0 ? (on || near ? 1 : .22) : 1;
+        var st = showProgress ? (STATUS[n.f] || 'unread') : null;
+        /* unread dims further on top of whatever the selection state already
+           set — the two effects should multiply, not fight each other */
+        cx.globalAlpha = baseAlpha * (st === 'unread' ? .32 : 1);
         cx.beginPath(); cx.arc(p.x, p.y, p.r + (on ? 2.2 : 0), 0, 7);
         cx.fillStyle = colorOf(n); cx.fill();
         if (on) { cx.strokeStyle = css('--bg'); cx.lineWidth = 1.8; cx.stroke(); }
+        if (st === 'mastered') {
+          cx.globalAlpha = baseAlpha;
+          cx.strokeStyle = css('--green'); cx.lineWidth = 1.6;
+          cx.beginPath(); cx.arc(p.x, p.y, p.r + (on ? 2.2 : 0) + 3, 0, 7); cx.stroke();
+        }
       });
       cx.globalAlpha = 1;
 
@@ -143,9 +182,11 @@
       }
       var n = N[i], nb = neighbours(i);
       var up = Object.keys(nb.up).length, down = Object.keys(nb.down).length;
+      var stLabel = { mastered: 'mastered', read: 'read', unread: 'not read yet' }[STATUS[n.f]];
       foot.innerHTML =
         '<b>§ ' + n.sec + ' · ' + n.t + '</b> &nbsp;·&nbsp; leans on <b>' + up + '</b>, ' +
-        'leaned on by <b>' + down + '</b> &nbsp;·&nbsp; ' +
+        'leaned on by <b>' + down + '</b>' +
+        (showProgress && stLabel ? ' &nbsp;·&nbsp; <b>' + stLabel + '</b>' : '') + ' &nbsp;·&nbsp; ' +
         '<a href="' + n.f + '">open the lesson →</a>' +
         (pin === i ? ' &nbsp;·&nbsp; <i>pinned — click it again to release</i>' : '');
     }
@@ -174,8 +215,19 @@
     if (reset) reset.addEventListener('click', function () {
       panX = panY = 0; pin = hot = -1; say(-1); draw();
     });
+    if (progBtn) progBtn.addEventListener('click', function () {
+      showProgress = !showProgress;
+      progBtn.classList.toggle('primary', showProgress);
+      progBtn.setAttribute('aria-pressed', String(showProgress));
+      if (progLegend) progLegend.classList.toggle('off', !showProgress);
+      draw();
+    });
+    if (!window.META && progBtn) { progBtn.disabled = true; progBtn.title = 'progress needs meta.js, which failed to load'; }
     window.addEventListener('resize', size);
     window.addEventListener('themechange', draw);
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'mls-study-progress-v1' || e.key === 'mls-srs-v1') { STATUS = computeStatus(); draw(); }
+    });
 
     /* --- the load-bearing list, counted from the same graph --- */
     var ol = document.getElementById('loadbearing');

@@ -246,4 +246,13 @@ P = {
    ("return", "“return”", "hands one value back. Without it you get None"),
    ("indentation", "—", "not decoration — it is what defines the body in Python")],
   "Every graded exercise is “fill in the body of this function”, so reading a signature is the core skill."),
+
+"f0-drill-dotprod": plain(
+  "Two lists of the same length. Pair up the numbers in the same position, multiply each pair, "
+  "then add all the answers together. One number comes out the other end.",
+  [("a·b", "“a dot b”", "the dot product — pair, multiply, add"),
+   ("4, 10, 18", "—", "the three pairwise products, before adding")],
+  "Like a receipt: 4 apples at £1 each, plus 5 pears at £2 each — you add the LINE TOTALS, not the "
+  "quantities or the prices alone."),
+
 }

@@ -9,6 +9,7 @@
 
   var KEY = 'mls-srs-v1';
   var DAY = 86400000;
+  var LEECH_LAPSES = 3;   /* forgotten this many times -> flagged as stuck, not just scheduled */
 
   /* ---------- dates, as local YYYY-MM-DD ---------- */
   function iso(d) {
@@ -159,6 +160,35 @@
     chipRow($('#f-kind'), kinds, 'kind', 'type');
   }
 
+  /* ---------- stuck cards: forgotten LEECH_LAPSES+ times, surfaced instead
+     of just quietly rescheduled forever. Deck-wide, not filtered — a leech
+     in a course you are not currently reviewing is still worth knowing
+     about. Same visual language as the weak-spots list on progress.html. ---------- */
+  function stripTags(h) { return String(h).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(); }
+  function renderStuck() {
+    var host = $('#srs-stuck');
+    if (!host) return;
+    var rows = DECK.map(function (c) {
+      var st = S.cards[c.id];
+      return st && st.lapses >= LEECH_LAPSES ? { c: c, lapses: st.lapses, ef: st.ef } : null;
+    }).filter(Boolean).sort(function (a, b) { return b.lapses - a.lapses; });
+    if (!rows.length) {
+      host.innerHTML = '';
+      return;
+    }
+    host.innerHTML =
+      '<h2><span class="ico">&#9888;&#65039;</span>Stuck cards</h2>' +
+      '<p>Forgotten ' + LEECH_LAPSES + '+ times each &mdash; rescheduling alone is not working. Worth ' +
+      'rereading the lesson, or rewriting the card in your own words.</p>' +
+      '<ol class="weaklist">' + rows.slice(0, 12).map(function (r) {
+        var txt = stripTags(r.c.front);
+        if (txt.length > 90) txt = txt.slice(0, 88) + '…';
+        return '<li><a href="' + r.c.lesson + '"><b>' + txt + '</b>' +
+          '<span class="wm">' + r.c.course + ' W' + r.c.weekNum + ' &middot; ' +
+          r.lapses + ' lapse' + (r.lapses === 1 ? '' : 's') + '</span></a></li>';
+      }).join('') + '</ol>';
+  }
+
   function renderCounts() {
     var c = counts();
     $('#c-due').textContent = c.due;
@@ -267,6 +297,7 @@
     next();
     renderCounts();
     renderForecast();
+    renderStuck();
   }
   function next() {
     current = queue.shift() || null;
@@ -280,6 +311,7 @@
     renderCounts();
     next();
     renderForecast();
+    renderStuck();
   }
 
   /* ---------- export / import / reset ---------- */

@@ -389,4 +389,22 @@ P = {
   "Superhuman in video games. Fragile and expensive on real robots. Worth knowing; rarely the first "
   "tool to reach for."),
 
+
+"c3w1-drill-gaussian": plain(
+  "The bell curve's height at its own centre \u2014 the single most likely value it will ever hand "
+  "back. Move away from the centre in either direction and the height only ever drops.",
+  [("&mu;", "“mew”", "the centre of the bell curve, its average"),
+   ("&sigma;", "“sigma”", "how wide the bell curve is"),
+   ("p(x)", "“p of x”", "how likely a value near x is \u2014 the bell's height there")],
+  "Standing exactly at the middle of a hill is the highest point you can be \u2014 walk any "
+  "direction and you go downhill from there. 0.399 is that hilltop height."),
+
+"c3w3-drill-return": plain(
+  "Add up every future reward, but shrink each one the further away it is \u2014 a reward three "
+  "steps from now is worth less than the same reward arriving right now.",
+  [("&gamma;", "“gamma”", "the discount \u2014 how much patience the agent has, between 0 and 1"),
+   ("R\u2081, R\u2082, R\u2083", "“R one, R two, R three”", "the reward received at each future step")],
+  "Like preferring \u00a3100 today over \u00a3100 in three years \u2014 the further away a reward "
+  "is, the less it counts right now."),
+
 }
