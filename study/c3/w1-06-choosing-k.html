@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,7 +238,20 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You must pick the number of clusters. If you set k equal to the number of points, <b>what is the cost?</b> Commit before reading.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Zero — every point is its own cluster. Watch for why the cost curve alone therefore cannot choose k for you.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>How many groups should the class split into? Two? Five? Twenty?</p>
 <p>There isn’t a right answer hiding in the children. It depends on <b>what the groups are for</b>. Two
 teams for a football match. Five for a quiz. Twenty if everyone is doing their own project.</p>
-<p>Same with data. The number of clusters depends on what you plan to do with them.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The elbow method, and the method that actually works</span><span class="h">J always falls as K rises — so J alone can never choose K for you</span></div><div class="demo-body" data-anim="elbow"></div></div><h2><span class="ico">🔢</span>Why you cannot just minimise J</h2><p>J decreases monotonically with K. More centroids can only fit tighter. At K = m every point
+<p>Same with data. The number of clusters depends on what you plan to do with them.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>How many piles should the photographs be in? Two — indoors and outdoors? Twenty — one per holiday?</p>
+<p>Both are defensible. The honest answer is that it depends on what the piles are <em>for</em>, and no
+amount of staring at the photographs will tell you. That is uncomfortable and it is the truth of this
+lesson.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The elbow method plots <var>J</var> against <var>k</var> and looks for the bend, and it is worth
+knowing that it frequently does not produce one.</p>
+<p>Andrew is unusually direct here: often there is no clear elbow, and choosing <var>k</var> by the
+downstream purpose beats choosing it by the curve. That is a rare and useful admission in a
+course.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two curves side by side. One with a visible bend at <var>k</var> = 3. One that declines smoothly with
+no bend anywhere.</p>
+<p>The second is the common case. Knowing that in advance stops you hunting for a feature of the data
+that is not there.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The alternative that actually decides it in industry is cost. A t-shirt manufacturer choosing between
+three sizes and five is weighing better fit against inventory complexity.</p>
+<p>That is a business calculation, informed by the clustering rather than produced by it, and it is how
+<var>k</var> gets picked in practice far more often than by an elbow.</p></div><p class="lens-fold">So the elbow below is one input to the decision, and usually not the deciding one.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The elbow method, and the method that actually works</span><span class="h">J always falls as K rises — so J alone can never choose K for you</span></div><div class="demo-body" data-anim="elbow"></div></div><h2><span class="ico">🔢</span>Why you cannot just minimise J</h2><p>J decreases monotonically with K. More centroids can only fit tighter. At K = m every point
 is its own cluster and J = 0 exactly. So “choose the K with the lowest J” always answers “as many clusters
 as you have points”, which is useless.</p><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>elbow method</td><td>“look for the bend”</td><td>Plot J against K and pick the point where the curve stops dropping steeply. Sometimes obvious, often not.</td></tr><tr><td>downstream purpose</td><td>“what is it for?”</td><td>Evaluate each K by how well it serves the actual later use. The method Andrew recommends.</td></tr><tr><td>silhouette score</td><td>“a tightness score”</td><td>A per-point measure of how much better its own cluster fits than the next best. Unlike J, it does have an interior maximum — so it <em>can</em> suggest a K.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Andrew is unusually direct in this video: he does not often use the elbow method, because
 on real data the curve is usually a smooth <span class="gterm" data-g="slope-f0">slope</span> with no clear bend. <b>Choose K by what the clusters are

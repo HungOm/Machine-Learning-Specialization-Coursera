@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,24 @@
 your thing together.</p>
 <p><b>Neat rows and columns</b> — ages, prices, categories, counts — that’s tree country. Fast, accurate,
 and you can read the answer.</p>
-<p><b>Pictures, sound, or words</b> — that’s neural network country, and it isn’t close.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The comparison, line by line</span><span class="h">each row highlights which side wins and why</span></div><div class="demo-body" data-anim="treevsnn"></div></div><h2><span class="ico">🔢</span>The scorecard</h2><div class="grid2"><div class="card"><h3>🌳 Decision trees & ensembles</h3><ul><li>Excellent on <b>tabular / structured</b> data.</li><li><b>Fast</b> to train — often seconds to minutes.</li><li>Handle categorical features natively; <b>no scaling needed</b>.</li><li>A small tree is <b>human-readable</b>.</li><li>✗ Not for images, audio or text.</li><li>✗ No transfer learning; cannot be chained into a bigger differentiable system.</li></ul></div><div class="card"><h3>🧠 Neural networks</h3><ul><li>Work on <b>everything</b> — tabular, images, audio, text, video.</li><li><b>Transfer learning</b>: start from someone else’s pre-trained model.</li><li>Multiple networks can be <b>chained and trained together</b> end to end.</li><li>✗ Slower to train.</li><li>✗ Need scaling, tuning, and more care.</li><li>✗ Much harder to interpret.</li></ul></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>The decisive advantage of neural networks is <b>composability</b>: because everything is
+<p><b>Pictures, sound, or words</b> — that’s neural network country, and it isn’t close.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Choosing between a socket set and a lathe.</p>
+<p>The socket set is fast, everyone in the shop can already use it, and it handles nine jobs in ten on
+the vehicles that actually come through the door. The lathe can make a part that does not exist yet,
+takes far longer to set up, and rewards a skilled operator. Neither is the better tool. The only
+question is what is on the bench.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have ever chosen between a decision rule and a fitted model — an actuarial table
+versus a survival model, a triage scoring sheet versus a clinician's judgement — you have made
+this trade before.</p>
+<p>It is the same axis every time: transparency and speed on one side, flexibility and the ability to
+absorb inputs that do not fit in columns on the other.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two things on a page, side by side. On the left, a spreadsheet — rows, named columns, mixed
+types, missing values, one column called <code>customer_age</code>.</p>
+<p>On the right, a photograph, a waveform, a sentence. The left is where trees win. The right is where
+networks win. Almost the whole decision is working out which of those two objects you are actually
+holding.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This choice costs real money. Neural networks on tabular data routinely lose to gradient
+boosting while costing far more to train, tune and serve — and on images, a transfer-learned
+network is the only sane option there has ever been.</p>
+<p>Teams that choose by fashion rather than by the shape of their data pay for it twice: once in GPU
+bills, and again in the weeks spent tuning something that was never going to win.</p></div><p class="lens-fold">So the comparison table below is not a list of opinions. It is a list of what each of those two
+objects makes cheap.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The comparison, line by line</span><span class="h">each row highlights which side wins and why</span></div><div class="demo-body" data-anim="treevsnn"></div></div><h2><span class="ico">🔢</span>The scorecard</h2><div class="grid2"><div class="card"><h3>🌳 Decision trees & ensembles</h3><ul><li>Excellent on <b>tabular / structured</b> data.</li><li><b>Fast</b> to train — often seconds to minutes.</li><li>Handle categorical features natively; <b>no scaling needed</b>.</li><li>A small tree is <b>human-readable</b>.</li><li>✗ Not for images, audio or text.</li><li>✗ No transfer learning; cannot be chained into a bigger differentiable system.</li></ul></div><div class="card"><h3>🧠 Neural networks</h3><ul><li>Work on <b>everything</b> — tabular, images, audio, text, video.</li><li><b>Transfer learning</b>: start from someone else’s pre-trained model.</li><li>Multiple networks can be <b>chained and trained together</b> end to end.</li><li>✗ Slower to train.</li><li>✗ Need scaling, tuning, and more care.</li><li>✗ Much harder to interpret.</li></ul></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>The decisive advantage of neural networks is <b>composability</b>: because everything is
 differentiable, you can bolt several networks together and train the whole stack with one gradient. You
 cannot do that with trees — and that single property is why deep learning scaled.</p></div><h2><span class="ico">🎓</span>You have finished Course 2</h2><p>Look back at what you can now do:</p>
 <ul>

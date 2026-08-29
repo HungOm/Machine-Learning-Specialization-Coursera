@@ -28,6 +28,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -613,9 +614,25 @@ every tool, guard, validator and budget above stays exactly as written.
 It also brings a failure the stub cannot have -- proposing a call that
 is well-formed, plausible, and wrong. That is what the validator, the
 repeat guard and the step budget are really defending against.</pre></div></section>
-
+<h2><span class="ico">&#129504;</span>What you need that the courses do not cover</h2>
+<div class="callout key"><span class="tag">Enough theory to read this file</span>
+<p>The model is a stub in this file, deliberately — so it is worth being precise about what the real
+thing does, because every guard rail here exists because of one of these three facts.</p>
+<p><b>It predicts one token at a time.</b> The model outputs a <span class="gterm" data-g="probability-f0">probability</span> for every token in its
+vocabulary, one is picked, it is appended to the input, and the whole thing runs again. Text comes out
+left to right, and the model has no plan for the sentence it is part-way through. A temperature dial
+controls how sharply the probabilities are peaked before sampling — low is repetitive, high is
+erratic.</p>
+<p><b>It has no separate store of facts.</b> There is no lookup table of true statements to consult, so
+a plausible-sounding wrong answer is produced by exactly the same machinery as a right one, with the
+same confidence. This is why the parser here is strict and why the tool runner never trusts the
+model's arithmetic.</p>
+<p><b>It was trained to be agreeable, not correct.</b> After pre-training, models are tuned on human
+preference comparisons — people pick the better of two answers, and the model is optimised for what
+gets picked. Helpful and confident is what wins those comparisons, which is precisely why an agent
+loop needs a repeat guard, a step budget, and an evaluation suite with deliberate failures in it.</p></div>
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
-<ul class="links plain"><li><a href="../c3/w3-04-policies.html">Policies</a></li></ul>
+<ul class="links plain"><li><a href="../c3/w3-04-policies.html">Policies</a></li><li><a href="../c2/w3-11-error-analysis.html">Error analysis</a></li><li><a href="../c2/w3-17-precision-recall-tradeoff.html">Precision and recall</a></li></ul>
 
 <nav class="pager">
 <a class="prev" href="../scratch/12-fine-tuning.html"><span class="dir">&#8249; previous</span><span class="ttl">Fine-tuning: head, full, and LoRA</span></a>

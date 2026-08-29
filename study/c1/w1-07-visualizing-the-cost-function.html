@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,19 @@
 <b>bowl</b>: a 3-D surface, with w one way, b the other, and J as the height.</p>
 <p>A 3-D picture is awkward on a flat page. So do what map-makers do: look at it from <b>directly
 above</b> and draw a ring around all the points at the same height. Rings close together mean steep; rings
-far apart mean flat. The bullseye in the middle is the bottom of the bowl — the best line.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag inside the right-hand panel</span><span class="h">each position is a (w, b) pair; the left panel shows the line that pair produces</span></div><div class="demo-body" data-anim="costcontour"></div></div><p>Move to the outer rings and the line is obviously wrong. Move towards the bullseye and it
+far apart mean flat. The bullseye in the middle is the bottom of the bowl — the best line.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A contour map of a valley. Rings drawn round a low point, close together where the ground is steep
+and far apart where it is gentle.</p>
+<p>You have never seen the valley from above. You can read it off the map, and you can tell from the
+spacing of the rings which way is downhill and how fast.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>These are level sets — the same object as isobars on a weather chart or elevation lines on an
+Ordnance Survey map.</p>
+<p>The one habit to bring across: on a contour plot, the <b>gradient is <span class="gterm" data-g="perpendicular">perpendicular</span> to the contour</b>.
+That single fact is what makes the gradient descent picture in the next lessons readable at a glance.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A bowl, and the same bowl seen from directly above as a set of nested ellipses.</p>
+<p>Each ellipse is one value of <var>J</var> — every (<var>w</var>, <var>b</var>) on that ring gives
+exactly the same cost. The centre of the rings is the best line. That is the whole picture.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The <b>shape</b> of the ellipses is what makes this worth learning rather than admiring.</p>
+<p>Circular contours mean gradient descent goes almost straight to the bottom. Long thin ellipses mean it
+zigzags and takes far longer — and that is precisely the picture that makes feature scaling in Week 2
+obviously necessary rather than an arbitrary preprocessing step.</p></div><p class="lens-fold">So the contour plot below is the same bowl you already understand, drawn flat so both parameters
+fit.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag inside the right-hand panel</span><span class="h">each position is a (w, b) pair; the left panel shows the line that pair produces</span></div><div class="demo-body" data-anim="costcontour"></div></div><p>Move to the outer rings and the line is obviously wrong. Move towards the bullseye and it
 settles onto the data. Every ring is a set of (w, b) pairs that are all <b>equally bad</b>.</p><h2><span class="ico">🔢</span>Reading a contour plot</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>contour plot</td><td>“a height map”</td><td>The 3-D bowl seen from above. Each closed curve joins points of equal J.</td></tr><tr><td>a ring</td><td>“an iso-cost line”</td><td>Every (w, b) on this ring gives a different line, all of which fit exactly as badly as each other.</td></tr><tr><td>rings close together</td><td>“steep”</td><td>J changes fast here. Gradient descent will take large steps.</td></tr><tr><td>the bullseye</td><td>“the minimum”</td><td>The best possible w and b for this data.</td></tr><tr><td>elongated rings</td><td>“an awkward valley”</td><td>The bowl is much steeper one way than the other. Week 2 shows why this is a problem and how feature scaling fixes it.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Every gradient-descent picture in this specialization is a <b>path across this
 map</b>, starting somewhere on an outer ring and walking to the bullseye. Getting comfortable reading it
 now pays off for the next two courses.</p></div><h2><span class="ico">🔬</span>Why the rings are ellipses</h2><p>J is a <span class="gterm" data-g="cubic">quadratic</span> in w and b, so its level sets are exact ellipses — not roughly, exactly.

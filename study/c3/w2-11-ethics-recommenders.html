@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,25 @@ happy”. Not “show people useful things”. Just: <b>keep them watching</b>.<
 <p>The robot will work out — correctly, and without any malice — that angry, shocking and frightening
 things keep people watching longest. So it shows more of them. People watch longer. The robot learns it was
 right, and shows even more.</p>
-<p>Nobody decided to do this. It is simply what the instruction meant when taken literally.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The same loop, two different objectives</span><span class="h">press the buttons to switch what the system is being told to maximise</span></div><div class="demo-body" data-anim="ethicsrec"></div></div><h2><span class="ico">🔢</span>The problem cases from the lecture</h2><table class="data"><thead><tr><th>Case</th><th>What the system optimises</th><th>What it amplifies</th></tr></thead><tbody><tr><td>Movie recommendation</td><td>watch time</td><td>usually fine — this one is mostly benign</td></tr><tr><td>Social media feed</td><td>engagement</td><td><b>outrage, conspiracy, and content that provokes</b></td></tr><tr><td>Ad targeting</td><td>click-through, or bid amount</td><td><b>exploitative businesses that can afford to bid more</b></td></tr><tr><td>News ranking</td><td>clicks</td><td><b>clickbait headlines over accurate ones</b></td></tr></tbody></table><p>The ad case is the sharpest, and Andrew’s framing is worth quoting in structure: a payday
+<p>Nobody decided to do this. It is simply what the instruction meant when taken literally.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A newsagent who notices that the shocking paper sells better, so he moves it to the front. It
+sells more, so he orders more. Within a year the quiet local paper is gone from the shop, and no
+individual decision he made was wrong.</p>
+<p>Nobody set out to narrow what the street reads. Every step was a small, defensible response to what
+people actually picked up. That is the whole mechanism, and it does not require anybody's bad
+intentions.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is a <b>feedback loop</b> with a badly chosen objective, and if you have worked with control
+systems, KPIs, or Goodhart's law, you know the failure exactly.</p>
+<p>The system optimises what it can measure. Engagement is measurable; whether the time was well spent
+is not. So the measurable proxy silently becomes the goal, and it drifts away from the thing it was
+standing in for.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A circle, not a line: <b>shown → clicked → trained on → shown more</b>.</p>
+<p>The crucial property is that the model's own output becomes its next training input. Every other
+model in this specialization learns from data that was there before it existed. A recommender writes
+the data it will be trained on tomorrow.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is the loop behind engagement-optimised feeds amplifying outrage, behind recommendation
+systems steering viewers towards more extreme content, and behind pricing systems that quietly learn
+which customers will tolerate more.</p>
+<p>The technical fixes — optimising for a longer-horizon outcome, injecting exploration, capping how
+often one item can be shown — are all things you now know how to build, which is the reason this
+lesson sits in a technical course rather than a policy one.</p></div><p class="lens-fold">So the questions below are engineering questions. What is being maximised, and who benefits when it
+is.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The same loop, two different objectives</span><span class="h">press the buttons to switch what the system is being told to maximise</span></div><div class="demo-body" data-anim="ethicsrec"></div></div><h2><span class="ico">🔢</span>The problem cases from the lecture</h2><table class="data"><thead><tr><th>Case</th><th>What the system optimises</th><th>What it amplifies</th></tr></thead><tbody><tr><td>Movie recommendation</td><td>watch time</td><td>usually fine — this one is mostly benign</td></tr><tr><td>Social media feed</td><td>engagement</td><td><b>outrage, conspiracy, and content that provokes</b></td></tr><tr><td>Ad targeting</td><td>click-through, or bid amount</td><td><b>exploitative businesses that can afford to bid more</b></td></tr><tr><td>News ranking</td><td>clicks</td><td><b>clickbait headlines over accurate ones</b></td></tr></tbody></table><p>The ad case is the sharpest, and Andrew’s framing is worth quoting in structure: a payday
 loan company charging exploitative rates makes more money per customer, so it can afford to bid more for
 ad slots, so an ad system that maximises revenue shows it to more people. <b>The more harmful business
 outbids the less harmful one, systematically.</b> That is not a bug in the algorithm; it is the algorithm

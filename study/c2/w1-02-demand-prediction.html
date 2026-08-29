@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,7 +241,25 @@ the advert budget and the fabric all at once — messy. Instead you ask three si
 <li>Have people <b>heard</b> of it? (that’s advertising)</li>
 <li>Does it <b>feel</b> expensive-good? (that’s fabric, and oddly, price again)</li></ul>
 <p>Answer those three little questions first, then answer the big question using only those three answers.
-The three little questions are the <b>hidden layer</b>. The big question is the <b>output layer</b>.</p></div><p>The important twist: <b>you never tell the network what the three questions are.</b> You
+The three little questions are the <b>hidden layer</b>. The big question is the <b>output layer</b>.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A market trader deciding whether a new line of t-shirts will sell. He does not weigh price,
+fabric, shipping and the season all at once in one judgement.</p>
+<p>He forms three smaller opinions first — <b>is it affordable, is it well made, do people know the
+brand</b> — and each of those is itself built from several facts. Only then does he combine the three
+into a yes or no. Nobody told him to think in two stages. It is just how a hard judgement gets
+made.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have built a scoring model with composite indices — a credit score assembled from
+sub-scores, a deprivation index built from domain scores — you have built a two-layer network by
+hand.</p>
+<p>The only difference is that you chose what the sub-scores meant and what went into each. Here the
+sub-scores are learned, which is more powerful and costs you the ability to name them.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Four input numbers on the left, three circles in the middle, one circle on the right, and every
+left number wired to every middle circle.</p>
+<p>Each middle circle is doing exactly what logistic regression did in C1: weights, a sum, a bias, a
+sigmoid. Nothing new has been invented — three of the old thing have been stacked in front of a
+fourth.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The word to be careful with is <b>affordability</b>. It is a caption a human put on that circle
+afterwards, not something the network was told to compute.</p>
+<p>Real networks do develop interpretable-looking units, and people over-read them constantly — an
+entire research field exists to check whether a unit means what it appears to mean. Treat the labels
+in this diagram as a teaching aid, not as a description of what training produces.</p></div><p class="lens-fold">So a layer is not a new idea. It is several logistic regressions run side by side on the same
+inputs.</p></div><p>The important twist: <b>you never tell the network what the three questions are.</b> You
 tell it “make three numbers”, and training decides what they should mean. “Affordability” is a story we
 tell afterwards, because it makes the picture teachable. The real learned features are usually weirder and
 harder to name — and that is fine.</p><h2><span class="ico">🔢</span>The maths, decoded</h2><p>Four inputs, three hidden units, one output. Every hidden unit sees <b>all four</b> inputs;

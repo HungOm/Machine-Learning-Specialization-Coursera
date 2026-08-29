@@ -57,6 +57,13 @@ PROBLEM_MODULES = _shown_modules([
     "problems_c4w1", "problems_c4w2", "problems_c4w3", "problems_c4w4",
 ])
 
+# one mock quiz per graded week — C1-C3 only, since F0 has no official quiz
+MOCK_MODULES = _shown_modules([
+    "mock_c1w1", "mock_c1w2", "mock_c1w3",
+    "mock_c2w1", "mock_c2w2", "mock_c2w3", "mock_c2w4",
+    "mock_c3w1", "mock_c3w2", "mock_c3w3",
+])
+
 MODULES = _shown_modules([
     "content_f0w1", "content_f0w2", "content_f0w3",
     "content_c1w1", "content_c1w2", "content_c1w3",
@@ -655,6 +662,7 @@ def sidebar(weeks, flat, current_slug, depth):
     out.append('<a href="%smastery.html" style="font-weight:700">✓ Mastery plan</a>' % up)
     out.append('<a href="%sreview.html" style="font-weight:700">◆ Review (SRS)</a>' % up)
     out.append('<a href="%sproblems.html" style="font-weight:700">✎ Problem sets</a>' % up)
+    out.append('<a href="%squizzes.html" style="font-weight:700">◎ Mock quizzes</a>' % up)
     out.append('<a href="%spaper.html" style="font-weight:700">✐ On paper</a>' % up)
     out.append('<a href="%sscratch.html" style="font-weight:700">⚙ From scratch</a>' % up)
     out.append('<a href="%slabs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>' % up)
@@ -1232,6 +1240,19 @@ def tag_quiz(body, slug):
     return out, n[0]
 
 
+def mock_lesson_map():
+    """qid -> lesson file, for the dashboard's weak-spot list."""
+    m = {}
+    for mname in MOCK_MODULES:
+        try:
+            mod = importlib.import_module(mname)
+        except ModuleNotFoundError:
+            continue
+        for q in mod.SET["questions"]:
+            m[q["qid"]] = q["lesson"]
+    return m
+
+
 def build_meta(weeks, flat, cards, qcount):
     """Everything the client-side pages need to know about the site.
 
@@ -1297,6 +1318,7 @@ def build_meta(weeks, flat, cards, qcount):
                    "n": len(w["lessons"])} for w in weeks],
         "cardsByLesson": by_lesson,
         "courseTitle": COURSE_TITLE,
+        "mockLesson": mock_lesson_map(),
         "problems": problems,
         "problemLesson": problem_lesson,
         "problemsByWeek": problems_by_week,
@@ -1553,6 +1575,118 @@ def build_problems(weeks, flat):
     return len(sets), total
 
 
+MOCKPAGE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock quiz &#183; {course} W{week}</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+</head>
+<body data-slug="{slug}" data-printable="Mock quiz &#183; {course} Week {week}|{n} questions">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">Mock quiz &#183; {course} W{week} &#183; <b>{title}</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="kicker">{course} &#183; Week {week} &#183; {n} questions &#183; pass mark 80%</p>
+<h1>{title}</h1>
+<p class="lede">{lede}</p>
+
+<div class="mq-head">
+  <div><b>Closed book.</b> No notes, no scrolling back &mdash; that is the condition the real
+  one is sat under.</div>
+  <span class="mq-score" id="mq-score">&mdash;</span>
+</div>
+
+<ol class="mqlist" data-set="{slug}">
+{questions}
+</ol>
+
+<div class="mq-acts">
+  <button class="btn primary" id="mq-submit">Submit answers</button>
+  <button class="btn" id="mq-retry" hidden>Clear and try again</button>
+  <span class="msg" id="mq-msg"></span>
+</div>
+
+<nav class="pager">
+{prev}
+{next}
+</nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+<script src="../assets/meta.js"></script>
+<script src="../assets/mock.js"></script>
+</body>
+</html>
+"""
+
+MOCKINDEX = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock quizzes</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/print.css" media="print">
+<script src="assets/site.js"></script>
+<script src="assets/search.js"></script>
+<script>window.GLOSS_UP="";</script>
+<script src="assets/gloss-data.js"></script>
+<script src="assets/gloss.js"></script>
+</head>
+<body data-slug="__quizzes__">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">Mock quizzes &#183; <b>{n} questions in the graded-quiz format</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="kicker">{nw} quizzes &#183; {n} questions</p>
+<h1>Mock quizzes</h1>
+<p class="lede">One per graded week, written the way the real quiz asks: single-answer multiple
+choice and &ldquo;select all that apply&rdquo;, marked in this browser, 80% to pass. The point is
+not the score. It is the <b>rationale on every option</b>, including the ones you did not pick.</p>
+<div class="callout kid"><span class="tag">Why every wrong answer is explained</span>
+<p>A distractor you chose for a reason is more informative than the answer you got right. Each wrong
+option here is a real misunderstanding &mdash; usually a true statement about the <i>wrong</i> thing
+&mdash; and the rationale names which one, so a miss tells you what to re-read rather than just
+costing you a mark.</p></div>
+<div class="callout trap"><span class="tag">These are not the real questions</span>
+<p>Nothing here is copied from Coursera. These are written from the same lessons the graded quizzes
+are drawn from, in the same format and at the same difficulty, so that sitting one tells you
+something true about whether you are ready.</p></div>
+{body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+</body>
+</html>
+"""
+
+
 SCRATCHPAGE = """<!doctype html>
 <html lang="en">
 <head>
@@ -1597,7 +1731,7 @@ python3 {file}</code></pre>
 </div>
 
 {body}
-
+{primer}
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
 {lessons}
 
@@ -1660,6 +1794,84 @@ broke, the page would show the error instead.</p></div>
 """
 
 
+def build_mock(weeks, flat):
+    """One graded-format quiz per week, marked in the browser.
+
+    The lessons train recognition and the problem sets train production; this
+    trains the specific thing the graded quiz asks for, which is neither —
+    picking the right statement out of four plausible ones under time.
+    """
+    sets = []
+    for mname in MOCK_MODULES:
+        try:
+            mod = importlib.import_module(mname)
+        except ModuleNotFoundError:
+            continue
+        importlib.reload(mod)
+        sets.append(mod.SET)
+    if not sets:
+        return 0, 0
+
+    files = ["quiz/%s%s.html" % (S["course"].lower(), S["week"]) for S in sets]
+    total_q = sum(len(S["questions"]) for S in sets)
+
+    for i, S in enumerate(sets):
+        slug = "%s%s" % (S["course"].lower(), S["week"])
+        qs = []
+        for q in S["questions"]:
+            opts = []
+            for o in q["opts"]:
+                opts.append(
+                    '<li class="mq-opt" data-c="%d">'
+                    '<label><input type="%s" name="%s"><span class="mq-t">%s</span></label>'
+                    '<p class="mq-why">%s</p></li>'
+                    % (1 if o["correct"] else 0,
+                       "checkbox" if q["multi"] else "radio",
+                       q["qid"], o["text"], o["why"]))
+            multi = ('<span class="mq-multi">select all that apply</span>'
+                     if q["multi"] else "")
+            tag = ('<span class="mq-tag">%s</span>' % html.escape(q["tag"])) if q["tag"] else ""
+            note = ('<p class="mq-note"><span class="lbl">What this is really testing</span>%s</p>'
+                    % q["note"]) if q["note"] else ""
+            qs.append(
+                '<li class="mq" data-qid="%s" data-lesson="%s">'
+                '<p class="mq-n">%s%s</p><div class="mq-ask">%s</div>'
+                '<ul class="mq-opts">%s</ul>%s</li>'
+                % (q["qid"], q["lesson"], tag, multi, q["ask"], "".join(opts), note))
+
+        prev = ('<a class="prev" href="../%s"><span class="dir">&#8249; previous</span>'
+                '<span class="ttl">%s W%s quiz</span></a>'
+                % (files[i - 1], sets[i - 1]["course"], sets[i - 1]["week"])
+                ) if i else '<span class="ghost"></span>'
+        nxt = ('<a class="next" href="../%s"><span class="dir">next &#8250;</span>'
+               '<span class="ttl">%s W%s quiz</span></a>'
+               % (files[i + 1], sets[i + 1]["course"], sets[i + 1]["week"])
+               ) if i < len(sets) - 1 else '<span class="ghost"></span>'
+
+        wr(os.path.join(ROOT, files[i]),
+           MOCKPAGE.format(course=S["course"], week=S["week"],
+                           title=html.escape(S["title"]), lede=S["lede"],
+                           slug="mock-" + slug, n=len(S["questions"]),
+                           sidebar=sidebar(weeks, flat, "mock-" + slug, 1),
+                           questions="\n".join(qs), prev=prev, next=nxt))
+
+    rows = []
+    for i, S in enumerate(sets):
+        topics = " &middot; ".join(q["tag"] for q in S["questions"] if q["tag"])
+        rows.append(
+            '<li><a data-slug-link="mock-%s%s" href="%s"><span class="n">%s W%s</span>'
+            '<span class="pt"><b>%s</b><span class="pgs">%s</span></span>'
+            '<span class="tag2">%d questions</span></a></li>'
+            % (S["course"].lower(), S["week"], files[i], S["course"], S["week"],
+               html.escape(S["title"]), topics, len(S["questions"])))
+    body = ('<h2><span class="ico">&#9678;</span>One per graded week</h2>'
+            '<ol class="problist">%s</ol>' % "".join(rows))
+    wr(os.path.join(ROOT, "quizzes.html"),
+       MOCKINDEX.format(sidebar=sidebar(weeks, flat, "__quizzes__", 0),
+                        n=total_q, nw=len(sets), body=body))
+    return len(sets), total_q
+
+
 def build_scratch(weeks, flat):
     try:
         import scratchkit
@@ -1696,7 +1908,15 @@ def build_scratch(weeks, flat):
         nxt = ('<a class="next" href="../%s"><span class="dir">next &#8250;</span>'
                '<span class="ttl">%s</span></a>' % (files[i + 1], html.escape(lane[i + 1]["title"]))
                ) if i < len(lane) - 1 else '<span class="ghost"></span>'
+        # Some builds go past the three courses and used to lean on C4 for their
+        # theory. A primer carries that ground themselves, so the file stands up
+        # whether or not C4 is a hidden course.
+        primer = ('<h2><span class="ico">&#129504;</span>What you need that the courses '
+                  'do not cover</h2>\n<div class="callout key"><span class="tag">Enough '
+                  'theory to read this file</span>%s</div>' % d["primer"]
+                  ) if d.get("primer") else ""
         page = SCRATCHPAGE.format(
+            primer=primer,
             title=html.escape(d["title"]), slug=d["slug"], lede=d["lede"],
             file=d["file"], builds=d["builds"], nlines=src_lines,
             num=i + 1, total=len(lane), nsec=len(sections),
@@ -2445,6 +2665,7 @@ def build():
     n_gloss = build_gloss()
     n_paper = build_paper(weeks, flat)
     n_sets, n_prob = build_problems(weeks, flat)
+    n_mock, n_mq = build_mock(weeks, flat)
     n_sc, n_sl, n_ss = build_scratch(weeks, flat)
     n_lab, n_grad, n_ex = build_labs(weeks, flat)
     n_q = build_meta(weeks, flat, cards, qcount)
@@ -2473,6 +2694,8 @@ def build():
         print("       + mastery.html (%d weeks, ~%d h budgeted)" % (len(weeks), n_hours))
     if n_sets:
         print("       + %d problem sets (%d problems)" % (n_sets, n_prob))
+    if n_mock:
+        print("       + %d mock quizzes (%d questions, graded in browser)" % (n_mock, n_mq))
     if n_sc:
         print("       + %d from-scratch pages (%d lines run, %d sections)" % (n_sc, n_sl, n_ss))
     if n_lab:

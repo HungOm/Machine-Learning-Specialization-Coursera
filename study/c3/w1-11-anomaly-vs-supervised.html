@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,22 @@
 spam looks like</em> — supervised.</p>
 <p><b>Aircraft engine faults</b>: engines fail in ways nobody has ever seen. Tomorrow’s failure might look
 nothing like the three you have on record. So <em>learn what normal looks like</em> and flag anything
-else — anomaly detection.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two columns, five deciding factors</span><span class="h">each row highlights which approach it favours</span></div><div class="demo-body" data-anim="anomalyvssupervised"></div></div><h2><span class="ico">🔢</span>The comparison</h2><table class="data"><thead><tr><th></th><th>Anomaly detection</th><th>Supervised learning</th></tr></thead><tbody><tr><td>Positive examples</td><td>very few (0–20)</td><td>many (100s+)</td></tr><tr><td>Negative examples</td><td>many</td><td>many</td></tr><tr><td>Types of anomaly</td><td>many, and future ones may be unlike past ones</td><td>enough examples of each type; future looks like past</td></tr><tr><td>What it learns</td><td>what NORMAL looks like</td><td>what each CLASS looks like</td></tr><tr><td>Novel failure modes</td><td><b>can catch them</b></td><td>cannot — never seen them</td></tr><tr><td>Examples</td><td>fraud, manufacturing faults, machine monitoring, intrusion detection</td><td>spam, weather, disease from symptoms, recurring known defects</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The deciding question: <b>do you expect future positive examples to look like the ones
+else — anomaly detection.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Two questions a doctor might be answering. <b>“Is this the flu?”</b> — she has seen ten thousand
+cases and knows what it looks like. <b>“Something is wrong with this patient and I have never seen it
+before.”</b></p>
+<p>Both are medicine. They need different training, and mistaking which one you are being asked is the
+error that matters.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The deciding question is not how many anomalies you have. It is whether <b>future anomalies will
+resemble past ones</b>.</p>
+<p>Spam evolves but stays recognisably spam, so a classifier works. Aircraft engine failures fail in new
+ways, so density estimation works. That distinction survives every borderline case in the table
+below.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two columns headed <b>“many positive examples, and they look alike”</b> and <b>“few positive
+examples, and new ones will be different”</b>.</p>
+<p>Sort your problem into one of those columns first. Everything else — which algorithm, which metric,
+which split — follows from the answer.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Getting it wrong is expensive in a specific way: a classifier trained on known fraud patterns catches
+known fraud beautifully and misses the new scheme entirely, while reporting excellent metrics on
+historical data.</p>
+<p>Fraud teams run both for exactly this reason — a classifier for the known, density estimation for the
+novel.</p></div><p class="lens-fold">So the table below is a decision about your problem, made before you choose an algorithm.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two columns, five deciding factors</span><span class="h">each row highlights which approach it favours</span></div><div class="demo-body" data-anim="anomalyvssupervised"></div></div><h2><span class="ico">🔢</span>The comparison</h2><table class="data"><thead><tr><th></th><th>Anomaly detection</th><th>Supervised learning</th></tr></thead><tbody><tr><td>Positive examples</td><td>very few (0–20)</td><td>many (100s+)</td></tr><tr><td>Negative examples</td><td>many</td><td>many</td></tr><tr><td>Types of anomaly</td><td>many, and future ones may be unlike past ones</td><td>enough examples of each type; future looks like past</td></tr><tr><td>What it learns</td><td>what NORMAL looks like</td><td>what each CLASS looks like</td></tr><tr><td>Novel failure modes</td><td><b>can catch them</b></td><td>cannot — never seen them</td></tr><tr><td>Examples</td><td>fraud, manufacturing faults, machine monitoring, intrusion detection</td><td>spam, weather, disease from symptoms, recurring known defects</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The deciding question: <b>do you expect future positive examples to look like the ones
 you already have?</b> Yes → supervised. No → anomaly detection.</p></div><h2><span class="ico">🔬</span>The same domain, both answers</h2><div class="grid2"><div class="card"><h3>Manufacturing — scratches</h3><p>You see scratched parts every day, hundreds of examples, and they all look like scratches. <b>Supervised.</b></p></div><div class="card"><h3>Manufacturing — anything else</h3><p>Aircraft engines fail in genuinely novel ways. You cannot enumerate them. <b>Anomaly detection.</b></p></div></div><p>Same factory, same cameras, different answers — because the structure of the positive class
 differs. This is why the question is about the <em>failure modes</em>, not about the industry.</p><div class="callout "><span class="tag">Why fraud is on the anomaly side</span><p>Fraud detection drifts over time. Fraudsters actively change tactics to evade whatever
 you deployed last month, so this year’s fraud genuinely does not look like last year’s. That adversarial

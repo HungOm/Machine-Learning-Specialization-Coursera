@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -236,8 +237,23 @@
 <p class="bookrail-cap"><span>C3 · Week 2 · lesson 15 of 15</span><span class="r">161 of 177 · 91% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>scikit-learn does PCA in three lines. <b>Guess what you must do to the data first</b>, and why skipping it silently ruins the result.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the mandatory centring step, and for what the explained-<span class="gterm" data-g="variance-f0">variance</span> ratio tells you.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Four lines. One to say how many directions you want to keep, one to look at the
 data and find them, one to squash the data down onto them, and one to ask how much you lost.</p>
-<p>The interesting part of this lesson is not the code &mdash; it is the last section, which argues
-that two of the three classic reasons for using PCA no longer hold. Read the code, then read that.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">from</span> sklearn.decomposition <span class="tok-k">import</span> PCA
+<p>The interesting part of this lesson is not the code — it is the last section, which argues
+that two of the three classic reasons for using PCA no longer hold. Read the code, then read that.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Reading the label on a tin before you eat what is in it. The interesting number here is not the
+output of the transform — it is <b>how much you threw away</b>.</p>
+<p>Two components that keep 95% of the variation are a good trade. Two that keep 34% mean you have
+flattened something that genuinely needed three dimensions, and everything downstream is now working
+from a bad photograph.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p><code>explained_variance_ratio_</code> is a scree plot in an array, and the elbow you look for is
+the same elbow you learned to look for when choosing <var>k</var> in k-means last week.</p>
+<p>Same judgement, same picture, different algorithm — which is worth noticing, because it is one of
+the few genuinely reusable habits in unsupervised learning.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>An array of numbers that sums to 1: <code>[0.71, 0.24, 0.03, 0.02]</code>.</p>
+<p>Read it as “the first direction carries 71% of the variation”. Add them up as you go and stop when
+the running total is high enough. That cumulative sum is the only number in this lesson worth
+memorising how to read.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The failure that costs real money is fitting the transform on the <em>whole</em> dataset before
+splitting into train and test.</p>
+<p>It leaks test-set structure into the training features, the validation score comes out flattering,
+and the model disappoints in production. Fit on train, apply to test — the same discipline as feature
+scaling in C1, and broken just as often.</p></div><p class="lens-fold">So the three lines below are ordinary. The fourth line, the one that prints the explained variance,
+is the one that tells you whether to trust the other three.</p></div><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">from</span> sklearn.decomposition <span class="tok-k">import</span> PCA
 
 pca = <span class="gterm" data-g="sklearnpca-api">PCA(</span><span class="gterm" data-g="kwncomponents-api">n_components=</span><span class="tok-n">2</span>)             <span class="tok-c"># how many components to keep</span>
 X_reduced = pca<span class="gterm" data-g="sklearnpca-api">.fit_transform(</span>X)      <span class="tok-c"># fit AND project, in one call</span>

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,7 +241,24 @@ tiny square. A 1000×1000 photo is a list of <b>a million</b> numbers.</p>
 First layer: find tiny straight lines and corners. Second layer: glue lines into eyes, noses, mouths.
 Third layer: glue parts into whole faces. Last layer: which face is it?</p>
 <p>Nobody programmed those steps. The network invented that staircase by itself, because it was the
-cheapest way to get the answers right.</p></div><h2><span class="ico">🔢</span>The maths, decoded</h2><p>There is barely any new maths here — that is the point. The same
+cheapest way to get the answers right.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Recognising a friend at a distance. You do not consciously check 40,000 points of light. Something
+finds <b>edges</b>, edges become an eye and a jawline, and those become a face — and by the time you
+are aware of anything at all, you already know who it is.</p>
+<p>The staged assembly happened without you. That is not a metaphor for how vision works; it is
+roughly what the visual cortex does, and it is where the architecture came from.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have worked with signal processing or image filters, the first layer will look extremely
+familiar: it learns something close to <b>edge detectors</b>, which is what a Sobel or Gabor filter is
+hand-designed to be.</p>
+<p>The shift is who designs them. For thirty years the job was to hand-craft features and feed them to
+a simple classifier. Here the features are learned from the labels, which is why the field changed
+shape so abruptly.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A 1000 × 1000 photograph flattened into a single column of a million numbers, each one a
+brightness between 0 and 255.</p>
+<p>The network never sees a picture. It sees that column. Everything it recovers — edges, parts,
+faces — is recovered from a list of numbers whose spatial arrangement it was never told about.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The famous visualisations of what each layer responds to — edges, then curves and corners, then
+faces — are real, from Zeiler and Fergus's work, and they hold up.</p>
+<p>They are also the reason transfer learning works commercially: the first layers of a network trained
+on 14 million photographs have learned things about edges that are true of <em>your</em> photographs
+too, which is worth millions of pounds of training you now do not have to pay for.</p></div><p class="lens-fold">So the hierarchy below — pixels, edges, parts, objects — is not a diagram someone drew. It is what
+gets found when you look.</p></div><h2><span class="ico">🔢</span>The maths, decoded</h2><p>There is barely any new maths here — that is the point. The same
 <var>a</var> = <var>g</var>(<var>w</var>·<var>x</var> + <var>b</var>) runs on pixels instead of prices.</p><div class="fanat-eq"><span class="lbl">a photo, flattened into one long vector — hover or click it</span><div class="fanat-row"><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="vector-f0"><var>x</var> <span class="op">=</span> <span class="paren">[</span><var>x</var><sub>1</sub>, <var>x</var><sub>2</sub>, …, <var>x</var><sub>1,000,000</sub><span class="paren">]</span></span></span><span class="tick"></span><span class="tag">one long list of numbers</span></span><span class="fanat-part plain"><span class="term"> <span class="op">,</span> each <var>x</var><sub><var>i</var></sub> <span class="op">∈</span> <span class="paren">[</span>0, 255<span class="paren">]</span></span></span></div></div><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td><var>x</var><sub><var>i</var></sub></td><td>“pixel i”</td><td>Brightness of one tiny square. 0 = black, 255 = white. Colour images use three such numbers per square (red, green, blue).</td></tr><tr><td>flatten</td><td>“unroll”</td><td>Reading the 2-D grid row by row into one long 1-D list, so a plain Dense layer can accept it.</td></tr><tr><td><var>a</var><sup>[1]</sup></td><td>“first layer’s activations”</td><td>In an image network, each unit here reacts strongly to one small pattern — typically an edge at a particular angle.</td></tr></tbody></table><div class="callout warn"><span class="tag">Watch out</span><p>Flattening throws away the fact that two pixels were next to each other. Fully-connected
 networks then have to <em>re-learn</em> that neighbouring pixels are related, from scratch, for every
 position in the image. Convolutional layers (Week 2, Lesson 12) fix precisely this. For now, flat is fine —

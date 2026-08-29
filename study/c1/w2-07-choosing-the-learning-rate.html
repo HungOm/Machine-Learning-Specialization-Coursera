@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,7 +238,20 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You must pick α with no formula to tell you the right value. <b>Guess a systematic way to search</b> — better than trying random numbers.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the ladder, and for the rule about what J doing anything other than falling tells you immediately.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>There is no formula for α. You try a few and look.</p>
 <p>The values people try go up by roughly ×3 each time — 0.001, 0.003, 0.01, 0.03, 0.1 — because α acts
 multiplicatively, so equal <em>ratios</em> matter rather than equal differences. Trying 0.1, 0.2, 0.3
-wastes all your attempts in one narrow region.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Five values, five learning curves</span><span class="h">the largest one that still falls smoothly is the one you want</span></div><div class="demo-body" data-anim="alphachoice"></div></div><h2><span class="ico">🔢</span>The procedure</h2><ol>
+wastes all your attempts in one narrow region.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Turning a tap to fill a glass. Too gentle and you stand there all day. Too hard and it splashes
+everywhere and the glass ends up emptier than when you started.</p>
+<p>Nobody computes the right pressure. You turn it, look, and adjust — and that is genuinely the accepted
+professional method here.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is a step-size choice, and the honest position is that there is <b>no formula</b>.</p>
+<p>The recommended procedure is a logarithmic sweep: 0.001, 0.003, 0.01, 0.03, 0.1 — roughly threefold
+steps, because you are looking for the right order of magnitude, not the third decimal place.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Three cost curves on one pair of axes.</p>
+<p>One falls smoothly and flattens — good. One falls very slowly and is still falling at the right-hand
+edge — α too small. One rises or oscillates — α too large. Learn those three shapes and you can diagnose
+any training run at a glance.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>A diverging cost is nearly always the learning rate, and it is the first thing to check before
+suspecting anything more interesting.</p>
+<p>The useful debugging trick is to set α absurdly small — 0.0001 — and confirm the cost decreases at all.
+If it does not, the bug is in the gradient, not the rate, and you have just halved your search
+space.</p></div><p class="lens-fold">So the sweep below is the actual professional practice, and the three curve shapes are how you read
+it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Five values, five learning curves</span><span class="h">the largest one that still falls smoothly is the one you want</span></div><div class="demo-body" data-anim="alphachoice"></div></div><h2><span class="ico">🔢</span>The procedure</h2><ol>
 <li>Try α = 0.001. Run for a few hundred iterations, plot J.</li>
 <li>Multiply by 3: 0.003, 0.01, 0.03, 0.1, 0.3, 1. Plot each.</li>
 <li>Find the largest α whose curve <b>decreases smoothly</b>.</li>

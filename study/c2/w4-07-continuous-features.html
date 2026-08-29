@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,25 @@
 <p>So you don’t ask “what does it weigh?”. You ask “<b>does it weigh less than 10 pounds?</b>” — which is
 back to yes/no.</p>
 <p>But where do you put the line? You try every sensible place, score each one with information gain, and
-keep the best. The computer doesn’t mind; there are only a handful of places worth trying.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Slide the threshold and watch the information gain</span><span class="h">the curve underneath is the gain at every possible threshold</span></div><div class="demo-body" data-anim="contsplit"></div></div><h2><span class="ico">🔢</span>The maths, decoded</h2><div class="eq small"><span class="lbl">one threshold turns a number into a yes/no question</span>split condition: <var>x</var><sub>weight</sub> <span class="op">≤</span> <var class="hl-a">t</var></div><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td><var class='hl-a'>t</var></td><td>“the threshold”</td><td>The cut point. Chosen by the algorithm, not by you.</td></tr><tr><td>m − 1 candidates</td><td>“the thresholds worth trying”</td><td>Sort the values; the only useful cut points are midway between consecutive distinct values. 10 examples → at most 9 candidates.</td></tr><tr><td>re-used features</td><td>“a feature can appear twice”</td><td>Unlike a binary feature, weight can be split at 10 lb near the top and again at 15 lb further down.</td></tr><tr><td>no scaling needed</td><td>“only the order matters”</td><td>Trees compare values; they never add them. Converting pounds to kilograms changes nothing about the tree.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>This is why trees need <b>no feature scaling at all</b> — a genuine practical advantage
+keep the best. The computer doesn’t mind; there are only a handful of places worth trying.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A market inspector grading melons, with nothing but a two-pan balance and a box of standard
+weights. She cannot ask “how heavy is this?” — the balance does not tell her that. She can only
+ask <b>“is it heavier than this weight?”</b></p>
+<p>So she tries the 1 kg, the 1.5, the 2, and keeps whichever one best separates the ripe from the
+unripe. The continuous quantity never becomes a number she reads off. It becomes a <em>threshold she
+tests</em>.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have ever set a clinical cut-off — troponin above 14 ng/L means investigate —
+you have chosen a threshold on a continuous variable to force a binary decision.</p>
+<p>Two things differ here. The algorithm chooses the cut-off rather than a committee, and it chooses
+it with the <em>same</em> criterion it uses for everything else. No new machinery arrives for
+continuous features; only a longer list of candidate questions.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Sort the examples by that one feature and lay them in a row, with their labels written
+underneath.</p>
+<p>Every gap between two neighbouring values is a candidate threshold. Walk along the row, score each
+gap with the gain you already know, keep the best. That row of sorted values <em>is</em> the whole
+procedure — there is no formula to learn here, only a loop.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This step is why fitting a tree costs O(<var>n</var> <span class="gterm" data-g="logarithm-f0">log</span> <var>n</var>) per feature rather than
+O(<var>n</var>) — the sort dominates.</p>
+<p>It is also, almost single-handedly, why LightGBM is fast: at a billion rows you stop considering
+every gap and bucket the values into a histogram of 255 bins instead. The speed difference that made
+gradient boosting practical on large data is this one decision, taken differently.</p></div><p class="lens-fold">So “try every midpoint and take the best gain” is that inspector, working patiently through her box
+of weights.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Slide the threshold and watch the information gain</span><span class="h">the curve underneath is the gain at every possible threshold</span></div><div class="demo-body" data-anim="contsplit"></div></div><h2><span class="ico">🔢</span>The maths, decoded</h2><div class="eq small"><span class="lbl">one threshold turns a number into a yes/no question</span>split condition: <var>x</var><sub>weight</sub> <span class="op">≤</span> <var class="hl-a">t</var></div><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td><var class='hl-a'>t</var></td><td>“the threshold”</td><td>The cut point. Chosen by the algorithm, not by you.</td></tr><tr><td>m − 1 candidates</td><td>“the thresholds worth trying”</td><td>Sort the values; the only useful cut points are midway between consecutive distinct values. 10 examples → at most 9 candidates.</td></tr><tr><td>re-used features</td><td>“a feature can appear twice”</td><td>Unlike a binary feature, weight can be split at 10 lb near the top and again at 15 lb further down.</td></tr><tr><td>no scaling needed</td><td>“only the order matters”</td><td>Trees compare values; they never add them. Converting pounds to kilograms changes nothing about the tree.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>This is why trees need <b>no feature scaling at all</b> — a genuine practical advantage
 over neural networks, and one of the reasons they are so easy to use on messy real-world tables.</p></div><h2><span class="ico">🧮</span>The procedure</h2><ol>
 <li>Sort the examples by that feature.</li>
 <li>Consider each midpoint between consecutive distinct values as a candidate threshold.</li>

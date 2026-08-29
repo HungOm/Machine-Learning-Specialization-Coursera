@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,7 +241,24 @@ really one fact. If you know one, you know the other.</p>
 directions. So most of what those two numbers tell you is really just <b>“how big is this car?”</b>, which
 is one number, plus a little bit left over.</p>
 <p>PCA finds that one number. It draws a new axis in the direction the data actually spreads, and measures
-everything along it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two correlated features collapsing onto one axis</span><span class="h">the dashed lines show each point dropping onto the new axis</span></div><div class="demo-body" data-anim="pcaintro"></div></div><h2><span class="ico">🔢</span>The vocabulary</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>dimensionality reduction</td><td>“fewer numbers per example”</td><td>Replace n features with k < n new ones that keep most of the information.</td></tr><tr><td>principal component</td><td>“a new axis”</td><td>A direction in the original feature space, built as a weighted combination of the original features.</td></tr><tr><td>PC1</td><td>“the first one”</td><td>The direction in which the data spreads out the most.</td></tr><tr><td>z</td><td>“the projected value”</td><td>How far along the new axis a point sits. One number replacing the original n.</td></tr><tr><td>unsupervised</td><td>“no y anywhere”</td><td>PCA only looks at x. It has no idea what you plan to predict.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The main use today is <b>visualisation</b>. A dataset with 50 features cannot be
+everything along it.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Photographing a chair for a catalogue. You could take a hundred pictures from a hundred angles,
+and most of them would tell the buyer nothing new.</p>
+<p>One good angle — usually three-quarters from the front — shows the arms, the back and the legs at
+once. You have thrown away two of the three dimensions and lost almost nothing that mattered.
+Choosing that angle is the entire idea of PCA.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>You may know this as factor analysis, as the SVD, or as the thing that produces a scree plot.</p>
+<p>The framing that transfers best: PCA finds the directions of <b>maximum <span class="gterm" data-g="variance-f0">variance</span></b>, and it assumes
+variance is what carries the information. That assumption is usually reasonable and occasionally
+catastrophic — a rare but decisive signal has, by definition, low variance.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A cloud of points on a page that is long and thin, tilted at 30°, with one arrow drawn along its
+length.</p>
+<p>That arrow is the first principal component. Projecting every point onto it replaces two numbers
+with one, and the cloud's shape is why so little is lost. Draw the cloud, draw the arrow, and the
+maths afterwards is bookkeeping.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The honest industrial use of PCA today is mostly <b>visualisation and compression</b>, not
+accuracy. It is how you look at a 300-column dataset before modelling it, and how you shrink a
+feature store.</p>
+<p>Andrew is explicit that using it to prevent <span class="gterm" data-g="overfitting-native">overfitting</span> is a mistake people used to make;
+<span class="gterm" data-g="regularization-native">regularisation</span> does that job better, and PCA throws away information without ever consulting the
+labels.</p></div><p class="lens-fold">So the algorithm below is a way of asking: which single direction, if I could keep only one, would I
+keep?</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Two correlated features collapsing onto one axis</span><span class="h">the dashed lines show each point dropping onto the new axis</span></div><div class="demo-body" data-anim="pcaintro"></div></div><h2><span class="ico">🔢</span>The vocabulary</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>dimensionality reduction</td><td>“fewer numbers per example”</td><td>Replace n features with k < n new ones that keep most of the information.</td></tr><tr><td>principal component</td><td>“a new axis”</td><td>A direction in the original feature space, built as a weighted combination of the original features.</td></tr><tr><td>PC1</td><td>“the first one”</td><td>The direction in which the data spreads out the most.</td></tr><tr><td>z</td><td>“the projected value”</td><td>How far along the new axis a point sits. One number replacing the original n.</td></tr><tr><td>unsupervised</td><td>“no y anywhere”</td><td>PCA only looks at x. It has no idea what you plan to predict.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The main use today is <b>visualisation</b>. A dataset with 50 features cannot be
 plotted; the same data reduced to 2 components can, and a human can then see the clusters, the outliers
 and the structure. That is genuinely valuable and hard to get any other way.</p></div><h2><span class="ico">🌍</span>The country example from the lecture</h2><p>Andrew’s example: a table of countries with GDP, population, GDP per person, life
 expectancy, human development index — dozens of columns. Nobody can look at that.</p>

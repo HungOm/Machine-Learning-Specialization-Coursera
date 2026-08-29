@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -236,7 +237,20 @@
 <p class="bookrail-cap"><span>C2 · Week 1 · lesson 11 of 16</span><span class="r">84 of 177 · 47% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You wrote a function for one layer. <b>Guess what has to change to make it work for a network of any depth.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for how little does. The whole network is one function, called in a loop.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Last lesson you wrote out neuron 1, then neuron 2, then neuron 3 — three near-identical
 paragraphs. That is silly. Whenever you catch yourself copying and pasting with one number changed, that
-number wants to become a <b>loop counter</b>.</p></div><h2><span class="ico">💻</span>The dense() function</h2><pre><code><span class="tok-k">def</span> dense(a_in, W, b):
+number wants to become a <b>loop counter</b>.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Writing down the recipe once instead of teaching it to each new cook. The three-unit version worked
+and it does not survive its first contact with a four-unit layer.</p>
+<p>Generalising is not showing off. It is the difference between code that solved today's example and
+code you can still use next week.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The move is from unrolled repetition to a loop over columns, and the discipline is the one you
+already apply when you refactor: identical code three times is a loop with the index left out.</p>
+<p>The shape bookkeeping is what makes it feel harder than a normal refactor, and the shape bookkeeping
+is exactly what the next four lessons remove.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A <code>for</code> loop over the columns of <var>W</var>, filling in an output array one entry at
+a time.</p>
+<p><code>W.shape[1]</code> is the number of units, which is the number of outputs. Say that sentence
+until it is obvious, because every shape question in the rest of the course is answered by it.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This version is correct and slow — a Python-level loop over units, and then over layers.</p>
+<p>The gap between this and what a framework does is roughly two orders of magnitude, and closing it is
+the entire subject of the last four lessons of this week. Understanding <em>why</em> it is slow is what
+makes vectorisation feel inevitable rather than magical.</p></div><p class="lens-fold">So the general version below is the same arithmetic as the hand-written one, with the repetition
+named.</p></div><h2><span class="ico">💻</span>The dense() function</h2><pre><code><span class="tok-k">def</span> dense(a_in, W, b):
     <span class="gterm" data-g="kwunits-api">units =</span> W.shape[<span class="tok-n">1</span>]            <span class="tok-c"># number of <span class="gterm" data-g="kwcolumns-api">columns =</span> number of neurons</span>
     a_out = <span class="gterm" data-g="npcreate-api">np.zeros</span>(units)       <span class="tok-c"># empty box to fill</span>
     <span class="tok-k">for</span> j <span class="tok-k">in</span> range(units):        <span class="tok-c"># one pass per neuron</span>

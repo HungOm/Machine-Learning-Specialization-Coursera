@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,7 +241,22 @@ worked perfectly for house prices.</p>
 walks down into the nearest dip, stops, and announces it has finished — while a much better answer sits in
 a different dip nearby.</p>
 <p>So you need a different way of scoring. Not because squared error is wrong in principle, but because
-the <b>shape</b> it produces here is unusable.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Bumpy versus bowl-shaped</span><span class="h">the same optimiser, two very different landscapes</span></div><div class="demo-body" data-anim="logcost"></div></div><h2><span class="ico">🔢</span>What went wrong</h2><p>In Week 1, f = wx + b, so (f − y)² was a <span class="gterm" data-g="cubic">quadratic</span> in w and b — and quadratics are convex,
+the <b>shape</b> it produces here is unusable.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Marking a forecaster who gives <span class="gterm" data-g="probability-f0">probabilities</span> rather than answers. She said 90% rain and it rained —
+a small penalty. She said 90% rain and it stayed dry — a large one.</p>
+<p>The penalty has to punish <b>confident and wrong</b> far more harshly than <b>uncertain and wrong</b>,
+or she will simply say 100% to everything.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Squared error is the obvious choice and it fails here for a reason worth knowing: with a sigmoid
+inside it, the cost surface is <b>non-convex</b>, full of local minima that gradient descent gets stuck
+in.</p>
+<p>If you have hit a non-convex optimisation before, you know the symptom — the answer depends on where
+you started. The logistic loss is chosen specifically to restore convexity.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two curves, one for each true label.</p>
+<p>When <var>y</var> = 1, the penalty is −<span class="gterm" data-g="logarithm-f0">log</span>(<var>f</var>): almost nothing when <var>f</var> is near 1,
+and rising to <b>infinity</b> as <var>f</var> approaches 0. That vertical asymptote is the mechanism —
+being confidently wrong is unboundedly expensive.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The infinite penalty is the whole design, and it is why the model cannot game the loss by being
+certain.</p>
+<p>It is also why numerical implementations clip probabilities away from exactly 0 and 1: an actual
+infinity in the loss makes every gradient NaN, and the whole model dies in one step. This is the same
+concern that <code>from_logits</code> addresses in C2.</p></div><p class="lens-fold">So the log below is not a mathematical flourish. It is what makes confident errors unaffordable and
+the surface convex.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Bumpy versus bowl-shaped</span><span class="h">the same optimiser, two very different landscapes</span></div><div class="demo-body" data-anim="logcost"></div></div><h2><span class="ico">🔢</span>What went wrong</h2><p>In Week 1, f = wx + b, so (f − y)² was a <span class="gterm" data-g="cubic">quadratic</span> in w and b — and quadratics are convex,
 guaranteed.</p>
 <p>Now f = g(wx + b), with a sigmoid in the middle. Squaring the error of a squashed function is
 no longer convex in general — the guarantee is gone, and where you end up can depend on where you
@@ -252,7 +268,7 @@ barely moving, for the reason worked out further down this page.</p><table class
 course keeps them distinct on purpose: loss is per-example, cost is the average. Course 2 relies on the
 distinction, and interviewers ask about it.</p></div><h2><span class="ico">🔢</span>The new loss</h2><div class="fanat-eq"><span class="lbl">the logistic loss — hover or click a part</span><div class="fanat-row"><span class="fanat-part plain"><span class="term"><var>L</var>(<var>f</var>, <var>y</var>) <span class="op">=</span> <span class="paren">{</span> </span></span><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="logarithm-f0"><span class="op">−</span>log(<var>f</var>)</span></span><span class="tick"></span><span class="tag">huge penalty if f is near 0</span></span><span class="fanat-part plain"><span class="term"> &nbsp;&nbsp; if <var>y</var> = 1<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="logarithm-f0"><span class="op">−</span>log(1 <span class="op">−</span> <var>f</var>)</span></span><span class="tick"></span><span class="tag">huge penalty if f is near 1</span></span><span class="fanat-part plain"><span class="term"> &nbsp;&nbsp; if <var>y</var> = 0</span></span></div></div><p>Two cases, and only one is ever active for any given example. The next lesson looks at the
 shape of these curves in detail; the point here is simply that this loss makes J <b>convex</b> again, and
-gradient descent gets its guarantee back.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>Why a <span class="gterm" data-g="logarithm-f0">logarithm</span> specifically? Two reasons, both good. It makes the overall cost convex.
+gradient descent gets its guarantee back.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>Why a logarithm specifically? Two reasons, both good. It makes the overall cost convex.
 And it is the <b>negative log-likelihood</b> — the choice of w and b that makes the data you actually
 observed most probable. It is not an arbitrary trick; it falls out of statistics.</p></div><h2><span class="ico">🧮</span>Watch squared error actually fail</h2><p>The claim is that squared error, which worked perfectly for linear regression, breaks
 for logistic regression. Here it is failing. Six points, a sigmoid model, and gradient descent run
@@ -266,7 +282,7 @@ almost no signal to correct itself.</p>
 <p>Log loss is built so that factor cancels. Its gradient is simply
 (<var>f</var> − <var>y</var>)<var>x</var> — no <var>g</var>′ anywhere — so a confidently wrong
 prediction produces a <em>large</em> correction rather than a vanishing one.</p><div class="explain"><span class="tag">Say it out loud</span><p>The cure is a cost function whose derivative cancels the sigmoid’s <span class="gterm" data-g="slope-f0">slope</span>.
-<b>Why is “confidently wrong should hurt most” the right principle to build in?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the model’s output is a <span class="gterm" data-g="probability-f0">probability</span>, and a probability of 0.99
+<b>Why is “confidently wrong should hurt most” the right principle to build in?</b></p><details class="ex"><summary>said it &mdash; now check</summary><div class="ex-b"><p>Because the model’s output is a probability, and a probability of 0.99
 attached to a wrong answer is a much more serious error than 0.51 attached to the same wrong answer —
 it means the model has learned something actively false, not merely that it is undecided. Squared
 error caps the penalty at 1 and, worse, flattens the gradient exactly there. Log loss sends the

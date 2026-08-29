@@ -147,6 +147,31 @@ the advert budget and the fabric all at once — messy. Instead you ask three si
 <li>Does it <b>feel</b> expensive-good? (that’s fabric, and oddly, price again)</li></ul>
 <p>Answer those three little questions first, then answer the big question using only those three answers.
 The three little questions are the <b>hidden layer</b>. The big question is the <b>output layer</b>.</p>""")
+
+        + lenses(
+            """<p>A market trader deciding whether a new line of t-shirts will sell. He does not weigh price,
+fabric, shipping and the season all at once in one judgement.</p>
+<p>He forms three smaller opinions first — <b>is it affordable, is it well made, do people know the
+brand</b> — and each of those is itself built from several facts. Only then does he combine the three
+into a yes or no. Nobody told him to think in two stages. It is just how a hard judgement gets
+made.</p>""",
+            """<p>If you have built a scoring model with composite indices — a credit score assembled from
+sub-scores, a deprivation index built from domain scores — you have built a two-layer network by
+hand.</p>
+<p>The only difference is that you chose what the sub-scores meant and what went into each. Here the
+sub-scores are learned, which is more powerful and costs you the ability to name them.</p>""",
+            """<p>Four input numbers on the left, three circles in the middle, one circle on the right, and every
+left number wired to every middle circle.</p>
+<p>Each middle circle is doing exactly what logistic regression did in C1: weights, a sum, a bias, a
+sigmoid. Nothing new has been invented — three of the old thing have been stacked in front of a
+fourth.</p>""",
+            """<p>The word to be careful with is <b>affordability</b>. It is a caption a human put on that circle
+afterwards, not something the network was told to compute.</p>
+<p>Real networks do develop interpretable-looking units, and people over-read them constantly — an
+entire research field exists to check whether a unit means what it appears to mean. Treat the labels
+in this diagram as a teaching aid, not as a description of what training produces.</p>""",
+            """So a layer is not a new idea. It is several logistic regressions run side by side on the same
+inputs.""")
         + """<p>The important twist: <b>you never tell the network what the three questions are.</b> You
 tell it “make three numbers”, and training decides what they should mean. “Affordability” is a story we
 tell afterwards, because it makes the picture teachable. The real learned features are usually weirder and
@@ -251,6 +276,30 @@ Third layer: glue parts into whole faces. Last layer: which face is it?</p>
 <p>Nobody programmed those steps. The network invented that staircase by itself, because it was the
 cheapest way to get the answers right.</p>""")
 
+        + lenses(
+            """<p>Recognising a friend at a distance. You do not consciously check 40,000 points of light. Something
+finds <b>edges</b>, edges become an eye and a jawline, and those become a face — and by the time you
+are aware of anything at all, you already know who it is.</p>
+<p>The staged assembly happened without you. That is not a metaphor for how vision works; it is
+roughly what the visual cortex does, and it is where the architecture came from.</p>""",
+            """<p>If you have worked with signal processing or image filters, the first layer will look extremely
+familiar: it learns something close to <b>edge detectors</b>, which is what a Sobel or Gabor filter is
+hand-designed to be.</p>
+<p>The shift is who designs them. For thirty years the job was to hand-craft features and feed them to
+a simple classifier. Here the features are learned from the labels, which is why the field changed
+shape so abruptly.</p>""",
+            """<p>A 1000 × 1000 photograph flattened into a single column of a million numbers, each one a
+brightness between 0 and 255.</p>
+<p>The network never sees a picture. It sees that column. Everything it recovers — edges, parts,
+faces — is recovered from a list of numbers whose spatial arrangement it was never told about.</p>""",
+            """<p>The famous visualisations of what each layer responds to — edges, then curves and corners, then
+faces — are real, from Zeiler and Fergus's work, and they hold up.</p>
+<p>They are also the reason transfer learning works commercially: the first layers of a network trained
+on 14 million photographs have learned things about edges that are true of <em>your</em> photographs
+too, which is worth millions of pounds of training you now do not have to pay for.</p>""",
+            """So the hierarchy below — pixels, edges, parts, objects — is not a diagram someone drew. It is what
+gets found when you look.""")
+
         + h2("🔢", "The maths, decoded")
         + """<p>There is barely any new maths here — that is the point. The same
 <var>a</var> = <var>g</var>(<var>w</var>·<var>x</var> + <var>b</var>) runs on pixels instead of prices.</p>"""
@@ -329,6 +378,28 @@ L.append(dict(
 same performance, but each cares about different things — one watches the footwork, one the music, one the
 smile. Each judge holds up one score card. The layer’s output is the row of score cards.</p>
 <p>Then the next layer is another panel that only sees the score cards, not the original performance.</p>""")
+
+        + lenses(
+            """<p>A kitchen brigade. The commis does one thing to everything that arrives: peels it. The sauce chef
+does one thing. The pass does one thing.</p>
+<p>Every station does its identical job to whatever is put in front of it and slides the result along.
+Nobody at any station knows what the finished plate looks like. The dish is what comes out of the last
+station, and no single person made it.</p>""",
+            """<p>Think of it as a <b>function composition</b>: <var>f</var>(<var>g</var>(<var>h</var>(x))), where
+each function is affine-then-nonlinear.</p>
+<p>If you have chained matrix transformations in graphics, or composed steps in a data pipeline, this
+is that — with the one twist that each stage's coefficients are learned rather than specified.</p>""",
+            """<p>A column of numbers going in, and a shorter column coming out.</p>
+<p>Four numbers in, three out. That is a layer: a machine that turns one vector into another vector,
+with the length usually changing. The notation
+<var>a</var><sup>[1]</sup> = <var>g</var>(<var>W</var><sup>[1]</sup><var>a</var><sup>[0]</sup> +
+<var>b</var><sup>[1]</sup>) says nothing more than that.</p>""",
+            """<p>The superscript-in-square-brackets convention is worth ten minutes now because it is used
+identically in every paper, framework and codebase you will ever read.</p>
+<p><b>[l] is the layer, (i) is the example</b>, and confusing the two produces shape errors that are
+genuinely painful to debug — the arithmetic runs, the numbers are wrong, and nothing raises.</p>""",
+            """So a layer is one function, applied to a vector, producing a vector. The whole network is that,
+repeated.""")
 
         + h2("🔢", "The maths, decoded")
         + """<p>For a layer with three units, reading a two-number input:</p>"""
@@ -443,6 +514,30 @@ panel gives the final verdict.</p>
 <p>To talk about one particular judge, you need two labels: <b>which panel</b> and <b>which seat</b>.
 That’s all the scary notation is — a seat number and a panel number.</p>""")
 
+        + lenses(
+            """<p>A production line getting longer. One more station, and each station can afford to do something
+simpler because the one before it has already done some of the work.</p>
+<p>The interesting thing is what depth buys: not more capacity to do a single clever thing, but the
+ability to build something complicated out of many simple steps — which is nearly always the cheaper
+way to build anything.</p>""",
+            """<p>The formal result is worth knowing because it is so often misquoted: a network with <b>one</b>
+hidden layer can approximate any continuous function to any accuracy. Depth is not required for
+expressiveness.</p>
+<p>What depth buys is <b>efficiency</b>. Some functions need exponentially many units in one layer and
+merely linearly many when spread over several. That is the actual argument for deep networks, and it
+is a statement about width, not about power.</p>""",
+            """<p>The same diagram as before with two more columns of circles inserted, and the notation
+<b>[1], [2], [3], [4]</b> written under them.</p>
+<p>Nothing new is happening in any of the new columns. Picture the output of one column becoming the
+input of the next, and you have understood every network in this course.</p>""",
+            """<p>“How many layers, how many units” is the first architecture decision anyone makes and the least
+principled. There is no formula.</p>
+<p>What practitioners actually do is start from something known to work on a similar problem, then use
+the bias/variance diagnostics from C2 W3 to decide whether to grow it. Architecture search exists as a
+research field precisely because nobody can do this from first principles.</p>""",
+            """So counting layers has one rule worth memorising: hidden layers plus the output layer, and the input
+does not count.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             '<var class="hl-a">a</var><sub><var class="hl-b">j</var></sub><sup>[<var class="hl-p">l</var>]</sup> <span class="op">=</span> <var>g</var><span class="paren">(</span>',
@@ -547,6 +642,28 @@ second panel. The second hands 15 score cards to the last judge. The last judge 
 “I’m 93% sure this is a 1.”</p>
 <p>The baton only ever moves <b>forwards</b>. Nobody runs backwards. That’s why it is called
 <b>forward</b> propagation.</p>""")
+
+        + lenses(
+            """<p>Passing a bucket along a line of people to a fire. Each person takes what they are handed, does
+their one action, and passes it on. The water only ever moves one way.</p>
+<p>Ask anyone in the line what the fire looks like and they cannot tell you. They know what arrived and
+what they did to it, and that is genuinely all a layer knows.</p>""",
+            """<p>This is straightforward <b>function evaluation</b> — nothing is being solved or searched, so it is
+much simpler than the training that comes later.</p>
+<p>If you have evaluated a nested formula in a spreadsheet, where each cell depends on the previous
+one, you have run forward propagation. The word “propagation” makes it sound harder than “work left to
+right”.</p>""",
+            """<p>Three columns of numbers on a page, computed one after another from left to right.</p>
+<p>Column 0 is your input. Column 1 comes from column 0 and <var>W</var><sup>[1]</sup>. Column 2 comes
+from column 1. The last column is the answer. Write the actual numbers out once by hand for a tiny
+network — it takes five minutes and permanently removes the mystery.</p>""",
+            """<p>Inference is where deployed models spend essentially all of their compute. A model is trained once
+and then run billions of times.</p>
+<p>Which is why an entire industry exists to make <em>just this direction</em> fast — quantisation,
+distillation, inference-specific chips. None of it touches training. Every optimisation in that
+industry is aimed at the arithmetic in this lesson.</p>""",
+            """So forward propagation is the whole prediction step, and the notation below is bookkeeping for
+“multiply, add, squash, repeat”.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -704,6 +821,26 @@ lesson is the bread machine. Same bread. Four buttons.</p>
 <p>The catch is that a bread machine is only safe if you already know what the dough should look like.
 That is why the by-hand lessons came first.</p>""")
 
+        + lenses(
+            """<p>Learning to drive an unfamiliar car. The pedals do what pedals do; the question is where they are
+and what the switches are called.</p>
+<p>Nothing conceptual is at stake in this lesson. You know what a layer computes. This is where it
+lives in somebody else's library, and the only difficulty is that the library has opinions about
+shapes.</p>""",
+            """<p>Keras is a declarative API: you describe the model and the library arranges the computation, in
+the same way SQL describes a result rather than a loop over rows.</p>
+<p>The cost of that convenience is the usual one — when something goes wrong, the error message comes
+from inside machinery you did not write, and reading those messages is a skill of its own.</p>""",
+            """<p><code>Dense(units=3, activation='sigmoid')</code>.</p>
+<p>That single line is <var>W</var>, <var>b</var>, and the sigmoid, all three. <code>units=3</code> is
+the width of the output column; the input width is inferred from whatever you feed it. Once you see
+those three objects in that line, Keras stops being notation.</p>""",
+            """<p>The shape convention is where real time is lost: TensorFlow expects a <b>2-D</b> array even for a
+single example, so <code>[[200, 17]]</code> and not <code>[200, 17]</code>.</p>
+<p>The rule is that the first dimension is always the batch, always, even when the batch is one. Most
+first-day TensorFlow errors are this one fact, arriving in an unhelpful message.</p>""",
+            """So the code below is the diagram you already understand, written in someone else's vocabulary.""")
+
         + h2("☕", "The example: roasting coffee")
         + """<p>Two inputs — temperature (°C) and duration (minutes). One output — was the roast good?
 The good region is a slanted blob: too cool and it’s raw whatever you do; too hot and it burns; and the
@@ -793,6 +930,28 @@ L.append(dict(
 box holding one single egg still has a row and a column.</p>
 <p>A <b>1-D array</b> is eggs loose in a bag. Same eggs — but the bag doesn’t say which is a row and which
 is a column. TensorFlow will not accept a bag. It wants the box.</p>""")
+
+        + lenses(
+            """<p>A shipping form that insists on a box even when you are sending one item. Quantity: 1. It looks
+silly on a single parcel and it is the only reason the same form works for a pallet of four hundred.</p>
+<p>The extra bracket in <code>[[200, 17]]</code> is that box. Slightly absurd for one example, and the
+reason nothing has to change for a million.</p>""",
+            """<p>NumPy users will recognise this immediately as the difference between shape <code>(2,)</code> and
+shape <code>(1, 2)</code> — a vector versus a one-row matrix.</p>
+<p>They are mathematically the same two numbers and behave very differently under matrix
+multiplication, and the confusion is the single most common source of silent shape bugs in
+numerical code.</p>""",
+            """<p>A table with one row.</p>
+<p>Not a list — a <em>table</em> that happens to have a single row. Rows are examples, columns are
+features, and the table shape never changes even when the count does. Hold that picture and the
+bracket stops being arbitrary.</p>""",
+            """<p>TensorFlow returns tensors, not NumPy arrays, and printing one shows
+<code>tf.Tensor([[0.9]], shape=(1,1), dtype=float32)</code> rather than a number.</p>
+<p><code>.numpy()</code> converts back, and forgetting it produces a confusing class of bug where a
+value that <em>prints</em> like a number will not behave like one in ordinary Python code
+downstream.</p>""",
+            """So the shapes below are not pedantry. They are the contract that lets one function serve one example
+and a million.""")
 
         + h2("🔢", "The three things that look alike")
         + table(["What you type", "Shape", "What it is", "Use it for"],
@@ -1013,6 +1172,26 @@ neuron — it is that neuron’s personal list of trust levels.</p>
 <p>So to work out neuron 2’s answer: take column 2, pair it up with the incoming numbers, multiply each
 pair, add them all up, add neuron 2’s bias, squash. Done. Now do the same with column 3.</p>""")
 
+        + lenses(
+            """<p>Building a clock after only ever having read one. You know it tells the time. Making the escapement
+yourself is what turns “I know what it does” into “I know how it does it”.</p>
+<p>Nothing in this lesson is needed to use a network. It is here because a layer you have written by
+hand is a layer you can debug, and one you have only imported is not.</p>""",
+            """<p>You are hand-rolling what a library call does — the same exercise as writing your own
+<code>sort()</code> or your own linked list once.</p>
+<p>Nobody ships the result. The point is that afterwards you read <code>Dense(3)</code> and see three
+weight vectors, three dot products and three sigmoids, rather than an opaque call.</p>""",
+            """<p>Three lines of near-identical code, one per unit, each doing
+<code>np.dot(w, a_in) + b</code> then a sigmoid.</p>
+<p>Notice the repetition — that is the point. Three copies of a dot product is exactly the pattern that
+a matrix multiply is going to collapse into one operation in six lessons' time.</p>""",
+            """<p>The convention to internalise here is that <var>W</var>'s <b>columns</b> are the units. Column
+<var>j</var> is unit <var>j</var>'s weight vector.</p>
+<p>Get this backwards and everything still runs, the shapes still work if the dimensions happen to
+match, and the network simply learns nothing while producing no error at all. It is the classic silent
+failure of hand-written layers.</p>""",
+            """So the loop below is a layer, without a library. It is the thing <code>Dense</code> was hiding.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             ('<var>w</var><sub><var>j</var></sub> = <var>W</var><span class="paren">[</span>:, <var>j</var><span class="paren">]</span>', "indexing-f0", "all rows, column j"),
@@ -1106,6 +1285,26 @@ L.append(dict(
         + kid("""<p>Last lesson you wrote out neuron 1, then neuron 2, then neuron 3 — three near-identical
 paragraphs. That is silly. Whenever you catch yourself copying and pasting with one number changed, that
 number wants to become a <b>loop counter</b>.</p>""")
+
+        + lenses(
+            """<p>Writing down the recipe once instead of teaching it to each new cook. The three-unit version worked
+and it does not survive its first contact with a four-unit layer.</p>
+<p>Generalising is not showing off. It is the difference between code that solved today's example and
+code you can still use next week.</p>""",
+            """<p>The move is from unrolled repetition to a loop over columns, and the discipline is the one you
+already apply when you refactor: identical code three times is a loop with the index left out.</p>
+<p>The shape bookkeeping is what makes it feel harder than a normal refactor, and the shape bookkeeping
+is exactly what the next four lessons remove.</p>""",
+            """<p>A <code>for</code> loop over the columns of <var>W</var>, filling in an output array one entry at
+a time.</p>
+<p><code>W.shape[1]</code> is the number of units, which is the number of outputs. Say that sentence
+until it is obvious, because every shape question in the rest of the course is answered by it.</p>""",
+            """<p>This version is correct and slow — a Python-level loop over units, and then over layers.</p>
+<p>The gap between this and what a framework does is roughly two orders of magnitude, and closing it is
+the entire subject of the last four lessons of this week. Understanding <em>why</em> it is slow is what
+makes vectorisation feel inevitable rather than magical.</p>""",
+            """So the general version below is the same arithmetic as the hand-written one, with the repetition
+named.""")
 
         + h2("💻", "The dense() function")
         + code("""
@@ -1223,6 +1422,29 @@ hundred copies of <b>one</b> learning machine, and each copy becomes whatever it
 <p>If that’s true, and if we found that one algorithm, you could learn everything with it. That is the
 dream. Nobody knows if it’s true.</p>""")
 
+        + lenses(
+            """<p>A very good ladder, and the Moon.</p>
+<p>Every rung is real progress and you genuinely are higher than you were. The question worth asking is
+whether the thing you are climbing goes where you are pointing, and no amount of climbing answers
+it.</p>""",
+            """<p>The distinction Andrew draws is between <b>ANI</b> — narrow systems that do one thing very well,
+and which are already extraordinary — and <b>AGI</b>, which is not the same thing scaled up.</p>
+<p>Anyone who has watched a technology S-curve knows the pattern: rapid progress makes extrapolation
+feel obvious, and the extrapolation is usually about the next order of magnitude rather than the next
+category.</p>""",
+            """<p>The one-line summary of the biological claim: a neuron in this course is a weighted sum and a
+sigmoid. A real neuron has thousands of synapses, its own internal chemistry, and timing that carries
+information.</p>
+<p>The name was borrowed in 1943 and has been generating overconfident predictions ever since. Hold
+both facts: the metaphor was fruitful, and it is not a description.</p>""",
+            """<p>This matters commercially because AGI talk distorts budgets. Teams have been sold general
+capability and delivered a narrow system that works beautifully inside its distribution and fails
+outside it.</p>
+<p>The discipline that protects you is in C2 W3: measure on data that looks like deployment, establish
+a baseline, and believe the numbers rather than the narrative.</p>""",
+            """So the honest position below is worth carrying: the results are real, the biology is a metaphor, and
+the extrapolation is not evidence.""")
+
         + h2("🎬", "Watch it move")
         + demo("oneAlgo", "The rewiring experiment",
                "eye → visual cortex, then eye → auditory cortex, which learns to see")
@@ -1303,6 +1525,27 @@ up the next… one hundred times. Or you could lay all 100 out on a big tray and
 <b>once</b>.</p>
 <p>Same 100 stamps. Wildly different amount of time. Computers have that giant stamp — it is called
 parallel hardware — but only if you hand them the whole tray instead of one letter at a time.</p>""")
+
+        + lenses(
+            """<p>A market porter carrying sacks one at a time from the lorry, and a forklift taking twelve.</p>
+<p>The porter is not doing anything wrong and each individual trip is efficient. The forklift wins
+because it moves twelve sacks in one motion, and that is a different kind of advantage from moving
+faster.</p>""",
+            """<p>The technical name is <b>SIMD</b> — single instruction, multiple data — and it is a property of
+the hardware, not a clever algorithm.</p>
+<p>If you have used pandas or R, you have been told to avoid explicit loops for the same reason. The
+loop is not slow because looping is slow; it is slow because it never reaches the instructions that do
+sixteen multiplications at once.</p>""",
+            """<p>Two pieces of code side by side: a <code>for</code> loop over 100,000 elements, and
+<code>np.dot(w, x)</code>.</p>
+<p>Same arithmetic, same result, and a factor of a hundred or more between them. The difference is
+entirely in how many operations reach the processor per Python instruction.</p>""",
+            """<p>This is why GPUs matter. A GPU is thousands of small cores that are only useful if you hand them
+thousands of independent multiplications at once — which is precisely what a matrix multiply is.</p>
+<p>The entire modern deep learning stack rests on the fact that a network's core operation happens to
+be the operation this hardware is best at. That coincidence is worth appreciating.</p>""",
+            """So vectorisation is not a coding style. It is the reason training a large network is possible at
+all.""")
 
         + h2("🎬", "Watch it move")
         + demo("vectorize", "One at a time vs. all at once",
@@ -1405,6 +1648,25 @@ bananas £5, cherries £6.</p>
 1×4 + 2×5 + 3×6 = 4 + 10 + 18 = <b>£32</b>.</p>
 <p>That is a dot product. Two lists go in, one number comes out. And it is <em>exactly</em> what a neuron
 does — inputs are the quantities, weights are the prices, z is the total bill.</p>""")
+
+        + lenses(
+            """<p>A shopping list and a price list. Three items, three prices. Multiply each quantity by its price
+and add up — one number, the total.</p>
+<p>That is a dot product, and you have done thousands of them. Everything in this lesson is that
+operation, arranged in a grid so that many totals get computed at once.</p>""",
+            """<p>If you know the dot product as a measure of <b>alignment</b> — large when two vectors point the
+same way, zero when perpendicular — keep that reading, because it explains what a unit does.</p>
+<p>A unit's weight vector is a direction. Its output is how much the input points that way. A layer is
+therefore a set of questions of the form “how much does this input look like <em>this</em>?”</p>""",
+            """<p>Two lists side by side, multiplied pairwise, then summed to one number.</p>
+<p>[1, 2] · [3, 4] = 3 + 8 = 11. Write that out once. Every matrix multiplication in the rest of the
+specialization is many copies of that single line.</p>""",
+            """<p>Matrix multiply is the most heavily optimised operation in computing. Decades of work sit inside
+BLAS, cuBLAS and tensor cores.</p>
+<p>The practical consequence is direct: express your computation as a matrix multiply and you inherit
+all of it for free; express the same maths as a loop and you inherit none of it. Which is why the next
+two lessons exist.</p>""",
+            """So the dot product below is the atom. Everything after it is arrangement.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -1518,6 +1780,26 @@ different price lists. How much does each customer pay at each shop? That’s 3 
 and you can lay them out in a grid: customers down the side, shops across the top.</p>
 <p>That grid is a matrix multiplication. Every cell of it is one ordinary dot product — a row meeting a
 column.</p>""")
+
+        + lenses(
+            """<p>Fitting a pipe to a fitting. A 22 mm pipe goes into a 22 mm socket. It does not matter how good
+the pipe is or how expensive the fitting is — if the numbers do not match, nothing joins.</p>
+<p>The inner dimensions are the thread. Everything else about a matrix multiplication is negotiable;
+that is not.</p>""",
+            """<p>The rule (m×n)(n×p) → (m×p) is worth holding as a picture rather than a sentence: <b>write the two
+shapes next to each other and cancel the touching pair.</b></p>
+<p>Anyone who has done dimensional analysis in physics or engineering already has the habit — units
+cancel in the middle, and what is left is the answer's units.</p>""",
+            """<p>Two shapes written on paper: <b>(3×2)(2×4)</b>.</p>
+<p>The middle two numbers touch and must agree. Cross them out, and the outside numbers are your
+answer: (3×4). Doing this on paper <em>before</em> writing code eliminates most shape errors before
+they happen.</p>""",
+            """<p>Shape errors are the single most common bug in numerical code, and the good news is that they are
+loud — an exception, immediately.</p>
+<p>The dangerous version is when the shapes happen to be compatible but wrong, so nothing raises and
+the model quietly learns nothing. The transpose convention is where that happens most, which is why
+the next lesson dwells on it.</p>""",
+            """So the rule below is one line, and checking it on paper is worth more than any debugging tool.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -1636,6 +1918,27 @@ L.append(dict(
         + kid("""<p>Everything you have learned this week collapses into two lines. One line does the
 multiply-and-add for every neuron and every example at once. The other squashes the results.</p>
 <p>That’s it. That’s a layer.</p>""")
+
+        + lenses(
+            """<p>Putting the forklift and the pallets together. The last four lessons built the parts; this is where
+the layer you wrote by hand becomes one line.</p>
+<p>What is worth noticing is that nothing was thrown away. The three dot products are still there —
+they have been arranged so the hardware can do them at once.</p>""",
+            """<p>In NumPy, <code>A @ B</code> is matrix multiplication and <code>A * B</code> is elementwise. Two
+characters apart, entirely different operations, and both run silently on compatible shapes.</p>
+<p>If you have used R's <code>%*%</code> versus <code>*</code>, or MATLAB's <code>*</code> versus
+<code>.*</code>, it is the same distinction and the same class of bug.</p>""",
+            """<p>One line: <code>Z = np.matmul(A_in, W) + b</code>.</p>
+<p>That line is the whole of the layer you wrote as a loop over units. Put the loop version and this
+line side by side and confirm they produce identical numbers — doing that once is what makes
+vectorisation trustworthy rather than magical.</p>""",
+            """<p>Broadcasting is what makes <code>+ b</code> work: <var>b</var> has shape (1, 3) and is added to
+every row of a (200, 3) result without being copied.</p>
+<p>It is enormously convenient and it is also how a bug hides — add a (3,) to a (200, 3) and NumPy will
+helpfully do something, possibly not what you meant. Broadcasting rules are worth the ten minutes they
+cost.</p>""",
+            """So the single line below is the whole week: a layer, vectorised, ready for hardware that was built
+for it.""")
 
         + h2("💻", "The vectorised dense()")
         + code("""

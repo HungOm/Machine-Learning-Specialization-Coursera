@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -242,13 +243,26 @@ it and you move <b>left</b> — downhill. ✓</li>
 <li>Standing on the left-hand slope, the ground falls to the right. Negative slope. Subtracting a negative
 adds, so you move <b>right</b> — downhill. ✓</li>
 </ul>
-<p>Either way you head for the bottom, and the formula never has to know which side you are on.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag w and watch the <span class="gterm" data-g="tan">tangent</span> line</span><span class="h">the green arrow is the step gradient descent would take from there</span></div><div class="demo-body" data-anim="gdintuition"></div></div><h2><span class="ico">🔢</span>What a derivative is, if that word is new</h2><p>Draw the tangent line — the straight line that just touches the curve at your point without
+<p>Either way you head for the bottom, and the formula never has to know which side you are on.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Walking downhill in thick fog. You cannot see the bottom. You can feel which way the ground falls
+under your feet, so you take a step that way and feel again.</p>
+<p>You will reach a low point. You have no way of knowing whether it is <em>the</em> low point, and for a
+bowl-shaped valley the distinction does not arise.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The sign of the derivative is doing all the work, and it is worth checking rather than trusting.</p>
+<p>Positive slope means the cost rises as <var>w</var> rises, so subtracting a positive number moves
+<var>w</var> left — downhill. Negative slope, and the same subtraction moves right. <b>One update rule
+handles both directions</b>, with no case analysis.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A point on a curve with an arrow showing which way it will move next.</p>
+<p>Steep slope, long arrow. Near the bottom, short arrow. The algorithm automatically slows as it
+approaches the minimum, without anyone telling it to, purely because the derivative shrinks.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>That automatic slowing is why a fixed learning rate works at all, and it is genuinely surprising the
+first time you see it.</p>
+<p>It also explains a common confusion — “why doesn't it overshoot at the end?” — and the failure case: if
+α is too large, the step overshoots so far that the new slope is steeper, and the process diverges
+instead of <span class="gterm" data-g="convergence-native">converging</span>.</p></div><p class="lens-fold">So the update rule below has the direction built into the sign, and the step size built into the
+magnitude.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag w and watch the <span class="gterm" data-g="tan">tangent</span> line</span><span class="h">the green arrow is the step gradient descent would take from there</span></div><div class="demo-body" data-anim="gdintuition"></div></div><h2><span class="ico">🔢</span>What a derivative is, if that word is new</h2><p>Draw the tangent line — the straight line that just touches the curve at your point without
 crossing it. The derivative is that line’s <b>slope</b>: rise over run.</p>
 <p>You do not need to be able to compute derivatives by hand to finish this course. You need to know that
 the derivative is a number, that its <b>sign</b> tells you which way is uphill, and that its <b>size</b>
 tells you how steep.</p><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>derivative</td><td>“the slope right here”</td><td>How much J changes for a tiny change in w. Positive = uphill to the right.</td></tr><tr><td>tangent line</td><td>“the local straight-line approximation”</td><td>Touching the curve at one point. Its slope is the derivative.</td></tr><tr><td>at the minimum</td><td>“slope zero”</td><td>The tangent is horizontal, so the update subtracts nothing and gradient descent stops on its own.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Notice something the demo shows nicely: even with α <b>fixed</b>, the steps automatically
 get smaller as you approach the minimum — because the slope gets smaller. You never have to shrink α by
-hand.</p></div><h2><span class="ico">🔬</span>What happens exactly at the minimum</h2><p>The slope is zero, so w := w − α(0) = w. Nothing moves. Gradient descent has <span class="gterm" data-g="convergence-native">converged</span> and
+hand.</p></div><h2><span class="ico">🔬</span>What happens exactly at the minimum</h2><p>The slope is zero, so w := w − α(0) = w. Nothing moves. Gradient descent has converged and
 stays put — which is the behaviour you want.</p>
 <p>This is also why a flat spot anywhere else is dangerous: if you land on a plateau or a saddle point, the
 gradient is near zero and progress stalls even though you are not at a good solution. It does not arise for

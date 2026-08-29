@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,7 +241,23 @@ perfect middle size. A tightrope.</p>
 memorising — don’t shrink it, just turn up the stiffness dial (λ) and get more data. A big, well-regularised
 network is almost never worse than a small one.</p>
 <p>The catch: “bigger” costs money and time, and “more data” isn’t always possible. The tightrope became a
-budget question rather than a modelling question.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The recipe, as a flowchart</span><span class="h">two questions, two fixes, and a loop</span></div><div class="demo-body" data-anim="nnrecipe"></div></div><h2><span class="ico">🔢</span>The recipe in words</h2><ol>
+budget question rather than a modelling question.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A rule of thumb that sounds like cheating: <b>if it underfits, build it bigger; if it overfits,
+get more data</b>. Repeat.</p>
+<p>It sounds like cheating because for most of statistical history it was impossible. Bigger models
+always overfit — that was the whole trade. Neural networks with regularisation broke the rule, which is
+a genuinely surprising fact and not merely a convenience.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The classical picture is a U-shaped test error against model size, with an optimum in the middle,
+and it is one of the most reliable results in statistics.</p>
+<p>Large regularised networks do not obey it cleanly. The modern account (double descent) is beyond
+this course; the practical takeaway is not — a large, well-regularised network rarely does worse than
+a small one, which changes the search strategy completely.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A flowchart with two questions and a loop.</p>
+<p><b>Does it do well on the training set?</b> No → bigger network. Yes → <b>does it do well on
+cross-validation?</b> No → more data. Yes → done. Two questions, and you go round until both are
+yes.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The two exits from this loop are money. “Bigger network” is GPU cost and latency; “more data” is
+labelling cost and time.</p>
+<p>The loop tells you which cheque to write, which is why it is worth more than either individual
+technique. It also has a real stopping condition — when both are expensive, you are at the frontier
+and the answer is better features or a better problem definition.</p></div><p class="lens-fold">So the loop below is a strategy, and the reason it works is that regularisation broke the old
+trade-off.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The recipe, as a flowchart</span><span class="h">two questions, two fixes, and a loop</span></div><div class="demo-body" data-anim="nnrecipe"></div></div><h2><span class="ico">🔢</span>The recipe in words</h2><ol>
 <li>Train the model. Ask: <b>does it do well on the training set?</b> (compare J<sub>train</sub> to your
 baseline)</li>
 <li>If no → <b>bigger network</b>. More layers, more units. Go back to step 1.</li>

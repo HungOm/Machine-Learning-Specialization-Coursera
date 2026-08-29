@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,22 @@
 <p>You do actually have a few known-broken engines — say twenty, collected over the years. Not enough to
 learn from, but enough to <b>test</b> with.</p>
 <p>So: train on the ten thousand good ones. Then hide the twenty broken ones among some good ones and see
-how many the detector spots. Turn the ε dial until it catches most of them without crying wolf constantly.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Sweep ε and watch <span class="gterm" data-g="precisionrecall-native">precision</span>, recall and F1</span><span class="h">the panel on the right shows how the data is split</span></div><div class="demo-body" data-anim="anomalyeval"></div></div><h2><span class="ico">🔢</span>The split</h2><table class="data"><thead><tr><th>Set</th><th>Contents</th><th>Used for</th></tr></thead><tbody><tr><td><b>training</b></td><td>6000 normal, 0 anomalies</td><td>fitting μ and σ — normal examples only</td></tr><tr><td><b>cross-validation</b></td><td>2000 normal, 10 anomalies</td><td>choosing ε, and choosing features</td></tr><tr><td><b>test</b></td><td>2000 normal, 10 anomalies</td><td>one final honest measurement</td></tr></tbody></table><p>With <em>very</em> few anomalies (say 2 in total) Andrew suggests dropping the test set and
+how many the detector spots. Turn the ε dial until it catches most of them without crying wolf constantly.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A smoke alarm you cannot test by burning the house down. You have almost no real fires and a great
+deal of ordinary air.</p>
+<p>So you keep every fire you have ever had — all six of them — and you do not waste a single one on
+training. They all go into the evaluation, because deciding the threshold is what they are uniquely
+able to tell you.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The split here is deliberately unusual: <b>all</b> the anomalies go to cross-validation and test, and
+the training set is entirely normal.</p>
+<p>That follows directly from what is being fitted — μ and σ describe normal, and contaminating them with
+anomalies widens the distribution until the anomalies look normal. The unusual split is a consequence,
+not a convention.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Three boxes: 6000 normal for training, then 2000 normal plus 10 anomalies for cross-validation, and
+the same again for test.</p>
+<p>Notice that the anomalies exist only in the last two boxes, and that ten of them is enough to choose ε.
+It is a small number doing a specific job.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Accuracy is useless here and it is worth being explicit about why: predicting “normal” for everything
+scores 99.8% on this data.</p>
+<p>So you use <span class="gterm" data-g="precisionrecall-native">precision</span>, recall and F1 — exactly the skewed-dataset metrics from C2 W3 — and this is the
+lesson where that machinery earns its keep.</p></div><p class="lens-fold">So the split below is unusual for a precise reason, and the metrics are the ones you already
+learned.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Sweep ε and watch precision, recall and F1</span><span class="h">the panel on the right shows how the data is split</span></div><div class="demo-body" data-anim="anomalyeval"></div></div><h2><span class="ico">🔢</span>The split</h2><table class="data"><thead><tr><th>Set</th><th>Contents</th><th>Used for</th></tr></thead><tbody><tr><td><b>training</b></td><td>6000 normal, 0 anomalies</td><td>fitting μ and σ — normal examples only</td></tr><tr><td><b>cross-validation</b></td><td>2000 normal, 10 anomalies</td><td>choosing ε, and choosing features</td></tr><tr><td><b>test</b></td><td>2000 normal, 10 anomalies</td><td>one final honest measurement</td></tr></tbody></table><p>With <em>very</em> few anomalies (say 2 in total) Andrew suggests dropping the test set and
 using cross-validation only — accepting that your final number will be optimistic. Better an honest
 compromise than pretending 2 examples give a reliable test estimate.</p><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>unsupervised training</td><td>“normal only”</td><td>μ and σ are fitted without ever seeing an anomaly.</td></tr><tr><td>supervised evaluation</td><td>“a few labels for tuning”</td><td>The handful of known anomalies are used only to choose ε and to score. This is not cheating — it is the only way to tune anything.</td></tr><tr><td>skewed classes</td><td>“1% positives or fewer”</td><td>Which is why accuracy is meaningless here, exactly as in C2 W3 L16.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Report <b>precision, recall and F1</b>, never accuracy. A detector that flags nothing at
 all scores 99.5% accuracy on a dataset that is 0.5% anomalies — and is worthless.</p></div><h2><span class="ico">💻</span>Choosing ε</h2><pre><code><span class="tok-k">def</span> select_threshold(y_val, p_val):

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,25 @@ doesn’t decide the contest.</p>
 <p>Decision trees have a lot of bad days. Swap a single animal in the training set and the root question
 can change from “pointy ears?” to “whiskers?” — and because every question below the root depends on the
 root, the whole tree rearranges.</p>
-<p>So: build lots of trees, all slightly different, and let them vote.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three trees, one vote</span><span class="h">press the button: one changed example flips a whole tree, and the ensemble shrugs</span></div><div class="demo-body" data-anim="ensemble"></div></div><h2><span class="ico">🔢</span>Why trees are <span class="gterm" data-g="bias-variance-native">high variance</span></h2><p>The root split is chosen by a single <span class="gterm" data-g="argmax-f0">argmax</span> over information gains. If two features score
+<p>So: build lots of trees, all slightly different, and let them vote.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>There is a rattle in your car. One mechanic listens and says wheel bearing. You are not
+convinced.</p>
+<p>So you take it to three more, separately, and crucially <b>without telling any of them what the
+first one said</b>. Three say bearing, one says exhaust bracket. You replace the bearing. No
+individual mechanic became more skilled — you exploited the fact that their mistakes were
+<em>different</em> mistakes.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>You may know this as the wisdom-of-crowds effect, or from averaging forecasts, or from Galton's
+ox at the county fair.</p>
+<p>And you probably know the condition everyone forgets when they repeat the story: the errors have
+to be <b>uncorrelated</b>. Four mechanics trained in the same garage by the same man are not four
+mechanics. They are one mechanic, consulted four times, and averaging them buys you nothing.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Ten small trees drawn side by side, the same new animal fed into each one, each shouting a label,
+and a tally box underneath.</p>
+<p>The tally is the prediction. That is the entire ensemble — no weighting, no cleverness, just
+a vote. Everything in the next three lessons is about making those ten trees disagree honestly.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Nearly every winning entry on a tabular Kaggle problem, and a very large share of credit scoring
+and insurance pricing in production, is an ensemble rather than a single tree.</p>
+<p>The reason is economic as much as statistical: the accuracy you gain by averaging is usually
+larger, and always cheaper, than the accuracy you gain by tuning any one model harder. That is why
+“start with gradient boosting” is genuinely good first advice for anything shaped like a
+spreadsheet.</p></div><p class="lens-fold">So the rest of the week answers exactly one question: how do you build trees that get
+<em>different</em> things wrong?</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three trees, one vote</span><span class="h">press the button: one changed example flips a whole tree, and the ensemble shrugs</span></div><div class="demo-body" data-anim="ensemble"></div></div><h2><span class="ico">🔢</span>Why trees are <span class="gterm" data-g="bias-variance-native">high variance</span></h2><p>The root split is chosen by a single <span class="gterm" data-g="argmax-f0">argmax</span> over information gains. If two features score
 0.281 and 0.278, a tiny change in the data flips which one wins — and everything below the root is then
 built on a different foundation.</p>
 <p>In Week 3’s vocabulary: a deep decision tree is a <b>low bias, high variance</b> model. It can fit

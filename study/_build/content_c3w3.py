@@ -119,6 +119,30 @@ Everything in between is worth nothing.</p>
 <p>Once it reaches either end it stops: the trip is over. Start it in the middle. Which way should it
 go?</p>""")
 
+        + lenses(
+            """<p>Teaching a dog to come when called. You cannot explain it. You can only let it wander, and give it
+something good when it happens to come back.</p>
+<p>It does not learn “come when called”. It learns that a particular thing it did, in a particular
+situation, tended to be followed by something good — and the hard part, which took researchers
+decades, is that the good thing often arrives several actions later.</p>""",
+            """<p>This is a <b>Markov decision process</b>, and the six-square rover is deliberately the smallest
+one that still has every part.</p>
+<p>If you have worked with state machines, the vocabulary is already yours: states, actions,
+transitions. The two additions are a reward attached to arriving somewhere, and the fact that the
+best action depends on what happens <em>afterwards</em>.</p>""",
+            """<p>Six squares in a row, numbered 1 to 6. A reward of 100 at the left end, 40 at the right end,
+nothing in between, and a rover that can go left or right.</p>
+<p>That is the entire world for the next eight lessons. Draw it on paper now, because every formula in
+the week will be checked against it.</p>""",
+            """<p>The six squares look like a toy and they are load-bearing. Every quantity you meet — return,
+policy, <var>Q</var>, Bellman — will be computed on this strip by hand before it is ever computed by a
+network.</p>
+<p>Skipping the hand arithmetic here is why people find <var>Q</var>(<var>s</var>,<var>a</var>)
+mysterious later. It is not mysterious; it is a number you can work out on six squares in about
+ninety seconds.</p>""",
+            """So the notation below — <var>s</var>, <var>a</var>, <var>R</var>(<var>s</var>),
+<var>s</var>&prime; — is four names for four things on that strip.""")
+
         + h2("🎬", "Watch it move")
         + demo("marsrover", "Drive it yourself",
                "start at state 4 and try both directions — watch the discounted return")
@@ -286,6 +310,26 @@ L.append(dict(
 <p>That is it. That is a policy. It is not a sequence of moves — it is a rule that tells you what to do
 <b>wherever</b> you find yourself.</p>""")
 
+        + lenses(
+            """<p>A ward round protocol. Not a plan for one patient — a rule that says, <b>for any patient in any
+state you might find them in</b>, what you do next.</p>
+<p>The distinction is the whole lesson. A plan is a sequence and it falls apart the moment something
+unexpected happens. A protocol still answers, because it is a lookup on the situation you are actually
+in.</p>""",
+            """<p>Formally a policy π is a <b>function from state to action</b>, and that type signature is worth
+holding on to.</p>
+<p>Anyone who has written an event handler or a control law has written a policy: not a script, but a
+rule that is ready for whichever input arrives. It is the closed-loop version of a plan.</p>""",
+            """<p>A small table. Left column: every state. Right column: the action to take there.</p>
+<p>Six rows for the rover. That table <em>is</em> the policy — the entire output of reinforcement
+learning, the thing everything else in the week is machinery for producing.</p>""",
+            """<p>Because a policy is defined for every state, it does not need replanning when the world surprises
+it — which is exactly why RL is used for control problems rather than classical planning.</p>
+<p>A robot that has slipped is simply in a different state, and the policy has an answer for that state
+already.</p>""",
+            """So π(<var>s</var>) = <var>a</var> below is a lookup table, and finding the best one is the entire
+problem.""")
+
         + h2("🎬", "Watch it move")
         + demo("policies", "Four different policies on the same rover",
                "the arrows are π(s); the green numbers are how much each state is worth under that policy")
@@ -348,11 +392,29 @@ L.append(dict(
         + h2("🎈", "The idea, in plain words")
         + kid("""<p>Everything so far has been five pieces: where you are, what you can do, what you
 get for doing it, how much you care about later, and where you end up. Those five together have a
-name &mdash; a <b>Markov Decision Process</b>.</p>
+name — a <b>Markov Decision Process</b>.</p>
 <p>Hidden inside that name is one assumption worth knowing about: <b>where you are now is all that
 matters</b>. How you got there is forgotten. For the rover on its line that is exactly true. For a
-poker hand, or a patient, or a conversation, it is not &mdash; and the section below says what
+poker hand, or a patient, or a conversation, it is not — and the section below says what
 people do about that.</p>""")
+
+        + lenses(
+            """<p>Laying out every tool on the bench before starting the job. Nothing new gets made in this lesson;
+you are checking that all six pieces are present and that you can name them.</p>
+<p>It is worth doing properly, because the next lesson combines all of them at once and a missing piece
+shows up as confusion rather than as an error.</p>""",
+            """<p>The six pieces are states, actions, rewards, discount factor, return, and policy — and this is the
+standard MDP tuple that every RL paper you ever read will assume.</p>
+<p>Learning the vocabulary once, precisely, is worth more here than in most subjects, because the
+notation is unusually consistent across the whole literature.</p>""",
+            """<p>Six words in a column, each with the rover's version written beside it.</p>
+<p>States: the six squares. Actions: left, right. Reward: 100, 40, 0. γ: 0.5. Return: the discounted
+sum. Policy: the table. Cover the right-hand column and reproduce it — that is the check.</p>""",
+            """<p>The one that quietly does the most damage if it is fuzzy is <b>reward versus return</b>.</p>
+<p>Reward is immediate and local; return is the discounted total from here on. Confusing them makes the
+Bellman equation unreadable, because the entire equation is a statement about the relationship between
+the two.</p>""",
+            """So the summary below is a checklist, and the next lesson assumes every box is ticked.""")
 
         +h2("🎬", "Watch it move")
         + demo("mdpreview", "The whole formalism on one screen",
@@ -419,6 +481,28 @@ in total?”</b></p>
 assumed to be optimal.</p>
 <p>Why define it so strangely? Because it makes choosing trivially easy. Work out Q for each action you
 could take, and take whichever number is bigger. That is the whole decision.</p>""")
+
+        + lenses(
+            """<p>A cook asking a strange but useful question: <b>“if I made this one bad move now, and then cooked
+perfectly from there on, how would the dish turn out?”</b></p>
+<p>It sounds contrived. It is enormously practical, because it separates the quality of one decision
+from the quality of everything that follows it, and lets you compare two moves fairly.</p>""",
+            """<p><var>Q</var>(<var>s</var>,<var>a</var>) is the classic definition and the odd part is real: you
+take action <var>a</var>, which may be foolish, and then behave <b>optimally</b> for ever after.</p>
+<p>The reason for the odd construction is that it makes the comparison clean. Any difference between
+<var>Q</var>(<var>s</var>, left) and <var>Q</var>(<var>s</var>, right) is caused by the first move
+alone, because everything after is identical in quality.</p>""",
+            """<p>Two numbers written next to each square: the value of going left from here, and the value of going
+right.</p>
+<p>Twelve numbers for the six-square rover. Once that table exists, the policy is free — stand in a
+square, read the two numbers, take the bigger. Every RL algorithm in this course is machinery for
+filling in those twelve numbers.</p>""",
+            """<p>This is why <var>Q</var>-learning dominated practical RL: the policy falls straight out of
+<var>Q</var> with an <code>argmax</code>, so you never represent the policy separately.</p>
+<p>It is also the shape that DQN put on Atari, and the reason the network in this week outputs one
+number per action rather than an action.</p>""",
+            """So the definition below is deliberately strange, and the strangeness is what makes the comparison
+honest.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -498,11 +582,29 @@ L.append(dict(
         + h2("🎈", "The idea, in plain words")
         + kid("""<p>This is the lesson where you get to break things and watch what happens.</p>
 <p>Move the reward at the far end up and down. Turn the patience dial &gamma; towards 0 and towards
-1. Every time you do, the little arrows showing the best move can flip &mdash; sometimes all of them
+1. Every time you do, the little arrows showing the best move can flip — sometimes all of them
 at once, sometimes just the one in the middle.</p>
 <p>Nothing here is new. It is the same six squares as the last three lessons. The point is to feel
 that these numbers are not fixed facts about the world: they are consequences of the reward you
 chose and how impatient you decided to be.</p>""")
+
+        + lenses(
+            """<p>Working the sum on paper for one square, then another, until the pattern is obvious.</p>
+<p>There is no idea in this lesson. There is arithmetic, done slowly, and the payoff is that
+<var>Q</var> stops being a symbol and becomes a number you know how to get.</p>""",
+            """<p>The habit being trained is the one every numerical field trains: compute the small case by hand
+before trusting the implementation.</p>
+<p>If you have hand-checked a spreadsheet formula on three rows before dragging it down a thousand, this
+is exactly that, and for exactly the same reason.</p>""",
+            """<p>The strip of six squares with twelve numbers filled in, worked left to right.</p>
+<p>Do it with γ = 0.5 and confirm that 100, 50, 25, 12.5 appear going right from the terminal state.
+Seeing the halving in your own handwriting is what makes the discount factor concrete.</p>""",
+            """<p>The number to sit with is how fast the discounting bites. At γ = 0.5, a reward six steps away is
+worth about 1.6% of its face value.</p>
+<p>That is why an agent with a small γ will not walk past a small nearby reward to reach a large distant
+one — and why γ is a modelling decision about how far-sighted you want the agent to be, not a
+convergence trick.</p>""",
+            """So the worked table below is the definition, in numbers, on the world you drew in lesson 2.""")
 
         +h2("🎬", "Watch it move")
         + demo("qexample", "Drag the rewards and γ",
@@ -584,6 +686,27 @@ tomorrow is not today.</p>
 <p>That is the whole equation. Every long journey splits into “this step” plus “the rest of the journey”.
 And “the rest of the journey” is the same kind of question, one step smaller — so the same rule applies
 again.</p>""")
+
+        + lenses(
+            """<p>Asking directions and getting a useful answer: <b>“take this turning, then ask again.”</b></p>
+<p>Nobody hands you the whole route. Each person tells you one step and points at somebody who knows the
+rest. Do that repeatedly and you arrive, without anyone ever having known the entire journey.</p>""",
+            """<p>This is the fundamental recursion of dynamic programming, and it is the same structure as the
+recurrence behind shortest paths or optimal stopping.</p>
+<p>The insight, and it is Bellman's, is the <b>principle of optimality</b>: an optimal path's tail is
+itself optimal. That is what licenses breaking a long-horizon problem into one step plus a smaller
+version of the same problem.</p>""",
+            """<p><var>Q</var>(<var>s</var>,<var>a</var>) = <var>R</var>(<var>s</var>) + γ max
+<var>Q</var>(<var>s</var>&prime;,<var>a</var>&prime;), written once by hand.</p>
+<p>Two pieces only: <b>what I get now</b>, and <b>the discounted best I can do from where I land</b>.
+Every reinforcement learning algorithm you will ever meet is a way of making this equation true.</p>""",
+            """<p>The equation is what turns RL into something a network can be trained on. The right-hand side is a
+target, the left is a prediction, and the difference between them is a supervised learning problem you
+already know how to solve.</p>
+<p>That reframing — treat the Bellman right-hand side as a label — is precisely what lesson 12 does, and
+it is the whole trick behind DQN.</p>""",
+            """So the equation below is not a formula to memorise. It is “one step, then the same problem
+again”.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -684,6 +807,27 @@ occasionally state 5”.</p>
 <p>So you stop asking “what will I get?” and start asking <b>“what will I get on average?”</b> — averaged
 over all the ways it could turn out, weighted by how likely each one is.</p>""")
 
+        + lenses(
+            """<p>A boat crossing a river with a current. You steer for the far jetty; the current takes you a little
+downstream anyway.</p>
+<p>You do not steer at where you want to end up. You steer to make the <em>average</em> outcome good,
+knowing each individual crossing lands somewhere slightly different.</p>""",
+            """<p>The change is one word: the return becomes an <b>expected</b> return, and max becomes max of an
+expectation.</p>
+<p>If you have done any decision analysis or expected-value calculation, this is the same move — you
+stop optimising the outcome and start optimising its average, because the outcome is no longer yours to
+choose.</p>""",
+            """<p>An arrow that splits: 90% of the time it goes the way you asked, 10% the other way.</p>
+<p>Draw that at each action and the whole picture changes character. You are no longer choosing where to
+go. You are choosing a probability distribution over where you might end up.</p>""",
+            """<p>Every real robot is stochastic — wheels slip, grippers miss, sensors lie — which is why this is not
+an optional extension.</p>
+<p>The practical consequence is that a policy tuned in a deterministic simulator often fails on
+hardware, and deliberately injecting noise during training (domain randomisation) is how the gap gets
+closed.</p>""",
+            """So the expectation below changes nothing structural. It changes what “best” means when you do not
+control the outcome.""")
+
         + h2("🎬", "Watch it move")
         + demo("stochastic", "Add a misstep probability and watch every value fall",
                "an unreliable world is worth less to be in")
@@ -757,6 +901,26 @@ two Q values each — twelve numbers, done.</p>
 possible states is that? <b>Infinitely many.</b> You cannot make a list.</p>
 <p>So you stop storing Q in a table and start <b>computing</b> it. Feed the numbers into a function and get
 Q back out. That function is going to be a neural network.</p>""")
+
+        + lenses(
+            """<p>The rover had six squares and you could write a number in each. A helicopter's position is a
+decimal, and there are infinitely many of them.</p>
+<p>You cannot keep a table any more. And the moment the table goes, you need something that takes a
+state it has never seen and produces a number anyway — which is the thing you have spent two courses
+building.</p>""",
+            """<p>This is the shift from <b>tabular</b> to <b>function approximation</b>, and it is the single
+biggest structural change in the week.</p>
+<p>Anyone who has moved from a lookup table to a fitted model knows the trade: you gain the ability to
+generalise to unseen inputs, and you lose the guarantee that what you store is exactly right.</p>""",
+            """<p>A list of eight numbers instead of a square number.</p>
+<p><var>x</var>, <var>y</var>, velocity, angle, angular velocity, two contact flags. That vector is the
+state. It goes into a network exactly as any feature vector has for two courses — nothing about the
+network knows this is reinforcement learning.</p>""",
+            """<p>This is what made RL practical, and it is also where the theory becomes shaky.</p>
+<p>Tabular <var>Q</var>-learning is proven to converge. <var>Q</var>-learning with a neural network is
+not, and can diverge — which is exactly why the refinements in lessons 13 to 15 exist. They are not
+polish; they are what keeps it stable.</p>""",
+            """So the state below is just a feature vector, and that is precisely the point.""")
 
         + h2("🎬", "Watch it move")
         + demo("continuousstates", "Six squares versus six real numbers",
@@ -844,6 +1008,26 @@ down, one pointing left, one pointing right. You can also do nothing and just fa
 because fuel is not free.</p>
 <p>Nobody tells you the correct thruster to fire at any moment. You just try, crash a few thousand times,
 and gradually work it out.</p>""")
+
+        + lenses(
+            """<p>A landing you have to get right: slow enough not to break, upright, between the flags, without
+running out of fuel.</p>
+<p>Nobody can write down the rule for the throttle. But everybody can say afterwards whether the landing
+was good, and that is a much weaker requirement — it is the only one RL needs.</p>""",
+            """<p>The reward function is the specification, and writing one is genuinely hard engineering.</p>
+<p>If you have designed a KPI or an incentive scheme, you know the failure: agents optimise exactly what
+you wrote, including the parts you did not mean. Reward shaping is that problem with a fast, tireless
+adversary.</p>""",
+            """<p>A lander, eight state numbers, four possible actions — nothing, left thruster, main, right — and a
+reward with several terms added together.</p>
+<p>Note that the reward includes both a landing bonus and a per-frame fuel penalty. Those two terms
+pulling against each other are what produce a controlled descent rather than a hover or a drop.</p>""",
+            """<p>Reward hacking is not a curiosity; it is the standard outcome of a sloppy reward. Agents have
+learned to spin in circles for a proximity bonus, and to crash quickly when a per-step penalty made
+living expensive.</p>
+<p>The discipline that helps is the same as error analysis in C2 W3: watch the failures, and fix the
+specification rather than the model.</p>""",
+            """So the reward function below is the actual design work. The algorithm is the easy half.""")
 
         + h2("🎬", "Watch it move")
         + demo("lunarlander", "The state vector, the actions, and the reward function",
@@ -937,6 +1121,27 @@ this reward, I ended up there.” Then use the Bellman equation to make a target
 worth.</em></p>
 <p>Your targets are partly guesses. But the reward part is real, and true information leaks in from there
 one step at a time until the guesses become correct.</p>""")
+
+        + lenses(
+            """<p>Guessing a house price, being told the real one, and adjusting. Except nobody tells you the real
+one — so you use your own later, better-informed guess as the answer instead.</p>
+<p>It sounds circular and it works, because the later guess has one real reward baked into it that the
+earlier one did not. A little bit of truth enters at every step and slowly spreads backwards.</p>""",
+            """<p>This is <b>bootstrapping</b> in the RL sense, and it is the idea that makes the whole field
+tick.</p>
+<p>The reframing is what to notice: the Bellman right-hand side becomes the label <var>y</var>, the
+network's output is <var>ŷ</var>, and you are back to supervised learning with a mean-squared error you
+have used since C1.</p>""",
+            """<p>A training set being written down as the agent plays: <b>(state, action) → target</b>, one row per
+step taken.</p>
+<p>The inputs are experiences. The labels are computed from the agent's own current network via Bellman.
+The table grows as it plays, and it is an ordinary dataset in every other respect.</p>""",
+            """<p>The instability is real and worth naming: the labels move, because they are produced by the same
+network you are training.</p>
+<p>Chasing a target that runs away is why naive deep <var>Q</var>-learning oscillates or diverges, and
+it is the specific problem that the soft update in lesson 15 exists to solve.</p>""",
+            """So the algorithm below is supervised learning where you invent the labels — and Bellman is what makes
+the invention legitimate.""")
 
         + h2("🎬", "Watch it move")
         + demo("dqn", "The six steps, and the replay buffer filling up",
@@ -1056,6 +1261,26 @@ separate times.</p>
 <p>Better design: tell it only where you are, and let it give you <b>four numbers at once</b> — one per
 action. Ask once, get everything.</p>""")
 
+        + lenses(
+            """<p>A shop assistant asked “how good is this coat?” — and you have to ask separately about every coat
+in the shop.</p>
+<p>Better to ask once: “rank all four.” Same information, one conversation instead of four, and you were
+always going to want all four answers anyway.</p>""",
+            """<p>This is a straightforward move from one output to <var>n</var> outputs, the same shape as going
+from binary to multiclass in C2 W2.</p>
+<p>What makes it more than a tidy-up is the <code>argmax</code>: you need <em>every</em> action's value
+at every step in order to pick the best one, so computing them one at a time was always four forward
+passes to get one decision.</p>""",
+            """<p>The network with four output units instead of one, and no action fed in at the input.</p>
+<p>State goes in; four <var>Q</var> values come out. Take the largest. That is a fourfold reduction in
+inference cost per decision, from a change to the last layer only.</p>""",
+            """<p>This is the architecture DQN used on Atari, and the efficiency is not cosmetic — training involves
+millions of decisions, each needing a max over actions.</p>
+<p>The constraint it imposes is worth noting: it requires a fixed, finite, discrete action set. Continuous
+control needs a different family of methods entirely.</p>""",
+            """So the change below is one number in the output layer, and it pays for itself on every single
+step.""")
+
         + h2("🎬", "Watch it move")
         + demo("dqnarch", "One output versus four",
                "count the forward passes at the bottom of each side")
@@ -1163,6 +1388,26 @@ are forty other dishes and one of them might be better — you will never find o
 believe firing the main engine is terrible. If it never tries, it never learns otherwise, and the belief
 never gets corrected.</p>""")
 
+        + lenses(
+            """<p>Always ordering the same dish at the same restaurant. It is good, you know it is good, and you will
+never discover the better one on the same menu.</p>
+<p>So you make a rule: <b>nine times out of ten order the usual, once in ten order something at
+random</b>. You give up a little on average and you stop being permanently wrong about the menu.</p>""",
+            """<p>The <b>explore–exploit</b> trade-off, and it is the same problem as A/B testing budget, clinical
+trial allocation, or any multi-armed bandit.</p>
+<p>The insight that makes it non-obvious: acting greedily on a bad estimate is self-confirming. You never
+take the action you underrate, so you never gather the evidence that would correct the estimate. The
+error is stable.</p>""",
+            """<p>A coin flipped before every action. Heads with probability 1 − ε: take the best known action. Tails
+with probability ε: pick at random.</p>
+<p>That is the entire algorithm. One extra line of code, and without it the agent gets stuck on the first
+mediocre strategy it happens to find.</p>""",
+            """<p>The standard practice is to <b>decay</b> ε — start near 1.0 and fall to about 0.01 — so the agent
+explores early when its estimates are worthless and exploits later when they are not.</p>
+<p>Getting the schedule wrong is a common and confusing failure: too fast and it locks onto a bad policy,
+too slow and it never stops behaving randomly. Both look like “the algorithm doesn't work”.</p>""",
+            """So the one random line below is what stops a confident agent being permanently wrong.""")
+
         + h2("🎬", "Watch it move")
         + demo("epsilongreedy", "Drag ε and watch the choices",
                "at ε = 0 it always takes the same action; at ε = 1 it is pure noise")
@@ -1242,6 +1487,27 @@ faster. Ten fast steps beat one perfect one.</p>
 them: keep 99% of the old and mix in 1% of the new. Because the network is being used to compute its own
 targets, changing it suddenly means every target lurches at once.</p>""")
 
+        + lenses(
+            """<p>Two habits of a good craftsman. First: judge from a handful of pieces rather than the whole batch,
+because a handful is nearly as informative and far quicker.</p>
+<p>Second: when you adjust the machine, <b>nudge it</b>. A full turn on the basis of one reading is how
+you chase your own corrections around all afternoon.</p>""",
+            """<p>The mini-batch idea you already know from C2 W2 — a noisy gradient computed quickly beats an exact
+one computed slowly.</p>
+<p>The soft update is the new one, and it is exactly exponential smoothing: <var>w</var> ← 0.01
+<var>w</var><sub>new</sub> + 0.99 <var>w</var><sub>old</sub>. Anyone who has smoothed a noisy signal
+knows both the mechanism and why it costs you responsiveness.</p>""",
+            """<p>Two dials. One says <b>batch size</b>: how much experience you look at before each step. The other
+says <b>τ</b>: how far you move the target network towards the new one.</p>
+<p>τ = 1 is the naive version — replace the target outright. τ = 0.01 is what makes deep
+<var>Q</var>-learning actually converge.</p>""",
+            """<p>These two refinements are the difference between an algorithm that works in a lecture and one that
+works on a machine.</p>
+<p>The soft update in particular addresses the moving-target instability named in lesson 12 directly: the
+target moves slowly enough that the network is chasing something nearly stationary.</p>""",
+            """So the two adjustments below are not tuning. They are what makes the previous three lessons
+stable.""")
+
         + h2("🎬", "Watch it move")
         + demo("minibatch", "The subset, and the blend",
                "drag τ from 0.001 to 1 and read what each end means")
@@ -1320,6 +1586,26 @@ machine learning right now.</p>
 <p>In a video game or a simulator, it is astonishing — it can beat the best humans in the world. In the
 real world, on real robots, it is fragile, expensive, and much harder than the demos suggest.</p>
 <p>Worth knowing. Not usually the first tool to reach for.</p>""")
+
+        + lenses(
+            """<p>A tool that does one thing spectacularly and is awkward everywhere else. Worth knowing exactly what
+it is for, and worth not carrying to every job.</p>
+<p>The honest summary is that RL is transformative in simulation and difficult in the physical world, and
+knowing which side of that line you are on saves entire projects.</p>""",
+            """<p>The practical limitation is <b>sample efficiency</b>. RL needs millions of episodes, and it learns
+by failing repeatedly.</p>
+<p>That is free in a simulator and expensive or unacceptable with real hardware, real customers or real
+patients — which is why nearly every deployed success either has a simulator or has a very cheap
+failure.</p>""",
+            """<p>Two columns. Games, simulated robotics, chip layout, datacentre cooling, RLHF for language models on
+one side. Physical robots, healthcare, anything where a mistake is expensive on the other.</p>
+<p>The dividing line is not difficulty. It is the cost of a failed attempt.</p>""",
+            """<p>The genuinely large commercial application right now is RLHF — reinforcement learning from human
+feedback — which is how language models are turned from text predictors into assistants.</p>
+<p>Note the shape: the reward comes from human comparisons rather than a simulator, which is one answer
+to the sample-efficiency problem rather than an exception to it.</p>""",
+            """So the assessment below is worth taking at face value. The technique is real, the hype is ahead of
+the deployments, and knowing the gap is professionally useful.""")
 
         + h2("🎬", "Watch it move")
         + demo("rlstate", "The scorecard",

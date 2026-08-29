@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,21 @@
 mixing, baking, <b>and</b> checking it hasn’t gone stale a week later.</p>
 <p>Machine learning projects have the same shape, and the last part — the “is it still good?” part —
 is the one people forget. A model that was excellent in March can be quietly useless by September, because
-the world moved and the model didn’t.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Scope → data → train → deploy, with the arrows that go backwards</span><span class="h">the dashed purple arrows are where projects actually spend their time</span></div><div class="demo-body" data-anim="fullcycle"></div></div><h2><span class="ico">🔢</span>The four stages</h2><table class="data"><thead><tr><th>Stage</th><th>The real work</th><th>Where it goes wrong</th></tr></thead><tbody><tr><td><b>scope</b></td><td>define the problem, decide whether ML is even the answer</td><td>solving a problem nobody has</td></tr><tr><td><b>collect data</b></td><td>decide what to collect, then label it consistently</td><td>inconsistent labels; not enough of the rare class</td></tr><tr><td><b>train</b></td><td>train, error-analyse, and go back for more data</td><td>skipping the diagnostics</td></tr><tr><td><b>deploy</b></td><td>serve it, monitor it, maintain it, retrain it</td><td>no monitoring, so nobody notices decay</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The arrows that go <b>backwards</b> are the ones that consume your quarter. Error
+the world moved and the model didn’t.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A restaurant is not a recipe. Somebody has to buy the produce, cost the dish, get it past
+environmental health, train the staff, and deal with it when the supplier changes.</p>
+<p>The cooking is the part everyone pictures and a small fraction of the work. A deployed model is the
+same shape, and the modelling is the part that gets the attention.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is <b>MLOps</b>, and if you have shipped any software you know most of it already: versioning,
+monitoring, rollback, on-call.</p>
+<p>The genuinely new part is that the model degrades without anyone touching it, because the world
+changes underneath it. Software does not usually rot on its own; models do, and it is called
+drift.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A loop with four stations — <b>scope → collect data → train → deploy</b> — and, crucially, an
+arrow from deploy back to collect.</p>
+<p>That return arrow is the point. Deployment produces new data, which trains the next model. A system
+in production is a data source, not a finished object.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The industry rule of thumb is that modelling is 10–20% of the effort of a deployed system, and
+data plumbing plus monitoring is most of the rest.</p>
+<p>The failure that costs most is silent drift: a fraud model trained on last year's fraud, still
+reporting good offline metrics on last year's held-out data, quietly missing this year's patterns.
+Monitoring the <em>inputs</em>, not just the accuracy, is what catches it.</p></div><p class="lens-fold">So the diagram below is the actual job. The three courses so far are one station on it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Scope → data → train → deploy, with the arrows that go backwards</span><span class="h">the dashed purple arrows are where projects actually spend their time</span></div><div class="demo-body" data-anim="fullcycle"></div></div><h2><span class="ico">🔢</span>The four stages</h2><table class="data"><thead><tr><th>Stage</th><th>The real work</th><th>Where it goes wrong</th></tr></thead><tbody><tr><td><b>scope</b></td><td>define the problem, decide whether ML is even the answer</td><td>solving a problem nobody has</td></tr><tr><td><b>collect data</b></td><td>decide what to collect, then label it consistently</td><td>inconsistent labels; not enough of the rare class</td></tr><tr><td><b>train</b></td><td>train, error-analyse, and go back for more data</td><td>skipping the diagnostics</td></tr><tr><td><b>deploy</b></td><td>serve it, monitor it, maintain it, retrain it</td><td>no monitoring, so nobody notices decay</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The arrows that go <b>backwards</b> are the ones that consume your quarter. Error
 analysis sends you back to data collection. Production feedback sends you back to training. Plan for the
 loop, not for a straight line.</p></div><h2><span class="ico">🚀</span>What deployment actually involves</h2><p>A typical setup: your model sits behind an inference server; the mobile app calls an API;
 predictions come back. Then the parts nobody mentions in tutorials:</p>

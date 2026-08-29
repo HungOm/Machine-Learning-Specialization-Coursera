@@ -34,6 +34,34 @@ you which question to ask next, until you reach the bottom and give your answer.
 <p>No maths at all when you <em>use</em> it. All the cleverness is in choosing which questions to ask —
 which is the next few lessons.</p>""")
 
+        + lenses(
+            """<p>A triage nurse in a busy A&amp;E. Someone walks in. <b>“Chest pain?”</b> No — and she points
+down a different corridor entirely. Yes — and the next question is <b>“how long?”</b> Under an
+hour sends you one way, since yesterday sends you another.</p>
+<p>She never weighs everything she knows about you at once. She asks <em>one</em> question, and your
+answer decides which question comes next. By the fourth question you are in a room. A decision tree
+is that corridor, written down.</p>""",
+            """<p>If you have ever written a nested <code>IF</code> in a spreadsheet, or drawn a flowchart for an
+approval process, you have already built a decision tree by hand.</p>
+<p>The only thing that changes here is <b>who chooses the questions</b>. You chose yours from
+experience, and put the most useful one first because you knew it was the most useful. The algorithm
+has no experience, so it has to measure which question is most useful — and that measurement is
+the whole of the next three lessons.</p>""",
+            """<p>An upside-down tree drawn on paper: one box at the top, two arrows leaving it, more boxes below,
+and along the bottom a row of labels.</p>
+<p>To make a prediction you put a finger on the top box and slide it down one arrow at a time until
+you run out of arrows. <b>That path is the prediction</b> — not the whole tree, just the one
+route your animal took through it. Most of the tree is irrelevant to any single prediction, and that
+is not a flaw.</p>""",
+            """<p>Banks adjudicating loans and hospitals writing clinical decision rules reach for trees over
+networks constantly, and usually not for accuracy. They reach for them because <b>the path is the
+explanation</b>.</p>
+<p>Under EU credit law a rejected applicant can demand the reason for the decision. “The fourth layer
+had a high activation” is not a reason. “Your debt-to-income was above 0.43 <em>and</em> your account
+was under six months old” is a reason, it is auditable, and you can read it straight off the path.</p>""",
+            """So when the formal version below says a tree is decision nodes and leaf nodes, it is saying something
+very plain: the questions, and the answers you land on.""")
+
         + h2("🐱", "The data")
         + """<p>Ten animals, three features, one label. This is the running example for the whole week and
 it is worth glancing back at.</p>"""
@@ -106,6 +134,31 @@ left, everything else on the right” — and the box splits into two smaller, t
 same thing to each smaller box.</p>
 <p>Two questions come up every time. <b>Which rule do I use?</b> (the one that tidies the most) and
 <b>when do I stop?</b> (when a box is already all one colour, or when it’s too small to bother with).</p>""")
+
+        + lenses(
+            """<p>A sorting office in the week before Christmas. Someone tips a sack onto a table and splits it by
+the single biggest thing that separates: <b>overseas or domestic</b>. Two smaller piles.</p>
+<p>Someone else takes each pile and splits <em>that</em> by the next most useful thing — region.
+Then postcode. Then street. Nobody planned the sequence in advance, and nobody is holding the whole
+sorting scheme in their head. At each table you look at the pile in front of you and pick the one
+split that tidies it most.</p>""",
+            """<p>This is a <b>greedy</b> algorithm in the exact technical sense, and if you have met stepwise
+regression, nearest-neighbour route building, or Huffman coding, you know the shape: take the locally
+best move, commit to it, never reconsider.</p>
+<p>You also know the price. Greedy is cheap and usually good, and it is <em>provably not optimal</em>
+— finding the smallest tree that fits the data exactly is NP-hard, which is why nobody does it.</p>""",
+            """<p>One pile of ten animals becoming two piles of five, then four piles of two or three. Draw it as
+actual piles on a table, not as a diagram.</p>
+<p>At every pile the algorithm asks one question and one only: <b>which single feature, split right
+now, leaves the two children tidiest?</b> Then it walks away and lets someone else worry about the
+children.</p>""",
+            """<p>The greediness is why adding a single row to your training data can change the top split, and
+changing the top split rewrites <em>every</em> tree beneath it.</p>
+<p>Teams running trees in production watch for exactly this: a model that reshuffles dramatically
+between retrains on almost identical data. It looks like a bug and it is not one — it is the
+algorithm being what it is, and it is a large part of why single trees gave way to forests.</p>""",
+            """So the formal statement — pick the split with the highest information gain, recurse, stop on a
+criterion — is that sorting office written in three lines.""")
 
         + h2("🎬", "Watch it move")
         + demo("treeprocess", "The two decisions, and the four ways to stop",
@@ -288,6 +341,32 @@ removed the most.</p>
 <p>One subtlety: a bag of 1 that’s perfectly tidy isn’t worth as much as a bag of 9 that’s perfectly tidy.
 So you weight each bag by how many animals are in it.</p>""")
 
+        + lenses(
+            """<p>Twenty questions, and you get to ask one. You want to learn as much as you possibly can from
+the answer.</p>
+<p><b>“Is it alive?”</b> cuts the world roughly in half whichever way it goes. A brilliant question.
+<b>“Is it a left-handed banjo?”</b> gets “no” essentially every time and leaves you exactly where you
+started. Information gain is just the score that says the first question is worth asking and the
+second is not — and it says it in a number, so a machine can compare them.</p>""",
+            """<p>Statisticians know this quantity as the <b>reduction in entropy</b>, and it is identical to the
+mutual information between the feature and the label.</p>
+<p>If you have run a chi-square test to ask “is this variable associated with the outcome?”, you were
+asking the same question with a different yardstick. The advantage of this one is that it is directly
+comparable across features of completely different kinds — a yes/no and a 12-way category score
+on the same scale, in bits.</p>""",
+            """<p>Three numbers on a page. The entropy <b>before</b> the split. The two entropies <b>after</b>.
+Gain is the first, minus the other two <em>weighted by how many examples fell each way</em>.</p>
+<p>That subtraction is the entire criterion. One number per candidate feature, computed the same way
+every time, and the algorithm keeps the biggest. There is nothing else in the box.</p>""",
+            """<p>The weighting is the part that earns its money in production. A split that isolates 2 fraudulent
+transactions out of 100,000 into a perfectly pure leaf looks spectacular if you ignore group size,
+and it is noise.</p>
+<p>Weighting by how many examples landed in each child is what stops a fraud model chasing single
+transactions into leaves of their own. Dropping that weight is a genuine, common, and quiet bug: the
+model still trains, still scores well on the data it memorised, and falls over in production.</p>""",
+            """So the weighted sum in the formula below is not bookkeeping. It is what makes gain mean “tidier on
+average” rather than “tidier somewhere”.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             'gain <span class="op">=</span> <var>H</var>(<var>p</var><sub>root</sub>) <span class="op">−</span> ',
@@ -390,6 +469,29 @@ L.append(dict(
 boxes is just a smaller version of the same problem.</b> So you run exactly the same procedure on it.</p>
 <p>That’s recursion — a set of instructions that includes “now do these instructions again, on a smaller
 pile”. It stops when a pile is already tidy, or too small to be worth splitting.</p>""")
+
+        + lenses(
+            """<p>Dividing an estate. You split the whole into two shares. Now you treat each share as a brand-new
+problem and divide it by the same rule.</p>
+<p>The rule applied to a share is the <em>identical</em> rule you applied to the whole estate. Nothing
+about it knows or cares whether it is running at the top or four levels down. That is the only idea
+in this lesson, and everything else is bookkeeping.</p>""",
+            """<p>This is recursion in its purest textbook form. If you have written a quicksort, walked a
+directory tree, or parsed nested JSON, you have written this exact control flow: do one thing, call
+yourself on each piece, stop at a base case.</p>
+<p>Which means the interesting question is the one recursion always raises — <b>what is the base
+case?</b> Here it is not a detail. It is every hyperparameter you will ever tune.</p>""",
+            """<p>One function, drawn as a box, with two arrows leaving it that point back into copies of itself.</p>
+<p>The tree on the page is <em>not</em> built by a loop that fills in level 1, then level 2. It is built
+by one short function that calls itself twice and stops when told to. Picture the box, and the two
+arrows curving back into it.</p>""",
+            """<p><code>max_depth</code>, <code>min_samples_leaf</code>, <code>min_impurity_decrease</code> —
+every one of these is the stopping condition of this recursion, wearing a different name.</p>
+<p>They are also the entire difference between a model that generalises and one that has memorised
+each customer individually. A tree left to recurse until every leaf is pure will hit 100% training
+accuracy on any dataset with no duplicate rows, every time, and tell you nothing.</p>""",
+            """So the algorithm below is four lines long only because recursion lets every level treat the other
+levels as somebody else's problem.""")
 
         + h2("🎬", "Watch it move")
         + demo("treebuild", "The tree building itself, one level at a time",
@@ -509,6 +611,29 @@ trick: replace the one question with <b>three yes/no questions</b>.</p>
 <p>“Pointy? yes/no.” “Floppy? yes/no.” “Oval? yes/no.” Exactly one of them is yes for every animal. Now
 everything is back to two branches and nothing else has to change.</p>""")
 
+        + lenses(
+            """<p>A form asks for your country and gives you one box to write a <em>number</em> in. So someone
+draws up a list: Albania 1, Brazil 2, and on to Zimbabwe at 195.</p>
+<p>The form now quietly believes Zimbabwe is 195 times Albania, and that Brazil sits neatly between
+them. Nothing whatsoever about those countries says that — the ordering came from the alphabet.
+Replace the one box with 195 tick-boxes, tick exactly one, and the invented arithmetic vanishes.</p>""",
+            """<p>Econometricians have called these <b>dummy variables</b> for a century; survey researchers call it
+indicator coding. Same object.</p>
+<p>One difference is worth carrying across, because it trips people up: in a linear regression you
+<em>drop</em> one level, or the columns are perfectly collinear and the fit has no unique solution.
+For trees and neural networks you normally keep all of them, because neither cares.</p>""",
+            """<p>One column of words becoming <var>k</var> columns of 0s and 1s, with exactly one 1 in every row.</p>
+<p>Lay the two side by side on paper. Identical information; no invented ordering. The name is a
+literal description of what you are looking at — one bit hot, the rest cold.</p>""",
+            """<p>This is where high-cardinality columns quietly destroy models. One-hot a UK postcode column and
+you have roughly 1.7 million new columns.</p>
+<p>The tree then splits on “is the postcode exactly SW1A 1AA”, memorises the training set, and scores
+beautifully in validation <em>if the same postcodes appear there</em>. Every serious feature pipeline
+has an explicit cardinality rule for this reason, and target- or hash-encoding exists because of
+it.</p>""",
+            """So one-hot is not a trick to memorise. It is what you do when a column's numbers were never
+quantities in the first place.""")
+
         + h2("🎬", "Watch it move")
         + demo("onehot", "One column with three values becomes three columns of 0/1",
                "exactly one column is “hot” in every row")
@@ -611,6 +736,31 @@ L.append(dict(
 back to yes/no.</p>
 <p>But where do you put the line? You try every sensible place, score each one with information gain, and
 keep the best. The computer doesn’t mind; there are only a handful of places worth trying.</p>""")
+
+        + lenses(
+            """<p>A market inspector grading melons, with nothing but a two-pan balance and a box of standard
+weights. She cannot ask “how heavy is this?” — the balance does not tell her that. She can only
+ask <b>“is it heavier than this weight?”</b></p>
+<p>So she tries the 1 kg, the 1.5, the 2, and keeps whichever one best separates the ripe from the
+unripe. The continuous quantity never becomes a number she reads off. It becomes a <em>threshold she
+tests</em>.</p>""",
+            """<p>If you have ever set a clinical cut-off — troponin above 14 ng/L means investigate —
+you have chosen a threshold on a continuous variable to force a binary decision.</p>
+<p>Two things differ here. The algorithm chooses the cut-off rather than a committee, and it chooses
+it with the <em>same</em> criterion it uses for everything else. No new machinery arrives for
+continuous features; only a longer list of candidate questions.</p>""",
+            """<p>Sort the examples by that one feature and lay them in a row, with their labels written
+underneath.</p>
+<p>Every gap between two neighbouring values is a candidate threshold. Walk along the row, score each
+gap with the gain you already know, keep the best. That row of sorted values <em>is</em> the whole
+procedure — there is no formula to learn here, only a loop.</p>""",
+            """<p>This step is why fitting a tree costs O(<var>n</var> log <var>n</var>) per feature rather than
+O(<var>n</var>) — the sort dominates.</p>
+<p>It is also, almost single-handedly, why LightGBM is fast: at a billion rows you stop considering
+every gap and bucket the values into a histogram of 255 bins instead. The speed difference that made
+gradient boosting practical on large data is this one decision, taken differently.</p>""",
+            """So “try every midpoint and take the best gain” is that inspector, working patiently through her box
+of weights.""")
 
         + h2("🎬", "Watch it move")
         + demo("contsplit", "Slide the threshold and watch the information gain",
@@ -716,6 +866,30 @@ that landed there. And when choosing a split, instead of asking “are these all
 “are these weights all <b>close to each other</b>?”.</p>
 <p>“All close together” has a name: low variance. That’s the only new word.</p>""")
 
+        + lenses(
+            """<p>An auction valuer, asked what your chair is worth. She does not compute anything. She puts it in
+a group — <b>Victorian, mahogany, damaged, no provenance</b> — and quotes what that group
+of chairs has been fetching. “Two to three hundred.”</p>
+<p>The number comes from the group, not from your chair. Two chairs in the same group get the same
+estimate even if one is visibly nicer, and the only way to get a different number is to land in a
+different group.</p>""",
+            """<p>Formally this is a <b>piecewise-constant</b> fit, or a step function.</p>
+<p>Anyone who has used banded rates — income tax brackets, postage by weight class, insurance
+age bands — has used exactly this model daily without calling it one. The tree's only extra
+trick is that it <em>chooses</em> where the bands go instead of taking them from legislation.</p>""",
+            """<p>A scatter plot with a <b>staircase</b> drawn through it instead of a line. Flat within each
+region, jumping at the boundaries.</p>
+<p>The tree decides where the jumps go. The height of each step is nothing cleverer than the average
+of the points sitting underneath it. Picture the staircase, and you have the model.</p>""",
+            """<p>The staircase is exactly why trees <b>cannot extrapolate</b>. A house-price tree trained on homes
+up to 400 m² will quote the 400 m² price for a 2,000 m² mansion, for ever, because no step exists
+beyond the last one.</p>
+<p>A linear model would happily extrapolate — often to something absurd, like a negative price.
+Which behaviour you want is a real engineering decision, and in safety-critical settings “refuses to
+guess outside what it has seen” is sometimes the feature rather than the bug.</p>""",
+            """So swapping entropy for variance below does not change the algorithm at all. It changes what the
+word “tidy” measures.""")
+
         + h2("🎬", "Watch it move")
         + demo("regtree", "Predicting weight — click the three candidate splits",
                "variance reduction replaces information gain, and leaves predict the mean")
@@ -820,6 +994,31 @@ can change from “pointy ears?” to “whiskers?” — and because every ques
 root, the whole tree rearranges.</p>
 <p>So: build lots of trees, all slightly different, and let them vote.</p>""")
 
+        + lenses(
+            """<p>There is a rattle in your car. One mechanic listens and says wheel bearing. You are not
+convinced.</p>
+<p>So you take it to three more, separately, and crucially <b>without telling any of them what the
+first one said</b>. Three say bearing, one says exhaust bracket. You replace the bearing. No
+individual mechanic became more skilled — you exploited the fact that their mistakes were
+<em>different</em> mistakes.</p>""",
+            """<p>You may know this as the wisdom-of-crowds effect, or from averaging forecasts, or from Galton's
+ox at the county fair.</p>
+<p>And you probably know the condition everyone forgets when they repeat the story: the errors have
+to be <b>uncorrelated</b>. Four mechanics trained in the same garage by the same man are not four
+mechanics. They are one mechanic, consulted four times, and averaging them buys you nothing.</p>""",
+            """<p>Ten small trees drawn side by side, the same new animal fed into each one, each shouting a label,
+and a tally box underneath.</p>
+<p>The tally is the prediction. That is the entire ensemble — no weighting, no cleverness, just
+a vote. Everything in the next three lessons is about making those ten trees disagree honestly.</p>""",
+            """<p>Nearly every winning entry on a tabular Kaggle problem, and a very large share of credit scoring
+and insurance pricing in production, is an ensemble rather than a single tree.</p>
+<p>The reason is economic as much as statistical: the accuracy you gain by averaging is usually
+larger, and always cheaper, than the accuracy you gain by tuning any one model harder. That is why
+“start with gradient boosting” is genuinely good first advice for anything shaped like a
+spreadsheet.</p>""",
+            """So the rest of the week answers exactly one question: how do you build trees that get
+<em>different</em> things wrong?""")
+
         + h2("🎬", "Watch it move")
         + demo("ensemble", "Three trees, one vote",
                "press the button: one changed example flips a whole tree, and the ensemble shrugs")
@@ -900,6 +1099,29 @@ Do that ten times.</p>
 came out at all. It’s the same bag, and it is a genuinely different list.</p>
 <p>Do the whole thing again and you get another different list. That is how you turn one training set into
 a hundred slightly different training sets — without collecting any new data.</p>""")
+
+        + lenses(
+            """<p>A cook tasting a pot of stew. She takes a spoonful, tastes it, and <b>tips it back in</b>. Then
+another spoonful — which may well catch the same piece of carrot again.</p>
+<p>Ten spoonfuls, each judged on its own, tell her far more about the pot than one careful spoonful
+would. And the tipping-back is what keeps it the same pot every time: she is not slowly eating her
+way through the evidence.</p>""",
+            """<p>This is <b>the bootstrap</b>, Efron 1979, borrowed wholesale.</p>
+<p>If you have ever put a confidence interval on a statistic with no clean formula — a median, a
+ratio of two means, an AUC — you resampled with replacement for precisely this reason. The
+trees are new; the resampling is a forty-year-old idea from statistics doing its usual job.</p>""",
+            """<p>A bag of ten numbered marbles. Draw one, write the number down, <b>put it back</b>. Do that ten
+times.</p>
+<p>Your list has ten entries. Some numbers appear twice, some not at all — and on average about
+<b>63%</b> of the original marbles show up at least once. That list is one training set. Do it again
+and you get a different one, from the same bag.</p>""",
+            """<p>The ~37% left out of each draw are not waste. They are the <b>out-of-bag</b> sample, and a random
+forest scores each tree on exactly the examples that tree never saw.</p>
+<p>That gives you a validation estimate for free, with no held-out set at all. On a clinical study
+with 300 patients, where surrendering 60 of them to a test set genuinely hurts, that free estimate is
+worth more than any accuracy gain the forest brings.</p>""",
+            """So “with replacement” is not a technicality to skim. It is the only reason the ten datasets differ
+at all.""")
 
         + h2("🎬", "Watch it move")
         + demo("bagging", "Draw a new bag, and see who got duplicated and who got left out",
@@ -1014,6 +1236,31 @@ suspiciously similar, and a hundred near-identical judges is barely better than 
 features. Sometimes the star feature isn’t even on the menu, and the tree is forced to find a different
 route.</p>
 <p>Forcing disagreement makes the vote worth taking.</p>""")
+
+        + lenses(
+            """<p>A panel tasting wine. Sit them round one table and the loudest taster anchors the room —
+you get one opinion in four voices.</p>
+<p>So you seat them apart. And then the real trick: you give each of them only <b>part</b> of the
+information. One gets the nose and the colour, another the finish and the acidity. Now their mistakes
+genuinely differ, and the average is better than any single palate.</p>""",
+            """<p>If you know that averaging <var>n</var> independent estimates shrinks the standard error by
+1/√<var>n</var>, you already know why bagging helps — and you know precisely why it stops
+helping.</p>
+<p>That formula assumes independence. Real bagged trees are heavily correlated, so the variance
+reduction stalls well short of what the formula promises. Feature subsampling is a direct, deliberate
+attack on the correlation term that bagging alone leaves untouched.</p>""",
+            """<p>At every split, in every tree, a hand covering most of the feature columns and leaving only a
+random handful visible. The tree must choose its split from what it can see.</p>
+<p>The essential detail: that hand moves <b>at every node</b>, not once per tree. A fresh random
+handful at every single split. That, and nothing else, is the difference between a random forest and
+plain bagging.</p>""",
+            """<p>Without it, one dominant feature — “has previously defaulted”, say — is chosen as the
+root split by all 500 trees, and 500 nearly identical trees average to approximately one tree.</p>
+<p>Practitioners meet this constantly: bagging alone gives a disappointing bump, and feature
+subsampling unlocks the rest. √<var>p</var> features per split is the usual classification
+default, and it is a default worth understanding rather than inheriting.</p>""",
+            """So the algorithm below is two lines — bootstrap the rows, subsample the columns at every node
+— and both lines exist for one purpose: to manufacture disagreement.""")
 
         + h2("🎬", "Watch it move")
         + demo("forest", "B trees, each voting",
@@ -1132,6 +1379,29 @@ L.append(dict(
 questions they got wrong</b>. Then tests again. Then revises the ones still wrong.</p>
 <p>It’s a much more efficient use of effort — and it is why boosted trees usually beat random forests on
 the same data.</p>""")
+
+        + lenses(
+            """<p>A tailor fitting a suit. The first cut is rough and close. He puts it on you, chalks the places
+where it pulls at the shoulder, and the second pass works <b>only on the chalk marks</b>.</p>
+<p>Then a third pass, on whatever is still wrong. Nobody re-cuts the whole suit each time. Each pass
+is small, and aimed squarely at the error the previous passes left behind.</p>""",
+            """<p>If you have used Newton's method, successive approximation, or a PID controller, this is that:
+each step works on the residual left by the steps before it.</p>
+<p>The contrast with a forest is worth stating precisely. A forest builds its trees <b>in parallel</b>
+and averages them — the trees never learn of each other's existence. Boosting builds
+<b>in sequence</b>, and every tree exists only because of what the previous ones got wrong.</p>""",
+            """<p>A column of <b>residuals</b>, shrinking.</p>
+<p>Fit tree 1 to the labels. Subtract its predictions and you are left with a column of what remains.
+Fit tree 2 to <em>that column</em>. Subtract again. The final prediction is the running sum of every
+tree. Picture the column of leftovers getting smaller down the page.</p>""",
+            """<p>XGBoost and its descendants — LightGBM, CatBoost — are the default model for tabular
+data across pricing, risk, ranking and ad click-through, and they beat neural networks on structured
+data more often than not.</p>
+<p>They are also markedly easier to overfit than a forest, because sequential fitting will
+enthusiastically keep chasing noise once the signal is gone. The learning rate exists to slow it
+down on purpose, which is why boosting has more knobs and demands more care than a forest.</p>""",
+            """So “boosting” names the mechanism exactly: each tree boosts the examples the previous one got
+wrong.""")
 
         + h2("🎬", "Watch it move")
         + demo("boosting", "Four rounds, each focusing on the remaining mistakes",
@@ -1262,6 +1532,30 @@ your thing together.</p>
 <p><b>Neat rows and columns</b> — ages, prices, categories, counts — that’s tree country. Fast, accurate,
 and you can read the answer.</p>
 <p><b>Pictures, sound, or words</b> — that’s neural network country, and it isn’t close.</p>""")
+
+        + lenses(
+            """<p>Choosing between a socket set and a lathe.</p>
+<p>The socket set is fast, everyone in the shop can already use it, and it handles nine jobs in ten on
+the vehicles that actually come through the door. The lathe can make a part that does not exist yet,
+takes far longer to set up, and rewards a skilled operator. Neither is the better tool. The only
+question is what is on the bench.</p>""",
+            """<p>If you have ever chosen between a decision rule and a fitted model — an actuarial table
+versus a survival model, a triage scoring sheet versus a clinician's judgement — you have made
+this trade before.</p>
+<p>It is the same axis every time: transparency and speed on one side, flexibility and the ability to
+absorb inputs that do not fit in columns on the other.</p>""",
+            """<p>Two things on a page, side by side. On the left, a spreadsheet — rows, named columns, mixed
+types, missing values, one column called <code>customer_age</code>.</p>
+<p>On the right, a photograph, a waveform, a sentence. The left is where trees win. The right is where
+networks win. Almost the whole decision is working out which of those two objects you are actually
+holding.</p>""",
+            """<p>This choice costs real money. Neural networks on tabular data routinely lose to gradient
+boosting while costing far more to train, tune and serve — and on images, a transfer-learned
+network is the only sane option there has ever been.</p>
+<p>Teams that choose by fashion rather than by the shape of their data pay for it twice: once in GPU
+bills, and again in the weeks spent tuning something that was never going to win.</p>""",
+            """So the comparison table below is not a list of opinions. It is a list of what each of those two
+objects makes cheap.""")
 
         + h2("🎬", "Watch it move")
         + demo("treevsnn", "The comparison, line by line",

@@ -28,6 +28,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -589,9 +590,25 @@ than the differences at n=200 -- with 20 examples nothing works well
 enough for the choice of method to matter. Fine-tuning pays in the
 middle band, where you have enough data to steer a model but not enough
 to raise one.</pre></div></section>
-
+<h2><span class="ico">&#129504;</span>What you need that the courses do not cover</h2>
+<div class="callout key"><span class="tag">Enough theory to read this file</span>
+<p>One piece of arithmetic makes this whole file make sense: <b>how many numbers are actually in a
+model</b>.</p>
+<p>A layer that maps <var>d</var> inputs to <var>d</var> outputs holds <var>d</var>² weights. At
+<var>d</var> = 768 that is 590,000 numbers — for one layer. Stack a few dozen of those and you are
+into the hundreds of millions. Full fine-tuning means computing a gradient for every one of them and
+storing an optimiser state alongside, which is where the memory actually goes: roughly four times the
+parameter count, before you have loaded a single <span class="gterm" data-g="trainingexample-native">training example</span>.</p>
+<p><b>LoRA's arithmetic is the point of it.</b> Instead of updating the <var>d</var>×<var>d</var>
+matrix, you freeze it and learn two thin matrices beside it — <var>d</var>×<var>r</var> and
+<var>r</var>×<var>d</var>, with <var>r</var> perhaps 8. That is 2<var>dr</var> numbers instead of
+<var>d</var>², which at <var>d</var> = 768 and <var>r</var> = 8 is 12,288 instead of 590,000: about
+2% of the parameters, and the frozen matrix is never touched.</p>
+<p>Everything else here you already have. Freezing early layers is transfer learning from C2 W3, the
+optimiser is Adam from C2 W2, and the reason a small learning rate matters when unfreezing is the
+same reason it always did.</p></div>
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
-<ul class="links plain"><li><a href="../c2/w3-13-transfer-learning.html">Transfer learning</a></li><li><a href="../c2/w2-11-advanced-optimization.html">Advanced optimization</a></li><li><a href="../c1/w3-10-cost-function-with-regularization.html">Regularization</a></li></ul>
+<ul class="links plain"><li><a href="../c2/w3-13-transfer-learning.html">Transfer learning</a></li><li><a href="../c2/w2-11-advanced-optimization.html">Advanced optimization</a></li><li><a href="../c1/w3-10-cost-function-with-regularization.html">Regularization</a></li><li><a href="../c2/w3-09-bias-variance-neural-networks.html">Bias and variance in networks</a></li></ul>
 
 <nav class="pager">
 <a class="prev" href="../scratch/11-retrieval.html"><span class="dir">&#8249; previous</span><span class="ttl">Retrieval, the R in RAG</span></a>

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,7 +238,20 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>You have built a network by hand. <b>Guess how many lines TensorFlow needs to do the same forward pass.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for how little code it is, and for which line does the thing you spent a whole lesson computing by hand.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>You just learned to make bread by hand — grinding the flour, kneading, waiting. This
 lesson is the bread machine. Same bread. Four buttons.</p>
 <p>The catch is that a bread machine is only safe if you already know what the dough should look like.
-That is why the by-hand lessons came first.</p></div><h2><span class="ico">☕</span>The example: roasting coffee</h2><p>Two inputs — temperature (°C) and duration (minutes). One output — was the roast good?
+That is why the by-hand lessons came first.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Learning to drive an unfamiliar car. The pedals do what pedals do; the question is where they are
+and what the switches are called.</p>
+<p>Nothing conceptual is at stake in this lesson. You know what a layer computes. This is where it
+lives in somebody else's library, and the only difficulty is that the library has opinions about
+shapes.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Keras is a declarative API: you describe the model and the library arranges the computation, in
+the same way SQL describes a result rather than a loop over rows.</p>
+<p>The cost of that convenience is the usual one — when something goes wrong, the error message comes
+from inside machinery you did not write, and reading those messages is a skill of its own.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p><code><span class="gterm" data-g="dense-api">Dense</span>(<span class="gterm" data-g="kwunits-api">units=</span>3, <span class="gterm" data-g="kwactivation-api">activation=</span>'sigmoid')</code>.</p>
+<p>That single line is <var>W</var>, <var>b</var>, and the sigmoid, all three. <code><span class="gterm" data-g="kwunits-api">units=</span>3</code> is
+the width of the output column; the input width is inferred from whatever you feed it. Once you see
+those three objects in that line, Keras stops being notation.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The shape convention is where real time is lost: TensorFlow expects a <b>2-D</b> array even for a
+single example, so <code>[[200, 17]]</code> and not <code>[200, 17]</code>.</p>
+<p>The rule is that the first dimension is always the batch, always, even when the batch is one. Most
+first-day TensorFlow errors are this one fact, arriving in an unhelpful message.</p></div><p class="lens-fold">So the code below is the diagram you already understand, written in someone else's vocabulary.</p></div><h2><span class="ico">☕</span>The example: roasting coffee</h2><p>Two inputs — temperature (°C) and duration (minutes). One output — was the roast good?
 The good region is a slanted blob: too cool and it’s raw whatever you do; too hot and it burns; and the
 right duration depends on the temperature. Two straight lines cannot carve that blob out, which is exactly
 why it needs a hidden layer.</p><h2><span class="ico">💻</span>In code</h2><pre><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -240,12 +241,25 @@ common confusion in Course 1.</p>
 size).</p>
 <p><b>Picture 2</b> is the score: how good each possible line is. The horizontal axis is <b>w</b> (the
 <span class="gterm" data-g="slope-f0">slope</span> you chose).</p>
-<p>Every <em>line</em> in picture 1 becomes a single <em>dot</em> in picture 2.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag w and watch both pictures respond</span><span class="h">left: the model in data-space. right: the cost in parameter-space</span></div><div class="demo-body" data-anim="costintuition"></div></div><h2><span class="ico">🔢</span>The simplification</h2><p>To make this drawable, set b = 0. The model becomes f(x) = wx — a line through the origin
+<p>Every <em>line</em> in picture 1 becomes a single <em>dot</em> in picture 2.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Adjusting one guy rope on a tent and walking round to see whether the whole thing sits better.</p>
+<p>Tighten it a little: better. A little more: better still. Too far: worse. Somewhere in between is the
+best this one rope can do, and you found it by trying, not by calculating.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Fixing <var>b</var> = 0 and varying only <var>w</var> reduces the cost to a function of one
+variable, and it is a <b>parabola</b> — which is not a coincidence.</p>
+<p>Squared error in a linear model is <span class="gterm" data-g="cubic">quadratic</span> in the parameters, so the cost surface is convex with
+exactly one minimum. If you know why that matters for optimisation, this lesson is where the guarantee
+comes from.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two graphs side by side, and keeping them separate is the whole difficulty of this lesson.</p>
+<p>On the left: <var>x</var> against <var>y</var>, with the data and a candidate line. On the right:
+<var>w</var> against <var>J</var>, with a single point. <b>One line on the left is one point on the
+right.</b> Move the line, the point moves.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Convexity is the property that makes linear regression safe. One minimum, no local traps, and
+gradient descent gets there from anywhere you start.</p>
+<p>Nothing later in the specialization has that guarantee. Neural network cost surfaces are riddled with
+local minima and saddle points, and knowing what you are giving up is worth the time spent here.</p></div><p class="lens-fold">So the parabola below is the cost of every possible line, drawn as a curve — and the bottom is the
+answer.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag w and watch both pictures respond</span><span class="h">left: the model in data-space. right: the cost in parameter-space</span></div><div class="demo-body" data-anim="costintuition"></div></div><h2><span class="ico">🔢</span>The simplification</h2><p>To make this drawable, set b = 0. The model becomes f(x) = wx — a line through the origin
 with only <b>one</b> parameter. Now J depends on one number, so J(w) is a curve you can plot.</p>
 <p>With the data (1,1), (2,2), (3,3):</p><table class="data"><thead><tr><th>w</th><th>the fit</th><th>J(w)</th></tr></thead><tbody><tr><td>1.0</td><td>passes exactly through every point</td><td><b>0</b></td></tr><tr><td>0.5</td><td>too shallow</td><td>0.58</td></tr><tr><td>0.0</td><td>flat along the x-axis</td><td>2.33</td></tr><tr><td>1.5</td><td>too steep</td><td>0.58</td></tr></tbody></table><p>Notice the symmetry: 0.5 and 1.5 are both 0.5 away from the best value, and both score
 0.58. Plot enough of these and you get a <b>parabola</b> — a U-shape with exactly one lowest point.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>Left picture: the world of the <b>data</b>. Right picture: the world of the
 <b>parameters</b>. Training happens entirely in the right-hand picture — you are searching for its lowest
-point.</p></div><h2><span class="ico">🔬</span>Why a parabola, exactly?</h2><p>Because J is a sum of squared terms, and each term is a <span class="gterm" data-g="cubic">quadratic</span> in w. Add up quadratics
+point.</p></div><h2><span class="ico">🔬</span>Why a parabola, exactly?</h2><p>Because J is a sum of squared terms, and each term is a quadratic in w. Add up quadratics
 and you get a quadratic. A quadratic with a positive leading coefficient is a U.</p>
 <p>This is a much bigger deal than it looks. A U-shape has <b>exactly one</b> minimum. There is no risk of
 getting stuck in a wrong valley, no dependence on where you start. Gradient descent on this shape simply

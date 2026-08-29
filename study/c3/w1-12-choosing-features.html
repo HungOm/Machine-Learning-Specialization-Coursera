@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,20 @@
 give it a weight near zero, because the answers tell it to.</p>
 <p>Anomaly detection has no answers. So it takes <b>every</b> feature equally seriously. Feed it a useless
 one and it will faithfully flag things that are unusual in a way nobody cares about.</p>
-<p>Which means: choosing the features <em>is</em> the job here.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ A skewed feature, transformed until it is bell-shaped</span><span class="h">drag c in <span class="gterm" data-g="logarithm-f0">log</span>(x + c) and watch the histogram straighten out</span></div><div class="demo-body" data-anim="featurechoice"></div></div><h2><span class="ico">🔢</span>Idea 1 — make your features Gaussian</h2><p>The algorithm assumes each feature is roughly bell-shaped. When one is not, transform it
+<p>Which means: choosing the features <em>is</em> the job here.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A doctor who listens to your chest rather than measuring your shoe size. Both are data. Only one
+changes when you are ill.</p>
+<p>Anomaly detection has no labels to tell it which is which, so the choice is yours and it matters far
+more here than in supervised learning, where a useless feature merely gets a small weight.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Two habits transfer directly. <b>Transform skewed features</b> — take a <span class="gterm" data-g="logarithm-f0">log</span> — so the Gaussian
+assumption is roughly true. And <b>engineer ratios</b> that make anomalies stand out on one axis.</p>
+<p>If you have done any diagnostic modelling you know the second one: CPU load is unremarkable, and CPU
+load divided by network traffic is a compromised machine.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two histograms of the same feature: the raw one, piled against the left edge with a long tail, and
+<code>log(x + 1)</code>, symmetric and bell-shaped.</p>
+<p>The second is what the model assumes. The first is what you were given. That transform is usually the
+single highest-value step in the pipeline.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The debugging procedure Andrew gives is the practical one: find an anomaly the system missed, look at
+its feature values, and ask <b>what would have made this one stand out</b>.</p>
+<p>That is error analysis from C2 W3, applied to an unsupervised model — and it is how these systems
+actually get improved in production, one missed case at a time.</p></div><p class="lens-fold">So the transforms below are not tidying. They are what makes the Gaussian assumption approximately
+true enough to use.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ A skewed feature, transformed until it is bell-shaped</span><span class="h">drag c in log(x + c) and watch the histogram straighten out</span></div><div class="demo-body" data-anim="featurechoice"></div></div><h2><span class="ico">🔢</span>Idea 1 — make your features Gaussian</h2><p>The algorithm assumes each feature is roughly bell-shaped. When one is not, transform it
 until it is. Plot a histogram, apply a transform, plot again, repeat.</p><table class="data"><thead><tr><th>Transform</th><th>Good for</th><th>Note</th></tr></thead><tbody><tr><td><code>log(x)</code></td><td>strongly right-skewed data</td><td>fails on zeros — use log(x + c)</td></tr><tr><td><code>log(x + c)</code></td><td>the same, with zeros present</td><td>tune c by eye; 1 is a common start</td></tr><tr><td><code><span class="gterm" data-g="npsqrt-api">np.sqrt</span>(x)</code></td><td>mildly skewed counts</td><td>same as x<sup>0.5</sup></td></tr><tr><td><code>x ** 0.3</code></td><td>in between</td><td>any fractional power is fair game</td></tr></tbody></table><div class="callout warn"><span class="tag">Watch out</span><p><b>Apply the identical transform to the cross-validation and test sets, and to
 production data.</b> A transform fitted on training data and forgotten at inference time is a classic
 production bug.</p></div><h2><span class="ico">🔬</span>Idea 2 — invent features from your errors</h2><p>An anomaly slipped through with a perfectly normal p(x). Do not shrug. <b>Look at that

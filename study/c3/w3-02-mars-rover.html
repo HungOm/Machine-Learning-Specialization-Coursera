@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,24 @@
 <p>Square 1 has a really interesting rock — worth 100 points. Square 6 has a duller rock — worth 40.
 Everything in between is worth nothing.</p>
 <p>Once it reaches either end it stops: the trip is over. Start it in the middle. Which way should it
-go?</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drive it yourself</span><span class="h">start at state 4 and try both directions — watch the discounted return</span></div><div class="demo-body" data-anim="marsrover"></div></div><h2><span class="ico">🔢</span>The setup</h2><table class="data"><thead><tr><th>Piece</th><th>In this example</th></tr></thead><tbody><tr><td>states S</td><td>{1, 2, 3, 4, 5, 6}</td></tr><tr><td>actions A</td><td>{left, right}</td></tr><tr><td>rewards R(s)</td><td>R(1) = 100, R(6) = 40, everything else 0</td></tr><tr><td>terminal states</td><td>1 and 6 — reaching either ends the episode</td></tr><tr><td>discount γ</td><td>0.5 in this course (unrealistically small, but the arithmetic stays readable)</td></tr></tbody></table><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>terminal state</td><td>“the end”</td><td>The episode stops. No further actions, no further rewards.</td></tr><tr><td>episode</td><td>“one attempt”</td><td>A complete run from the starting state to a terminal state.</td></tr><tr><td>R(s)</td><td>“the reward for being in state s”</td><td>This course attaches rewards to states. Some texts attach them to (state, action) or to transitions — the maths is equivalent.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Everything you meet this week — returns, policies, Q, the Bellman equation — will be
+go?</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Teaching a dog to come when called. You cannot explain it. You can only let it wander, and give it
+something good when it happens to come back.</p>
+<p>It does not learn “come when called”. It learns that a particular thing it did, in a particular
+situation, tended to be followed by something good — and the hard part, which took researchers
+decades, is that the good thing often arrives several actions later.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is a <b>Markov decision process</b>, and the six-square rover is deliberately the smallest
+one that still has every part.</p>
+<p>If you have worked with state machines, the vocabulary is already yours: states, actions,
+transitions. The two additions are a reward attached to arriving somewhere, and the fact that the
+best action depends on what happens <em>afterwards</em>.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Six squares in a row, numbered 1 to 6. A reward of 100 at the left end, 40 at the right end,
+nothing in between, and a rover that can go left or right.</p>
+<p>That is the entire world for the next eight lessons. Draw it on paper now, because every formula in
+the week will be checked against it.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The six squares look like a toy and they are load-bearing. Every quantity you meet — return,
+policy, <var>Q</var>, Bellman — will be computed on this strip by hand before it is ever computed by a
+network.</p>
+<p>Skipping the hand arithmetic here is why people find <var>Q</var>(<var>s</var>,<var>a</var>)
+mysterious later. It is not mysterious; it is a number you can work out on six squares in about
+ninety seconds.</p></div><p class="lens-fold">So the notation below — <var>s</var>, <var>a</var>, <var>R</var>(<var>s</var>),
+<var>s</var>&prime; — is four names for four things on that strip.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drive it yourself</span><span class="h">start at state 4 and try both directions — watch the discounted return</span></div><div class="demo-body" data-anim="marsrover"></div></div><h2><span class="ico">🔢</span>The setup</h2><table class="data"><thead><tr><th>Piece</th><th>In this example</th></tr></thead><tbody><tr><td>states S</td><td>{1, 2, 3, 4, 5, 6}</td></tr><tr><td>actions A</td><td>{left, right}</td></tr><tr><td>rewards R(s)</td><td>R(1) = 100, R(6) = 40, everything else 0</td></tr><tr><td>terminal states</td><td>1 and 6 — reaching either ends the episode</td></tr><tr><td>discount γ</td><td>0.5 in this course (unrealistically small, but the arithmetic stays readable)</td></tr></tbody></table><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>terminal state</td><td>“the end”</td><td>The episode stops. No further actions, no further rewards.</td></tr><tr><td>episode</td><td>“one attempt”</td><td>A complete run from the starting state to a terminal state.</td></tr><tr><td>R(s)</td><td>“the reward for being in state s”</td><td>This course attaches rewards to states. Some texts attach them to (state, action) or to transitions — the maths is equivalent.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>Everything you meet this week — returns, policies, Q, the Bellman equation — will be
 demonstrated on this one six-square strip. It is worth getting comfortable with it now.</p></div><h2><span class="ico">🧮</span>The question that makes it interesting</h2><p>From state 4: going left takes <b>3 steps</b> to reach a reward of <b>100</b>. Going right
 takes <b>2 steps</b> to reach a reward of <b>40</b>.</p>
 <p>Nearer but smaller, or further but bigger? You cannot answer that without a rule for trading time

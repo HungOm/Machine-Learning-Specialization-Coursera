@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,7 +238,23 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Your model is accurate overall. <b>Guess how it could still be doing serious harm</b> — accuracy and fairness are not the same measurement.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for who the average hides. Watch also for the concrete process suggested rather than good intentions.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>If you teach a computer by showing it what people did before, it learns to do what
 people did before — including the unfair bits. It has no way to know which parts of history were a mistake.</p>
 <p>And it will do it faster, cheaper and at bigger scale than any person could, while sounding perfectly
-objective because it is “just maths”.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ One accuracy number, four very different experiences</span><span class="h">press the button to break the average down by group</span></div><div class="demo-body" data-anim="fairness"></div></div><h2><span class="ico">📋</span>Documented cases worth knowing</h2><ul>
+objective because it is “just maths”.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A hiring manager who has always promoted people who remind him of himself. Ask him and he will
+tell you honestly that he judges on merit, and he believes it.</p>
+<p>The pattern is in the outcomes, not in anyone's intentions, and it is visible only if somebody
+counts. A model trained on his decisions learns the pattern perfectly and applies it faster and to
+more people.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The technical statement is that a model learns the <b>conditional distribution of its training
+labels</b>, including whatever produced them.</p>
+<p>If historical decisions were biased, the labels encode the bias, and the model reproduces it while
+looking objective. Removing the protected attribute does not fix it — correlated features carry the
+information, which is a fact worth knowing before you propose it as a solution.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two confusion <span class="gterm" data-g="matrix-f0">matrices</span> side by side, one per group.</p>
+<p>Same model, same threshold, different false-negative rates. That gap is the measurement, and it is
+invisible in the single aggregate accuracy number everyone reports. Splitting the metric by group is
+the whole of the technique.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The documented cases are not hypothetical: recruiting tools downranking women's CVs, risk scores
+with unequal error rates across groups, medical algorithms allocating less care because they used
+historical spending as a proxy for need.</p>
+<p>Each was a technically competent model doing exactly what it was trained to do. The defence is
+procedural — audit by subgroup, red-team before launch, and be able to roll back.</p></div><p class="lens-fold">So the questions below are engineering practice, and the measurement is one line of code you have
+already written.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ One accuracy number, four very different experiences</span><span class="h">press the button to break the average down by group</span></div><div class="demo-body" data-anim="fairness"></div></div><h2><span class="ico">📋</span>Documented cases worth knowing</h2><ul>
 <li><b>Hiring.</b> A recruiting tool trained on ten years of past hires learned to down-rank CVs
 containing the word “women’s”, because the historical hires it learned from were overwhelmingly male. The
 project was scrapped.</li>

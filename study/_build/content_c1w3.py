@@ -22,6 +22,26 @@ malignant, nothing surprising about it — and the line tilts, the 0.5 crossing 
 tumours you were correctly calling malignant are suddenly called benign.</p>
 <p>Nothing about the disease changed. Only the maths broke.</p>""")
 
+        + lenses(
+            """<p>A doctor asked whether a lump is malignant. Not <b>how malignant</b> — the question has two
+answers.</p>
+<p>Fitting a straight line through yes-and-no answers produces predictions like 1.4 and −0.3, which are
+not answers to the question that was asked. The tool is wrong for the job, and the failure is not
+subtle once you look at it.</p>""",
+            """<p>The technical problem is that a linear model is <b>unbounded</b>, and probabilities live in [0, 1].</p>
+<p>Statisticians solve this with a link function, and the logistic link is the standard choice for binary
+outcomes. If you have fitted a logit or probit model, this is that, arrived at from the other
+direction.</p>""",
+            """<p>The classic picture, and it is worth drawing yourself: data points at <var>y</var> = 0 and
+<var>y</var> = 1, a fitted straight line running through them, and one new point far to the right.</p>
+<p>Adding that single far-right point <b>rotates the line</b> and moves the decision boundary, changing
+predictions for patients whose data did not change at all. That instability is the argument.</p>""",
+            """<p>This lesson matters because linear regression on a binary outcome is a mistake people actually make,
+and it does not announce itself.</p>
+<p>The model trains, the loss decreases, and the errors are concentrated exactly where the stakes are
+highest — at the extremes. Knowing the failure by sight is worth more than knowing the fix.</p>""",
+            """So the next lesson's S-shaped curve is a direct response to the specific failure below.""")
+
         + h2("🎬", "Watch it move")
         + demo("classmotivation", "Press the button to add one large tumour",
                "count the misclassified points before and after")
@@ -200,6 +220,25 @@ L.append(dict(
 its mind is simply <b>wherever z = 0</b> — and z is just the old straight-line formula. The boundary is a
 line, and you already know how to draw it.</p>""")
 
+        + lenses(
+            """<p>A fence across a field. On one side the animals are sheep, on the other they are goats.</p>
+<p>The fence is not the animals and it is not a rule about any one animal. It is a line you can draw such
+that what falls either side is mostly one kind, and the model's whole job is to place it.</p>""",
+            """<p>The boundary is where <var>z</var> = 0, equivalently where the predicted probability is exactly
+0.5.</p>
+<p>Anyone who has worked with hyperplanes or with SVMs will recognise the object: a linear boundary in
+feature space, and a set of points that the model is genuinely undecided about.</p>""",
+            """<p>A scatter of two-coloured points with a straight line through them.</p>
+<p>Everything on one side is predicted 1, everything on the other 0. Points near the line are the uncertain
+ones, and the sigmoid gives them probabilities near 0.5 — which is exactly the information you want about
+a borderline case.</p>""",
+            """<p>The important nuance is that the boundary is linear <b>in the features you supply</b>.</p>
+<p>Add <var>x</var>₁² and <var>x</var>₂² as columns and the boundary becomes a circle in the original
+space, while remaining a straight line in the expanded one. That single trick is how a linear classifier
+handles non-linear problems, and it is the same move as polynomial regression last week.</p>""",
+            """So the boundary below is where <var>z</var> crosses zero, and its shape is decided by which columns
+you handed the model.""")
+
         + h2("🎬", "Watch it move")
         + demo("decisionboundary", "Linear features, then polynomial features",
                "the shaded regions are what the model predicts everywhere")
@@ -280,6 +319,28 @@ walks down into the nearest dip, stops, and announces it has finished — while 
 a different dip nearby.</p>
 <p>So you need a different way of scoring. Not because squared error is wrong in principle, but because
 the <b>shape</b> it produces here is unusable.</p>""")
+
+        + lenses(
+            """<p>Marking a forecaster who gives probabilities rather than answers. She said 90% rain and it rained —
+a small penalty. She said 90% rain and it stayed dry — a large one.</p>
+<p>The penalty has to punish <b>confident and wrong</b> far more harshly than <b>uncertain and wrong</b>,
+or she will simply say 100% to everything.</p>""",
+            """<p>Squared error is the obvious choice and it fails here for a reason worth knowing: with a sigmoid
+inside it, the cost surface is <b>non-convex</b>, full of local minima that gradient descent gets stuck
+in.</p>
+<p>If you have hit a non-convex optimisation before, you know the symptom — the answer depends on where
+you started. The logistic loss is chosen specifically to restore convexity.</p>""",
+            """<p>Two curves, one for each true label.</p>
+<p>When <var>y</var> = 1, the penalty is −log(<var>f</var>): almost nothing when <var>f</var> is near 1,
+and rising to <b>infinity</b> as <var>f</var> approaches 0. That vertical asymptote is the mechanism —
+being confidently wrong is unboundedly expensive.</p>""",
+            """<p>The infinite penalty is the whole design, and it is why the model cannot game the loss by being
+certain.</p>
+<p>It is also why numerical implementations clip probabilities away from exactly 0 and 1: an actual
+infinity in the loss makes every gradient NaN, and the whole model dies in one step. This is the same
+concern that <code>from_logits</code> addresses in C2.</p>""",
+            """So the log below is not a mathematical flourish. It is what makes confident errors unaffordable and
+the surface convex.""")
 
         + h2("🎬", "Watch it move")
         + demo("logcost", "Bumpy versus bowl-shaped",
@@ -480,6 +541,22 @@ write, awkward to code, awkward to differentiate.</p>
 multipliers is always <b>zero</b>, so one of the two terms always vanishes.</p>
 <p>Two rules, one formula, no <code>if</code> statement.</p>""")
 
+        + lenses(
+            """<p>Two rules written as one line, using the fact that one of the two terms always switches itself off.</p>
+<p>A small piece of algebraic housekeeping with a real payoff: code with no <code>if</code> in the inner
+loop, and a formula that vectorises across a whole dataset at once.</p>""",
+            """<p>The trick is multiplying by <var>y</var> and (1 − <var>y</var>) so that exactly one term survives,
+and it is the standard way to write a two-case function as one expression.</p>
+<p>Anyone who has used an indicator variable to collapse a piecewise definition has done exactly this.</p>""",
+            """<p>The single line, with the two halves covered in turn.</p>
+<p>Set <var>y</var> = 1 and the second term vanishes. Set <var>y</var> = 0 and the first does. Do that
+substitution on paper once and the formula stops looking like something to memorise.</p>""",
+            """<p>This expression is <b>binary cross-entropy</b>, and it is the same object you will meet in C2 for
+neural networks and in C3 for recommenders with binary labels.</p>
+<p>Learning it properly once here is worth a great deal later, because it is the loss function you will
+use most often in the whole specialization.</p>""",
+            """So the one line below is the two-case rule from the previous lesson, folded together.""")
+
         + h2("🎬", "Watch it move")
         + demo("simplifiedcost", "The two terms, and one of them disappearing",
                "watch which half survives as the true label flips")
@@ -586,6 +663,26 @@ L.append(dict(
 get… exactly the same formula as before.</p>
 <p>It looks like a mistake. It is not. The sigmoid and the log loss are built to fit together, and when you
 compose them the messy bits cancel out perfectly.</p>""")
+
+        + lenses(
+            """<p>The same fog-walk down the same kind of hill. Different scoring function, identical procedure.</p>
+<p>And there is a genuine surprise waiting: the update rule comes out looking exactly like the one from
+linear regression, which is either a coincidence or a sign that something deeper is going on. It is the
+second.</p>""",
+            """<p>The derivative of the logistic loss with respect to <var>w</var><sub>j</sub> is the <b>same
+expression</b> as for squared error in linear regression: (<var>f</var> − <var>y</var>)
+<var>x</var><sub>j</sub>.</p>
+<p>This is not an accident — it holds for any generalised linear model with its canonical link, and the
+logs and exponentials cancel exactly. Worth knowing, because it means one implementation serves
+both.</p>""",
+            """<p>Two update rules written one above the other, identical character for character.</p>
+<p>The only difference is hidden inside <var>f</var>: a dot product in one case, a sigmoid of a dot product
+in the other. Same algorithm, different model plugged in.</p>""",
+            """<p>The practical consequences carry across too: feature scaling still helps for the same reason, the
+learning-curve diagnostics still apply, and simultaneous update is still mandatory.</p>
+<p>Everything you learned in Weeks 1 and 2 about running gradient descent transfers without
+modification, which is the real payoff of the identical form.</p>""",
+            """So the update below looks familiar because it genuinely is the same, with <var>f</var> redefined.""")
 
         + h2("🎬", "Watch it move")
         + demo("gdlogistic", "The same update, a different f",
@@ -842,6 +939,25 @@ learn the actual pattern instead.</li>
 <li><b>Stop it turning the knobs so far.</b> Keep every knob, but don’t let any of them go to extremes.</li>
 </ol>""")
 
+        + lenses(
+            """<p>Three ways to stop a student memorising the mark scheme instead of learning the subject.</p>
+<p>Give them more past papers. Cut the syllabus to what matters. Or mark them down for over-elaborate
+answers. All three work, they cost different amounts, and you would try them in that order.</p>""",
+            """<p>The three options are more data, fewer features, and regularisation, and the trade-off is
+practical.</p>
+<p>More data is the best fix and usually the most expensive. Feature selection is cheap and discards
+information permanently. Regularisation keeps every feature and merely shrinks its influence, which is
+why it is the default.</p>""",
+            """<p>Three fits through the same points: a straight line missing the trend, a smooth curve following it,
+and a wild curve passing exactly through every point.</p>
+<p>The third has <b>zero training error</b> and is useless. Holding that picture is what makes “zero
+training error” read as a warning rather than an achievement.</p>""",
+            """<p>Feature selection has a specific hidden cost: it is a decision made on your training data, so
+removing a feature that looked useless on 200 rows can remove one that mattered.</p>
+<p>Regularisation avoids the irreversible choice by shrinking rather than deleting, and letting the data
+decide how much — which is the argument for the rest of the week.</p>""",
+            """So the three options below are a ranked list, and the third is where the remaining lessons go.""")
+
         + h2("🎬", "Watch it move")
         + demo("addressing", "The three options, with what each costs",
                "each row shows the benefit and the drawback")
@@ -1060,6 +1176,26 @@ like 0.9998.</p>
 <p>Then take the ordinary step.</p>
 <p>Over thousands of iterations that constant nibbling keeps the weights small, unless the data keeps
 pushing them back up. A weight only stays large if it is genuinely earning its place.</p>""")
+
+        + lenses(
+            """<p>The same walk downhill with a light spring pulling every parameter back towards zero.</p>
+<p>A parameter that genuinely earns its size holds against the spring. One that grew large to
+accommodate a single odd data point gets quietly pulled back in, and the fit stops chasing noise.</p>""",
+            """<p>The extra term in the gradient is (λ/<var>m</var>)<var>w</var><sub>j</sub>, and rearranging shows
+what it does: each step multiplies <var>w</var><sub>j</sub> by a factor slightly less than 1 before the
+usual update.</p>
+<p>That is why it is called <b>weight decay</b>, and it is exactly the ridge regression penalty you may
+already know.</p>""",
+            """<p>The familiar update line with one term added on the end.</p>
+<p>And one deliberate omission worth noticing: <b><var>b</var> is not regularised</b>. The bias sets the
+overall level rather than the sensitivity to any feature, and shrinking it towards zero just biases every
+prediction downwards for no benefit.</p>""",
+            """<p>Regularisation and feature scaling are entangled in a way that catches people: the penalty treats all
+weights alike, so an unscaled feature with a large range gets an artificially small weight and is
+penalised as though it mattered less.</p>
+<p>Scale first, then regularise. Doing it the other way round applies an uneven penalty you did not
+intend and cannot see.</p>""",
+            """So the one extra term below is the spring, and λ is how strong you make it.""")
 
         + h2("🎬", "Watch it move")
         + demo("reglinlog", "The rearranged update, and the shrink factor",

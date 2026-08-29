@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,21 @@ examine all ten million.</p>
 <p>First you grab a trolley-full of <b>plausible</b> things — quickly, roughly, using easy rules like “toys,
 about the right age, popular this year”. Maybe a hundred items.</p>
 <p>Then you look at those hundred <b>properly</b> and pick the best few.</p>
-<p>Fast filter, then careful ranking. Every large recommender works this way.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The funnel — and the trade-off in how wide you open it</span><span class="h">drag the candidate count and watch the quality-versus-cost balance shift</span></div><div class="demo-body" data-anim="retrieval"></div></div><h2><span class="ico">🔢</span>The two stages</h2><table class="data"><thead><tr><th></th><th>Retrieval</th><th>Ranking</th></tr></thead><tbody><tr><td>Goal</td><td>generate plausible candidates</td><td>score them accurately</td></tr><tr><td>How many items</td><td>10,000,000 → ~100</td><td>~100 → 10</td></tr><tr><td>Method</td><td>precomputed lists, nearest-neighbour lookup, simple rules</td><td>the full two-tower network</td></tr><tr><td>Speed</td><td>milliseconds</td><td>affordable for 100 items</td></tr><tr><td>Optimised for</td><td><b><span class="gterm" data-g="precisionrecall-native">recall</span></b> — do not miss anything good</td><td><b>precision</b> — get the order right</td></tr></tbody></table><p>Typical retrieval rules, straight from the lecture:</p>
+<p>Fast filter, then careful ranking. Every large recommender works this way.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A librarian asked for a book like the one you just finished, in a library of ten million.</p>
+<p>She does not consider ten million books. She walks to two or three <em>shelves</em> that are
+obviously relevant, pulls perhaps a hundred, and only then reads the blurbs properly to pick five.
+Fast and rough, then slow and careful — and never slow and careful on everything.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p><b>Retrieval then ranking</b>, and the shape is everywhere: a database index before a full table
+scan, a cheap bounding-box test before exact collision detection, triage before diagnosis.</p>
+<p>The economics are always the same. A cheap filter you can afford to run on everything, then an
+expensive judgement you can only afford on what survives.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A funnel with two stages written on it: <b>10,000,000 → 500 → 10</b>.</p>
+<p>The first arrow is approximate nearest-neighbour lookup, milliseconds, slightly wrong. The second
+is the full model on 500 candidates, and it is allowed to be slow because 500 is a small number. The
+whole system's latency budget lives in the shape of that funnel.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Getting the funnel wrong is one of the most common causes of a recommender that is excellent
+offline and disappointing in production.</p>
+<p>If retrieval never surfaces an item, no amount of ranking quality can rescue it — your beautifully
+tuned model simply never sees it. Teams measure <b>retrieval <span class="gterm" data-g="precisionrecall-native">recall</span></b> separately for this reason,
+and it is usually the first thing to check when a good model underperforms.</p></div><p class="lens-fold">So the two-stage design below is not an optimisation bolted on afterwards. It is the only reason
+the thing runs at all.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The funnel — and the trade-off in how wide you open it</span><span class="h">drag the candidate count and watch the quality-versus-cost balance shift</span></div><div class="demo-body" data-anim="retrieval"></div></div><h2><span class="ico">🔢</span>The two stages</h2><table class="data"><thead><tr><th></th><th>Retrieval</th><th>Ranking</th></tr></thead><tbody><tr><td>Goal</td><td>generate plausible candidates</td><td>score them accurately</td></tr><tr><td>How many items</td><td>10,000,000 → ~100</td><td>~100 → 10</td></tr><tr><td>Method</td><td>precomputed lists, nearest-neighbour lookup, simple rules</td><td>the full two-tower network</td></tr><tr><td>Speed</td><td>milliseconds</td><td>affordable for 100 items</td></tr><tr><td>Optimised for</td><td><b>recall</b> — do not miss anything good</td><td><b>precision</b> — get the order right</td></tr></tbody></table><p>Typical retrieval rules, straight from the lecture:</p>
 <ul>
 <li>For each of the last 10 films the user watched, find the 10 most similar items.</li>
 <li>For each of the user’s top 3 genres, take the top 10 films.</li>

@@ -122,6 +122,25 @@ saying “dog” or “not a dog”. After enough of them you can label a photo 
 <p>That is supervised learning. Every training example arrives with its right answer, and the algorithm
 learns the pattern that connects the two.</p>""")
 
+        + lenses(
+            """<p>An apprentice watching a master glazier cut glass, with one crucial extra: after every cut, the
+master says <b>“that one was right”</b> or <b>“two millimetres out”</b>.</p>
+<p>Watching alone teaches very little. It is the correction arriving immediately afterwards that does the
+work, and it is the only thing supervised learning requires.</p>""",
+            """<p>The defining feature is that every training example carries the <b>right answer</b> with it.</p>
+<p>If you have built any model from historical outcomes — a churn model, a mortality table, a demand
+forecast — you have done supervised learning, and the outcome column was your <var>y</var>.</p>""",
+            """<p>Two columns again, and the right-hand one is the whole distinction.</p>
+<p><b>Regression:</b> the right column holds a number, and there are infinitely many possible answers.
+<b>Classification:</b> the right column holds one of a few labels. Look at that column and you know
+which half of the course you are in.</p>""",
+            """<p>The overwhelming majority of deployed machine learning is supervised, for an unglamorous reason: it
+works, and the business already had the labels.</p>
+<p>Which is also where the cost sits. Getting labels for something nobody recorded — is this scan
+cancerous, is this transaction fraud — is often the largest line in the budget, and it is why
+unsupervised and transfer methods matter commercially.</p>""",
+            """So the definition below turns on one thing: the answers came with the questions.""")
+
         + h2("🎬", "Watch it move")
         + demo("supervised", "The two kinds — click between them",
                "regression predicts a number; classification predicts a category")
@@ -194,6 +213,27 @@ picture on the lid.</p>
 you those were the right piles. You just noticed that some pieces belong together.</p>
 <p>That is unsupervised learning. Data with no answers, and the job is to find whatever structure is
 there.</p>""")
+
+        + lenses(
+            """<p>Handed a crate of unlabelled ironmongery and asked to <b>make sense of it</b>. Nobody tells you the
+categories. You group by what looks alike, and you find yourself with screws, bolts and hinges without
+anyone having named them.</p>
+<p>You could also just notice that one item is unlike anything else in the crate. Both are useful, and
+neither required an answer key.</p>""",
+            """<p>The technical statement is short: there is <b>no <var>y</var></b>. You have <var>X</var> and nothing
+else.</p>
+<p>Anyone who has done exploratory data analysis or factor analysis knows both the appeal and the
+difficulty — without a ground truth there is no accuracy, so “did it work?” becomes a judgement rather
+than a measurement.</p>""",
+            """<p>The same spreadsheet as before with the right-hand column deleted.</p>
+<p>That deletion is the entire definition. Everything that makes unsupervised learning harder to evaluate
+follows directly from the missing column.</p>""",
+            """<p>The commercial uses are real and mostly about discovery: customer segments nobody had defined,
+anomalies in server metrics, compressing 300 columns to 20 before modelling.</p>
+<p>The recurring trap is confirmation. An algorithm will always return clusters — including from pure
+noise — and it takes a deliberate check to establish that the groups correspond to anything.</p>""",
+            """So the two families below, clustering and anomaly detection, are both answers to “make sense of
+this” rather than “predict that”.""")
 
         + h2("🎬", "Watch it move")
         + demo("unsupervised", "The three kinds",
@@ -508,6 +548,26 @@ size).</p>
 slope you chose).</p>
 <p>Every <em>line</em> in picture 1 becomes a single <em>dot</em> in picture 2.</p>""")
 
+        + lenses(
+            """<p>Adjusting one guy rope on a tent and walking round to see whether the whole thing sits better.</p>
+<p>Tighten it a little: better. A little more: better still. Too far: worse. Somewhere in between is the
+best this one rope can do, and you found it by trying, not by calculating.</p>""",
+            """<p>Fixing <var>b</var> = 0 and varying only <var>w</var> reduces the cost to a function of one
+variable, and it is a <b>parabola</b> — which is not a coincidence.</p>
+<p>Squared error in a linear model is quadratic in the parameters, so the cost surface is convex with
+exactly one minimum. If you know why that matters for optimisation, this lesson is where the guarantee
+comes from.</p>""",
+            """<p>Two graphs side by side, and keeping them separate is the whole difficulty of this lesson.</p>
+<p>On the left: <var>x</var> against <var>y</var>, with the data and a candidate line. On the right:
+<var>w</var> against <var>J</var>, with a single point. <b>One line on the left is one point on the
+right.</b> Move the line, the point moves.</p>""",
+            """<p>Convexity is the property that makes linear regression safe. One minimum, no local traps, and
+gradient descent gets there from anywhere you start.</p>
+<p>Nothing later in the specialization has that guarantee. Neural network cost surfaces are riddled with
+local minima and saddle points, and knowing what you are giving up is worth the time spent here.</p>""",
+            """So the parabola below is the cost of every possible line, drawn as a curve — and the bottom is the
+answer.""")
+
         + h2("🎬", "Watch it move")
         + demo("costintuition", "Drag w and watch both pictures respond",
                "left: the model in data-space. right: the cost in parameter-space")
@@ -582,6 +642,25 @@ L.append(dict(
 <p>A 3-D picture is awkward on a flat page. So do what map-makers do: look at it from <b>directly
 above</b> and draw a ring around all the points at the same height. Rings close together mean steep; rings
 far apart mean flat. The bullseye in the middle is the bottom of the bowl — the best line.</p>""")
+
+        + lenses(
+            """<p>A contour map of a valley. Rings drawn round a low point, close together where the ground is steep
+and far apart where it is gentle.</p>
+<p>You have never seen the valley from above. You can read it off the map, and you can tell from the
+spacing of the rings which way is downhill and how fast.</p>""",
+            """<p>These are level sets — the same object as isobars on a weather chart or elevation lines on an
+Ordnance Survey map.</p>
+<p>The one habit to bring across: on a contour plot, the <b>gradient is perpendicular to the contour</b>.
+That single fact is what makes the gradient descent picture in the next lessons readable at a glance.</p>""",
+            """<p>A bowl, and the same bowl seen from directly above as a set of nested ellipses.</p>
+<p>Each ellipse is one value of <var>J</var> — every (<var>w</var>, <var>b</var>) on that ring gives
+exactly the same cost. The centre of the rings is the best line. That is the whole picture.</p>""",
+            """<p>The <b>shape</b> of the ellipses is what makes this worth learning rather than admiring.</p>
+<p>Circular contours mean gradient descent goes almost straight to the bottom. Long thin ellipses mean it
+zigzags and takes far longer — and that is precisely the picture that makes feature scaling in Week 2
+obviously necessary rather than an arbitrary preprocessing step.</p>""",
+            """So the contour plot below is the same bowl you already understand, drawn flat so both parameters
+fit.""")
 
         + h2("🎬", "Watch it move")
         + demo("costcontour", "Drag inside the right-hand panel",
@@ -910,6 +989,26 @@ adds, so you move <b>right</b> — downhill. ✓</li>
 </ul>
 <p>Either way you head for the bottom, and the formula never has to know which side you are on.</p>""")
 
+        + lenses(
+            """<p>Walking downhill in thick fog. You cannot see the bottom. You can feel which way the ground falls
+under your feet, so you take a step that way and feel again.</p>
+<p>You will reach a low point. You have no way of knowing whether it is <em>the</em> low point, and for a
+bowl-shaped valley the distinction does not arise.</p>""",
+            """<p>The sign of the derivative is doing all the work, and it is worth checking rather than trusting.</p>
+<p>Positive slope means the cost rises as <var>w</var> rises, so subtracting a positive number moves
+<var>w</var> left — downhill. Negative slope, and the same subtraction moves right. <b>One update rule
+handles both directions</b>, with no case analysis.</p>""",
+            """<p>A point on a curve with an arrow showing which way it will move next.</p>
+<p>Steep slope, long arrow. Near the bottom, short arrow. The algorithm automatically slows as it
+approaches the minimum, without anyone telling it to, purely because the derivative shrinks.</p>""",
+            """<p>That automatic slowing is why a fixed learning rate works at all, and it is genuinely surprising the
+first time you see it.</p>
+<p>It also explains a common confusion — “why doesn't it overshoot at the end?” — and the failure case: if
+α is too large, the step overshoots so far that the new slope is steeper, and the process diverges
+instead of converging.</p>""",
+            """So the update rule below has the direction built into the sign, and the step size built into the
+magnitude.""")
+
         + h2("🎬", "Watch it move")
         + demo("gdintuition", "Drag w and watch the tangent line",
                "the green arrow is the step gradient descent would take from there")
@@ -1103,6 +1202,26 @@ descent). Now bolt them together.</p>
 <p>And there is a piece of good luck here. The bowl for linear regression has <b>exactly one</b> bottom —
 no side valleys, no traps. Whichever fog-bound spot you start from, you always end up in the same place.</p>""")
 
+        + lenses(
+            """<p>The two halves of the week meeting. You have a way to score any line, and a way to walk downhill.
+Putting them together is the first complete learning algorithm in the course.</p>
+<p>Everything from here — logistic regression, neural networks, recommenders — is this same pairing with a
+different scoring function.</p>""",
+            """<p>The derivation is the chain rule applied to a squared error, and the result is worth recognising
+rather than memorising.</p>
+<p>The gradient is the <b>average error times the input</b>. If you have derived normal equations or done
+any least-squares work, this expression is an old friend arriving in a new notation.</p>""",
+            """<p>Two formulas, and the difference between them is one factor.</p>
+<p>∂<var>J</var>/∂<var>w</var> has an <var>x</var><sup>(i)</sup> on the end; ∂<var>J</var>/∂<var>b</var>
+does not. That is because <var>b</var>'s own derivative is 1. Everything else about the two lines is
+identical.</p>""",
+            """<p>The detail that catches people in code is <b>simultaneous update</b>: compute both derivatives from
+the <em>old</em> parameters, then assign both.</p>
+<p>Update <var>w</var> first and then use the new <var>w</var> to compute <var>b</var>'s gradient, and you
+are descending a surface that no longer exists. It often still converges, to something slightly wrong,
+which is what makes it hard to spot.</p>""",
+            """So the two formulas below are the cost function and the fog-walk, finally joined.""")
+
         + h2("🎬", "Watch it move")
         + demo("gdlinreg", "One bowl versus many valleys",
                "the derivatives, and the property that makes linear regression easy")
@@ -1206,6 +1325,26 @@ L.append(dict(
 <p>The line on the left swings around and settles onto the data. The dot on the right walks steadily from
 an outer ring to the bullseye. And the cost curve underneath falls and flattens.</p>
 <p>They are three views of the same event.</p>""")
+
+        + lenses(
+            """<p>Watching the tent settle as you work round the ropes. The first few adjustments make a visible
+difference; by the twentieth, you are making tiny corrections and it already looks right.</p>
+<p>Seeing that happen is what converts the algorithm from a formula into something you believe.</p>""",
+            """<p>The <b>learning curve</b> — cost against iteration — is the standard convergence diagnostic, and
+reading it is a skill you will use for the rest of the specialization.</p>
+<p>Falling and flattening: converged. Falling very slowly: α too small. Rising or oscillating: α too
+large. Three shapes, three diagnoses, and you will meet all three.</p>""",
+            """<p>Two panels animating together.</p>
+<p>On the left, the line rotating and shifting onto the data. On the right, a point sliding down the
+contour plot towards the centre. <b>The same event, drawn twice</b> — and holding both pictures at once
+is the single best thing to take from this week.</p>""",
+            """<p>This is <b>batch</b> gradient descent — every step uses every example — and the name matters because
+you will meet the alternatives.</p>
+<p>At a million rows, one step reads a million rows, which is why mini-batch gradient descent exists and
+why almost nothing in production uses the batch version. Knowing that this one is the simple case
+prevents surprise later.</p>""",
+            """So the plot below is the algorithm running, and the shape of that curve is your first diagnostic
+tool.""")
 
         + h2("🎬", "Watch it move")
         + demo("gdrunning", "All three views at once — and try changing α",

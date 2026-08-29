@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,20 @@
 machine learning right now.</p>
 <p>In a video game or a simulator, it is astonishing — it can beat the best humans in the world. In the
 real world, on real robots, it is fragile, expensive, and much harder than the demos suggest.</p>
-<p>Worth knowing. Not usually the first tool to reach for.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The scorecard</span><span class="h">three things it does well, three that make it hard</span></div><div class="demo-body" data-anim="rlstate"></div></div><h2><span class="ico">⚖️</span>The honest assessment</h2><div class="grid2"><div class="card"><h3>What is real</h3><ul><li>Superhuman play in games with perfect simulators.</li><li>Genuine wins in control: data-centre cooling, some robotics.</li><li>RLHF — how essentially every modern chat model is tuned. Quietly the biggest deployed application of RL that exists.</li></ul></div><div class="card"><h3>What is hard</h3><ul><li>Simulation-to-reality transfer. The simulator is never the world.</li><li>Sample efficiency — millions of trials, which is fine in sim and impossible with a real drone.</li><li>Extreme sensitivity to reward design and <span class="gterm" data-g="hyperparameter-native">hyperparameters</span>.</li><li>Far fewer production applications than supervised learning.</li></ul></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>Andrew’s own framing, and it is worth copying: the ideas are important and the research
+<p>Worth knowing. Not usually the first tool to reach for.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A tool that does one thing spectacularly and is awkward everywhere else. Worth knowing exactly what
+it is for, and worth not carrying to every job.</p>
+<p>The honest summary is that RL is transformative in simulation and difficult in the physical world, and
+knowing which side of that line you are on saves entire projects.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The practical limitation is <b>sample efficiency</b>. RL needs millions of episodes, and it learns
+by failing repeatedly.</p>
+<p>That is free in a simulator and expensive or unacceptable with real hardware, real customers or real
+patients — which is why nearly every deployed success either has a simulator or has a very cheap
+failure.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two columns. Games, simulated robotics, chip layout, datacentre cooling, RLHF for language models on
+one side. Physical robots, healthcare, anything where a mistake is expensive on the other.</p>
+<p>The dividing line is not difficulty. It is the cost of a failed attempt.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The genuinely large commercial application right now is RLHF — reinforcement learning from human
+feedback — which is how language models are turned from text predictors into assistants.</p>
+<p>Note the shape: the reward comes from human comparisons rather than a simulator, which is one answer
+to the sample-efficiency problem rather than an exception to it.</p></div><p class="lens-fold">So the assessment below is worth taking at face value. The technique is real, the hype is ahead of
+the deployments, and knowing the gap is professionally useful.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The scorecard</span><span class="h">three things it does well, three that make it hard</span></div><div class="demo-body" data-anim="rlstate"></div></div><h2><span class="ico">⚖️</span>The honest assessment</h2><div class="grid2"><div class="card"><h3>What is real</h3><ul><li>Superhuman play in games with perfect simulators.</li><li>Genuine wins in control: data-centre cooling, some robotics.</li><li>RLHF — how essentially every modern chat model is tuned. Quietly the biggest deployed application of RL that exists.</li></ul></div><div class="card"><h3>What is hard</h3><ul><li>Simulation-to-reality transfer. The simulator is never the world.</li><li>Sample efficiency — millions of trials, which is fine in sim and impossible with a real drone.</li><li>Extreme sensitivity to reward design and <span class="gterm" data-g="hyperparameter-native">hyperparameters</span>.</li><li>Far fewer production applications than supervised learning.</li></ul></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>Andrew’s own framing, and it is worth copying: the ideas are important and the research
 is exciting, and the number of <em>commercial</em> applications today is much smaller than the attention
 suggests. Being able to say that clearly is a mark of understanding the field rather than its
 marketing.</p></div><h2><span class="ico">🎓</span>You have finished the specialization</h2><p>Three courses. Here is what you can now do.</p>

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,28 @@ ears?” Yes → “Is its face round?” Yes → “It’s a cat!”</p>
 <p>That’s the entire model. A list of questions arranged in a tree, where the answer to each question tells
 you which question to ask next, until you reach the bottom and give your answer.</p>
 <p>No maths at all when you <em>use</em> it. All the cleverness is in choosing which questions to ask —
-which is the next few lessons.</p></div><h2><span class="ico">🐱</span>The data</h2><p>Ten animals, three features, one label. This is the running example for the whole week and
+which is the next few lessons.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A triage nurse in a busy A&amp;E. Someone walks in. <b>“Chest pain?”</b> No — and she points
+down a different corridor entirely. Yes — and the next question is <b>“how long?”</b> Under an
+hour sends you one way, since yesterday sends you another.</p>
+<p>She never weighs everything she knows about you at once. She asks <em>one</em> question, and your
+answer decides which question comes next. By the fourth question you are in a room. A decision tree
+is that corridor, written down.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>If you have ever written a nested <code>IF</code> in a spreadsheet, or drawn a flowchart for an
+approval process, you have already built a decision tree by hand.</p>
+<p>The only thing that changes here is <b>who chooses the questions</b>. You chose yours from
+experience, and put the most useful one first because you knew it was the most useful. The algorithm
+has no experience, so it has to measure which question is most useful — and that measurement is
+the whole of the next three lessons.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>An upside-down tree drawn on paper: one box at the top, two arrows leaving it, more boxes below,
+and along the bottom a row of labels.</p>
+<p>To make a prediction you put a finger on the top box and slide it down one arrow at a time until
+you run out of arrows. <b>That path is the prediction</b> — not the whole tree, just the one
+route your animal took through it. Most of the tree is irrelevant to any single prediction, and that
+is not a flaw.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Banks adjudicating loans and hospitals writing clinical decision rules reach for trees over
+networks constantly, and usually not for accuracy. They reach for them because <b>the path is the
+explanation</b>.</p>
+<p>Under EU credit law a rejected applicant can demand the reason for the decision. “The fourth layer
+had a high activation” is not a reason. “Your debt-to-income was above 0.43 <em>and</em> your account
+was under six months old” is a reason, it is auditable, and you can read it straight off the path.</p></div><p class="lens-fold">So when the formal version below says a tree is decision nodes and leaf nodes, it is saying something
+very plain: the questions, and the answers you land on.</p></div><h2><span class="ico">🐱</span>The data</h2><p>Ten animals, three features, one label. This is the running example for the whole week and
 it is worth glancing back at.</p><table class="data"><thead><tr><th>#</th><th>Ear shape</th><th>Face shape</th><th>Whiskers</th><th>Cat?</th></tr></thead><tbody><tr><td>1</td><td>pointy</td><td>round</td><td>present</td><td><b>yes</b></td></tr><tr><td>2</td><td>pointy</td><td>round</td><td>present</td><td><b>yes</b></td></tr><tr><td>3</td><td>pointy</td><td>round</td><td>absent</td><td><b>yes</b></td></tr><tr><td>4</td><td>pointy</td><td>round</td><td>absent</td><td><b>yes</b></td></tr><tr><td>5</td><td>pointy</td><td>not round</td><td>present</td><td>no</td></tr><tr><td>6</td><td>floppy</td><td>not round</td><td>present</td><td><b>yes</b></td></tr><tr><td>7</td><td>floppy</td><td>round</td><td>absent</td><td>no</td></tr><tr><td>8</td><td>floppy</td><td>round</td><td>absent</td><td>no</td></tr><tr><td>9</td><td>floppy</td><td>round</td><td>absent</td><td>no</td></tr><tr><td>10</td><td>floppy</td><td>not round</td><td>absent</td><td>no</td></tr></tbody></table><p>Every feature here takes one of two values, which keeps the arithmetic clean. Lessons 6 and
 7 remove that restriction.</p><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Toggle the features and watch the path light up</span><span class="h">the orange path is the only part of the tree that gets used</span></div><div class="demo-body" data-anim="treeplay"></div></div><h2><span class="ico">🔢</span>The vocabulary</h2><table class="decode"><thead><tr><th>Term</th><th>Say it out loud</th><th>What it is</th></tr></thead><tbody><tr><td>root node</td><td>“the top”</td><td>The first question, asked of every example. Drawn at the top; trees in ML grow downwards.</td></tr><tr><td>decision node</td><td>“an internal question”</td><td>Any node that asks about a feature and branches. Also called a split.</td></tr><tr><td>leaf node</td><td>“the answer”</td><td>A node with no children. It makes the prediction — no more questions asked.</td></tr><tr><td>branch</td><td>“an answer arrow”</td><td>The path taken for one value of the feature.</td></tr><tr><td>depth</td><td>“how many questions deep”</td><td>The number of decisions from root to leaf. The main knob for controlling <span class="gterm" data-g="overfitting-native">overfitting</span>.</td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>There are <b>many</b> possible trees for the same data. The learning algorithm’s job is
 to pick one that is accurate on the training set <em>and</em> small enough to generalise. Small matters:

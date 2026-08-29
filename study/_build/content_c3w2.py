@@ -22,6 +22,29 @@ you can guess it for every empty square — and then recommend each person which
 highest for them.</p>
 <p>That is the whole business. Netflix, Spotify, Amazon, YouTube, every app store.</p>""")
 
+        + lenses(
+            """<p>A second-hand bookshop with one very good owner. You have bought from her eleven times. You walk
+in, and before you have taken your coat off she has a book on the counter for you.</p>
+<p>She has never read your mind. She has a shelf of books, a memory of what <em>you</em> took and what
+you brought back, and a memory of what everyone else took. The whole business of recommendation is
+those two memories, and this week is about writing them down as a table.</p>""",
+            """<p>If you have worked with a sparse matrix, or a survey where most respondents skipped most
+questions, you already know the central difficulty here.</p>
+<p>It is not that the maths is hard. It is that <b>almost every cell is empty</b>. A cinema with
+50,000 films and 10 million users has 500 billion cells and perhaps 0.01% of them filled. Every
+technique in this week is a way of being useful about the 99.99% you cannot see.</p>""",
+            """<p>A grid. Films down the side, people across the top, a rating written in a cell when that person
+rated that film, and a blank when they did not.</p>
+<p>That grid is the entire problem statement. Every algorithm this week does exactly one thing to it:
+<b>fill in a blank</b>. Not “understand taste” — fill in a blank with a number.</p>""",
+            """<p>Roughly a third of what people buy on large retail sites, and the large majority of what gets
+watched on streaming services, comes from a recommender rather than a search.</p>
+<p>That makes the blank-filling worth an enormous amount of money, and it also means these systems
+shape what a culture sees. The lesson on ethics later this week is not an afterthought bolted on: it
+is a direct consequence of the sums being this large.</p>""",
+            """So the notation below — <var>n</var><sub>u</sub>, <var>n</var><sub>m</sub>, <var>r</var>(i,j),
+<var>y</var>(i,j) — is just names for the parts of that grid.""")
+
         + h2("🎬", "Watch it move")
         + demo("ratingsmatrix", "Four users, five movies, and a lot of question marks",
                "the highlighted cell is the one being predicted")
@@ -115,6 +138,29 @@ how much action does it have (0 to 1).</p>
 personal formula is roughly “5 × romance + 0 × action”. Learn that formula for her, and you can score any
 film she has not seen.</p>
 <p>Then do it again for Bob. And again for Carol. One little formula each.</p>""")
+
+        + lenses(
+            """<p>A video shop where every case has two numbers pencilled on the spine by the owner: <b>how much
+romance</b>, and <b>how much action</b>, each out of ten.</p>
+<p>You tell her you liked a 9-romance, 1-action film and hated a 0-romance, 10-action one. She now has
+enough to guess at any other film on the shelf without knowing anything else about you — because the
+films were described first, and your taste is read off the descriptions.</p>""",
+            """<p>This is ordinary <b>linear regression, one model per person</b>.</p>
+<p>If you have fitted a separate regression for each store, each patient or each region, you have done
+exactly this: the same feature columns, a different coefficient vector each time, fitted on that
+unit's own rows. The only novelty is that a “unit” is a user and the rows are their ratings.</p>""",
+            """<p>One person's rating history, written as a little table: the film's two feature numbers on the
+left, the rating they gave on the right. Four or five rows.</p>
+<p>Fitting <var>w</var> for that person means finding the two weights that best turn the left columns
+into the right one. Then you do it again for the next person, from scratch. That stack of tiny
+regressions is the whole algorithm.</p>""",
+            """<p>The catch is what the pencilled numbers cost. Somebody has to decide how much romance is in every
+one of 50,000 films, and keep doing it as the catalogue grows.</p>
+<p>Studios and streaming services really did employ people to tag content this way — Netflix's
+micro-genre tagging is the famous example — and it does not scale to user-generated catalogues at
+all. That expense is precisely what the next lesson removes.</p>""",
+            """So the cost function below is the familiar squared error, with one crucial change: it sums only over
+the films that person actually rated.""")
 
         + h2("🎬", "Watch it move")
         + demo("peritemfeatures", "One user at a time — click through the four",
@@ -341,6 +387,29 @@ Did you click it? Did you watch past 30 seconds? Did you buy it?</p>
 you just swap the prediction formula and the loss, exactly like going from linear regression to logistic
 regression in Course 1.</p>""")
 
+        + lenses(
+            """<p>The shop owner stops asking customers for marks out of five, because almost nobody gave her one.
+Instead she just watches: <b>did they pick it up, and did they take it home?</b></p>
+<p>She loses the fine detail — she can no longer tell a four from a five — and she gains a hundred
+times more evidence, because every customer generates it without being asked. That trade is worth
+making, and it is the trade the whole modern industry has made.</p>""",
+            """<p>You have seen this move before: it is the switch from <b>linear regression to logistic
+regression</b>, and it is the same switch for the same reason.</p>
+<p>Squared error on a 0/1 target is badly behaved; the logistic loss is not. Everything you learned in
+C1 W3 transfers wholesale — sigmoid on the output, binary cross-entropy instead of squared error, and
+the rest of the algorithm untouched.</p>""",
+            """<p>The same grid as before, with the numbers replaced by 1, 0 or blank.</p>
+<p>And the essential distinction, which is easy to skate over: <b>0 is not blank</b>. A 0 means shown
+and not clicked — real negative evidence. A blank means never shown at all. Confusing the two is the
+single most common mistake in applied recommenders.</p>""",
+            """<p>Implicit feedback — clicks, watch time, skips — is what every large recommender actually runs on,
+because explicit ratings are rare, biased towards extremes, and given by the wrong people.</p>
+<p>It also brings a bias that explicit ratings do not: you only observe clicks on things the system
+chose to show, so the model is trained on its own past decisions. Whole subfields exist to correct
+for that feedback loop.</p>""",
+            """So the change below is one line — swap the squared error for the logistic loss — and it is the line
+that made recommenders practical.""")
+
         + h2("🎬", "Watch it move")
         + demo("binarylabels", "Ones, zeros, and question marks",
                "note that 0 and ? mean completely different things")
@@ -405,6 +474,30 @@ thinks are worst.</p>
 <p>Fix: before training, subtract each film’s average rating from its row. Now “zero” means “average”
 instead of “terrible”. Add the average back when predicting, and Eve gets sensible starting
 recommendations — the generally well-liked films.</p>""")
+
+        + lenses(
+            """<p>Two judges at a village show. One gives 7s and 8s to everything he mildly likes; the other gives
+2s to anything short of perfection. Neither is wrong, and comparing their raw numbers is
+meaningless.</p>
+<p>So the show secretary does what secretaries have always done: she subtracts each judge's own
+average before comparing. Now a 2 from the harsh judge and an 8 from the generous one can sit in the
+same column and mean the same thing.</p>""",
+            """<p>This is <b>centring</b>, the same operation you apply before a PCA or when computing a
+correlation, and it does the same job here: it removes a per-unit offset that is not the signal you
+care about.</p>
+<p>The wrinkle specific to recommenders is what it does for a user with <em>no</em> ratings at all.
+Centring quietly turns “I know nothing about you” into “I predict the average”, which is the correct
+and sane default, and you get it for free rather than special-casing it.</p>""",
+            """<p>A row of ratings, and the same row with that row's mean subtracted from every entry.</p>
+<p>Do it once on paper with [5, 5, 0, 0, blank] and you will see the whole point: the mean is 2.5, the
+row becomes [2.5, 2.5, −2.5, −2.5, blank], and a brand-new user with an empty row now predicts 2.5
+instead of 0.</p>""",
+            """<p>Without this, a new user is predicted to hate everything, so the system shows them nothing good,
+so they never rate anything, so they stay new. That is the <b>cold-start</b> problem doing real
+commercial damage in the first thirty seconds of a customer's life.</p>
+<p>Mean normalization is a two-line fix for the most expensive minute in the product.</p>""",
+            """So the step below — subtract the row mean, add it back at prediction time — is worth far more than
+its size suggests.""")
 
         + h2("🎬", "Watch it move")
         + demo("meannorm", "Press the button and watch Eve’s column change meaning",
@@ -506,6 +599,31 @@ L.append(dict(
 filtering isn’t a stack of layers — it’s a strange sum over a sparse set of (user, movie) pairs.</p>
 <p>So you write the loop yourself. The good news: you still don’t have to do any calculus. TensorFlow
 <b>records</b> everything you compute on a “tape”, then plays it backwards to get the derivatives.</p>""")
+
+        + lenses(
+            """<p>A joiner who has always cut mortises by hand buys a machine. The machine does not know what a
+mortise is. It knows how to move a chisel exactly where he tells it, very fast, without tiring.</p>
+<p>His job changes from cutting to <b>describing the cut</b>. Get the description right and the machine
+is unstoppable; get it wrong and it will make the same mistake ten thousand times without
+complaining.</p>""",
+            """<p>Automatic differentiation is the idea, and it is far older and far simpler than deep learning
+makes it sound.</p>
+<p>If you have used a solver in a spreadsheet, or <code>scipy.optimize.minimize</code> with a
+numerically estimated gradient, you have used the same division of labour: you supply the objective,
+the tool supplies the derivative. TensorFlow's <code>GradientTape</code> just does it exactly rather
+than approximately.</p>""",
+            """<p>A tape recorder that is running while you compute the cost.</p>
+<p>Every operation you perform inside the <code>with tf.GradientTape()</code> block is written onto the
+tape in order. When you ask for the gradient, the tape is played <em>backwards</em>, applying the
+chain rule at each step. That is the entire mechanism, and it is why the block has to wrap the
+forward computation.</p>""",
+            """<p>This lesson is where the course quietly stops being about recommenders and starts being about a
+general tool.</p>
+<p>Collaborative filtering is not a <code>Sequential</code> model — you are optimising two parameter
+matrices in a custom cost — so this is the first time you meet the escape hatch that every non-standard
+model in industry is built through. Anything you invent later gets trained exactly this way.</p>""",
+            """So the code below is not recommender code. It is the general pattern: define the cost, tape it,
+apply the gradients.""")
 
         + h2("🎬", "Watch it move")
         + demo("tfcollab", "The tape, recording and replaying",
@@ -618,6 +736,30 @@ mean — but films that got <b>similar</b> numbers turn out to be similar films.
 <p>So to find films like this one: measure the distance between number lists and pick the closest few.
 That is the entire “because you watched…” row.</p>""")
 
+        + lenses(
+            """<p>A record shop with the stock arranged not by genre but by <em>how it sounds</em>. Two albums end
+up next to each other because the same people kept buying both, and nobody at the shop can quite
+articulate why they go together.</p>
+<p>“Customers who liked this also liked…” is that shelf. The similarity was never described in words.
+It was learned from behaviour and then measured with a ruler.</p>""",
+            """<p>This is nearest-neighbour search in a learned vector space, and the distance is the squared
+Euclidean one you already know.</p>
+<p>If you have done any clustering or used cosine similarity on documents, the move is familiar: turn
+each object into a vector, then let geometry stand in for meaning. What is new is that nobody chose
+the axes — the optimiser did, and it will not tell you what they represent.</p>""",
+            """<p>The feature vector <var>x</var><sup>(i)</sup> that collaborative filtering learned for one film,
+sitting as a point in space, with the handful of other points nearest to it circled.</p>
+<p>Those circled points are the recommendation. No user is involved in this computation at all —
+which is exactly why it works on a page for a film you have never seen, for a visitor who is not
+logged in.</p>""",
+            """<p>This is the workhorse of “more like this”, and it is what fills the page when a system knows
+nothing about you.</p>
+<p>It is also where the failure modes show up first: a niche film with four ratings sits next to
+whatever those four people also happened to rate, and the result is confidently absurd. Production
+systems put a minimum-ratings floor on this for exactly that reason.</p>""",
+            """So the distance formula below is doing something modest and useful: measuring how close two learned
+descriptions turned out to be.""")
+
         + h2("🎬", "Watch it move")
         + demo("relateditems", "Pick a film, get its nearest neighbours",
                "the green lines are the two closest in learned-feature space")
@@ -690,6 +832,28 @@ watched before.” It looks at the actual properties of you and of the item.</p>
 <p>Collaborative can find surprising links nobody would have described. Content-based can handle a film
 released this morning that nobody has rated yet. You want both.</p>""")
 
+        + lenses(
+            """<p>Two ways to be recommended a builder. The first: <b>“three people on this street used him and
+were happy.”</b> Nothing about the builder is described — only the pattern of who was pleased.</p>
+<p>The second: <b>“he is a roofer, he is certified, he works in your postcode, and you need a
+roof.”</b> Nobody's experience is involved. The two answers can disagree, and knowing which one you
+are getting matters enormously.</p>""",
+            """<p>This is the same axis as memory-based versus model-based reasoning, or case-based versus
+rule-based systems.</p>
+<p>And it has the same well-known weakness on each side: the behaviour-based one cannot say anything
+about a thing nobody has used yet, and the description-based one cannot discover anything its
+descriptions failed to capture.</p>""",
+            """<p>Two arrows pointing at the same empty cell in the grid.</p>
+<p>One arrow comes along the <em>column</em> — other people's ratings of this film. The other comes
+along the <em>row</em> — this film's attributes matched against your stated preferences. Same blank,
+two entirely different routes to a number.</p>""",
+            """<p>Every real system runs both, because each covers the other's blind spot. A brand-new film has no
+ratings, so content-based carries it until it has some; an obscure film with no useful metadata is
+found only by behaviour.</p>
+<p>The switchover is a genuine engineering decision with revenue attached, and “hybrid recommender”
+is simply the industry's name for having made it.</p>""",
+            """So the comparison below is not a ranking. It is a description of two different blind spots.""")
+
         + h2("🎬", "Watch it move")
         + demo("cfvscbf", "Five deciding factors, side by side",
                "note that both cold-start rows favour content-based")
@@ -759,6 +923,29 @@ compare them directly.</p>
 everything about a film into 32 numbers. Neither machine knows what the other is doing.</p>
 <p>Now both are lists of 32 numbers — so you can compare them. Multiply them together and add up. Big
 number, good match.</p>""")
+
+        + lenses(
+            """<p>The video-shop owner stops pencilling two numbers on the spine and starts writing a paragraph:
+cast, director, decade, mood, pace, budget, where it was shot.</p>
+<p>She cannot compare paragraphs by eye any more. So she hires someone whose only job is to read a
+paragraph and boil it down to <b>thirty-two numbers</b>, doing it the same way every time. The
+paragraphs are rich; the thirty-two numbers are comparable. That reader is the network.</p>""",
+            """<p>This is the <b>two-tower</b> architecture, and it is one of the most widely deployed shapes in
+industry.</p>
+<p>If you know Siamese networks from signature verification or face matching, it is the same idea:
+two separate networks, no shared weights, trained jointly so that their outputs land in one shared
+space where a dot product means something.</p>""",
+            """<p>Two funnels pointing at each other.</p>
+<p>Into the left funnel goes everything you know about the user — age band, watch history, country —
+and out comes a vector of 32 numbers. Into the right goes everything about the film, and out comes
+another 32. The prediction is the dot product of the two outputs. Nothing else.</p>""",
+            """<p>The two towers are why this scales. The film tower can be run <b>overnight</b>, once per film,
+and the results stored — films do not change.</p>
+<p>At request time you run only the small user tower and take dot products against a precomputed
+table. That asymmetry is what lets a system respond in 20 milliseconds over a catalogue of
+millions, and it is the whole reason the architecture is shaped this way.</p>""",
+            """So the two networks below are not one model split in half. They are two encoders that were taught
+to agree on a meeting place.""")
 
         + h2("🎬", "Watch it move")
         + demo("deepcbf", "Two towers meeting at a dot product",
@@ -884,6 +1071,27 @@ about the right age, popular this year”. Maybe a hundred items.</p>
 <p>Then you look at those hundred <b>properly</b> and pick the best few.</p>
 <p>Fast filter, then careful ranking. Every large recommender works this way.</p>""")
 
+        + lenses(
+            """<p>A librarian asked for a book like the one you just finished, in a library of ten million.</p>
+<p>She does not consider ten million books. She walks to two or three <em>shelves</em> that are
+obviously relevant, pulls perhaps a hundred, and only then reads the blurbs properly to pick five.
+Fast and rough, then slow and careful — and never slow and careful on everything.</p>""",
+            """<p><b>Retrieval then ranking</b>, and the shape is everywhere: a database index before a full table
+scan, a cheap bounding-box test before exact collision detection, triage before diagnosis.</p>
+<p>The economics are always the same. A cheap filter you can afford to run on everything, then an
+expensive judgement you can only afford on what survives.</p>""",
+            """<p>A funnel with two stages written on it: <b>10,000,000 → 500 → 10</b>.</p>
+<p>The first arrow is approximate nearest-neighbour lookup, milliseconds, slightly wrong. The second
+is the full model on 500 candidates, and it is allowed to be slow because 500 is a small number. The
+whole system's latency budget lives in the shape of that funnel.</p>""",
+            """<p>Getting the funnel wrong is one of the most common causes of a recommender that is excellent
+offline and disappointing in production.</p>
+<p>If retrieval never surfaces an item, no amount of ranking quality can rescue it — your beautifully
+tuned model simply never sees it. Teams measure <b>retrieval recall</b> separately for this reason,
+and it is usually the first thing to check when a good model underperforms.</p>""",
+            """So the two-stage design below is not an optimisation bolted on afterwards. It is the only reason
+the thing runs at all.""")
+
         + h2("🎬", "Watch it move")
         + demo("retrieval", "The funnel — and the trade-off in how wide you open it",
                "drag the candidate count and watch the quality-versus-cost balance shift")
@@ -994,6 +1202,31 @@ things keep people watching longest. So it shows more of them. People watch long
 right, and shows even more.</p>
 <p>Nobody decided to do this. It is simply what the instruction meant when taken literally.</p>""")
 
+        + lenses(
+            """<p>A newsagent who notices that the shocking paper sells better, so he moves it to the front. It
+sells more, so he orders more. Within a year the quiet local paper is gone from the shop, and no
+individual decision he made was wrong.</p>
+<p>Nobody set out to narrow what the street reads. Every step was a small, defensible response to what
+people actually picked up. That is the whole mechanism, and it does not require anybody's bad
+intentions.</p>""",
+            """<p>This is a <b>feedback loop</b> with a badly chosen objective, and if you have worked with control
+systems, KPIs, or Goodhart's law, you know the failure exactly.</p>
+<p>The system optimises what it can measure. Engagement is measurable; whether the time was well spent
+is not. So the measurable proxy silently becomes the goal, and it drifts away from the thing it was
+standing in for.</p>""",
+            """<p>A circle, not a line: <b>shown → clicked → trained on → shown more</b>.</p>
+<p>The crucial property is that the model's own output becomes its next training input. Every other
+model in this specialization learns from data that was there before it existed. A recommender writes
+the data it will be trained on tomorrow.</p>""",
+            """<p>This is the loop behind engagement-optimised feeds amplifying outrage, behind recommendation
+systems steering viewers towards more extreme content, and behind pricing systems that quietly learn
+which customers will tolerate more.</p>
+<p>The technical fixes — optimising for a longer-horizon outcome, injecting exploration, capping how
+often one item can be shown — are all things you now know how to build, which is the reason this
+lesson sits in a technical course rather than a policy one.</p>""",
+            """So the questions below are engineering questions. What is being maximised, and who benefits when it
+is.""")
+
         + h2("🎬", "Watch it move")
         + demo("ethicsrec", "The same loop, two different objectives",
                "press the buttons to switch what the system is being told to maximise")
@@ -1072,13 +1305,36 @@ L.append(dict(
         """<p>Watch for why <code>Sequential</code> cannot do it, and what replaces it.</p>""")
         + h2("🎈", "The idea, in plain words")
         + kid("""<p>Two separate machines. One reads everything you know about a <b>person</b>
-&mdash; age bracket, what they have watched, how they tend to rate things &mdash; and boils it down
+— age bracket, what they have watched, how they tend to rate things — and boils it down
 to a short list of numbers. The other reads everything you know about a <b>film</b> and boils that
 down to a list of numbers of the same length.</p>
 <p>Then you compare the two lists. If they point the same way, it is a good match.</p>
 <p>The useful part: the film side never changes when a different person arrives, so you can work
 out every film's list once, store it, and only ever compute the person's list live. That is what
 makes it fast enough to run for millions of items.</p>""")
+
+        + lenses(
+            """<p>The joiner's machine again, but now cutting two matching pieces at once. The joint only works if
+the tenon and the mortise are cut to the <em>same</em> reference, so both cutters move together and
+are adjusted together.</p>
+<p>Cut them independently, each perfect against its own reference, and the joint will not close.
+Training the two towers jointly is that: two cuts, one reference.</p>""",
+            """<p>The Keras functional API is what you reach for the moment a model stops being a straight line of
+layers.</p>
+<p>If you have built any DAG-shaped computation — a build graph, a dataflow pipeline — the idea is
+familiar: name the inputs, wire the operations, then declare which nodes are the model's ends.
+<code>Sequential</code> is the special case where the graph is a path.</p>""",
+            """<p>Two <code>Sequential</code> stacks drawn side by side, their outputs joined by a single dot
+product, and one loss hanging off the bottom.</p>
+<p>The gradient flows back from that one loss into <em>both</em> towers. That is the whole reason the
+two encoders learn to agree: they are punished together for disagreeing.</p>""",
+            """<p>Two details in this code carry disproportionate weight in production: <b>L2-normalising</b> each
+tower's output, which turns the dot product into a cosine and stops one tower winning by shouting, and
+the fact that the towers do <em>not</em> share weights, because users and films are not the same kind
+of thing.</p>
+<p>Both are one-line decisions, and both are the sort of thing that silently costs a few percent for
+months if you get them wrong.</p>""",
+            """So the code below is the two-tower diagram, transcribed almost line for line.""")
 
         +h2("🎬", "Watch it move")
         + demo("tfcbf", "Step through the code, watch the towers build",
@@ -1176,6 +1432,30 @@ is one number, plus a little bit left over.</p>
 <p>PCA finds that one number. It draws a new axis in the direction the data actually spreads, and measures
 everything along it.</p>""")
 
+        + lenses(
+            """<p>Photographing a chair for a catalogue. You could take a hundred pictures from a hundred angles,
+and most of them would tell the buyer nothing new.</p>
+<p>One good angle — usually three-quarters from the front — shows the arms, the back and the legs at
+once. You have thrown away two of the three dimensions and lost almost nothing that mattered.
+Choosing that angle is the entire idea of PCA.</p>""",
+            """<p>You may know this as factor analysis, as the SVD, or as the thing that produces a scree plot.</p>
+<p>The framing that transfers best: PCA finds the directions of <b>maximum variance</b>, and it assumes
+variance is what carries the information. That assumption is usually reasonable and occasionally
+catastrophic — a rare but decisive signal has, by definition, low variance.</p>""",
+            """<p>A cloud of points on a page that is long and thin, tilted at 30°, with one arrow drawn along its
+length.</p>
+<p>That arrow is the first principal component. Projecting every point onto it replaces two numbers
+with one, and the cloud's shape is why so little is lost. Draw the cloud, draw the arrow, and the
+maths afterwards is bookkeeping.</p>""",
+            """<p>The honest industrial use of PCA today is mostly <b>visualisation and compression</b>, not
+accuracy. It is how you look at a 300-column dataset before modelling it, and how you shrink a
+feature store.</p>
+<p>Andrew is explicit that using it to prevent overfitting is a mistake people used to make;
+regularisation does that job better, and PCA throws away information without ever consulting the
+labels.</p>""",
+            """So the algorithm below is a way of asking: which single direction, if I could keep only one, would I
+keep?""")
+
         + h2("🎬", "Watch it move")
         + demo("pcaintro", "Two correlated features collapsing onto one axis",
                "the dashed lines show each point dropping onto the new axis")
@@ -1237,6 +1517,29 @@ about who is where.</p>
 <p>From another angle, the shadows are nicely spread out and you can still tell people apart.</p>
 <p>PCA rotates the torch until the shadows are <b>as spread out as possible</b>. Spread means information
 kept.</p>""")
+
+        + lenses(
+            """<p>Turning a wire sculpture in your hand until it shows its widest face, then tracing its shadow on
+the wall.</p>
+<p>Two steps, in order, and they cannot be swapped. First find the best angle. Then flatten. The
+shadow is smaller than the sculpture and still recognisable, precisely because you turned it
+first.</p>""",
+            """<p>Formally: the principal components are the eigenvectors of the covariance matrix, ordered by
+eigenvalue, and in practice everyone computes them with an SVD instead because it is numerically
+better behaved.</p>
+<p>If you met eigenvectors as “the directions a matrix does not rotate”, this is the payoff — the
+covariance matrix's own directions are the axes the data was secretly using all along.</p>""",
+            """<p>An arrow, and a point dropping perpendicularly onto it.</p>
+<p>The projection is one number: how far along the arrow the foot of that perpendicular lands. It is
+a dot product, and if the arrow has unit length it is <em>only</em> a dot product. Everything else in
+the algorithm is choosing which arrow.</p>""",
+            """<p>The mandatory step is the one people skip: <b>scale the features first</b>. PCA maximises
+variance, and variance has units.</p>
+<p>Leave a salary column in pounds next to an age column in years and the first component will be
+“salary”, every time, regardless of structure. Nothing warns you. The output looks perfectly
+reasonable and is worthless.</p>""",
+            """So the three steps below — normalise, find the directions, project — are the sculpture, the turn and
+the shadow.""")
 
         + h2("🎬", "Watch it move")
         + demo("pcaalgo", "Rotate the axis and watch the variance",
@@ -1341,8 +1644,30 @@ L.append(dict(
         + h2("🎈", "The idea, in plain words")
         + kid("""<p>Four lines. One to say how many directions you want to keep, one to look at the
 data and find them, one to squash the data down onto them, and one to ask how much you lost.</p>
-<p>The interesting part of this lesson is not the code &mdash; it is the last section, which argues
+<p>The interesting part of this lesson is not the code — it is the last section, which argues
 that two of the three classic reasons for using PCA no longer hold. Read the code, then read that.</p>""")
+
+        + lenses(
+            """<p>Reading the label on a tin before you eat what is in it. The interesting number here is not the
+output of the transform — it is <b>how much you threw away</b>.</p>
+<p>Two components that keep 95% of the variation are a good trade. Two that keep 34% mean you have
+flattened something that genuinely needed three dimensions, and everything downstream is now working
+from a bad photograph.</p>""",
+            """<p><code>explained_variance_ratio_</code> is a scree plot in an array, and the elbow you look for is
+the same elbow you learned to look for when choosing <var>k</var> in k-means last week.</p>
+<p>Same judgement, same picture, different algorithm — which is worth noticing, because it is one of
+the few genuinely reusable habits in unsupervised learning.</p>""",
+            """<p>An array of numbers that sums to 1: <code>[0.71, 0.24, 0.03, 0.02]</code>.</p>
+<p>Read it as “the first direction carries 71% of the variation”. Add them up as you go and stop when
+the running total is high enough. That cumulative sum is the only number in this lesson worth
+memorising how to read.</p>""",
+            """<p>The failure that costs real money is fitting the transform on the <em>whole</em> dataset before
+splitting into train and test.</p>
+<p>It leaks test-set structure into the training features, the validation score comes out flattering,
+and the model disappoints in production. Fit on train, apply to test — the same discipline as feature
+scaling in C1, and broken just as often.</p>""",
+            """So the three lines below are ordinary. The fourth line, the one that prints the explained variance,
+is the one that tells you whether to trust the other three.""")
 
         +h2("💻", "In code")
         + code("""

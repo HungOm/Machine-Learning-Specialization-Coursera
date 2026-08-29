@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -236,11 +237,22 @@
 <p class="bookrail-cap"><span>C3 · Week 3 · lesson 7 of 16</span><span class="r">168 of 177 · 95% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Change the terminal reward from 40 to 400. <b>Guess what happens to the policy</b> in the states far from it.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for how far the influence reaches, and how γ controls that reach.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>This is the lesson where you get to break things and watch what happens.</p>
 <p>Move the reward at the far end up and down. Turn the patience dial &gamma; towards 0 and towards
-1. Every time you do, the little arrows showing the best move can flip &mdash; sometimes all of them
+1. Every time you do, the little arrows showing the best move can flip — sometimes all of them
 at once, sometimes just the one in the middle.</p>
 <p>Nothing here is new. It is the same six squares as the last three lessons. The point is to feel
 that these numbers are not fixed facts about the world: they are consequences of the reward you
-chose and how impatient you decided to be.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag the rewards and γ</span><span class="h">the arrows above the strip are the optimal policy — watch where they flip</span></div><div class="demo-body" data-anim="qexample"></div></div><h2><span class="ico">🧪</span>Three experiments worth running</h2><div class="grid3"><div class="card"><h3>1 · Raise the right reward</h3><p>Set state 6 to 200. States 4 and 5 both switch to going right. The dividing line moves left.</p></div><div class="card"><h3>2 · Raise γ to 0.9</h3><p>The distant 100 stops being so heavily discounted, so even state 5 becomes willing to make the long journey left.</p></div><div class="card"><h3>3 · Drop γ to 0.2</h3><p>Only what is immediately nearby matters. The agent becomes extremely short-sighted and dives for whichever end is closer.</p></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>The optimal policy is a function of the <b>reward function and γ together</b>, not of
+chose and how impatient you decided to be.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Working the sum on paper for one square, then another, until the pattern is obvious.</p>
+<p>There is no idea in this lesson. There is arithmetic, done slowly, and the payoff is that
+<var>Q</var> stops being a symbol and becomes a number you know how to get.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The habit being trained is the one every numerical field trains: compute the small case by hand
+before trusting the implementation.</p>
+<p>If you have hand-checked a spreadsheet formula on three rows before dragging it down a thousand, this
+is exactly that, and for exactly the same reason.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>The strip of six squares with twelve numbers filled in, worked left to right.</p>
+<p>Do it with γ = 0.5 and confirm that 100, 50, 25, 12.5 appear going right from the terminal state.
+Seeing the halving in your own handwriting is what makes the discount factor concrete.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The number to sit with is how fast the discounting bites. At γ = 0.5, a reward six steps away is
+worth about 1.6% of its face value.</p>
+<p>That is why an agent with a small γ will not walk past a small nearby reward to reach a large distant
+one — and why γ is a modelling decision about how far-sighted you want the agent to be, not a
+<span class="gterm" data-g="convergence-native">convergence</span> trick.</p></div><p class="lens-fold">So the worked table below is the definition, in numbers, on the world you drew in lesson 2.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Drag the rewards and γ</span><span class="h">the arrows above the strip are the optimal policy — watch where they flip</span></div><div class="demo-body" data-anim="qexample"></div></div><h2><span class="ico">🧪</span>Three experiments worth running</h2><div class="grid3"><div class="card"><h3>1 · Raise the right reward</h3><p>Set state 6 to 200. States 4 and 5 both switch to going right. The dividing line moves left.</p></div><div class="card"><h3>2 · Raise γ to 0.9</h3><p>The distant 100 stops being so heavily discounted, so even state 5 becomes willing to make the long journey left.</p></div><div class="card"><h3>3 · Drop γ to 0.2</h3><p>Only what is immediately nearby matters. The agent becomes extremely short-sighted and dives for whichever end is closer.</p></div></div><div class="callout key"><span class="tag">The one thing to remember</span><p>The optimal policy is a function of the <b>reward function and γ together</b>, not of
 either alone. This is why reward design is the hard part of applying RL: you are not specifying the
 behaviour, you are specifying an objective and hoping the behaviour that maximises it is the one you
 wanted.</p></div><h2><span class="ico">🔬</span>Reward shaping, and how it goes wrong</h2><p>Since behaviour follows from the reward function, people try to design rewards that

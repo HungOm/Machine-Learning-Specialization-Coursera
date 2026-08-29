@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,22 @@ straighten the wheel, or buy a whole new bike. Each takes an afternoon.</p>
 <p>A bad mechanic tries them in order until something works — five wasted afternoons.</p>
 <p>A good mechanic <b>spins the wheel first and listens</b>. Ten seconds, and now they know it’s the
 brake rubbing. That ten-second check is called a <b>diagnostic</b>, and this whole week is about the two
-diagnostics that matter in machine learning.</p></div><h2><span class="ico">😖</span>The situation</h2><p>You built a regularised linear regression to predict house prices. It makes unacceptably
+diagnostics that matter in machine learning.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A car that will not start. One mechanic changes the battery, then the plugs, then the starter
+motor, working through parts by price until something happens. Another puts a meter on it, finds no
+spark, and replaces one component.</p>
+<p>Both know engines. Only the second one is <b>diagnosing</b>, and the difference is not knowledge —
+it is having a test that narrows the possibilities before spending money.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Anyone who has debugged a production system knows the discipline: form a hypothesis, find the
+cheapest measurement that distinguishes it from the alternatives, then act.</p>
+<p>Machine learning is unusually bad at encouraging this, because every option — more data, more
+features, more layers, more <span class="gterm" data-g="regularization-native">regularisation</span> — sounds plausible in isolation and takes days to try.
+Hence a whole week on measurement.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A list of six things you could do next, and an arrow pointing at only one of them.</p>
+<p>The list is short and everyone can write it. The arrow is the entire content of this week, and the
+thing that produces the arrow is two numbers: training error and cross-validation error.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is the week that separates people who can run a model from people who can <em>improve</em>
+one, and it is worth more career-wise than any algorithm in the specialization.</p>
+<p>Andrew's own framing is blunt: teams routinely spend six months collecting data that a
+ten-minute diagnostic would have shown was not the bottleneck. The cost of guessing is measured in
+quarters.</p></div><p class="lens-fold">So the list below is not a menu of remedies. It is a list of things that each fix a different
+disease.</p></div><h2><span class="ico">😖</span>The situation</h2><p>You built a regularised linear regression to predict house prices. It makes unacceptably
 large errors on new data. Here is your menu:</p><div class="demo"><div class="demo-head"><span class="t">▶ Six things you could try — which half of the list is yours?</span><span class="h">each option fixes exactly one of the two problems</span></div><div class="demo-body" data-anim="whattotry"></div></div><h2><span class="ico">🔢</span>Why guessing is so expensive</h2><table class="data"><thead><tr><th>Option</th><th>Typical cost</th><th>Fixes</th></tr></thead><tbody><tr><td>Get more <span class="gterm" data-g="trainingexample-native">training examples</span></td><td>weeks–months, sometimes money</td><td><span class="gterm" data-g="bias-variance-native">high variance</span> only</td></tr><tr><td>Try a smaller set of features</td><td>hours–days</td><td>high variance only</td></tr><tr><td>Try getting additional features</td><td>days–weeks</td><td>high bias only</td></tr><tr><td>Try adding polynomial features</td><td>hours</td><td>high bias only</td></tr><tr><td>Try decreasing λ</td><td>minutes</td><td>high bias only</td></tr><tr><td>Try increasing λ</td><td>minutes</td><td>high variance only</td></tr></tbody></table><p>Notice the asymmetry: the most expensive item on the list — collecting more data — is
 useless against high bias. Teams routinely spend a quarter collecting data for a model that was never
 going to benefit from it.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>A diagnostic is a test you run to find out <b>what is actually wrong</b>, so you stop

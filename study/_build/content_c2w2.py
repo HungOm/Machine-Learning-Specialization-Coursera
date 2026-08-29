@@ -21,6 +21,27 @@ L.append(dict(
 <p>You did all three in Course 1 with logistic regression, by hand. TensorFlow just gives each step a name
 and does the boring part for you.</p>""")
 
+        + lenses(
+            """<p>Three lines that hide a fortnight of work. You describe the shape, you say how wrong is wrong, and
+you say go.</p>
+<p>Worth knowing what is behind each line before you get comfortable, because when training misbehaves —
+and it will — the error surfaces in machinery you did not write, and only the shape of it tells you
+which of the three lines was the mistake.</p>""",
+            """<p>The three calls map exactly onto the three things you built by hand in C1: <code>Sequential</code>
+is <var>f</var>, <code>compile</code> is the cost function, <code>fit</code> is gradient descent.</p>
+<p>If you have used any solver API — <code>scipy.optimize</code>, a spreadsheet Solver — this is the same
+contract: describe the objective, hand over the search.</p>""",
+            """<p>Three lines on a page with three labels beside them.</p>
+<p><code>Sequential</code> → the model. <code>compile(loss=...)</code> → how wrong. <code>fit(X, y,
+epochs=100)</code> → go, a hundred times. Every training script you ever write is these three,
+elaborated.</p>""",
+            """<p>The convenience is real and so is the risk: it is entirely possible to train a model for a week
+without ever knowing what loss you optimised.</p>
+<p>The most common concrete instance is the loss/activation mismatch — <code>BinaryCrossentropy</code>
+with a linear output, or the wrong <code>from_logits</code> setting. It trains, it converges, the numbers
+are wrong, and nothing raises.</p>""",
+            """So the three lines below are the three objects from C1, wearing library names.""")
+
         + h2("💻", "The whole of training, in code")
         + code("""
 import tensorflow as tf
@@ -149,6 +170,26 @@ dog costs you a little.</p>
 <p>Training is just: play this game millions of times, and after every guess, nudge your brain slightly in
 whatever direction would have reduced the penalty.</p>""")
 
+        + lenses(
+            """<p>Every recipe in this specialization has the same three steps: say what the machine computes, say how
+wrong an answer is, and turn the dial until it is less wrong.</p>
+<p>Linear regression, logistic regression and a twelve-layer network differ only in the first step.
+Recognising that is what stops each new model feeling like a new subject.</p>""",
+            """<p>The pattern is <b>model, loss, optimiser</b>, and it is the organising structure of every deep
+learning framework in existence.</p>
+<p>Once you see PyTorch, JAX and TensorFlow all as three-slot templates, learning the next framework
+becomes an afternoon of syntax rather than a new field.</p>""",
+            """<p>A table with three rows and three columns: linear regression, logistic regression, neural network
+across the top; model, loss, optimiser down the side.</p>
+<p>The bottom row is identical across all three. The middle row changes once. Only the top row is really
+different, and that is the whole map of the specialization on one page.</p>""",
+            """<p>The practical payoff is that debugging becomes a triage: is the model wrong, the loss wrong, or the
+optimisation failing?</p>
+<p>Those three have different symptoms and different fixes, and asking which of the three has broken is
+faster than any other approach to a model that will not train.</p>""",
+            """So the three steps below are not new. They are the same three you have used since the first week of
+C1.""")
+
         + h2("🔢", "The maths, decoded — the loss")
         + eqp([
             '<var>L</var>(<var>f</var>, <var>y</var>) <span class="op">=</span> ',
@@ -264,6 +305,28 @@ able to learn, because learning needs the curve to have a <b>slope</b>.</p>
 <p>ReLU is blunter and better: <b>if it’s negative, say zero. Otherwise, pass it straight through.</b>
 That’s the whole function. And on the positive side it never flattens.</p>""")
 
+        + lenses(
+            """<p>A tap that only turns between fully off and barely on. Past a certain point, turning the handle
+harder changes nothing you can see.</p>
+<p>That is the sigmoid at either extreme — and if the only way the network learns is by noticing how much
+the output changes when you turn the handle, a handle that does nothing is a handle that teaches
+nothing.</p>""",
+            """<p>This is the <b>vanishing gradient</b> problem, and it is the single reason deep networks did not work
+for twenty years.</p>
+<p>The sigmoid's derivative peaks at 0.25 and approaches zero at both ends. Multiply ten such numbers
+together through ten layers of the chain rule and the gradient reaching the early layers is
+approximately nothing.</p>""",
+            """<p>Two curves drawn on the same axes, with their slopes marked.</p>
+<p>Sigmoid: flat, steep in the middle, flat again. ReLU: exactly zero on the left, exactly slope 1 on the
+right, for ever. That constant slope of 1 on the positive side is the entire advantage.</p>""",
+            """<p>ReLU is the reason deep learning became practical, and it is a strikingly cheap fix —
+<code>max(0, z)</code>, one comparison, no exponential.</p>
+<p>It brings its own failure, the “dying ReLU”: a unit pushed permanently negative has zero gradient
+for ever and never recovers. Leaky ReLU and GELU exist for that, but ReLU remains the sensible
+default.</p>""",
+            """So the activation below is not a detail of style. It is what decides whether gradients survive the
+trip back.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             ('<var>g</var>(<var>z</var>) <span class="op">=</span> max(0, <var>z</var>)', "relu-native", "0 below zero, unchanged above"),
@@ -378,6 +441,24 @@ L.append(dict(
 <li>If the answer is “which one of these ten?” → <b>softmax</b>.</li></ul>
 <p>The middle layers don’t talk to you at all, so they don’t need to be polite: use ReLU and stop
 thinking about it.</p>""")
+
+        + lenses(
+            """<p>Two decisions that feel like one and are not. What the last station does is fixed by what you are
+being asked to produce. What the middle stations do is a free choice, and there is a right default.</p>
+<p>Keeping them separate is the whole lesson, because the reasoning behind each is completely
+different.</p>""",
+            """<p>The <b>output</b> activation is determined by the range of the answer: sigmoid for a probability,
+linear for any real number, ReLU for a non-negative quantity. It is a modelling decision.</p>
+<p>The <b>hidden</b> activation is an optimisation decision, and the answer is ReLU almost always. If you
+have chosen a link function in a GLM, the output half is exactly that choice.</p>""",
+            """<p>A two-row table. <b>Output layer:</b> depends on <var>y</var>. <b>Hidden layers:</b> ReLU.</p>
+<p>That is the entire decision procedure, and the second row genuinely is that simple in practice.</p>""",
+            """<p>The mistake that costs most is using a sigmoid on a regression output: predictions are silently
+capped between 0 and 1, and a house-price model quietly cannot predict anything above one.</p>
+<p>The model trains, the loss decreases, and the ceiling is invisible unless you plot the
+predictions.</p>""",
+            """So the table below separates a modelling question from an optimisation one, and only the first
+requires thought.""")
 
         + h2("🎬", "Watch it move")
         + demo("actchoice", "Pick your problem, get your activation",
@@ -602,6 +683,25 @@ everything, because “70% yes” automatically means “30% no”.</p>
 <p>Now you have <b>ten</b> possible answers — is it a 0, a 1, a 2, … a 9? One number isn’t enough any more.
 You need ten numbers, one per digit, and they have to share a budget of 100%.</p>""")
 
+        + lenses(
+            """<p>Sorting post into one of ten pigeonholes rather than into a yes pile and a no pile.</p>
+<p>Every letter goes in exactly one hole. That “exactly one” is doing real work — it is what makes the ten
+answers a single decision rather than ten independent ones, and it is the difference from the multi-label
+lesson four ahead.</p>""",
+            """<p>The generalisation is from Bernoulli to <b>categorical</b>, and it is the same step as going from a
+coin to a die.</p>
+<p>Anyone who has fitted a multinomial logistic regression has met this exact model. The constraint that
+the probabilities sum to one is not decoration; it is what encodes “exactly one”.</p>""",
+            """<p>Ten output units instead of one, with ten numbers that add to 1.00.</p>
+<p><code>[0.02, 0.71, 0.01, ...]</code>. The largest is the prediction; the rest tell you how confident it
+is. Those are two genuinely useful pieces of information from one output.</p>""",
+            """<p>The confidence is what production systems act on. A digit classifier that outputs 0.71 for its best
+guess is telling you it is unsure, and a well-built system routes that to a human.</p>
+<p>Discarding everything but the <code>argmax</code> throws away the most operationally useful thing the
+model produced.</p>""",
+            """So the change below is one output unit becoming <var>n</var>, plus a constraint that makes them a
+single decision.""")
+
         + h2("🔢", "The maths, decoded")
         + eq("""<var>y</var> <span class="op">∈</span> {1, 2, …, <var>N</var>}
 &nbsp;&nbsp;&nbsp;
@@ -794,6 +894,26 @@ L.append(dict(
         + kid("""<p>Everything before the last layer stays exactly the same. You just widen the final panel
 of judges from one seat to ten, and then make those ten share out 100% between them.</p>""")
 
+        + lenses(
+            """<p>The same production line with a wider final station. Ten outputs instead of one, and one extra rule
+at the end: the ten numbers have to add up to one.</p>
+<p>That last rule is the only structurally new thing, and it is what stops the ten units answering ten
+separate questions.</p>""",
+            """<p>Everything you know transfers: same layers, same ReLU in the hidden layers, same optimiser. Only the
+final activation and the loss change.</p>
+<p>The loss is categorical cross-entropy, which is the same negative-log-likelihood you met in C1 W3 with
+more than two categories. The formula looks new and the derivation is identical.</p>""",
+            """<p>The familiar network diagram with ten circles in the final column and a box drawn round all ten
+labelled <b>softmax</b>.</p>
+<p>The box is important: softmax is a function of <em>all ten</em> logits at once, not ten independent
+activations. That coupling is the difference from every other layer you have drawn.</p>""",
+            """<p>The coupling has a practical consequence: raising one logit lowers every other probability, without
+those units changing at all.</p>
+<p>Which is why softmax outputs cannot be interpreted one at a time, and why the multi-label problem four
+lessons ahead needs a different construction entirely.</p>""",
+            """So the layer below is ten units plus one coupling rule, and the coupling is what makes it a
+classifier over categories.""")
+
         + h2("🔢", "The architecture")
         + eqp([
             '<var>x</var> → 25 ',
@@ -902,6 +1022,25 @@ errors pile up. Sometimes they pile up so badly that the answer is 0 when it sho
 you take a logarithm of 0 and everything explodes.</p>
 <p>The fix isn’t a better calculator. The fix is to <b>rearrange the sum</b> so the dangerous middle step
 never happens.</p>""")
+
+        + lenses(
+            """<p>Two ways to compute the same thing, one of which quietly loses digits.</p>
+<p>Nothing conceptual is at stake. This is about what a computer can actually represent, and it is the
+kind of detail that separates code that works on the exercise from code that works on real data.</p>""",
+            """<p>The issue is floating-point <b>catastrophic cancellation</b>: computing a probability, then taking
+its log, loses precision that computing the log directly would keep.</p>
+<p>If you have worked with log-probabilities in statistics — summing logs instead of multiplying
+probabilities — you have applied the same fix for the same reason.</p>""",
+            """<p><code>from_logits=True</code>, and a linear output layer instead of a softmax one.</p>
+<p>You are handing the raw scores to the loss function and letting it do the softmax and the log together
+in one numerically careful step. Same maths, rearranged so the intermediate never has to exist.</p>""",
+            """<p>The failure mode is silent and specific: <code>exp(1000)</code> overflows to infinity,
+<code>log(0)</code> is negative infinity, and the loss becomes NaN — at which point every weight in the
+network becomes NaN and training is over.</p>
+<p>Anyone who has seen a training run go to NaN a few hundred steps in has probably met this. It is the
+one line of code in the week most worth remembering.</p>""",
+            """So the flag below is not an optimisation. It is what stops the arithmetic falling over on real
+inputs.""")
 
         + h2("🔢", "The maths, decoded")
         + """<p>The naive route computes <var>a</var> first, then the loss:</p>"""
@@ -1034,6 +1173,25 @@ L.append(dict(
 <p>“Is there a car in this photo? Is there a bus? Is there a person?” — the answer could be yes, yes, yes.
 Or no, no, no. They don’t compete. That’s <b>multi-label</b>.</p>
 <p>Multi-class shares one budget of 100%. Multi-label gives every question its own separate 100%.</p>""")
+
+        + lenses(
+            """<p>A photograph, and three separate questions about it. <b>Is there a car? Is there a bus? Is there a
+pedestrian?</b></p>
+<p>All three can be yes. None of them can be answered by looking at the others. That independence is the
+whole distinction from the multiclass lesson, and it is worth being able to state in one sentence.</p>""",
+            """<p>Three <b>independent</b> Bernoulli outputs rather than one categorical output over three
+options.</p>
+<p>So it is three sigmoids, not one softmax, and the loss is the sum of three binary cross-entropies. The
+outputs are free to be [0.9, 0.8, 0.95] — no constraint ties them together.</p>""",
+            """<p>Three output units, each with its own sigmoid, and the numbers <code>[0.9, 0.8, 0.95]</code> written
+under them.</p>
+<p>They do not sum to 1, and they are not supposed to. Compare that directly with the softmax picture from
+lesson 8 and the difference is settled for good.</p>""",
+            """<p>Getting this wrong is a common and expensive architecture mistake: use softmax for a multi-label
+problem and the model is forced to choose one object per image.</p>
+<p>It will never report a car and a pedestrian together, no matter how much data you give it, because the
+architecture forbids it. The bug is in the last layer, not the training.</p>""",
+            """So the choice below is one question: can two answers be true at once?""")
 
         + h2("🎬", "Watch it move")
         + demo("multilabel", "Three questions, three independent answers",
@@ -1282,6 +1440,27 @@ looking at a different window, all using the <b>same</b> set of weights.</p>
 top-left automatically spots edges everywhere else too, because it is literally the same detector, moved
 along.</p>""")
 
+        + lenses(
+            """<p>Reading a page. Your eye does not consider all four hundred words simultaneously — it takes in a few
+at a time, and the same reading skill works anywhere on the page.</p>
+<p>Two ideas there, and both are the convolutional layer: <b>look locally</b>, and <b>reuse the same
+skill everywhere</b>.</p>""",
+            """<p>Formally these are the two structural priors — <b>local receptive fields</b> and <b>weight
+sharing</b> — and they are the reason convolutional networks work on images.</p>
+<p>If you have used a moving average or any sliding-window filter, the mechanism is familiar. A
+convolution is a learned filter slid across the input rather than a designed one.</p>""",
+            """<p>A small square window sliding across a large image, with the same nine weights used at every
+position.</p>
+<p>That reuse is where the parameter saving comes from. A dense layer on a 1000×1000 image needs a
+million weights per unit; a 3×3 convolution needs nine, wherever the feature appears.</p>""",
+            """<p>The prior is what buys the data efficiency, and it is also what limits it: convolution assumes
+locality and translation invariance, which are true of images and false of tabular data.</p>
+<p>Applying a convolution to a spreadsheet where column order is arbitrary encodes a relationship that
+does not exist — which is why the layer type has to match the data's structure rather than its
+size.</p>""",
+            """So the layer below is a different assumption about the input, not a more advanced version of the
+one you know.""")
+
         + h2("🎬", "Watch it move")
         + demo("conv", "A sliding window over an EKG trace",
                "each unit sees only five readings — and every unit shares the same weights")
@@ -1391,6 +1570,26 @@ or down, and by how much?</p>
 <p>That’s a derivative. It is the answer to “what happens if I nudge?” — nothing more mysterious than
 that.</p>""")
 
+        + lenses(
+            """<p>Standing on a hillside in fog with one question: <b>if I step this way, do I go up or down, and how
+steeply?</b></p>
+<p>You cannot see the valley. You can feel the slope under your feet. Every optimisation in this
+specialization is that, and nothing more.</p>""",
+            """<p>A derivative is a <b>rate of change</b> — and the framing that transfers best is the practical one:
+if I nudge this input by a tiny amount, how much does the output move?</p>
+<p>If you have computed a marginal cost, a velocity, or an elasticity, you have used a derivative under
+another name, and the intuition is exactly the one you need here.</p>""",
+            """<p>A curve, a point on it, and a straight line just touching at that point.</p>
+<p>The slope of that line is the derivative. Steep line, big derivative, big step. Flat line, small
+derivative, small step — which is precisely why gradient descent slows down as it approaches a
+minimum, with no extra machinery required.</p>""",
+            """<p>This is the lesson that makes the α ∂<var>J</var>/∂<var>w</var> in the update rule stop being
+notation.</p>
+<p>The whole of training is: measure the slope, step downhill, repeat. Everything since C1 W1 has been
+that sentence with more parameters, and the optional lessons here are where it finally becomes
+concrete.</p>""",
+            """So the derivative below is a slope, and the update rule is a step downhill in proportion to it.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var></span></span>', "partial-f0", "the slope, at w"),
@@ -1492,6 +1691,26 @@ Turn A one notch, D moves three.</p>
 <p>That’s the chain rule, and that’s backpropagation. Every node only needs to know its own little
 multiplier.</p>""")
 
+        + lenses(
+            """<p>Tracing a plumbing fault backwards. Water on the floor. Which joint? Follow the pipe back one
+connection at a time, checking each as you go.</p>
+<p>You do not solve the whole system at once. You attribute the problem one link back, then repeat — and
+that repeated local attribution is exactly what backpropagation is.</p>""",
+            """<p>This is the <b>chain rule</b>, applied mechanically, and the insight is that it is mechanical.</p>
+<p>Anyone who has propagated uncertainty through a calculation, or done sensitivity analysis on a
+spreadsheet model, has done this: each stage passes its sensitivity to the stage before it.</p>""",
+            """<p>A graph of boxes with arrows left to right, and a second set of arrows going right to left
+underneath.</p>
+<p>Forward: compute the value. Backward: compute how much each node affected the final loss. Two passes
+over the same graph, and the backward pass costs about the same as the forward one — which is the
+result that makes training large networks affordable at all.</p>""",
+            """<p>This is what <code>GradientTape</code> and <code>autograd</code> do, and knowing it changes how you
+read errors.</p>
+<p>“No gradients provided for any variable” means the tape did not see your computation — the graph was
+broken. That message is unintelligible without this lesson and obvious with it.</p>""",
+            """So the graph below is what a framework builds for you, and backpropagation is one backwards walk
+across it.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             ('<span class="frac"><span>∂<var>J</var></span><span>∂<var>w</var></span></span>', "partial-f0", "the slope, at w"),
@@ -1569,6 +1788,23 @@ L.append(dict(
 <p>Here’s the amazing part. You might think that to find out how each of a million gears affects the final
 one, you’d have to test each gear separately: a million experiments. You don’t. <b>One</b> careful walk
 backwards through the machine tells you about every gear at once.</p>""")
+
+        + lenses(
+            """<p>Doing the whole job once, slowly, by hand, on something small enough to hold.</p>
+<p>Nothing new is introduced. The value is that after this you know the machinery has no gaps in it — and
+that confidence is not obtainable any other way.</p>""",
+            """<p>Scaling up changes nothing structural, which is the point worth taking away: the same forward pass,
+the same chain rule, more nodes.</p>
+<p>If you have hand-traced an algorithm before trusting an implementation, this is that exercise, and it
+retires the feeling that something is being hidden.</p>""",
+            """<p>A network with a few layers, and every intermediate value written out as an actual number.</p>
+<p>Forward, then backward, with the numbers filled in at each step. Doing this once — genuinely once, on
+paper — permanently changes how you read the framework's error messages.</p>""",
+            """<p>In practice nobody computes gradients by hand, and that is exactly why this lesson is optional and
+worth doing anyway.</p>
+<p>The engineers who debug training failures fastest are the ones who know what the framework is doing,
+because a NaN loss or a dead layer is a statement about this arithmetic.</p>""",
+            """So the worked example below is the whole of training, at a size you can check.""")
 
         + h2("🎬", "Watch it move")
         + demo("bignet", "Forward, then backward, through a whole network",

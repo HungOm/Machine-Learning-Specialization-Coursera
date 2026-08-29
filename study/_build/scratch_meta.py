@@ -426,10 +426,26 @@ dict(file="11_retrieval.py", slug="11-retrieval",
      builds="chunking with overlap, a tf-idf index, cosine search, LSA embeddings, "
             "a hybrid ranker measured on three query sets, a prompt assembler with a "
             "token budget, and a threshold for saying nothing",
-     lessons=[("c4/w1-04-embeddings.html", "Embeddings"),
-              ("c4/w2-02-query-key-value.html", "Query, key and value"),
-              ("c4/w4-05-context-and-cost.html", "Context and cost"),
-              ("f0/w1-10-dot-product.html", "The dot product")],
+     primer="""
+<p>This file leans on three ideas the three courses do not cover, so here they are, self-contained.</p>
+<p><b>An embedding is a learned lookup table.</b> Give every word in your vocabulary a row of, say, 300
+numbers. Nothing about those numbers is meaningful at first — they are random. They become meaningful
+because they are adjusted, by ordinary gradient descent, until words used in similar contexts end up
+with similar rows. That is the whole of it: a matrix with one row per word, trained like any other
+parameters you met in C1.</p>
+<p><b>The dot product is the similarity.</b> Two rows pointing the same way have a large dot product;
+two pointing in unrelated directions have one near zero. Divide by both lengths and you have the
+cosine, which is the same measurement with the magnitudes taken out — so a long document and a short
+one can be compared on what they are about rather than on how much of it there is. This is the
+F0 dot product doing exactly what it always did, on rows that happen to have been learned.</p>
+<p><b>Context costs money and attention.</b> Whatever you retrieve has to be pasted into a fixed-size
+prompt, and that budget is finite — a few thousand words in a small model. So retrieval is not
+"find everything relevant". It is "rank, then fit as much as the budget allows, best first", and
+knowing when to return <em>nothing</em> matters as much as ranking well.</p>""",
+     lessons=[("f0/w1-10-dot-product.html", "The dot product"),
+              ("c2/w1-06-forward-propagation.html", "Forward propagation"),
+              ("c3/w2-07-finding-related-items.html", "Finding related items"),
+              ("c3/w2-13-reducing-features-pca.html", "Reducing features with PCA")],
      prose={
 "corpus": "<p>Fourteen sentences, and two of them are the experiment: some notes say "
           "<i>cost</i> and some say <i>loss</i> for the same idea. Every retrieval "
@@ -487,10 +503,26 @@ dict(file="12_fine_tuning.py", slug="12-fine-tuning",
      builds="a pretrained network, a from-scratch baseline, head-only training, full "
             "fine-tuning, LoRA with its own gradients derived by hand, a rank sweep, "
             "and two sweeps that show what actually decides whether transfer works",
+     primer="""
+<p>One piece of arithmetic makes this whole file make sense: <b>how many numbers are actually in a
+model</b>.</p>
+<p>A layer that maps <var>d</var> inputs to <var>d</var> outputs holds <var>d</var>² weights. At
+<var>d</var> = 768 that is 590,000 numbers — for one layer. Stack a few dozen of those and you are
+into the hundreds of millions. Full fine-tuning means computing a gradient for every one of them and
+storing an optimiser state alongside, which is where the memory actually goes: roughly four times the
+parameter count, before you have loaded a single training example.</p>
+<p><b>LoRA's arithmetic is the point of it.</b> Instead of updating the <var>d</var>×<var>d</var>
+matrix, you freeze it and learn two thin matrices beside it — <var>d</var>×<var>r</var> and
+<var>r</var>×<var>d</var>, with <var>r</var> perhaps 8. That is 2<var>dr</var> numbers instead of
+<var>d</var>², which at <var>d</var> = 768 and <var>r</var> = 8 is 12,288 instead of 590,000: about
+2% of the parameters, and the frozen matrix is never touched.</p>
+<p>Everything else here you already have. Freezing early layers is transfer learning from C2 W3, the
+optimiser is Adam from C2 W2, and the reason a small learning rate matters when unfreezing is the
+same reason it always did.</p>""",
      lessons=[("c2/w3-13-transfer-learning.html", "Transfer learning"),
-              ("c4/w3-08-counting-a-real-model.html", "Counting a real model"),
               ("c2/w2-11-advanced-optimization.html", "Advanced optimization"),
-              ("c1/w3-10-cost-function-with-regularization.html", "Regularization")],
+              ("c1/w3-10-cost-function-with-regularization.html", "Regularization"),
+              ("c2/w3-09-bias-variance-neural-networks.html", "Bias and variance in networks")],
      prose={
 "tasks": "<p>20000 examples of the task you do not care about, 60 of the task you do. "
          "That ratio is the entire situation and it is why any of this exists.</p>",
@@ -538,10 +570,25 @@ dict(file="13_agent_loop.py", slug="13-agent-loop",
      builds="a safe arithmetic tool, argument validation, a tool runner that never "
             "raises, an action parser, the think-act-observe loop, a repeat guard, "
             "token accounting, and an evaluation suite with deliberate failures in it",
-     lessons=[("c4/w4-02-generation.html", "Generation"),
-              ("c4/w4-06-what-it-cannot-do.html", "What it cannot do"),
-              ("c4/w4-04-rlhf.html", "RLHF"),
-              ("c3/w3-04-policies.html", "Policies")],
+     primer="""
+<p>The model is a stub in this file, deliberately — so it is worth being precise about what the real
+thing does, because every guard rail here exists because of one of these three facts.</p>
+<p><b>It predicts one token at a time.</b> The model outputs a probability for every token in its
+vocabulary, one is picked, it is appended to the input, and the whole thing runs again. Text comes out
+left to right, and the model has no plan for the sentence it is part-way through. A temperature dial
+controls how sharply the probabilities are peaked before sampling — low is repetitive, high is
+erratic.</p>
+<p><b>It has no separate store of facts.</b> There is no lookup table of true statements to consult, so
+a plausible-sounding wrong answer is produced by exactly the same machinery as a right one, with the
+same confidence. This is why the parser here is strict and why the tool runner never trusts the
+model's arithmetic.</p>
+<p><b>It was trained to be agreeable, not correct.</b> After pre-training, models are tuned on human
+preference comparisons — people pick the better of two answers, and the model is optimised for what
+gets picked. Helpful and confident is what wins those comparisons, which is precisely why an agent
+loop needs a repeat guard, a step budget, and an evaluation suite with deliberate failures in it.</p>""",
+     lessons=[("c3/w3-04-policies.html", "Policies"),
+              ("c2/w3-11-error-analysis.html", "Error analysis"),
+              ("c2/w3-17-precision-recall-tradeoff.html", "Precision and recall")],
      prose={
 "tools": "<p>A tool is a name, a declared argument shape, and a function. The declared "
          "shape is not paperwork \u2014 it is the only thing between a wrong guess and a "

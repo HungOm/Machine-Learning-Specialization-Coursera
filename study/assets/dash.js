@@ -150,6 +150,14 @@
     Object.keys(Q).forEach(function (qid) {
       if (Q[qid].r !== 0) return;
       var slug;
+      if (qid.indexOf('M:') === 0) {
+        var mfile = (META.mockLesson || {})[qid.slice(2)];
+        slug = mfile && slugOfFile[mfile];
+        if (!slug) return;
+        byLesson[slug] = byLesson[slug] || { miss: 0, lapse: 0, prob: 0, mock: 0 };
+        byLesson[slug].mock = (byLesson[slug].mock || 0) + 1;
+        return;
+      }
       if (qid.indexOf('P:') === 0) {
         var file = (META.problemLesson || {})[qid.slice(2)];
         slug = file && slugOfFile[file];
@@ -181,8 +189,9 @@
     META.lessons.forEach(function (L) { meta[L.s] = L; });
     var out = Object.keys(byLesson).map(function (s) {
       var v = byLesson[s];
-      return { s: s, L: meta[s], score: v.miss * 3 + v.lapse + (v.prob || 0) * 6,
-               miss: v.miss, lapse: v.lapse, prob: v.prob || 0 };
+      return { s: s, L: meta[s],
+               score: v.miss * 3 + v.lapse + (v.prob || 0) * 6 + (v.mock || 0) * 5,
+               miss: v.miss, lapse: v.lapse, prob: v.prob || 0, mock: v.mock || 0 };
     }).filter(function (x) { return x.L; });
     out.sort(function (a, b) { return b.score - a.score; });
 
@@ -193,6 +202,7 @@
     }
     el('dash-weak').innerHTML = '<ol class="weaklist">' + out.slice(0, 15).map(function (x) {
       var why = [];
+      if (x.mock) why.push(x.mock + ' mock-quiz miss' + (x.mock === 1 ? '' : 'es'));
       if (x.prob) why.push(x.prob + ' problem' + (x.prob === 1 ? '' : 's') + ' needed the solution');
       if (x.miss) why.push(x.miss + ' self-check miss' + (x.miss === 1 ? '' : 'es'));
       if (x.lapse) why.push(x.lapse + ' card lapse' + (x.lapse === 1 ? '' : 's'));

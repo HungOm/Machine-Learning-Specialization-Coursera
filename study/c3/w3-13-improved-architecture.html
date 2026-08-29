@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,20 @@
 doing, and it gives you one number. But then, to choose between four actions, you have to ask it four
 separate times.</p>
 <p>Better design: tell it only where you are, and let it give you <b>four numbers at once</b> — one per
-action. Ask once, get everything.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ One output versus four</span><span class="h">count the forward passes at the bottom of each side</span></div><div class="demo-body" data-anim="dqnarch"></div></div><h2><span class="ico">🔢</span>The comparison</h2><table class="data"><thead><tr><th></th><th>Naive</th><th>Improved</th></tr></thead><tbody><tr><td>Input</td><td>8 state + 4 <span class="gterm" data-g="onehot-native">one-hot</span> action = 12</td><td><b>8 state only</b></td></tr><tr><td>Output</td><td>1 number: Q(s, a)</td><td><b>4 numbers: Q(s, a) for every a</b></td></tr><tr><td>Passes per decision</td><td>4</td><td><b>1</b></td></tr><tr><td>Computing max Q(s′, a′)</td><td>4 more passes</td><td><b>a max over 4 numbers you already have</b></td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The saving compounds. Every training step needs max<sub>a′</sub> Q(s′, a′) for the
+action. Ask once, get everything.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A shop assistant asked “how good is this coat?” — and you have to ask separately about every coat
+in the shop.</p>
+<p>Better to ask once: “rank all four.” Same information, one conversation instead of four, and you were
+always going to want all four answers anyway.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is a straightforward move from one output to <var>n</var> outputs, the same shape as going
+from binary to multiclass in C2 W2.</p>
+<p>What makes it more than a tidy-up is the <code>argmax</code>: you need <em>every</em> action's value
+at every step in order to pick the best one, so computing them one at a time was always four forward
+passes to get one decision.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>The network with four output units instead of one, and no action fed in at the input.</p>
+<p>State goes in; four <var>Q</var> values come out. Take the largest. That is a fourfold reduction in
+inference cost per decision, from a change to the last layer only.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is the architecture DQN used on Atari, and the efficiency is not cosmetic — training involves
+millions of decisions, each needing a max over actions.</p>
+<p>The constraint it imposes is worth noting: it requires a fixed, finite, discrete action set. Continuous
+control needs a different family of methods entirely.</p></div><p class="lens-fold">So the change below is one number in the output layer, and it pays for itself on every single
+step.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ One output versus four</span><span class="h">count the forward passes at the bottom of each side</span></div><div class="demo-body" data-anim="dqnarch"></div></div><h2><span class="ico">🔢</span>The comparison</h2><table class="data"><thead><tr><th></th><th>Naive</th><th>Improved</th></tr></thead><tbody><tr><td>Input</td><td>8 state + 4 <span class="gterm" data-g="onehot-native">one-hot</span> action = 12</td><td><b>8 state only</b></td></tr><tr><td>Output</td><td>1 number: Q(s, a)</td><td><b>4 numbers: Q(s, a) for every a</b></td></tr><tr><td>Passes per decision</td><td>4</td><td><b>1</b></td></tr><tr><td>Computing max Q(s′, a′)</td><td>4 more passes</td><td><b>a max over 4 numbers you already have</b></td></tr></tbody></table><div class="callout key"><span class="tag">The one thing to remember</span><p>The saving compounds. Every training step needs max<sub>a′</sub> Q(s′, a′) for the
 target, and every action choice needs all four Q values. The improved architecture does both in one pass
 instead of four — and this happens millions of times during training.</p></div><h2><span class="ico">💻</span>In Keras</h2><pre><code><span class="tok-k">from</span> tensorflow.keras <span class="tok-k">import</span> <span class="gterm" data-g="sequential-api">Sequential</span>
 <span class="tok-k">from</span> tensorflow.keras.layers <span class="tok-k">import</span> <span class="gterm" data-g="dense-api">Dense</span>

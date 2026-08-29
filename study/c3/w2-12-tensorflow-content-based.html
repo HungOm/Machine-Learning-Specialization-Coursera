@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -235,13 +236,29 @@
 <div class="bookrail" title="Lesson 158 of 177 in the book"><i style="width:89%"></i></div>
 <p class="bookrail-cap"><span>C3 · Week 2 · lesson 12 of 15</span><span class="r">158 of 177 · 89% of the book</span></p>
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Two towers, one <span class="gterm" data-g="dot-product-f0">dot product</span>. <b>Guess how you would express that in Keras</b> when it is not a simple stack of layers.</p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for why <code><span class="gterm" data-g="sequential-api">Sequential</span></code> cannot do it, and what replaces it.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Two separate machines. One reads everything you know about a <b>person</b>
-&mdash; age bracket, what they have watched, how they tend to rate things &mdash; and boils it down
+— age bracket, what they have watched, how they tend to rate things — and boils it down
 to a short list of numbers. The other reads everything you know about a <b>film</b> and boils that
 down to a list of numbers of the same length.</p>
 <p>Then you compare the two lists. If they point the same way, it is a good match.</p>
 <p>The useful part: the film side never changes when a different person arrives, so you can work
 out every film's list once, store it, and only ever compute the person's list live. That is what
-makes it fast enough to run for millions of items.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Step through the code, watch the towers build</span><span class="h">the dot at the end is the only place the two sides meet</span></div><div class="demo-body" data-anim="tfcbf"></div></div><h2><span class="ico">💻</span>The model</h2><pre><code>num_outputs = <span class="tok-n">32</span>
+makes it fast enough to run for millions of items.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>The joiner's machine again, but now cutting two matching pieces at once. The joint only works if
+the tenon and the mortise are cut to the <em>same</em> reference, so both cutters move together and
+are adjusted together.</p>
+<p>Cut them independently, each perfect against its own reference, and the joint will not close.
+Training the two towers jointly is that: two cuts, one reference.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The Keras functional API is what you reach for the moment a model stops being a straight line of
+layers.</p>
+<p>If you have built any DAG-shaped computation — a build graph, a dataflow pipeline — the idea is
+familiar: name the inputs, wire the operations, then declare which nodes are the model's ends.
+<code><span class="gterm" data-g="sequential-api">Sequential</span></code> is the special case where the graph is a path.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two <code><span class="gterm" data-g="sequential-api">Sequential</span></code> stacks drawn side by side, their outputs joined by a single dot
+product, and one loss hanging off the bottom.</p>
+<p>The gradient flows back from that one loss into <em>both</em> towers. That is the whole reason the
+two encoders learn to agree: they are punished together for disagreeing.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Two details in this code carry disproportionate weight in production: <b>L2-normalising</b> each
+tower's output, which turns the dot product into a cosine and stops one tower winning by shouting, and
+the fact that the towers do <em>not</em> share weights, because users and films are not the same kind
+of thing.</p>
+<p>Both are one-line decisions, and both are the sort of thing that silently costs a few percent for
+months if you get them wrong.</p></div><p class="lens-fold">So the code below is the two-tower diagram, transcribed almost line for line.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Step through the code, watch the towers build</span><span class="h">the dot at the end is the only place the two sides meet</span></div><div class="demo-body" data-anim="tfcbf"></div></div><h2><span class="ico">💻</span>The model</h2><pre><code>num_outputs = <span class="tok-n">32</span>
 
 user_NN = <span class="gterm" data-g="sequential-api">tf.keras.models.Sequential</span>([
     <span class="gterm" data-g="dense-api">tf.keras.layers.Dense</span>(<span class="tok-n">256</span>, <span class="gterm" data-g="kwactivation-api">activation=</span><span class="tok-s">&#x27;relu&#x27;</span>),

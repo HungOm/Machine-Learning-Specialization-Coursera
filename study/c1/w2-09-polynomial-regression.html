@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,19 @@
 <p>Except you do not bend the line — you cannot, the model only adds things up. Instead you hand it
 <b>x squared</b> as an extra feature. Now “add up weighted features” includes an x² term, and the result
 is a curve.</p>
-<p>Same algorithm. Different ingredients.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Four models on the same curved data</span><span class="h">click through: straight line, <span class="gterm" data-g="cubic">quadratic</span>, cubic, square root</span></div><div class="demo-body" data-anim="polyreg"></div></div><h2><span class="ico">🔢</span>The options</h2><table class="data"><thead><tr><th>Model</th><th>Features you supply</th><th>Shape it can make</th></tr></thead><tbody><tr><td>f = w₁x + b</td><td>x</td><td>a straight line</td></tr><tr><td>f = w₁x + w₂x² + b</td><td>x, x²</td><td>a parabola — which eventually turns back down</td></tr><tr><td>f = w₁x + w₂x² + w₃x³ + b</td><td>x, x², x³</td><td>an S-curve that keeps rising</td></tr><tr><td>f = w₁√x + b</td><td>√x</td><td>rises fast, then flattens</td></tr></tbody></table><p>For house prices, the parabola is a poor choice despite fitting well in the middle: it
+<p>Same algorithm. Different ingredients.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Bending a flexible ruler to follow a curved line instead of laying a straight one against it.</p>
+<p>The ruler is still a ruler and you are still fitting it, but it can now follow a shape a straight edge
+never could. Bend it too eagerly and it follows every wobble, including the ones that were mistakes in
+the drawing.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The point that surprises people: adding <var>x</var>², <var>x</var>³ as columns keeps the model
+<b>linear in the parameters</b>, which is what “linear regression” actually means.</p>
+<p>Everything you know still applies — same cost, same gradient descent, same guarantees. The curve is in
+the features, not in the model.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A spreadsheet with three columns computed from one: <var>x</var>, <var>x</var>², <var>x</var>³.</p>
+<p>Feed those to the same linear regression and you get a cubic fit. Nothing about the algorithm knows or
+cares that the columns are related.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>Feature scaling becomes urgent rather than helpful here, and it is worth seeing the numbers: if
+<var>x</var> runs to 1,000 then <var>x</var>³ runs to 1,000,000,000.</p>
+<p>Those columns are nine orders of magnitude apart, the contours become extraordinarily elongated, and
+gradient descent will not <span class="gterm" data-g="convergence-native">converge</span> in any reasonable time without scaling.</p></div><p class="lens-fold">So the powers below are new columns, and the model fitting them is exactly the one you already
+have.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Four models on the same curved data</span><span class="h">click through: straight line, <span class="gterm" data-g="cubic">quadratic</span>, cubic, square root</span></div><div class="demo-body" data-anim="polyreg"></div></div><h2><span class="ico">🔢</span>The options</h2><table class="data"><thead><tr><th>Model</th><th>Features you supply</th><th>Shape it can make</th></tr></thead><tbody><tr><td>f = w₁x + b</td><td>x</td><td>a straight line</td></tr><tr><td>f = w₁x + w₂x² + b</td><td>x, x²</td><td>a parabola — which eventually turns back down</td></tr><tr><td>f = w₁x + w₂x² + w₃x³ + b</td><td>x, x², x³</td><td>an S-curve that keeps rising</td></tr><tr><td>f = w₁√x + b</td><td>√x</td><td>rises fast, then flattens</td></tr></tbody></table><p>For house prices, the parabola is a poor choice despite fitting well in the middle: it
 predicts that beyond some size, bigger houses get <em>cheaper</em>. The square root is often the most
 natural shape here — prices rise with size but with diminishing returns.</p><div class="callout key"><span class="tag">The one thing to remember</span><p>It is <b>still linear regression</b>. “Linear” refers to being linear in the
 <em>parameters</em> w, not in x. You have not changed the algorithm at all — only what you feed it.</p></div><h2><span class="ico">⚠️</span>Scaling becomes essential</h2><div class="callout warn"><span class="tag">Watch out</span><p>If x ranges from 1 to 1000, then x² ranges to 1,000,000 and x³ to 1,000,000,000. Those
@@ -261,7 +274,7 @@ ranges. For a size feature running to about 3,000:</p><table class="data"><thead
 lesson, the largest usable α is set by the steepest direction — so <var>x</var>³ would force α down
 to something around 10⁻²⁰, at which point <var>x</var> would never move at all.</p>
 <p>So: with polynomial features, <b>scaling is not an optimisation, it is a precondition</b>. Without
-it gradient descent does not <span class="gterm" data-g="convergence-native">converge</span> slowly, it does not converge.</p>
+it gradient descent does not converge slowly, it does not converge.</p>
 <p>Which degree to pick is a question this course cannot yet answer honestly — the fit always
 improves on the training data as the degree rises. Course 2 Week 3 answers it with a
 cross-validation set.</p><div class="explain"><span class="tag">Say it out loud</span><p>Adding <var>x</var>² and <var>x</var>³ lets the model draw curves, yet it is

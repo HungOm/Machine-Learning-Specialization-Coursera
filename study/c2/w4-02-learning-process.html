@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,25 @@
 left, everything else on the right” — and the box splits into two smaller, tidier boxes. Then you do the
 same thing to each smaller box.</p>
 <p>Two questions come up every time. <b>Which rule do I use?</b> (the one that tidies the most) and
-<b>when do I stop?</b> (when a box is already all one colour, or when it’s too small to bother with).</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The two decisions, and the four ways to stop</span><span class="h">decision 1 is lessons 3–4; decision 2 is where <span class="gterm" data-g="overfitting-native">overfitting</span> is controlled</span></div><div class="demo-body" data-anim="treeprocess"></div></div><h2><span class="ico">🔢</span>Decision 1 — which feature?</h2><p>Try every feature. For each one, ask: how <b>pure</b> are the two groups it creates? Keep
+<b>when do I stop?</b> (when a box is already all one colour, or when it’s too small to bother with).</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A sorting office in the week before Christmas. Someone tips a sack onto a table and splits it by
+the single biggest thing that separates: <b>overseas or domestic</b>. Two smaller piles.</p>
+<p>Someone else takes each pile and splits <em>that</em> by the next most useful thing — region.
+Then postcode. Then street. Nobody planned the sequence in advance, and nobody is holding the whole
+sorting scheme in their head. At each table you look at the pile in front of you and pick the one
+split that tidies it most.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is a <b>greedy</b> algorithm in the exact technical sense, and if you have met stepwise
+regression, nearest-neighbour route building, or Huffman coding, you know the shape: take the locally
+best move, commit to it, never reconsider.</p>
+<p>You also know the price. Greedy is cheap and usually good, and it is <em>provably not optimal</em>
+— finding the smallest tree that fits the data exactly is NP-hard, which is why nobody does it.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>One pile of ten animals becoming two piles of five, then four piles of two or three. Draw it as
+actual piles on a table, not as a diagram.</p>
+<p>At every pile the algorithm asks one question and one only: <b>which single feature, split right
+now, leaves the two children tidiest?</b> Then it walks away and lets someone else worry about the
+children.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The greediness is why adding a single row to your training data can change the top split, and
+changing the top split rewrites <em>every</em> tree beneath it.</p>
+<p>Teams running trees in production watch for exactly this: a model that reshuffles dramatically
+between retrains on almost identical data. It looks like a bug and it is not one — it is the
+algorithm being what it is, and it is a large part of why single trees gave way to forests.</p></div><p class="lens-fold">So the formal statement — pick the split with the highest information gain, recurse, stop on a
+criterion — is that sorting office written in three lines.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The two decisions, and the four ways to stop</span><span class="h">decision 1 is lessons 3–4; decision 2 is where <span class="gterm" data-g="overfitting-native">overfitting</span> is controlled</span></div><div class="demo-body" data-anim="treeprocess"></div></div><h2><span class="ico">🔢</span>Decision 1 — which feature?</h2><p>Try every feature. For each one, ask: how <b>pure</b> are the two groups it creates? Keep
 the feature that produces the purest split. “Pure” means “as close as possible to all-one-class”, and
 Lesson 3 makes it a number.</p>
 <p>This is a <b>greedy</b> algorithm: it takes the best split available <em>right now</em>, without

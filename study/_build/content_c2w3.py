@@ -23,6 +23,28 @@ straighten the wheel, or buy a whole new bike. Each takes an afternoon.</p>
 brake rubbing. That ten-second check is called a <b>diagnostic</b>, and this whole week is about the two
 diagnostics that matter in machine learning.</p>""")
 
+        + lenses(
+            """<p>A car that will not start. One mechanic changes the battery, then the plugs, then the starter
+motor, working through parts by price until something happens. Another puts a meter on it, finds no
+spark, and replaces one component.</p>
+<p>Both know engines. Only the second one is <b>diagnosing</b>, and the difference is not knowledge —
+it is having a test that narrows the possibilities before spending money.</p>""",
+            """<p>Anyone who has debugged a production system knows the discipline: form a hypothesis, find the
+cheapest measurement that distinguishes it from the alternatives, then act.</p>
+<p>Machine learning is unusually bad at encouraging this, because every option — more data, more
+features, more layers, more regularisation — sounds plausible in isolation and takes days to try.
+Hence a whole week on measurement.</p>""",
+            """<p>A list of six things you could do next, and an arrow pointing at only one of them.</p>
+<p>The list is short and everyone can write it. The arrow is the entire content of this week, and the
+thing that produces the arrow is two numbers: training error and cross-validation error.</p>""",
+            """<p>This is the week that separates people who can run a model from people who can <em>improve</em>
+one, and it is worth more career-wise than any algorithm in the specialization.</p>
+<p>Andrew's own framing is blunt: teams routinely spend six months collecting data that a
+ten-minute diagnostic would have shown was not the bottleneck. The cost of guessing is measured in
+quarters.</p>""",
+            """So the list below is not a menu of remedies. It is a list of things that each fix a different
+disease.""")
+
         + h2("😖", "The situation")
         + """<p>You built a regularised linear regression to predict house prices. It makes unacceptably
 large errors on new data. Here is your menu:</p>"""
@@ -96,6 +118,27 @@ mark yourself using last year’s paper. Amazing — 100%!</p>
 <p>So: hide some questions from yourself before you start studying. Study on the rest. Then mark yourself
 on the hidden ones. That’s the train/test split, and it is the most important habit in all of applied
 machine learning.</p>""")
+
+        + lenses(
+            """<p>A student who revises by reading the answers, then marks himself on the same questions. He scores
+100% and learns nothing about whether he can sit the exam.</p>
+<p>The fix is not a better student or harder questions. It is <b>questions he has not already seen</b>.
+That is the whole idea, and it is obvious right up until you are the one holding the data.</p>""",
+            """<p>This is out-of-sample validation, and it is the same principle as a holdout in clinical trials or
+a control group in any experiment.</p>
+<p>The framing that transfers best: training error measures <em>fit</em>, and test error estimates
+<b>generalisation</b>. They are different quantities, they can move in opposite directions, and only
+one of them is what you were paid for.</p>""",
+            """<p>One dataset, cut into two blocks with a line drawn through it. 70% on the left, 30% on the right,
+and the right-hand block covered by a hand until the very end.</p>
+<p>The covering hand is the method. Everything else is arithmetic.</p>""",
+            """<p>The subtlety that matters in production is <b>how</b> you cut. Split time-series data randomly and
+you train on the future to predict the past — the model looks superb and is worthless.</p>
+<p>The same trap catches grouped data: split a medical dataset by scan rather than by patient and the
+same patient appears on both sides. Both are silent, both flatter the score, and both are found only
+by thinking about what the rows mean.</p>""",
+            """So the split below is the first honest number you get about a model, and every number before it was
+about fit.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -468,6 +511,28 @@ Underfitting.</li></ul>
 noise. You find it by trying a ladder of values and keeping the one with the best cross-validation
 score.</p>""")
 
+        + lenses(
+            """<p>A tap. Closed, nothing comes out and the model is rigid. Wide open, everything comes out and it
+floods.</p>
+<p>You are not choosing between two settings; you are turning one handle and watching two things move
+in opposite directions. The right position is not a principle — it is found by looking.</p>""",
+            """<p>This is the bias–variance trade-off with an explicit dial on it, and if you know ridge regression
+you know this exact curve.</p>
+<p>The useful mental link: λ controls the <em>effective</em> number of parameters. A large λ makes a
+big model behave like a small one, which is why regularisation and model size are two routes to the
+same place.</p>""",
+            """<p>Two curves on one pair of axes, with λ along the bottom.</p>
+<p>Training error rises steadily left to right. Cross-validation error falls, bottoms out, then rises.
+<b>That minimum is the answer</b>, and the picture is worth memorising because the identical shape
+reappears for polynomial degree, tree depth and network size.</p>""",
+            """<p>The procedural point people get wrong: λ is chosen on the <b>cross-validation</b> set, and the
+test set is touched once, afterwards.</p>
+<p>Try twenty values of λ and report the best test score and you have quietly fitted the test set with
+twenty attempts. The number you report is then optimistic, and you will not find out until
+deployment.</p>""",
+            """So λ is not a magic number to look up. It is a dial, and the U-shaped curve below is how you find
+where to leave it.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             ("<var>J</var>(<var>w</var>,<var>b</var>)", "cost-j", "the cost"),
@@ -584,6 +649,26 @@ perfect score.</p>
 <p>Same with models. 10.8% error sounds awful — until you learn that humans listening to the same crackly
 audio get 10.6% wrong.</p>""")
 
+        + lenses(
+            """<p>A runner who does the mile in six minutes. Good or bad? Meaningless until you know whether she is
+eleven or an Olympian.</p>
+<p>An error rate on its own is exactly that number. 10% is superb for some tasks and disqualifying for
+others, and nothing in the number itself tells you which.</p>""",
+            """<p>This is a <b>control</b>, and every experimental field insists on one for the same reason.</p>
+<p>Human-level performance is the usual control here because it estimates the irreducible noise — the
+part of the error no model can remove because the information genuinely is not in the input. Comparing
+against it converts a raw score into a diagnosis.</p>""",
+            """<p>Three numbers stacked in a column: <b>baseline 10.6%, training 10.8%, cross-validation
+14.8%</b>.</p>
+<p>Read the two gaps, not the three numbers. Baseline to training is 0.2 — bias is fine. Training to
+cross-validation is 4.0 — that is your variance problem, and it is where the work goes.</p>""",
+            """<p>Without a baseline, teams chase bias that does not exist. Speech recognition with 10.8% training
+error looks broken until you learn that humans hit 10.6% on the same noisy audio.</p>
+<p>Andrew's example is exactly this, and the lesson generalises: on tasks with genuine ambiguity —
+medical images, sentiment, audio — the ceiling is not 100% and pretending otherwise wastes
+months.</p>""",
+            """So the two gaps below are the diagnosis. The raw error rate on its own never was.""")
+
         + h2("🎬", "Watch it move")
         + demo("baseline", "Three scenarios, identical-looking numbers",
                "click through: the same J_train means different things against different baselines")
@@ -653,6 +738,27 @@ impossible. So as you add examples, your score on the stuff you studied gets <b>
 on new stuff gets <b>better</b>. The two lines move towards each other.</p>
 <p>Now: if they have already met and gone flat, adding more data changes nothing. Buying more books won’t
 help someone who has stopped being able to learn from books. You need a different student.</p>""")
+
+        + lenses(
+            """<p>Two students taught the same syllabus. Give the first more practice papers and she keeps
+improving. Give the second more and nothing changes — he has understood everything he is going to
+understand from this material.</p>
+<p>More practice helps one and not the other, and you can tell which is which by watching the marks as
+the practice piles up rather than by asking them.</p>""",
+            """<p>A learning curve is a <b>sensitivity analysis</b> on training set size, and it answers a question
+that costs real money: is more data worth buying?</p>
+<p>If you have plotted any convergence diagnostic — a power curve, a sample-size calculation — the
+reading habit is identical. It is the <em>shape</em>, and specifically whether the two curves are still
+approaching each other, that carries the information.</p>""",
+            """<p>Two curves against training set size, one rising and one falling towards each other.</p>
+<p>If a large gap remains at the right-hand edge, more data will close it. If the two have already met
+and flattened, more data is money burnt — and no amount of it will help, because the model is not
+capable of using it.</p>""",
+            """<p>This is the plot that decides whether to spend three months labelling. Andrew's point is
+uncomfortable and correct: with high bias, more data does <b>nothing</b>.</p>
+<p>Plotting the curve costs an afternoon — train on 100, 200, 400, 800 examples and plot both errors.
+Skipping it is one of the most expensive shortcuts available in applied ML.</p>""",
+            """So the two shapes below are a purchase decision, drawn as a graph.""")
 
         + h2("🎬", "Watch it move")
         + demo("learncurve", "Error against training-set size",
@@ -767,6 +873,27 @@ L.append(dict(
         + kid("""<p>Remember the bike that wouldn’t go? You’ve now learned to spin the wheel and listen.
 Here is the repair table that tells you what to do with what you heard.</p>""")
 
+        + lenses(
+            """<p>The mechanic's fault chart on the workshop wall. Symptom on the left, cause in the middle,
+what to do on the right.</p>
+<p>Nothing on the chart is clever. Its value is that it stops a tired person at 6 p.m. from working
+through parts by price, which is precisely what everyone does without one.</p>""",
+            """<p>This is a <b>decision table</b>, and the reason to internalise it is that it inverts the natural
+order of thinking.</p>
+<p>The instinct is to start from the remedy — “should we get more data?” The table starts from the
+symptom and lets the remedy fall out. That inversion is the single most valuable habit in the
+week.</p>""",
+            """<p>Six fixes sorted into two columns.</p>
+<p><b>High bias:</b> more features, polynomial features, lower λ. <b>High variance:</b> more data,
+fewer features, higher λ. Notice that they are opposites — which is why doing the wrong one actively
+makes things worse rather than merely wasting time.</p>""",
+            """<p>Every one of these six actions costs days or weeks. Choosing between them by intuition is how
+teams lose quarters.</p>
+<p>The two diagnostic numbers cost an afternoon and they are the difference between a team that
+converges and one that thrashes. That asymmetry is the whole argument for this week.</p>""",
+            """So the table below is worth copying onto one card and keeping it. It is the most practical object in
+the specialization.""")
+
         + h2("🎬", "Watch it move")
         + demo("fixtable", "Symptom on the left, fix on the right",
                "the same six options from Lesson 1, now sorted")
@@ -873,6 +1000,29 @@ network is almost never worse than a small one.</p>
 <p>The catch: “bigger” costs money and time, and “more data” isn’t always possible. The tightrope became a
 budget question rather than a modelling question.</p>""")
 
+        + lenses(
+            """<p>A rule of thumb that sounds like cheating: <b>if it underfits, build it bigger; if it overfits,
+get more data</b>. Repeat.</p>
+<p>It sounds like cheating because for most of statistical history it was impossible. Bigger models
+always overfit — that was the whole trade. Neural networks with regularisation broke the rule, which is
+a genuinely surprising fact and not merely a convenience.</p>""",
+            """<p>The classical picture is a U-shaped test error against model size, with an optimum in the middle,
+and it is one of the most reliable results in statistics.</p>
+<p>Large regularised networks do not obey it cleanly. The modern account (double descent) is beyond
+this course; the practical takeaway is not — a large, well-regularised network rarely does worse than
+a small one, which changes the search strategy completely.</p>""",
+            """<p>A flowchart with two questions and a loop.</p>
+<p><b>Does it do well on the training set?</b> No → bigger network. Yes → <b>does it do well on
+cross-validation?</b> No → more data. Yes → done. Two questions, and you go round until both are
+yes.</p>""",
+            """<p>The two exits from this loop are money. “Bigger network” is GPU cost and latency; “more data” is
+labelling cost and time.</p>
+<p>The loop tells you which cheque to write, which is why it is worth more than either individual
+technique. It also has a real stopping condition — when both are expensive, you are at the frontier
+and the answer is better features or a better problem definition.</p>""",
+            """So the loop below is a strategy, and the reason it works is that regularisation broke the old
+trade-off.""")
+
         + h2("🎬", "Watch it move")
         + demo("nnrecipe", "The recipe, as a flowchart",
                "two questions, two fixes, and a loop")
@@ -960,6 +1110,29 @@ you throw things in, <b>taste it</b>, and adjust. Then taste again.</p>
 <p>The whole skill is in the tasting: knowing what to taste for, and how to change one thing at a time so
 you learn something from each round.</p>""")
 
+        + lenses(
+            """<p>Nobody builds a chair by designing it perfectly and then cutting once. You cut, you sit on it, it
+wobbles, you shorten a leg.</p>
+<p>The wobble is information you could not have had before building. Machine learning has exactly this
+property and people keep trying to plan their way past it.</p>""",
+            """<p>This is the same loop as build–measure–learn, or PDCA, or any engineering cycle — and it is here
+for the same reason: the feedback is unavailable until you have built something.</p>
+<p>The ML-specific twist is that the measurement step is genuinely hard. Knowing your model is 87%
+accurate tells you almost nothing about what to change, which is why error analysis is a separate
+lesson.</p>""",
+            """<p>A circle with four stations: <b>choose architecture → train → diagnose → change something</b>,
+and back to the start.</p>
+<p>The arrow that matters is the one from diagnose back to choose, and the fact that you will go round
+it many times. First-iteration models are supposed to be bad. That is not failure; it is the first
+measurement.</p>""",
+            """<p>The practical advice that follows is to make the first loop as fast as possible — a small model on
+a small dataset that gets you a diagnostic today rather than a careful one that gets you a diagnostic
+in three weeks.</p>
+<p>Teams that optimise the first model instead of the first <em>loop</em> systematically ship
+later.</p>""",
+            """So the cycle below is not a project plan. It is an admission that the information arrives after the
+building.""")
+
         + h2("🎬", "Watch it move")
         + demo("mlloop", "Choose → train → diagnose → choose again",
                "the loop you will run dozens of times on any real project")
@@ -1026,6 +1199,26 @@ them in piles: “these are all about pills”, “these are fake bank emails”
 <p>Then count the piles. 21 pills, 18 fake banks, 3 weird spellings. Now you know exactly what to build
 next — and, just as importantly, what <b>not</b> to build. Fixing the spelling problem could take a month
 and would win you three emails.</p>""")
+
+        + lenses(
+            """<p>A baker whose loaves keep coming out wrong. He could change the flour, the oven, the yeast and the
+timing. Instead he lays out the last hundred bad loaves on a bench and looks at them.</p>
+<p>Sixty are pale on one side. That is not four problems, it is one problem — the oven is uneven, and
+he found it by <b>looking at the failures</b> rather than by reasoning about causes.</p>""",
+            """<p>This is Pareto analysis applied to model errors, and it usually holds: a small number of causes
+account for most of the failures.</p>
+<p>What makes it feel unnatural in ML is that it is manual and unglamorous. You read a hundred wrong
+predictions and tally them by hand. There is no library for it, and it routinely beats a week of
+tuning.</p>""",
+            """<p>A tally chart: 100 misclassified examples, sorted into causes, with counts beside them.</p>
+<p><b>Pharmaceutical spam: 21. Deliberate misspellings: 3. Unusual routing: 7.</b> Those numbers decide
+what you work on next, and they are impossible to guess from an aggregate accuracy figure.</p>""",
+            """<p>The economics are stark. Fixing the deliberate-misspelling category perfectly buys you 3% of your
+errors — perhaps 0.3% accuracy — for weeks of work.</p>
+<p>Andrew's example is exactly this, and it is the most common way strong engineers waste time: solving
+the most interesting failure rather than the most common one.</p>""",
+            """So the tally below is the cheapest high-value hour in the whole workflow, and almost nobody does
+it.""")
 
         + h2("🎬", "Watch it move")
         + demo("erroranalysis", "100 mistakes, sorted into piles",
@@ -1101,6 +1294,27 @@ L.append(dict(
 <li><b>Bend the ones you have</b> — turn the page sideways, photocopy it badly, read it in dim light.
 Still the same question, still the same answer. (augmentation)</li>
 <li><b>Make brand new ones from scratch</b> — write your own with a computer. (synthesis)</li></ol>""")
+
+        + lenses(
+            """<p>Teaching someone to recognise your handwriting. You could write a thousand more words. Or you could
+write the same words with a blunt pencil, on lined paper, in poor light, at speed.</p>
+<p>The second gives them something the first cannot: what your handwriting looks like <b>when
+conditions are bad</b>, which is exactly when they will need to read it.</p>""",
+            """<p>Data augmentation is the systematic version, and the rule for a valid augmentation is precise:
+the distortion must be one that <b>plausibly occurs in deployment</b>.</p>
+<p>Rotating a photograph by 15° is realistic; adding uniform random pixel noise generally is not, and
+the second reliably fails to help. That test — would this really happen? — is the whole design
+criterion.</p>""",
+            """<p>One training image, and beside it eight copies: rotated, brighter, blurred, cropped, mirrored.</p>
+<p>Nine examples from one label. The label cost you nothing to reuse, which is the entire economic
+argument, since labelling is almost always the expensive part.</p>""",
+            """<p>Augmentation is why modern vision and speech systems work at the data volumes actually available.
+Speech models are trained on clean audio deliberately mixed with car noise, crowd noise and bad
+phone lines.</p>
+<p>Mirroring, though, is a good example of how domain-specific the choice is: fine for cats,
+catastrophic for handwritten digits, where a mirrored 2 is not a 2.</p>""",
+            """So the augmentations below are not tricks. They are statements about what your deployment
+environment does to your inputs.""")
 
         + h2("🎬", "Watch it move")
         + demo("augment", "One letter becomes twelve",
@@ -1190,6 +1404,29 @@ learn “what an edge is” from scratch.</p>
 <p>So take their network, throw away only the <b>last</b> layer (the part that says “cat”), bolt on your
 own last layer that says “tumour / no tumour”, and train just that. All the hard-won knowledge about edges
 and textures comes along for free.</p>""")
+
+        + lenses(
+            """<p>Hiring a chef to run a bakery. She has never made bread commercially, and she already knows heat,
+dough, timing, and how a kitchen runs.</p>
+<p>You are not training her from nothing. You are training the last part — the bread — on top of years
+you did not pay for. That is the whole idea, and it is why it works with so few examples.</p>""",
+            """<p>The transferable claim is that <b>early layers learn general things</b>. Edges and textures are the
+same in medical scans as in photographs of dogs.</p>
+<p>Only the last layers are task-specific, which is why you replace those and keep the rest. If you
+have used a pre-trained embedding, or started from a template rather than a blank page, the economics
+are familiar.</p>""",
+            """<p>A trained network with the final layer sliced off and a new one bolted on.</p>
+<p>Everything to the left keeps the weights it arrived with. Only the new layer starts random. Picture
+the cut, and the two options — freeze the left side, or let it move slowly — are obvious rather than
+arbitrary.</p>""",
+            """<p>This is what makes deep learning possible for organisations without 14 million labelled images.
+A radiology model can be built on a few thousand scans because the first layers came from
+ImageNet.</p>
+<p>The practical rule of thumb: with very little data, freeze everything and train only the new head;
+with more, unfreeze and fine-tune at a low learning rate. Getting that backwards on a small dataset
+destroys the pre-trained weights, which is the most common way this technique is misapplied.</p>""",
+            """So the two options below are one decision — how much of somebody else's training you are willing to
+disturb.""")
 
         + h2("🎬", "Watch it move")
         + demo("transfer", "Pre-train on a million photos, then fine-tune on fifty X-rays",
@@ -1290,6 +1527,27 @@ mixing, baking, <b>and</b> checking it hasn’t gone stale a week later.</p>
 is the one people forget. A model that was excellent in March can be quietly useless by September, because
 the world moved and the model didn’t.</p>""")
 
+        + lenses(
+            """<p>A restaurant is not a recipe. Somebody has to buy the produce, cost the dish, get it past
+environmental health, train the staff, and deal with it when the supplier changes.</p>
+<p>The cooking is the part everyone pictures and a small fraction of the work. A deployed model is the
+same shape, and the modelling is the part that gets the attention.</p>""",
+            """<p>This is <b>MLOps</b>, and if you have shipped any software you know most of it already: versioning,
+monitoring, rollback, on-call.</p>
+<p>The genuinely new part is that the model degrades without anyone touching it, because the world
+changes underneath it. Software does not usually rot on its own; models do, and it is called
+drift.</p>""",
+            """<p>A loop with four stations — <b>scope → collect data → train → deploy</b> — and, crucially, an
+arrow from deploy back to collect.</p>
+<p>That return arrow is the point. Deployment produces new data, which trains the next model. A system
+in production is a data source, not a finished object.</p>""",
+            """<p>The industry rule of thumb is that modelling is 10–20% of the effort of a deployed system, and
+data plumbing plus monitoring is most of the rest.</p>
+<p>The failure that costs most is silent drift: a fraud model trained on last year's fraud, still
+reporting good offline metrics on last year's held-out data, quietly missing this year's patterns.
+Monitoring the <em>inputs</em>, not just the accuracy, is what catches it.</p>""",
+            """So the diagram below is the actual job. The three courses so far are one station on it.""")
+
         + h2("🎬", "Watch it move")
         + demo("fullcycle", "Scope → data → train → deploy, with the arrows that go backwards",
                "the dashed purple arrows are where projects actually spend their time")
@@ -1371,6 +1629,29 @@ L.append(dict(
 people did before — including the unfair bits. It has no way to know which parts of history were a mistake.</p>
 <p>And it will do it faster, cheaper and at bigger scale than any person could, while sounding perfectly
 objective because it is “just maths”.</p>""")
+
+        + lenses(
+            """<p>A hiring manager who has always promoted people who remind him of himself. Ask him and he will
+tell you honestly that he judges on merit, and he believes it.</p>
+<p>The pattern is in the outcomes, not in anyone's intentions, and it is visible only if somebody
+counts. A model trained on his decisions learns the pattern perfectly and applies it faster and to
+more people.</p>""",
+            """<p>The technical statement is that a model learns the <b>conditional distribution of its training
+labels</b>, including whatever produced them.</p>
+<p>If historical decisions were biased, the labels encode the bias, and the model reproduces it while
+looking objective. Removing the protected attribute does not fix it — correlated features carry the
+information, which is a fact worth knowing before you propose it as a solution.</p>""",
+            """<p>Two confusion matrices side by side, one per group.</p>
+<p>Same model, same threshold, different false-negative rates. That gap is the measurement, and it is
+invisible in the single aggregate accuracy number everyone reports. Splitting the metric by group is
+the whole of the technique.</p>""",
+            """<p>The documented cases are not hypothetical: recruiting tools downranking women's CVs, risk scores
+with unequal error rates across groups, medical algorithms allocating less care because they used
+historical spending as a proxy for need.</p>
+<p>Each was a technically competent model doing exactly what it was trained to do. The defence is
+procedural — audit by subgroup, red-team before launch, and be able to roll back.</p>""",
+            """So the questions below are engineering practice, and the measurement is one line of code you have
+already written.""")
 
         + h2("🎬", "Watch it move")
         + demo("fairness", "One accuracy number, four very different experiences",
@@ -1577,6 +1858,27 @@ you’ll miss the quiet ones. High precision, low recall.</li>
 a day for nothing. High recall, low precision.</li></ul>
 <p>There is no setting that is right for every beach. It depends on how bad a missed rescue is compared to
 a false alarm — and that is a judgement about <em>consequences</em>, not about mathematics.</p>""")
+
+        + lenses(
+            """<p>A smoke alarm. Make it sensitive enough to catch every fire and it goes off when you make toast.
+Make it calm enough to ignore toast and one day it will ignore a fire.</p>
+<p>There is no setting that does both, and there is no cleverer alarm — the choice is about which
+mistake you would rather make, and that is a judgement about the kitchen, not about the alarm.</p>""",
+            """<p>This is the ROC trade-off in different clothing, and the same knob — the decision threshold —
+moves both quantities.</p>
+<p>The key insight is that <b>the model is not changing</b>. One trained model gives you an entire
+curve of operating points, and choosing among them is a business decision made after training, not a
+modelling decision made during it.</p>""",
+            """<p>A slider from 0 to 1, with precision written above it and recall below.</p>
+<p>Push it right: precision rises, recall falls. Push it left: the reverse. One slider, two numbers
+moving in opposite directions, and no position that maximises both.</p>""",
+            """<p>Which way you push is a real decision with real consequences. A cancer screen must not miss cases,
+so it accepts false alarms and a follow-up test. A spam filter must not eat a real email, so it
+accepts some spam.</p>
+<p>F1 exists to summarise the trade-off in one number for comparing models, and it is the wrong thing
+to optimise when the two errors have genuinely different costs — which is most of the time.</p>""",
+            """So the threshold below is the one hyperparameter you tune after training, using a value the model
+cannot know.""")
 
         + h2("🎬", "Watch it move")
         + demo("prcurve", "The trade-off curve",

@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,21 @@
 <li><b>What counts as wrong</b> — “no, that was a sit, I said roll.” (that’s the loss)</li>
 <li><b>Practise until it improves</b> — again, and again, and again. (that’s fit)</li></ol>
 <p>You did all three in Course 1 with logistic regression, by hand. TensorFlow just gives each step a name
-and does the boring part for you.</p></div><h2><span class="ico">💻</span>The whole of training, in code</h2><pre><code><span class="tok-k">import</span> tensorflow <span class="tok-k">as</span> tf
+and does the boring part for you.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Three lines that hide a fortnight of work. You describe the shape, you say how wrong is wrong, and
+you say go.</p>
+<p>Worth knowing what is behind each line before you get comfortable, because when training misbehaves —
+and it will — the error surfaces in machinery you did not write, and only the shape of it tells you
+which of the three lines was the mistake.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The three calls map exactly onto the three things you built by hand in C1: <code><span class="gterm" data-g="sequential-api">Sequential</span></code>
+is <var>f</var>, <code>compile</code> is the cost function, <code>fit</code> is gradient descent.</p>
+<p>If you have used any solver API — <code>scipy.optimize</code>, a spreadsheet Solver — this is the same
+contract: describe the objective, hand over the search.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Three lines on a page with three labels beside them.</p>
+<p><code><span class="gterm" data-g="sequential-api">Sequential</span></code> → the model. <code>compile(<span class="gterm" data-g="kwloss-api">loss=</span>...)</code> → how wrong. <code>fit(X, y,
+<span class="gterm" data-g="kwepochs-api">epochs=</span>100)</code> → go, a hundred times. Every training script you ever write is these three,
+elaborated.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The convenience is real and so is the risk: it is entirely possible to train a model for a week
+without ever knowing what loss you optimised.</p>
+<p>The most common concrete instance is the loss/activation mismatch — <code><span class="gterm" data-g="tflosses-api">BinaryCrossentropy</span></code>
+with a linear output, or the wrong <code>from_logits</code> setting. It trains, it <span class="gterm" data-g="convergence-native">converges</span>, the numbers
+are wrong, and nothing raises.</p></div><p class="lens-fold">So the three lines below are the three objects from C1, wearing library names.</p></div><h2><span class="ico">💻</span>The whole of training, in code</h2><pre><code><span class="tok-k">import</span> tensorflow <span class="tok-k">as</span> tf
 <span class="tok-k">from</span> tensorflow.keras <span class="tok-k">import</span> <span class="gterm" data-g="sequential-api">Sequential</span>
 <span class="tok-k">from</span> tensorflow.keras.layers <span class="tok-k">import</span> <span class="gterm" data-g="dense-api">Dense</span>
 <span class="tok-k">from</span> tensorflow.keras.losses <span class="tok-k">import</span> <span class="gterm" data-g="tflosses-api">BinaryCrossentropy</span>

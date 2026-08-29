@@ -21,6 +21,28 @@ more than that — how many bedrooms, how many floors, how old it is.</p>
 negative because older houses are usually worth less.</p>
 <p>Four dials instead of one. Same idea, more of it.</p>""")
 
+        + lenses(
+            """<p>Valuing a house on floor area alone gets you close. Everyone knows the other things that matter —
+bedrooms, age, whether it is on a main road — and each one adds a correction.</p>
+<p>An estate agent does not have a formula. She has a starting figure and a list of adjustments, and that
+list is what a multi-feature model is.</p>""",
+            """<p>This is multiple linear regression, and if you have run one in R, Stata or a spreadsheet, the model
+is identical.</p>
+<p>The coefficient interpretation carries across exactly: <var>w</var><sub>j</sub> is the change in
+<var>y</var> per unit change in <var>x</var><sub>j</sub>, <b>holding the others fixed</b> — and that last
+clause is the part people forget when features are correlated.</p>""",
+            """<p>The spreadsheet gains columns. One row is still one house; there are now four numbers to the left of
+the price instead of one.</p>
+<p>The notation follows the picture: <var>x</var><sup>(i)</sup> is a whole <b>row</b>,
+<var>x</var><sub>j</sub><sup>(i)</sup> is one <b>cell</b>. Superscript is the row, subscript the
+column.</p>""",
+            """<p>Real models have hundreds of columns, and the geometry stops being drawable at three. This is where
+you have to start trusting the algebra over the picture.</p>
+<p>The good news is that nothing in the maths changes — the dot product handles four features exactly as
+it handles four hundred, which is why the vector notation is worth adopting now rather than later.</p>""",
+            """So the notation below is bookkeeping for a wider table, and the model is the same line it always
+was.""")
+
         + h2("🎬", "Watch it move")
         + demo("multifeatures", "The table, and what each subscript means",
                "watch the highlighted cell and read its name underneath")
@@ -233,6 +255,26 @@ second pair, write it down.</p>
 once, then a machine that adds up all hundred answers in one go.</p>
 <p>Your computer really does have that room. A Python loop simply never asks it to help.</p>""")
 
+        + lenses(
+            """<p>Twelve people carrying one sack each in a single trip, versus one person making twelve trips.</p>
+<p>Same twelve sacks. The first finishes in a twelfth of the time, and not because anyone is walking
+faster — because twelve things happened at once.</p>""",
+            """<p>The mechanism is <b>SIMD</b>: one instruction applied to several numbers simultaneously, built into
+the processor.</p>
+<p>If you have been told to avoid loops in R or pandas, this is the reason. The loop is not slow because
+looping is slow; it is slow because each pass goes through the Python interpreter and never reaches the
+instructions that handle sixteen floats at once.</p>""",
+            """<p>Two blocks of code side by side computing the identical result: a <code>for</code> loop over 100,000
+elements, and <code>np.dot(w, x)</code>.</p>
+<p>Time them. The factor is typically 50 to 200, and seeing the number yourself is what makes the habit
+stick.</p>""",
+            """<p>The consequence scales all the way up: this is why GPUs matter, because a GPU is thousands of small
+cores that are useful only if handed thousands of independent multiplications at once.</p>
+<p>Training a large model is possible because its core operation happens to be exactly the operation this
+hardware is best at.</p>""",
+            """So <code>np.dot</code> below is not shorter code. It is different code, reaching parts of the machine
+a loop never touches.""")
+
         + h2("🎬", "Watch it move")
         + demo("vectorfast", "The loop, tick by tick, and the vectorised version in one",
                "same 16 multiplications, very different amounts of waiting")
@@ -327,6 +369,26 @@ L.append(dict(
         + h2("🎈", "The idea, in plain words")
         + kid("""<p>You had two dials to tune. Now you have five. Nothing else changes: work out which way
 each dial should move, then move them all at the same moment.</p>""")
+
+        + lenses(
+            """<p>Adjusting four guy ropes instead of one. Same procedure at every rope: feel which way it wants to
+go, move a little, come back round.</p>
+<p>No new skill is required. There are simply more ropes, and you adjust them all before walking round
+again.</p>""",
+            """<p>The gradient is now a <b>vector</b>, one partial derivative per parameter, and every component has
+exactly the form you derived last week.</p>
+<p>If you have done multivariable calculus, this is the gradient of a scalar field, and gradient descent
+is following it downhill in <var>n</var> dimensions. The formula per component is unchanged.</p>""",
+            """<p><var>n</var> update lines instead of two, computed together and applied together.</p>
+<p><code>w = w - alpha * dj_dw</code>, where both <code>w</code> and <code>dj_dw</code> are arrays of
+length <var>n</var>. One line of NumPy is <var>n</var> simultaneous updates, which is the vectorisation
+lesson paying off immediately.</p>""",
+            """<p>Simultaneous update matters more here than it did with two parameters, because there are more chances
+to get it wrong.</p>
+<p>Compute the entire gradient vector from the current parameters, <em>then</em> assign. Updating in place
+inside a loop over features is a real bug that still converges to something slightly wrong, which is the
+worst kind.</p>""",
+            """So the vector update below is last week's algorithm with the ropes counted.""")
 
         + h2("🎬", "Watch it move")
         + demo("gdmulti", "n + 1 update lines, all almost identical",
@@ -676,6 +738,26 @@ L.append(dict(
 multiplicatively, so equal <em>ratios</em> matter rather than equal differences. Trying 0.1, 0.2, 0.3
 wastes all your attempts in one narrow region.</p>""")
 
+        + lenses(
+            """<p>Turning a tap to fill a glass. Too gentle and you stand there all day. Too hard and it splashes
+everywhere and the glass ends up emptier than when you started.</p>
+<p>Nobody computes the right pressure. You turn it, look, and adjust — and that is genuinely the accepted
+professional method here.</p>""",
+            """<p>This is a step-size choice, and the honest position is that there is <b>no formula</b>.</p>
+<p>The recommended procedure is a logarithmic sweep: 0.001, 0.003, 0.01, 0.03, 0.1 — roughly threefold
+steps, because you are looking for the right order of magnitude, not the third decimal place.</p>""",
+            """<p>Three cost curves on one pair of axes.</p>
+<p>One falls smoothly and flattens — good. One falls very slowly and is still falling at the right-hand
+edge — α too small. One rises or oscillates — α too large. Learn those three shapes and you can diagnose
+any training run at a glance.</p>""",
+            """<p>A diverging cost is nearly always the learning rate, and it is the first thing to check before
+suspecting anything more interesting.</p>
+<p>The useful debugging trick is to set α absurdly small — 0.0001 — and confirm the cost decreases at all.
+If it does not, the bug is in the gradient, not the rate, and you have just halved your search
+space.</p>""",
+            """So the sweep below is the actual professional practice, and the three curve shapes are how you read
+it.""")
+
         + h2("🎬", "Watch it move")
         + demo("alphachoice", "Five values, five learning curves",
                "the largest one that still falls smoothly is the one you want")
@@ -749,6 +831,27 @@ and the depth (how far back it goes).</p>
 <p>But what actually matters is the <b>area</b> — width × depth. And your model can only add things
 together. It literally cannot multiply two features, no matter how many iterations you run.</p>
 <p>So multiply them yourself and hand the result over as a third feature. Now it can use the area.</p>""")
+
+        + lenses(
+            """<p>A surveyor given the length and width of a plot, asked what it is worth. He multiplies them
+together, because <b>land sells by area</b>.</p>
+<p>Nobody handed him the area. He knew something about the trade that the two raw numbers did not say on
+their own, and creating that third number is worth more than any amount of adjusting the first two.</p>""",
+            """<p>This is domain knowledge entering the model as a new column, and it is consistently the highest-value
+activity in applied machine learning on tabular data.</p>
+<p>The reason is structural: a linear model cannot represent <var>x</var><sub>1</sub> ×
+<var>x</var><sub>2</sub> however long you train it. Handing it the product changes what is
+<em>representable</em>, not merely what is learned.</p>""",
+            """<p>A new column appearing in the spreadsheet, computed from two existing ones.</p>
+<p><code>area = frontage * depth</code>. One column, added by a person who knows what the rows mean. That
+is feature engineering entirely.</p>""",
+            """<p>Before deep learning, this was most of the job — teams of people inventing columns. It remains most
+of the job for tabular data, which is nearly all business data.</p>
+<p>Deep learning's claim is that networks learn features themselves, and that is broadly true for images,
+audio and text and much less true for spreadsheets. Knowing which regime you are in tells you where to
+spend your week.</p>""",
+            """So the new column below carries something no amount of training could have recovered from the old
+ones.""")
 
         + h2("🎬", "Watch it move")
         + demo("featureeng", "Two features becoming three",
@@ -828,6 +931,25 @@ L.append(dict(
 <b>x squared</b> as an extra feature. Now “add up weighted features” includes an x² term, and the result
 is a curve.</p>
 <p>Same algorithm. Different ingredients.</p>""")
+
+        + lenses(
+            """<p>Bending a flexible ruler to follow a curved line instead of laying a straight one against it.</p>
+<p>The ruler is still a ruler and you are still fitting it, but it can now follow a shape a straight edge
+never could. Bend it too eagerly and it follows every wobble, including the ones that were mistakes in
+the drawing.</p>""",
+            """<p>The point that surprises people: adding <var>x</var>², <var>x</var>³ as columns keeps the model
+<b>linear in the parameters</b>, which is what “linear regression” actually means.</p>
+<p>Everything you know still applies — same cost, same gradient descent, same guarantees. The curve is in
+the features, not in the model.</p>""",
+            """<p>A spreadsheet with three columns computed from one: <var>x</var>, <var>x</var>², <var>x</var>³.</p>
+<p>Feed those to the same linear regression and you get a cubic fit. Nothing about the algorithm knows or
+cares that the columns are related.</p>""",
+            """<p>Feature scaling becomes urgent rather than helpful here, and it is worth seeing the numbers: if
+<var>x</var> runs to 1,000 then <var>x</var>³ runs to 1,000,000,000.</p>
+<p>Those columns are nine orders of magnitude apart, the contours become extraordinarily elongated, and
+gradient descent will not converge in any reasonable time without scaling.</p>""",
+            """So the powers below are new columns, and the model fitting them is exactly the one you already
+have.""")
 
         + h2("🎬", "Watch it move")
         + demo("polyreg", "Four models on the same curved data",

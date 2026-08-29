@@ -28,6 +28,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -713,9 +714,25 @@ a floor of 0.322 separates them on these four
 Four probes is not a calibration. The method is right and the sample is
 far too small: collect the queries you actually get, score them, and put
 the floor where the two groups stop overlapping -- if they ever do.</pre></div></section>
-
+<h2><span class="ico">&#129504;</span>What you need that the courses do not cover</h2>
+<div class="callout key"><span class="tag">Enough theory to read this file</span>
+<p>This file leans on three ideas the three courses do not cover, so here they are, self-contained.</p>
+<p><b>An embedding is a learned lookup table.</b> Give every word in your vocabulary a row of, say, 300
+numbers. Nothing about those numbers is meaningful at first — they are random. They become meaningful
+because they are adjusted, by ordinary gradient descent, until words used in similar contexts end up
+with similar rows. That is the whole of it: a matrix with one row per word, trained like any other
+parameters you met in C1.</p>
+<p><b>The dot product is the similarity.</b> Two rows pointing the same way have a large dot product;
+two pointing in unrelated directions have one near zero. Divide by both lengths and you have the
+cosine, which is the same measurement with the magnitudes taken out — so a long document and a short
+one can be compared on what they are about rather than on how much of it there is. This is the
+F0 dot product doing exactly what it always did, on rows that happen to have been learned.</p>
+<p><b>Context costs money and attention.</b> Whatever you retrieve has to be pasted into a fixed-size
+prompt, and that budget is finite — a few thousand words in a small model. So retrieval is not
+"find everything relevant". It is "rank, then fit as much as the budget allows, best first", and
+knowing when to return <em>nothing</em> matters as much as ranking well.</p></div>
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
-<ul class="links plain"><li><a href="../f0/w1-10-dot-product.html">The dot product</a></li></ul>
+<ul class="links plain"><li><a href="../f0/w1-10-dot-product.html">The dot product</a></li><li><a href="../c2/w1-06-forward-propagation.html">Forward propagation</a></li><li><a href="../c3/w2-07-finding-related-items.html">Finding related items</a></li><li><a href="../c3/w2-13-reducing-features-pca.html">Reducing features with PCA</a></li></ul>
 
 <nav class="pager">
 <a class="prev" href="../scratch/10-reinforcement-learning.html"><span class="dir">&#8249; previous</span><span class="ttl">Reinforcement learning</span></a>

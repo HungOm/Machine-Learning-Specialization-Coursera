@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,7 +238,25 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>This cost function has no standard layer type. <b>Guess how you would still use TensorFlow to minimise it.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for auto-differentiation as a general tool, not a neural-network feature — you write the cost, it finds the gradient.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Usually you hand TensorFlow a stack of layers and say “train it”. But collaborative
 filtering isn’t a stack of layers — it’s a strange sum over a sparse set of (user, movie) pairs.</p>
 <p>So you write the loop yourself. The good news: you still don’t have to do any calculus. TensorFlow
-<b>records</b> everything you compute on a “tape”, then plays it backwards to get the <span class="gterm" data-g="derivative-f0">derivatives</span>.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The tape, recording and replaying</span><span class="h">step through — watch what lands on the tape and what comes back off it</span></div><div class="demo-body" data-anim="tfcollab"></div></div><h2><span class="ico">💻</span>The real thing</h2><pre><code><span class="gterm" data-g="kwoptimizer-api">optimizer =</span> <span class="gterm" data-g="adam-api">keras.optimizers.Adam</span>(<span class="gterm" data-g="kwlr-api">learning_rate=</span><span class="tok-n">1e-1</span>)
+<b>records</b> everything you compute on a “tape”, then plays it backwards to get the <span class="gterm" data-g="derivative-f0">derivatives</span>.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A joiner who has always cut mortises by hand buys a machine. The machine does not know what a
+mortise is. It knows how to move a chisel exactly where he tells it, very fast, without tiring.</p>
+<p>His job changes from cutting to <b>describing the cut</b>. Get the description right and the machine
+is unstoppable; get it wrong and it will make the same mistake ten thousand times without
+complaining.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>Automatic differentiation is the idea, and it is far older and far simpler than deep learning
+makes it sound.</p>
+<p>If you have used a solver in a spreadsheet, or <code>scipy.optimize.minimize</code> with a
+numerically estimated gradient, you have used the same division of labour: you supply the objective,
+the tool supplies the derivative. TensorFlow's <code>GradientTape</code> just does it exactly rather
+than approximately.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A tape recorder that is running while you compute the cost.</p>
+<p>Every operation you perform inside the <code>with <span class="gterm" data-g="tftape-api">tf.GradientTape</span>()</code> block is written onto the
+tape in order. When you ask for the gradient, the tape is played <em>backwards</em>, applying the
+chain rule at each step. That is the entire mechanism, and it is why the block has to wrap the
+forward computation.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This lesson is where the course quietly stops being about recommenders and starts being about a
+general tool.</p>
+<p>Collaborative filtering is not a <code><span class="gterm" data-g="sequential-api">Sequential</span></code> model — you are optimising two parameter
+<span class="gterm" data-g="matrix-f0">matrices</span> in a custom cost — so this is the first time you meet the escape hatch that every non-standard
+model in industry is built through. Anything you invent later gets trained exactly this way.</p></div><p class="lens-fold">So the code below is not recommender code. It is the general pattern: define the cost, tape it,
+apply the gradients.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The tape, recording and replaying</span><span class="h">step through — watch what lands on the tape and what comes back off it</span></div><div class="demo-body" data-anim="tfcollab"></div></div><h2><span class="ico">💻</span>The real thing</h2><pre><code><span class="gterm" data-g="kwoptimizer-api">optimizer =</span> <span class="gterm" data-g="adam-api">keras.optimizers.Adam</span>(<span class="gterm" data-g="kwlr-api">learning_rate=</span><span class="tok-n">1e-1</span>)
 
 <span class="tok-k">for</span> iter <span class="tok-k">in</span> range(<span class="tok-n">200</span>):
     <span class="tok-k">with</span> <span class="gterm" data-g="tftape-api">tf.GradientTape</span>() <span class="tok-k">as</span> tape:
@@ -248,7 +267,7 @@ filtering isn’t a stack of layers — it’s a strange sum over a sparse set o
     j = (<span class="gterm" data-g="npdot-api">tf.linalg.matmul</span>(X, <span class="gterm" data-g="tftranspose-api">tf.transpose</span>(W)) + b - Y) * R    <span class="tok-c"># &lt;- R zeroes the &#x27;?&#x27; entries</span>
     J = <span class="tok-n">0.5</span> * <span class="gterm" data-g="tfreduce-api">tf.reduce_sum</span>(j ** <span class="tok-n">2</span>)
     J += (lambda_ / <span class="tok-n">2</span>) * (<span class="gterm" data-g="tfreduce-api">tf.reduce_sum</span>(X ** <span class="tok-n">2</span>) + <span class="gterm" data-g="tfreduce-api">tf.reduce_sum</span>(W ** <span class="tok-n">2</span>))
-    <span class="tok-k">return</span> J</code></pre><div class="callout key"><span class="tag">The one thing to remember</span><p><code>* R</code> is the whole trick. Multiplying <span class="gterm" data-g="elementwise-f0">elementwise</span> by the 0/1 <span class="gterm" data-g="matrix-f0">matrix</span> R
+    <span class="tok-k">return</span> J</code></pre><div class="callout key"><span class="tag">The one thing to remember</span><p><code>* R</code> is the whole trick. Multiplying <span class="gterm" data-g="elementwise-f0">elementwise</span> by the 0/1 matrix R
 zeroes out every unrated cell <b>before</b> squaring, so the question marks contribute exactly nothing to
 the cost or to the gradient. One character does the job of the “sum only where r(i,j)=1” notation.</p></div><h2><span class="ico">🧮</span>The real training run</h2><p>4,778 movies × 443 users, 10 features, λ = 1, 200 Adam steps on the mean-normalised
 ratings:</p><table class="data"><thead><tr><th>iteration</th><th>J</th></tr></thead><tbody><tr><td>0</td><td>14,647.8</td></tr><tr><td>20</td><td>5,826.0</td></tr><tr><td>40</td><td>5,073.2</td></tr><tr><td>100</td><td>4,748.4</td></tr><tr><td>160</td><td>4,701.1</td></tr><tr><td>199</td><td><b>4,687.7</b></td></tr></tbody></table><p>Most of the work happens in the first twenty steps — the cost falls by 60% before

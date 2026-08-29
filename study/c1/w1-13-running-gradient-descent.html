@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -237,11 +238,24 @@
 <h2><span class="ico">❓</span>Before you read</h2><div class="pretest"><p>Watching it train, the path takes big confident strides at first, then crawls slowly for a long time. <b>Guess what about the data — not the algorithm — causes the crawl.</b></p><details class="pt"><summary>I have committed to an answer</summary><div class="pt-b"><p>Watch for the shape of the bowl seen from above, and for which of next week's lessons is the fix.</p></div></details></div><h2><span class="ico">🎈</span>The idea, in plain words</h2><div class="callout kid"><span class="tag">In plain English</span><p>Press go and watch three things happen at once.</p>
 <p>The line on the left swings around and settles onto the data. The dot on the right walks steadily from
 an outer ring to the bullseye. And the cost curve underneath falls and flattens.</p>
-<p>They are three views of the same event.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ All three views at once — and try changing α</span><span class="h">the fit, the path across the cost map, and J against iterations</span></div><div class="demo-body" data-anim="gdrunning"></div></div><p>Look at the shape of the path. Big confident strides down the steep sides of the valley,
+<p>They are three views of the same event.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Watching the tent settle as you work round the ropes. The first few adjustments make a visible
+difference; by the twentieth, you are making tiny corrections and it already looks right.</p>
+<p>Seeing that happen is what converts the algorithm from a formula into something you believe.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>The <b>learning curve</b> — cost against iteration — is the standard <span class="gterm" data-g="convergence-native">convergence</span> diagnostic, and
+reading it is a skill you will use for the rest of the specialization.</p>
+<p>Falling and flattening: converged. Falling very slowly: α too small. Rising or oscillating: α too
+large. Three shapes, three diagnoses, and you will meet all three.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two panels animating together.</p>
+<p>On the left, the line rotating and shifting onto the data. On the right, a point sliding down the
+contour plot towards the centre. <b>The same event, drawn twice</b> — and holding both pictures at once
+is the single best thing to take from this week.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>This is <b>batch</b> gradient descent — every step uses every example — and the name matters because
+you will meet the alternatives.</p>
+<p>At a million rows, one step reads a million rows, which is why <span class="gterm" data-g="minibatch-native">mini-batch</span> gradient descent exists and
+why almost nothing in production uses the batch version. Knowing that this one is the simple case
+prevents surprise later.</p></div><p class="lens-fold">So the plot below is the algorithm running, and the shape of that curve is your first diagnostic
+tool.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ All three views at once — and try changing α</span><span class="h">the fit, the path across the cost map, and J against iterations</span></div><div class="demo-body" data-anim="gdrunning"></div></div><p>Look at the shape of the path. Big confident strides down the steep sides of the valley,
 then a long slow crawl along the flat floor towards the centre. That elongated valley is a direct
-consequence of the features not being scaled — which is the first thing Week 2 fixes.</p><h2><span class="ico">🔢</span>What “batch” means</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>batch gradient descent</td><td>“use every example, every step”</td><td>Each single update looks at all m <span class="gterm" data-g="trainingexample-native">training examples</span>. What this course uses throughout Course 1.</td></tr><tr><td>stochastic gradient descent</td><td>“one example at a time”</td><td>Each update uses a single example. Noisier per step, and far more steps per second.</td></tr><tr><td><span class="gterm" data-g="minibatch-native">mini-batch</span></td><td>“a handful at a time”</td><td>The practical compromise — typically 32 to 512 examples per step. What essentially all deep learning uses.</td></tr></tbody></table><p>The name “batch” is why you will see the term <em>mini</em>-batch later: it is a smaller
+consequence of the features not being scaled — which is the first thing Week 2 fixes.</p><h2><span class="ico">🔢</span>What “batch” means</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td>batch gradient descent</td><td>“use every example, every step”</td><td>Each single update looks at all m <span class="gterm" data-g="trainingexample-native">training examples</span>. What this course uses throughout Course 1.</td></tr><tr><td>stochastic gradient descent</td><td>“one example at a time”</td><td>Each update uses a single example. Noisier per step, and far more steps per second.</td></tr><tr><td>mini-batch</td><td>“a handful at a time”</td><td>The practical compromise — typically 32 to 512 examples per step. What essentially all deep learning uses.</td></tr></tbody></table><p>The name “batch” is why you will see the term <em>mini</em>-batch later: it is a smaller
 batch. Course 3 Week 3 revisits this properly. For Course 1, batch is simple and fast enough.</p><h2><span class="ico">📈</span>The one plot to always make</h2><div class="callout key"><span class="tag">The one thing to remember</span><p>Plot J against iteration number. Every time. It costs three lines of matplotlib and it
-tells you immediately whether α is sensible, whether it has <span class="gterm" data-g="convergence-native">converged</span>, and whether something is broken.
+tells you immediately whether α is sensible, whether it has converged, and whether something is broken.
 Skipping it is how people spend two days on a problem that a glance would have diagnosed.</p></div><pre><code>w, b, J_history = gradient_descent(x, y, w_init, b_init, alpha, iters)
 
 plt.plot(J_history)

@@ -1458,3 +1458,52 @@ table td code, table th code { overflow-wrap: anywhere; }
 /* 3 — vertical swipe must still scroll the page over a canvas.
    pan-y keeps the page scrollable while horizontal drags still pan. */
 #conceptmap { touch-action: pan-y; }
+
+/* ------------------------------------------------------------ mock quizzes */
+/* One graded quiz per week, in the shape the real one uses. Marked in the
+   browser; every option carries a rationale, revealed together on submit. */
+.mq-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg-panel); margin: 0 0 18px; }
+.mq-head .mq-score { margin-left: auto; font-weight: 700; font-size: 20px;
+  font-variant-numeric: tabular-nums; color: var(--ink-faint); }
+.mq-head .mq-score.pass { color: var(--green); }
+.mq-head .mq-score.fail { color: var(--red); }
+
+ol.mqlist { list-style: none; padding: 0; margin: 0; counter-reset: mq; }
+li.mq { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px;
+  margin: 0 0 14px; background: var(--bg-panel); counter-increment: mq; }
+li.mq > .mq-n { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 6px; font-weight: 700; }
+li.mq > .mq-n::before { content: "Question " counter(mq); }
+li.mq > .mq-n .mq-tag { color: var(--accent); margin-left: 8px; letter-spacing: 0;
+  text-transform: none; font-weight: 650; }
+li.mq > .mq-n .mq-multi { color: var(--purple); margin-left: 8px; letter-spacing: 0;
+  text-transform: none; font-weight: 650; }
+li.mq > .mq-ask { margin: 0 0 12px; }
+
+ul.mq-opts { list-style: none; padding: 0; margin: 0; }
+ul.mq-opts > li { border: 1px solid var(--line-soft); border-radius: 6px;
+  margin: 0 0 6px; overflow: hidden; }
+ul.mq-opts label { display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 11px; cursor: pointer; }
+ul.mq-opts label:hover { background: var(--bg-sunk); }
+ul.mq-opts input { margin: 3px 0 0; flex: none; }
+.mq-why { display: none; margin: 0; padding: 9px 11px 10px 34px;
+  border-top: 1px dashed var(--line); font-size: 14px; color: var(--ink-soft); }
+li.marked .mq-why { display: block; }
+li.marked ul.mq-opts label { cursor: default; }
+li.marked ul.mq-opts label:hover { background: none; }
+li.marked ul.mq-opts > li.ok { border-color: var(--green); background: var(--green-soft); }
+li.marked ul.mq-opts > li.bad { border-color: var(--red); background: var(--red-soft); }
+li.marked ul.mq-opts > li.ok .mq-t::after { content: " ✓"; color: var(--green); font-weight: 700; }
+li.marked ul.mq-opts > li.bad .mq-t::after { content: " ✗"; color: var(--red); font-weight: 700; }
+li.mq.right { border-color: var(--green); }
+li.mq.wrong { border-color: var(--red); }
+.mq-note { display: none; margin: 10px 0 0; padding: 9px 12px; border-radius: 6px;
+  background: var(--bg-sunk); font-size: 14px; }
+li.marked .mq-note { display: block; }
+.mq-note .lbl { font-weight: 700; color: var(--accent); margin-right: 6px; }
+.mq-acts { display: flex; gap: 8px; align-items: center; margin: 18px 0 0; flex-wrap: wrap; }
+.mq-acts .msg { color: var(--ink-faint); font-size: 13.5px; }
+.mq-unanswered { color: var(--amber); font-weight: 650; }

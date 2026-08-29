@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -238,7 +239,20 @@
 them in piles: “these are all about pills”, “these are fake bank emails”, “these are weirdly spelled”.</p>
 <p>Then count the piles. 21 pills, 18 fake banks, 3 weird spellings. Now you know exactly what to build
 next — and, just as importantly, what <b>not</b> to build. Fixing the spelling problem could take a month
-and would win you three emails.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ 100 mistakes, sorted into piles</span><span class="h">the count per pile is the whole output of the technique</span></div><div class="demo-body" data-anim="erroranalysis"></div></div><h2><span class="ico">🔢</span>How to actually do it</h2><ol>
+and would win you three emails.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>A baker whose loaves keep coming out wrong. He could change the flour, the oven, the yeast and the
+timing. Instead he lays out the last hundred bad loaves on a bench and looks at them.</p>
+<p>Sixty are pale on one side. That is not four problems, it is one problem — the oven is uneven, and
+he found it by <b>looking at the failures</b> rather than by reasoning about causes.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is Pareto analysis applied to model errors, and it usually holds: a small number of causes
+account for most of the failures.</p>
+<p>What makes it feel unnatural in ML is that it is manual and unglamorous. You read a hundred wrong
+predictions and tally them by hand. There is no library for it, and it routinely beats a week of
+tuning.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A tally chart: 100 misclassified examples, sorted into causes, with counts beside them.</p>
+<p><b>Pharmaceutical spam: 21. Deliberate misspellings: 3. Unusual routing: 7.</b> Those numbers decide
+what you work on next, and they are impossible to guess from an aggregate accuracy figure.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The economics are stark. Fixing the deliberate-misspelling category perfectly buys you 3% of your
+errors — perhaps 0.3% accuracy — for weeks of work.</p>
+<p>Andrew's example is exactly this, and it is the most common way strong engineers waste time: solving
+the most interesting failure rather than the most common one.</p></div><p class="lens-fold">So the tally below is the cheapest high-value hour in the whole workflow, and almost nobody does
+it.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ 100 mistakes, sorted into piles</span><span class="h">the count per pile is the whole output of the technique</span></div><div class="demo-body" data-anim="erroranalysis"></div></div><h2><span class="ico">🔢</span>How to actually do it</h2><ol>
 <li>Take the misclassified <b>cross-validation</b> examples. If there are more than ~100, sample 100 at
 random — that is enough to see the big categories.</li>
 <li>Read them. Actually read them. Invent categories as you go; they will overlap, and that is fine.</li>

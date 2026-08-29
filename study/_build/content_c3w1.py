@@ -21,6 +21,28 @@ start making them anyway — the reds here, the blues there, the wheels in their
 <p>That’s clustering. The computer looks at a pile of data and asks: <b>are there natural groups in
 here?</b></p>""")
 
+        + lenses(
+            """<p>Tipping out a drawer of loose photographs and sorting them into piles. Nobody told you the
+categories. You make them up as you go — <b>these are all the seaside ones</b> — and you would struggle
+to say what rule you used.</p>
+<p>Someone else sorting the same photographs would produce different piles, and neither of you would be
+wrong. That ambiguity is not a weakness of the method; it is what the problem is.</p>""",
+            """<p>The formal difference from everything in C1 and C2 is one column: there is <b>no <var>y</var></b>.</p>
+<p>Anyone who has done exploratory data analysis, or segmented customers before knowing what the segments
+mean, has done this. And you know the consequence already: with no ground truth, there is no accuracy,
+so “is this good?” becomes a judgement rather than a measurement.</p>""",
+            """<p>A scatter of points on a page with no colours, and the same scatter with three loops drawn round
+groups.</p>
+<p>Supervised learning is given the colours and learns the boundary. Clustering is given nothing and
+invents the colours. Put the two pictures side by side once and the whole distinction is settled.</p>""",
+            """<p>The commercial uses are mostly discovery: customer segments nobody had named, groups of genes that
+behave alike, servers that fail in the same way.</p>
+<p>The recurring trap is treating the output as truth. K-means will confidently return five clusters from
+pure noise, every time, and it will not warn you. Validating that the groups mean something is a
+separate job the algorithm cannot do.</p>""",
+            """So the definition below turns on one absence: no labels, and therefore no right answer to check
+against.""")
+
         + h2("🎬", "Watch it move")
         + demo("whatisclustering", "The same points, with and without labels",
                "left: you were given y. right: the algorithm has to find the groups itself")
@@ -176,11 +198,33 @@ L.append(dict(
         + kid("""<p>You have a pile of dots and you want to sort them into two groups, but nobody
 has told you what the groups are.</p>
 <p>So you guess. Drop two pins on the page at random. Every dot joins whichever pin it is nearer
-to &mdash; that is group one and group two. Now look at each group and move its pin to the middle
+to — that is group one and group two. Now look at each group and move its pin to the middle
 of the dots that joined it.</p>
 <p>Some dots are now nearer the <i>other</i> pin, so they switch sides. Move the pins again.
 Repeat until nobody switches. That is the whole algorithm, and the two steps below are those two
 sentences written in symbols.</p>""")
+
+        + lenses(
+            """<p>A room of people told to walk to whichever of three flags is nearest. Once everyone has moved, each
+flag-holder walks to the middle of their own crowd.</p>
+<p>Now some people are nearer a different flag, so everyone moves again. Repeat until nobody moves. That
+is the entire algorithm, and it terminates for a reason you can feel: each step tightens the
+arrangement.</p>""",
+            """<p>This is <b>alternating optimisation</b>: hold one set of variables fixed, optimise the other, swap,
+repeat.</p>
+<p>If you have used the EM algorithm — or any iterative scheme with two interleaved update rules — the
+guarantee is the familiar one. Each half-step cannot increase the objective, so it converges. To a local
+optimum, and not necessarily the global one.</p>""",
+            """<p>Two steps drawn as two pictures.</p>
+<p><b>Assign:</b> colour each point by its nearest centroid. <b>Move:</b> slide each centroid to the mean
+of its own colour. Draw those two frames three times on paper and you have run k-means by hand.</p>""",
+            """<p>Both steps are cheap, which is the reason k-means is still everywhere fifty years on: it is O(<var>n
+k d</var>) per iteration and converges in tens of iterations.</p>
+<p>The cost of that speed is the assumption hiding in “nearest”: Euclidean distance, which means k-means
+looks for round, similarly sized blobs. Give it long thin clusters and it will cut them in half
+without complaint.</p>""",
+            """So the two steps below are one loop, and everything else this week is about how to start it and when
+to stop.""")
 
         +h2("🔢", "The maths, decoded")
         + eqp([
@@ -294,6 +338,27 @@ more it stretches, and stretched elastic is uncomfortable.</p>
 Running to your nearest flag reduces it. Moving each flag to the middle reduces it. So it goes down, and
 down, and eventually stops.</p>""")
 
+        + lenses(
+            """<p>Measuring how tidy the piles are by one honest number: <b>add up how far every photograph sits from
+the middle of its own pile</b>.</p>
+<p>Small number, tight piles. And crucially, it is the number both halves of the algorithm are quietly
+reducing, which is why the process ends rather than cycling for ever.</p>""",
+            """<p>This is the within-cluster sum of squares, sometimes called inertia or distortion, and it is the
+objective k-means actually minimises.</p>
+<p>Seeing that both steps reduce the same <var>J</var> is what converts k-means from a recipe into an
+optimisation algorithm — and it is the standard proof that it terminates.</p>""",
+            """<p>A single number that never goes up.</p>
+<p>Plot <var>J</var> against iteration and it falls, then flattens. If it ever rises in your
+implementation, you have a bug — that monotonicity is one of the most useful debugging assertions in
+unsupervised learning.</p>""",
+            """<p><var>J</var> is also what you use to choose between random initialisations: run k-means ten times
+and keep the run with the lowest final <var>J</var>.</p>
+<p>What it cannot do is choose <var>k</var>. <var>J</var> falls automatically as <var>k</var> rises, and
+at <var>k</var> = <var>n</var> it reaches zero with every point its own cluster — which is why the next
+two lessons exist.</p>""",
+            """So the cost function below is both the proof of convergence and the tool for picking the best of
+several runs.""")
+
         + h2("🔢", "The maths, decoded")
         + eqp([
             '<var>J</var> <span class="op">=</span> ',
@@ -397,6 +462,27 @@ happily, with nothing moving.</p>
 <p>So: <b>do it fifty times from fifty different starts, and keep whichever run ended up in the deepest
 dip.</b> You already have a number that measures depth — that is J.</p>""")
 
+        + lenses(
+            """<p>Three flags dropped into the room by accident, and two of them land in the same corner.</p>
+<p>Everyone in that corner splits between two flags, and the crowd at the far end — who clearly are a
+group — get one flag between them. Nobody is doing anything wrong from that point on. The starting
+position decided the answer.</p>""",
+            """<p>This is local optima, made concrete, and it is the standard weakness of any greedy iterative
+scheme.</p>
+<p>The standard defence is equally standard: <b>random restarts</b>. Run it many times from different
+starts and keep the best by the objective — the same tactic you would use with any non-convex
+optimisation.</p>""",
+            """<p>Two finished pictures of the same data, from different starts, with visibly different clusters and
+different <var>J</var>.</p>
+<p>That pair of pictures is the argument for restarts. One run of k-means is a sample, not an answer.</p>""",
+            """<p>The practical recipe is 50 to 1000 restarts, keeping the lowest <var>J</var> — cheap, because each
+run is fast.</p>
+<p>Better still, <b>k-means++</b> chooses the initial centroids spread apart rather than uniformly at
+random, and it is what <code>scikit-learn</code> does by default. If you have ever wondered why your
+results are more stable than the textbook warns, that default is why.</p>""",
+            """So the restarts below are not a safeguard bolted on. Without them, k-means answers a question about
+your random seed.""")
+
         + h2("🎬", "Watch it move")
         + demo("kmeansinit", "Three random starts, three different answers",
                "same data, same algorithm — and one run is measurably worse")
@@ -495,6 +581,26 @@ L.append(dict(
 <p>There isn’t a right answer hiding in the children. It depends on <b>what the groups are for</b>. Two
 teams for a football match. Five for a quiz. Twenty if everyone is doing their own project.</p>
 <p>Same with data. The number of clusters depends on what you plan to do with them.</p>""")
+
+        + lenses(
+            """<p>How many piles should the photographs be in? Two — indoors and outdoors? Twenty — one per holiday?</p>
+<p>Both are defensible. The honest answer is that it depends on what the piles are <em>for</em>, and no
+amount of staring at the photographs will tell you. That is uncomfortable and it is the truth of this
+lesson.</p>""",
+            """<p>The elbow method plots <var>J</var> against <var>k</var> and looks for the bend, and it is worth
+knowing that it frequently does not produce one.</p>
+<p>Andrew is unusually direct here: often there is no clear elbow, and choosing <var>k</var> by the
+downstream purpose beats choosing it by the curve. That is a rare and useful admission in a
+course.</p>""",
+            """<p>Two curves side by side. One with a visible bend at <var>k</var> = 3. One that declines smoothly with
+no bend anywhere.</p>
+<p>The second is the common case. Knowing that in advance stops you hunting for a feature of the data
+that is not there.</p>""",
+            """<p>The alternative that actually decides it in industry is cost. A t-shirt manufacturer choosing between
+three sizes and five is weighing better fit against inventory complexity.</p>
+<p>That is a business calculation, informed by the clustering rather than produced by it, and it is how
+<var>k</var> gets picked in practice far more often than by an elbow.</p>""",
+            """So the elbow below is one input to the decision, and usually not the deciding one.""")
 
         + h2("🎬", "Watch it move")
         + demo("elbow", "The elbow method, and the method that actually works",
@@ -599,6 +705,28 @@ ever seen? Does it shake in a way none of the others did?</p>
 <p>Weird isn’t the same as broken. But weird is worth a closer look — and it is a question you can actually
 answer.</p>""")
 
+        + lenses(
+            """<p>A mechanic who knows what a healthy engine sounds like. He does not have a catalogue of every
+possible fault — he has thousands of hours of <b>normal</b>, and something today is not it.</p>
+<p>He cannot name the fault. He is certain there is one. That asymmetry is exactly the situation anomaly
+detection is built for.</p>""",
+            """<p>The formal move is to model <var>p</var>(<var>x</var>) for normal data and flag whatever falls in the
+tail — <b>density estimation</b> rather than classification.</p>
+<p>Anyone who has used statistical process control has done this: establish the in-control distribution,
+then alarm on points outside it. The reason to prefer it over a classifier is not accuracy but
+availability of labels.</p>""",
+            """<p>A cloud of normal points with one point sitting well outside it, and a contour drawn round the
+cloud.</p>
+<p>The contour is a probability level. Inside is normal, outside is flagged. Nothing about the outside
+point was learned — it was flagged for being somewhere the training data never went.</p>""",
+            """<p>This is how aircraft engine monitoring, fraud detection and datacentre health checks work, and the
+reason is always the same: you have millions of normal examples and a handful of failures, some of
+which have not happened yet.</p>
+<p>A classifier can only recognise faults it has seen. This approach flags faults nobody has ever
+seen, which is precisely what you want from a jet engine.</p>""",
+            """So the model below learns only what normal looks like, and treats everything else as suspicious by
+construction.""")
+
         + h2("🎬", "Watch it move")
         + demo("anomalyintro", "Drag the test engine around",
                "the further it sits from the crowd, the lower its probability")
@@ -665,6 +793,27 @@ hill: lots of people near the middle, fewer as you go out, almost none at the ex
 <ul><li><b>μ</b> — where the top of the hill is (the average).</li>
 <li><b>σ</b> — how wide the hill is (how spread out things are).</li></ul>
 <p>Knowing those two, you can say how surprising any particular height is.</p>""")
+
+        + lenses(
+            """<p>Measure the height of a thousand people and mark each one on a wall. The marks pile up in the
+middle and thin out at both ends, and they do it in a shape that is remarkably consistent — heights,
+measurement errors, weights of loaves.</p>
+<p>Two numbers describe the whole wall: where the middle is, and how spread out it is. That is the entire
+model.</p>""",
+            """<p>The reason it appears everywhere is the central limit theorem: sums of many small independent
+effects tend to this shape regardless of what the individual effects look like.</p>
+<p>Which also tells you when to be suspicious. Quantities driven by one dominant multiplicative factor —
+incomes, city sizes, file sizes — are not Gaussian, they are heavy-tailed, and treating them as Gaussian
+mislabels ordinary large values as anomalies.</p>""",
+            """<p>The bell curve, with μ marked at the peak and σ as the distance to the inflection point.</p>
+<p>Worth committing to memory: about <b>68%</b> within one σ, <b>95%</b> within two, <b>99.7%</b> within
+three. Those three numbers are what turn a threshold into an expected false-alarm rate.</p>""",
+            """<p>The independence assumption — modelling each feature with its own Gaussian and multiplying — is
+what makes this cheap and what makes it miss things.</p>
+<p>Two features that are individually normal can be jointly anomalous: high CPU is fine, low traffic is
+fine, and high CPU <em>with</em> low traffic is a compromised server. That case needs the multivariate
+version, and knowing why is worth more than the formula.</p>""",
+            """So the two parameters below are the whole model, and estimating them is one line each.""")
 
         + h2("🔢", "The maths, decoded")
         + eqp([
@@ -899,6 +1048,28 @@ learn from, but enough to <b>test</b> with.</p>
 <p>So: train on the ten thousand good ones. Then hide the twenty broken ones among some good ones and see
 how many the detector spots. Turn the ε dial until it catches most of them without crying wolf constantly.</p>""")
 
+        + lenses(
+            """<p>A smoke alarm you cannot test by burning the house down. You have almost no real fires and a great
+deal of ordinary air.</p>
+<p>So you keep every fire you have ever had — all six of them — and you do not waste a single one on
+training. They all go into the evaluation, because deciding the threshold is what they are uniquely
+able to tell you.</p>""",
+            """<p>The split here is deliberately unusual: <b>all</b> the anomalies go to cross-validation and test, and
+the training set is entirely normal.</p>
+<p>That follows directly from what is being fitted — μ and σ describe normal, and contaminating them with
+anomalies widens the distribution until the anomalies look normal. The unusual split is a consequence,
+not a convention.</p>""",
+            """<p>Three boxes: 6000 normal for training, then 2000 normal plus 10 anomalies for cross-validation, and
+the same again for test.</p>
+<p>Notice that the anomalies exist only in the last two boxes, and that ten of them is enough to choose ε.
+It is a small number doing a specific job.</p>""",
+            """<p>Accuracy is useless here and it is worth being explicit about why: predicting “normal” for everything
+scores 99.8% on this data.</p>
+<p>So you use precision, recall and F1 — exactly the skewed-dataset metrics from C2 W3 — and this is the
+lesson where that machinery earns its keep.</p>""",
+            """So the split below is unusual for a precise reason, and the metrics are the ones you already
+learned.""")
+
         + h2("🎬", "Watch it move")
         + demo("anomalyeval", "Sweep ε and watch precision, recall and F1",
                "the panel on the right shows how the data is split")
@@ -1020,6 +1191,28 @@ spam looks like</em> — supervised.</p>
 nothing like the three you have on record. So <em>learn what normal looks like</em> and flag anything
 else — anomaly detection.</p>""")
 
+        + lenses(
+            """<p>Two questions a doctor might be answering. <b>“Is this the flu?”</b> — she has seen ten thousand
+cases and knows what it looks like. <b>“Something is wrong with this patient and I have never seen it
+before.”</b></p>
+<p>Both are medicine. They need different training, and mistaking which one you are being asked is the
+error that matters.</p>""",
+            """<p>The deciding question is not how many anomalies you have. It is whether <b>future anomalies will
+resemble past ones</b>.</p>
+<p>Spam evolves but stays recognisably spam, so a classifier works. Aircraft engine failures fail in new
+ways, so density estimation works. That distinction survives every borderline case in the table
+below.</p>""",
+            """<p>Two columns headed <b>“many positive examples, and they look alike”</b> and <b>“few positive
+examples, and new ones will be different”</b>.</p>
+<p>Sort your problem into one of those columns first. Everything else — which algorithm, which metric,
+which split — follows from the answer.</p>""",
+            """<p>Getting it wrong is expensive in a specific way: a classifier trained on known fraud patterns catches
+known fraud beautifully and misses the new scheme entirely, while reporting excellent metrics on
+historical data.</p>
+<p>Fraud teams run both for exactly this reason — a classifier for the known, density estimation for the
+novel.</p>""",
+            """So the table below is a decision about your problem, made before you choose an algorithm.""")
+
         + h2("🎬", "Watch it move")
         + demo("anomalyvssupervised", "Two columns, five deciding factors",
                "each row highlights which approach it favours")
@@ -1093,6 +1286,26 @@ give it a weight near zero, because the answers tell it to.</p>
 <p>Anomaly detection has no answers. So it takes <b>every</b> feature equally seriously. Feed it a useless
 one and it will faithfully flag things that are unusual in a way nobody cares about.</p>
 <p>Which means: choosing the features <em>is</em> the job here.</p>""")
+
+        + lenses(
+            """<p>A doctor who listens to your chest rather than measuring your shoe size. Both are data. Only one
+changes when you are ill.</p>
+<p>Anomaly detection has no labels to tell it which is which, so the choice is yours and it matters far
+more here than in supervised learning, where a useless feature merely gets a small weight.</p>""",
+            """<p>Two habits transfer directly. <b>Transform skewed features</b> — take a log — so the Gaussian
+assumption is roughly true. And <b>engineer ratios</b> that make anomalies stand out on one axis.</p>
+<p>If you have done any diagnostic modelling you know the second one: CPU load is unremarkable, and CPU
+load divided by network traffic is a compromised machine.</p>""",
+            """<p>Two histograms of the same feature: the raw one, piled against the left edge with a long tail, and
+<code>log(x + 1)</code>, symmetric and bell-shaped.</p>
+<p>The second is what the model assumes. The first is what you were given. That transform is usually the
+single highest-value step in the pipeline.</p>""",
+            """<p>The debugging procedure Andrew gives is the practical one: find an anomaly the system missed, look at
+its feature values, and ask <b>what would have made this one stand out</b>.</p>
+<p>That is error analysis from C2 W3, applied to an unsupervised model — and it is how these systems
+actually get improved in production, one missed case at a time.</p>""",
+            """So the transforms below are not tidying. They are what makes the Gaussian assumption approximately
+true enough to use.""")
 
         + h2("🎬", "Watch it move")
         + demo("featurechoice", "A skewed feature, transformed until it is bell-shaped",

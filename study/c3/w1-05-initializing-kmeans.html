@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -239,7 +240,21 @@ where you let go. Some dips are deeper than others.</p>
 <p>K-means is exactly like this. Start the flags in a bad place and it settles into a bad answer, quite
 happily, with nothing moving.</p>
 <p>So: <b>do it fifty times from fifty different starts, and keep whichever run ended up in the deepest
-dip.</b> You already have a number that measures depth — that is J.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three random starts, three different answers</span><span class="h">same data, same algorithm — and one run is measurably worse</span></div><div class="demo-body" data-anim="kmeansinit"></div></div><h2><span class="ico">🔢</span>The recipe</h2><pre><code>best_J, best_centroids, best_idx = float(<span class="tok-s">&#x27;inf&#x27;</span>), <span class="tok-k">None</span>, <span class="tok-k">None</span>
+dip.</b> You already have a number that measures depth — that is J.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Three flags dropped into the room by accident, and two of them land in the same corner.</p>
+<p>Everyone in that corner splits between two flags, and the crowd at the far end — who clearly are a
+group — get one flag between them. Nobody is doing anything wrong from that point on. The starting
+position decided the answer.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is local optima, made concrete, and it is the standard weakness of any greedy iterative
+scheme.</p>
+<p>The standard defence is equally standard: <b>random restarts</b>. Run it many times from different
+starts and keep the best by the objective — the same tactic you would use with any non-convex
+optimisation.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>Two finished pictures of the same data, from different starts, with visibly different clusters and
+different <var>J</var>.</p>
+<p>That pair of pictures is the argument for restarts. One run of k-means is a sample, not an answer.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The practical recipe is 50 to 1000 restarts, keeping the lowest <var>J</var> — cheap, because each
+run is fast.</p>
+<p>Better still, <b>k-means++</b> chooses the initial centroids spread apart rather than uniformly at
+random, and it is what <code>scikit-learn</code> does by default. If you have ever wondered why your
+results are more stable than the textbook warns, that default is why.</p></div><p class="lens-fold">So the restarts below are not a safeguard bolted on. Without them, k-means answers a question about
+your random seed.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ Three random starts, three different answers</span><span class="h">same data, same algorithm — and one run is measurably worse</span></div><div class="demo-body" data-anim="kmeansinit"></div></div><h2><span class="ico">🔢</span>The recipe</h2><pre><code>best_J, best_centroids, best_idx = float(<span class="tok-s">&#x27;inf&#x27;</span>), <span class="tok-k">None</span>, <span class="tok-k">None</span>
 
 <span class="tok-k">for</span> attempt <span class="tok-k">in</span> range(<span class="tok-n">50</span>):                       <span class="tok-c"># 50 to 1000 is typical</span>
     centroids = X[<span class="gterm" data-g="nprandom-api">np.random.choice</span>(m, K, <span class="gterm" data-g="kwreplace-api">replace=</span><span class="tok-k">False</span>)]   <span class="tok-c"># K random TRAINING POINTS</span>

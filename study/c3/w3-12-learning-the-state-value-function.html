@@ -29,6 +29,7 @@
 <a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
 <a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
 <a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
 <a href="../paper.html" style="font-weight:700">✐ On paper</a>
 <a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
 <a href="../labs.html" style="font-weight:700;margin-bottom:10px">⌨ Lab companions</a>
@@ -241,7 +242,21 @@ this reward, I ended up there.” Then use the Bellman equation to make a target
 <em>y = the reward I actually got, plus γ times whatever my current network thinks the new state is
 worth.</em></p>
 <p>Your targets are partly guesses. But the reward part is real, and true information leaks in from there
-one step at a time until the guesses become correct.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The six steps, and the replay buffer filling up</span><span class="h">each cycle makes the targets slightly less wrong</span></div><div class="demo-body" data-anim="dqn"></div></div><h2><span class="ico">🔢</span>The algorithm</h2><ol>
+one step at a time until the guesses become correct.</p></div><div class="lenses"><div class="lens trade"><span class="tag"><span class="ico">🔧</span>If you have never seen a formula</span><p>Guessing a house price, being told the real one, and adjusting. Except nobody tells you the real
+one — so you use your own later, better-informed guess as the answer instead.</p>
+<p>It sounds circular and it works, because the later guess has one real reward baked into it that the
+earlier one did not. A little bit of truth enters at every step and slowly spreads backwards.</p></div><div class="lens bridge"><span class="tag"><span class="ico">🌉</span>If you know a neighbouring field</span><p>This is <b>bootstrapping</b> in the RL sense, and it is the idea that makes the whole field
+tick.</p>
+<p>The reframing is what to notice: the Bellman right-hand side becomes the label <var>y</var>, the
+network's output is <var>ŷ</var>, and you are back to supervised learning with a mean-squared error you
+have used since C1.</p></div><div class="lens object"><span class="tag"><span class="ico">👁</span>One thing to picture</span><p>A training set being written down as the agent plays: <b>(state, action) → target</b>, one row per
+step taken.</p>
+<p>The inputs are experiences. The labels are computed from the agent's own current network via Bellman.
+The table grows as it plays, and it is an ordinary dataset in every other respect.</p></div><div class="lens stakes"><span class="tag"><span class="ico">⚖️</span>Where this really costs something</span><p>The instability is real and worth naming: the labels move, because they are produced by the same
+network you are training.</p>
+<p>Chasing a target that runs away is why naive deep <var>Q</var>-learning oscillates or diverges, and
+it is the specific problem that the soft update in lesson 15 exists to solve.</p></div><p class="lens-fold">So the algorithm below is supervised learning where you invent the labels — and Bellman is what makes
+the invention legitimate.</p></div><h2><span class="ico">🎬</span>Watch it move</h2><div class="demo"><div class="demo-head"><span class="t">▶ The six steps, and the replay buffer filling up</span><span class="h">each cycle makes the targets slightly less wrong</span></div><div class="demo-body" data-anim="dqn"></div></div><h2><span class="ico">🔢</span>The algorithm</h2><ol>
 <li>Initialise the neural network with <b>random weights</b> — a terrible guess at Q(s, a).</li>
 <li>Repeat forever:
   <ul>
