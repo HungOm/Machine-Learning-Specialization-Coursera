@@ -98,6 +98,15 @@ a tree deep enough to give every example its own leaf is a perfect memoriser.</p
         + trap("""<p><b>Thinking every feature is used for every prediction.</b> Only the features on the
 path are consulted. If the ears are pointy, this tree never looks at the whiskers at all.</p>""")
 
+        + explain("""<p>The comparison table says a tree needs no feature scaling. <b>Say why not, when every model in
+C1 and C2 so far did.</b></p>""",
+                  """<p>Because a tree only ever asks <b>&ldquo;is this value above that threshold?&rdquo;</b>, and the
+answer to that question is unchanged by any monotonic rescaling. Multiply every salary by 1000 and
+every split still separates exactly the same examples.</p>
+<p>Gradient-based models care because scaling changes the <em>shape of the cost surface</em>. A tree
+has no cost surface and takes no steps — it only compares. Same data, completely different reason to
+care or not.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("A floppy-eared animal with whiskers. What does the tree in the demo say, and which features did it use?",
@@ -200,6 +209,15 @@ found quickly, and that trade is why the algorithm is practical.</p>""")
         + trap("""<p><b>Leaving max_depth unset.</b> scikit-learn will happily grow until every leaf is
 pure — a perfectly overfit tree. Always set <code>max_depth</code> or <code>min_samples_leaf</code>.</p>""")
 
+        + explain("""<p>Left alone, scikit-learn grows a tree until every leaf is pure — 100% training accuracy. <b>Say
+why that is a warning rather than an achievement.</b></p>""",
+                  """<p>Because on any dataset with no duplicate rows it is <em>always</em> achievable, for any data,
+including pure noise. A result you can get regardless of whether there is a pattern tells you nothing
+about whether there is one.</p>
+<p>What it has done is memorise: one path per training example. Every stopping rule —
+<code>max_depth</code>, <code>min_samples_leaf</code> — exists to stop it, and they are the reason the
+tree has to generalise instead of remembering.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why is choosing the best split greedy rather than exhaustive?",
@@ -297,6 +315,15 @@ because it has a clean information-theoretic meaning; Gini is used because it is
 Guard it: <code>if p == 0 or p == 1: return 0</code>.</p>""")
         + trap("""<p><b>Using the wrong log base.</b> Base 2 gives bits and a maximum of 1. Natural log gives
 nats and a maximum of 0.693. Splits come out identical either way — only the numbers on the page change.</p>""")
+
+        + explain("""<p>Base 2 gives a maximum entropy of 1 and natural log gives 0.693, and the splits chosen come out
+identical. <b>Say why the base cannot change which split wins.</b></p>""",
+                  """<p>Changing the base multiplies every entropy by the same constant. Information gain is a difference
+of entropies, so it is scaled by that same constant too — and scaling every candidate's score by one
+positive number cannot change which is largest.</p>
+<p>So the base is a choice of <em>units</em>, exactly like measuring in metres or feet. Bits are
+conventional because they carry the clean information-theoretic reading: a 50/50 group costs one coin
+flip of uncertainty.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -429,6 +456,15 @@ branches look wonderful. This is the single most common implementation bug in th
         + trap("""<p><b>Bias towards many-valued features.</b> A feature with a unique value per example
 (an ID column!) gives perfect purity and enormous gain, while being completely useless. C4.5 fixes this
 with <em>gain ratio</em>; the practical fix is: never feed an ID column to a tree.</p>""")
+
+        + explain("""<p>An ID column gives perfect purity and enormous information gain. <b>Say why gain — a correct
+formula, correctly computed — recommends something useless.</b></p>""",
+                  """<p>Because gain measures purity on the <b>training set only</b>, and it has no way to ask whether a
+split will ever apply again. Every ID is unique, so splitting on it separates the data perfectly and
+scores brilliantly.</p>
+<p>A new customer arrives with an ID the tree has never seen, and the split is meaningless. The
+formula is not wrong; it is answering &ldquo;does this tidy the data in front of me?&rdquo; when you
+wanted &ldquo;will this generalise?&rdquo; — which is the whole reason held-out evaluation exists.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -767,8 +803,12 @@ of weights.""")
                "the curve underneath is the gain at every possible threshold")
 
         + h2("🔢", "The maths, decoded")
-        + eq("""split condition: <var>x</var><sub>weight</sub> <span class="op">≤</span> <var class="hl-a">t</var>""",
-             "one threshold turns a number into a yes/no question", small=True)
+        + eqp([
+            'split condition: ',
+            ('<var>x</var><sub>weight</sub>', "func-f", "the continuous feature, as it arrives"),
+            ' <span class="op">≤</span> ',
+            ('<var class="hl-a">t</var>', "sq-distance", "the threshold the algorithm chooses"),
+        ], "one threshold turns a number into a yes/no question — hover or click a part", small=True)
         + decode([
             ("<var class='hl-a'>t</var>", "“the threshold”", "The cut point. Chosen by the algorithm, not by you."),
             ("m − 1 candidates", "“the thresholds worth trying”", "Sort the values; the only useful cut points are midway between consecutive distinct values. 10 examples → at most 9 candidates."),
@@ -1608,6 +1648,15 @@ reinforcement learning. The habits from Week 3 carry into all of it.</p>"""
 likely beat it, train in seconds and need no tuning. Try the cheap thing first.</p>""")
         + trap("""<p><b>Reaching for a tree on raw pixels.</b> A tree has no notion of “nearby pixels”, so
 it must learn every position independently. It will not work.</p>""")
+
+        + explain("""<p>A tree on raw pixels &ldquo;will not work&rdquo;. <b>Say what a tree lacks that a convolutional
+network has.</b></p>""",
+                  """<p>Any notion that pixel 4,001 is <em>next to</em> pixel 4,002. To a tree the input is an unordered
+list of numbers, so a cat one pixel to the left is an entirely unrelated set of thresholds and must be
+learned from scratch.</p>
+<p>A convolution builds locality and translation invariance in as a structural assumption — the same
+filter slides everywhere. That prior is true of images and false of spreadsheets, which is precisely
+why the two model families swap places depending on the data.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

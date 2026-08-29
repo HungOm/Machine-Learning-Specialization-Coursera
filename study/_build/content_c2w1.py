@@ -98,6 +98,15 @@ learned features” is a green one.</p>""")
         + trap("""<p><b>Confusing weights with inputs.</b> Inputs change with every example. Weights stay
 put and change only during training. If you mix these up, nothing later in the course will make sense.</p>""")
 
+        + explain("""<p>Inputs change with every example; weights stay put between examples. <b>Say why mixing those two
+up makes everything later in the course incoherent.</b></p>""",
+                  """<p>Because training is defined as <em>changing the weights while the data stays fixed</em>. The
+gradient asks &ldquo;how should <var>w</var> change to reduce the cost on this data?&rdquo; — a
+question that only makes sense if <var>x</var> is the thing you cannot alter.</p>
+<p>Confuse them and gradient descent, backpropagation and regularization all become meaningless: you
+would be adjusting the data to fit the model. A weight is what the network <b>learned</b>; an input is
+what it is <b>shown</b>.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("A neuron has weights [2, −1] and bias 0.5. The input is [1, 3]. What is z, and roughly what is a?",
@@ -228,6 +237,16 @@ field of its own.</p>""")
 brackets like <var>x</var><sup>(3)</sup> = the third <em>training example</em>. Plain superscripts are
 powers. Three different meanings, three different bracket styles — the course is consistent about it.</p>""")
 
+        + explain("""<p>The course writes <var>a</var><sup>[2]</sup>, <var>x</var><sup>(3)</sup> and <var>x</var>&sup2;
+— three superscripts, three meanings. <b>Say what each bracket style means and why the distinction is
+worth the effort.</b></p>""",
+                  """<p>Square brackets are the <b>layer</b>. Round brackets are the <b>training example</b>. A bare
+superscript is an ordinary <b>power</b>. Every paper and framework you read uses this convention, so
+learning it once pays for the rest of your career.</p>
+<p>The practical reason it matters: layers and examples are the two dimensions your arrays are
+indexed by, and confusing them produces shape errors where the arithmetic runs and the numbers are
+wrong. Nothing raises, so the notation is your only defence.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("The hidden layer has 3 units and there are 4 inputs. How many weights and biases in that layer?",
@@ -337,6 +356,16 @@ sigmoid saturates flat, gradients vanish and training stalls. Divide by 255 (or 
 almost everyone once.</p>""")
         + trap("""<p><b>Assuming the layer roles are guaranteed.</b> “Layer 1 = edges” is a strong tendency,
 not a law. It is what you observe after training, not something you can rely on before it.</p>""")
+
+        + explain("""<p>&ldquo;Layer 1 learns edges&rdquo; is described as a strong tendency rather than a law.
+<b>Say why that distinction matters in practice.</b></p>""",
+                  """<p>Because it is an <em>observation made after training</em>, not a constraint imposed before it.
+Nothing in the loss function asks for edge detectors — they emerge because they happen to be useful
+for natural images.</p>
+<p>So the tendency is reliable enough to justify transfer learning, and not reliable enough to justify
+claims about what a particular unit means. Whole research fields exist to check whether units mean
+what they appear to. Treat the hierarchy as a well-supported observation, and be careful with any
+individual unit.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -891,6 +920,15 @@ That is the entire subject of the next lesson.</p>""")
 different scales. Real code puts a <code>Normalization</code> layer in front — the optional lab does exactly
 this, and skipping it makes training crawl.</p>""")
 
+        + explain("""<p>Temperature runs around 200 and duration around 17, and real code puts a Normalization layer in
+front. <b>Say why, using what you learned about contours in Course 1.</b></p>""",
+                  """<p>Unequal feature ranges stretch the cost surface into long thin ellipses, so gradient descent
+zigzags across the narrow direction instead of running down the valley. It converges to the same
+place, far more slowly.</p>
+<p>Nothing about neural networks removes that — if anything depth makes it worse, since every layer
+inherits the badly scaled input. So the C1 Week 2 lesson is not superseded here; it is a permanent
+part of the pipeline, and the Normalization layer is simply where it now lives.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("What is the shape of a1 after <code>layer_1(x)</code> with units=3 and x of shape (1,2)?",
@@ -992,6 +1030,15 @@ of confusion in this week.</p>""")
         + trap("""<p><b>Silent broadcasting.</b> NumPy will sometimes cheerfully broadcast a wrong shape into
 a valid-looking result instead of erroring. You get numbers, they’re just the wrong ones. Print
 <code>.shape</code> after every step while you’re learning.</p>""")
+
+        + explain("""<p><code>(2,)</code> and <code>(1, 2)</code> hold exactly the same two numbers. <b>Say what
+actually differs, and why NumPy's helpfulness makes it worse.</b></p>""",
+                  """<p>The <b>rank</b> — how many dimensions the array has. <code>(2,)</code> is a one-dimensional
+vector; <code>(1, 2)</code> is a two-dimensional table with a single row. Matrix multiplication cares
+about that difference enormously.</p>
+<p>And NumPy will often broadcast a wrong-rank array into something that produces numbers rather than
+an error. You get output, it looks plausible, and it is wrong. This is why printing
+<code>.shape</code> after every step is worth the keystrokes while you are learning.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1250,6 +1297,15 @@ things, both length-2 here, so NumPy will not save you.</p>""")
 element-wise and returns a <em>list</em>. <code>np.dot</code> also sums, returning a <em>number</em>. A
 neuron needs the number.</p>""")
 
+        + explain("""<p><code>W[0]</code> and <code>W[:, 0]</code> are both length 2 here, so NumPy will not stop you
+using the wrong one. <b>Say what each actually contains.</b></p>""",
+                  """<p><code>W[0]</code> is a <b>row</b>: the weights that all three neurons apply to input 0.
+<code>W[:, 0]</code> is a <b>column</b>: everything neuron 0 uses. They are different objects that
+happen to have the same length in this small example.</p>
+<p>Get it backwards and every neuron computes a mixture of the wrong weights. The shapes are
+compatible, the code runs, and the network learns nothing while reporting no error — the classic
+silent failure of a hand-written layer.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("With the W above, what is W[:, 2] and what does it belong to?",
@@ -1484,6 +1540,15 @@ the extrapolation — is the professional norm. Be suspicious of anyone who has 
             ("one learning algorithm hypothesis", "“one algorithm”", "The conjecture that one piece of brain tissue can learn to process any sense — the strongest scientific argument for the AGI idea."),
             ("neuroplasticity", "“plasticity”", "The brain's ability to rewire. The rewiring experiments are the evidence the hypothesis rests on."),
         ])
+        + explain("""<p>The one-learning-algorithm hypothesis rests on rewiring experiments — auditory cortex fed visual
+input learns to see. <b>Say why that is suggestive rather than conclusive.</b></p>""",
+                  """<p>It shows one piece of tissue is <em>more general than expected</em>, which is a real and
+surprising result. It does not show that a single algorithm accounts for all cognition, and it says
+nothing at all about whether today's architectures are that algorithm.</p>
+<p>The gap is the one every S-curve produces: rapid progress on narrow tasks makes extrapolation feel
+obvious, and the extrapolation is usually about the next order of magnitude rather than the next
+category. The evidence is for plasticity, and the claim being made from it is much larger.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("What is the one-learning-algorithm hypothesis in one sentence?",

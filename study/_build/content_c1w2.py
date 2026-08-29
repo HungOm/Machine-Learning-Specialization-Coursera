@@ -215,6 +215,16 @@ elementwise and returns an <em>array</em>. <code>np.dot</code> multiplies <em>an
         + trap("""<p><b>Off-by-one between maths and code.</b> w₁ in a formula is <code>w[0]</code> in
 NumPy. Be deliberate about it, especially when translating a formula from a lecture.</p>""")
 
+        + explain("""<p><code>[1,2,3] * 2</code> gives <code>[1,2,3,1,2,3]</code> and <code>np.array([1,2,3]) * 2</code>
+gives <code>[2,4,6]</code>. <b>Say why Python is right in both cases, and why that makes the bug so
+dangerous.</b></p>""",
+                  """<p>For a <em>list</em>, <code>*</code> means repeat — the same meaning it has for strings. For an
+<em>array</em>, it means multiply each element. Both are correct behaviour for their own type, so
+neither raises.</p>
+<p>That is exactly what makes it dangerous: your gradient is silently six numbers long instead of
+three, the shapes may still be compatible downstream, and the model trains to something confidently
+wrong. A bug that errors is cheap; this one costs you an afternoon.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("w = [1, 2, 3], x = [10, 20, 30], b = 5. What is np.dot(w, x) + b?",
@@ -452,6 +462,15 @@ b directly, in one shot, with an explicit formula. No iterations, no α, no conv
                  ["Works for other algorithms", "<b>yes, all of them</b>", "no — linear regression only"]])
         + """<p>Some scikit-learn implementations use it internally without telling you. Worth knowing it
 exists so the term is not a surprise; not worth reaching for, because it generalises to nothing.</p>"""
+
+        + explain("""<p>The normal equation needs no &alpha;, no iterations and no convergence check. <b>Say why the
+whole specialization is nevertheless built on gradient descent.</b></p>""",
+                  """<p>Because it <b>generalises to nothing else</b>. It is a closed-form solution that exists only
+because linear regression with squared error happens to have one. Logistic regression does not,
+neural networks do not, recommenders do not.</p>
+<p>It also costs roughly O(<var>n</var>&sup3;) for the matrix inverse, so it is impractical past
+about 10,000 features. Gradient descent is slower on the one problem where both work, and it is the
+only method that survives Course 2 and Course 3.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -704,6 +723,16 @@ five-second diagnosis. Always keep the history.</p>""")
         + trap("""<p><b>Expecting a fixed number of iterations to work.</b> Different problems need 30,
 1,000 or 100,000. There is no universal number — which is exactly why you plot it.</p>""")
 
+        + explain("""<p>Two problems converge in 30 iterations and 100,000 iterations respectively, with the same code.
+<b>Say why no universal iteration count exists, and what you should do instead.</b></p>""",
+                  """<p>How many steps you need depends on the shape of the cost surface — how elongated the contours
+are, which depends on your features and your scaling — and on &alpha;. Those change with every
+dataset, so any fixed number is right by accident.</p>
+<p>So you plot <var>J</var> against iteration and read the shape: falling and flat means converged,
+still falling means keep going or raise &alpha;, rising means lower it. That is why recording the
+history is non-negotiable — without it, a failing model is a mystery instead of a five-second
+diagnosis.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("J goes 100, 40, 22, 21.8, 21.7, 21.7. What now?",
@@ -792,6 +821,15 @@ guaranteed</em> to decrease every iteration, provided the gradient is correct.</
             ("diverge", "“blow up”", "J grows instead of shrinking, usually to infinity. Always means α is too large — or the derivative is wrong."),
             ("oscillate", "“bounce”", "J goes down, up, down, up. Overshooting the valley. Halve α."),
         ])
+        + explain("""<p>&alpha; and &lambda; are both called hyperparameters, and <var>w</var> and <var>b</var> are
+not. <b>Say what the distinction actually is.</b></p>""",
+                  """<p>Parameters are the numbers the algorithm <em>learns from the data</em> by minimising the cost.
+Hyperparameters are the numbers you fix before the learning starts, and gradient descent never
+touches them.</p>
+<p>Which is why they need a completely different search method — a sweep and a plot rather than a
+gradient — and why choosing them well is a manual skill rather than an automatic one. Everything in
+C2 Week 3 is, in one way or another, about choosing hyperparameters honestly.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why go up by ×3 rather than adding a fixed amount?",
@@ -892,6 +930,15 @@ customer churns and you engineer “days since they cancelled”, your model wil
 useless in production. Ask whether the feature would exist at prediction time.</p>""")
         + trap("""<p><b>Forgetting to scale engineered features.</b> If x₁ is 0–2000 then x₁² is
 0–4,000,000. Rescale after engineering, not before.</p>""")
+
+        + explain("""<p>You are predicting customer churn and engineer a feature called <i>days since they cancelled</i>.
+It gives a near-perfect model. <b>Say what has gone wrong.</b></p>""",
+                  """<p>The feature <b>cannot exist at prediction time</b>. You are trying to predict whether someone
+will cancel, and the feature already knows that they did — so the model has been handed the answer
+in the input.</p>
+<p>This is data leakage, and its signature is exactly this: implausibly good validation numbers and
+a useless model in production. The test to apply to every engineered feature is one question — would
+this value be available, with this meaning, at the moment I need the prediction?</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

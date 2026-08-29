@@ -199,6 +199,15 @@ million judgement calls — and two people would disagree about half of them.</p
 taste. Whatever it is that makes people who liked <i>Arrival</i> also like <i>Prisoners</i>, nobody has a
 column for it.</p>"""
 
+        + explain("""<p>Whatever makes people who liked <i>Arrival</i> also like <i>Prisoners</i>, nobody has a column
+for it. <b>Say why that single sentence motivates the entire next lesson.</b></p>""",
+                  """<p>Because per-item features can only express what somebody thought to write down. The features
+that are easy to label — genre, year, length — are not the ones that predict taste, and the ones that
+do are hard to name.</p>
+<p>Collaborative filtering's move is to stop trying to name them: learn the item features from the
+ratings themselves. You lose the ability to say what any dimension means, and you gain the ability to
+capture a similarity nobody could articulate. That is the trade the rest of the week is built on.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Alice rates romantic films 5 and action films 0. Roughly what is her w?",
@@ -436,6 +445,14 @@ recording them as 0 poisons the model.</p>""")
             card("<h3>Did they finish it?</h3><p>Much stronger evidence of genuine value, and much rarer.</p>"),
             card("<h3>Did they come back?</h3><p>The strongest signal, and the slowest to collect. Long-term "
                  "metrics are the hardest to optimise and the most worth optimising.</p>"))
+
+        + explain("""<p>Of 50,000 items a user saw 20 and clicked 3. <b>Say why recording the other 49,980 as
+<var>y</var> = 0 poisons the model, when 0 is the correct label for &ldquo;did not click&rdquo;.</b></p>""",
+                  """<p>Because 0 and blank mean different things. A 0 should mean <b>shown and not clicked</b> — real
+evidence of disinterest. A blank means <b>never shown</b>, which is evidence of nothing at all.</p>
+<p>Recording all 49,980 as 0 tells the model the user actively rejected the entire catalogue, when in
+fact they never saw it. The model then learns to predict &ldquo;no&rdquo; for almost everything, and
+the confusion is invisible because the arithmetic is perfectly well behaved.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -794,6 +811,14 @@ nonsense until it accumulates ratings. Fall back to content features for new ite
         + trap("""<p><b>Recommending things that are <em>too</em> similar.</b> Five sequels of the same film
 is technically correct and a bad user experience. Real systems add an explicit diversity penalty.</p>""")
 
+        + explain("""<p>Recommending five sequels of the same film is technically correct and a poor experience. <b>Say
+what the objective is optimising, and what it never asked about.</b></p>""",
+                  """<p>The objective optimises predicted rating <b>one item at a time</b>. Each of the five sequels
+genuinely is the best individual prediction, so the model is doing exactly what it was asked.</p>
+<p>Nothing in the objective mentions the <em>set</em> — whether the five items together are a good
+slate. Diversity is a property of the collection, so it has to be added deliberately as a penalty or a
+re-ranking step. It will never emerge from a per-item objective, however good the model gets.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("x⁽¹⁾ = [0.9, 0.1] and x⁽²⁾ = [0.8, 0.2]. Squared distance?",
@@ -882,6 +907,15 @@ express what its features encode. If the thing that actually drives taste is not
 is invisible — and collaborative filtering would have found it.</p>""")
         + trap("""<p><b>Filter bubbles.</b> Content-based recommends more of what you already engage with,
 by construction. Deliberate diversity injection is a design decision, not an emergent property.</p>""")
+
+        + explain("""<p>Content-based filtering feels safer because it uses &ldquo;real&rdquo; information about items.
+<b>Say what it cannot do that collaborative filtering can.</b></p>""",
+                  """<p>It can only express what its <b>features encode</b>. If the thing that actually drives taste is
+not in your feature list, it is invisible to the model no matter how much data you collect — and you
+will not know it is missing.</p>
+<p>Collaborative filtering has no such ceiling: it learns whatever dimensions explain the ratings,
+including ones nobody could name. The trade is that it needs ratings to exist, which is exactly the
+blind spot content-based covers. Neither is safer; they fail differently.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1268,6 +1302,15 @@ building, and be transparent about the trade you are making”.</p>""")
             ("amplification", "“amplification”", "The system making an existing tendency stronger, rather than merely reflecting it."),
             ("transparency", "“transparency”", "Telling people why they were shown something, and letting them change it."),
         ])
+        + explain("""<p>&ldquo;Amplification&rdquo; is distinguished from &ldquo;merely reflecting&rdquo;. <b>Say what
+makes the difference, mechanically.</b></p>""",
+                  """<p>The feedback loop. A system that reflected would show you a fixed sample of what exists. This one
+trains on what was clicked, and what was clicked depends on what it previously chose to show — so its
+own output becomes its next training input.</p>
+<p>A small initial tendency is therefore reinforced on every cycle rather than staying constant. That
+is the mechanical difference, and it is why no bad intention is required: every individual step is a
+reasonable response to observed behaviour.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why does optimising for engagement tend to amplify outrage?",
@@ -1388,6 +1431,15 @@ error. Define it once as a variable, as above.</p>""")
         + trap("""<p><b>Forgetting <code>axis=1</code> in l2_normalize.</b> Normalising the wrong axis
 scales across the batch instead of within each example — a quiet, wrong result.</p>""")
 
+        + explain("""<p><code>l2_normalize</code> with the wrong axis gives &ldquo;a quiet, wrong result&rdquo;. <b>Say
+what normalising across the batch instead of within each example actually does.</b></p>""",
+                  """<p>It makes each output dimension have unit norm <em>across the examples in the batch</em>, so a
+vector's values now depend on which other examples happened to be batched with it. The same user
+produces different embeddings in different batches.</p>
+<p>Nothing errors, the loss decreases, and the model learns something incoherent — and worse, the
+behaviour differs between training and single-example serving. Normalising <code>axis=1</code> keeps
+each example's own vector at unit length, which is what turns the dot product into a cosine.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why the functional API instead of Sequential?",
@@ -1480,6 +1532,15 @@ correspond roughly to “size of the economy” and the vertical to “GDP per p
 visibly. Nobody defined those axes — they fell out of the data.</p>"""
         + warn("""<p>Note the hedge: the axes “turn out to correspond roughly to”. PCA gives you directions,
 not names. Interpreting them is your judgement, and it is easy to over-read.</p>""")
+
+        + explain("""<p>The two PCA axes &ldquo;turn out to correspond roughly to&rdquo; economy size and GDP per
+person. <b>Say why that hedge is doing real work.</b></p>""",
+                  """<p>Because PCA returns <b>directions of maximum variance</b>, and nothing else. It has no access to
+meaning, no labels, and no notion of what your columns represent — the names are entirely your
+interpretation after the fact.</p>
+<p>The directions are also not guaranteed to be interpretable at all; often a component is a mixture
+with no clean reading. Over-reading them is easy and common, and it is why PCA is honestly a
+visualisation and compression tool rather than an explanatory one.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1716,6 +1777,14 @@ more legible cluster structure than PCA. They are non-linear, slower, and their 
 should not be over-interpreted — but for “show me the shape of this data”, they are the modern default.
 PCA remains the right choice when you need a fast, linear, invertible transform.</p>""",
                "What people use instead, for plotting")
+
+        + explain("""<p>t-SNE and UMAP usually produce more legible cluster pictures than PCA, and their between-cluster
+distances should not be over-interpreted. <b>Say why PCA is still worth having.</b></p>""",
+                  """<p>Because it is <b>linear and invertible</b>. You can project down, work in the reduced space, and
+transform back — and you can apply the exact same transform to new data later, which a t-SNE embedding
+cannot do at all.</p>
+<p>It is also fast, deterministic, and it reports how much variance it kept, so you know what you gave
+up. t-SNE is the better picture; PCA is the better <em>transform</em>, and those are different jobs.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

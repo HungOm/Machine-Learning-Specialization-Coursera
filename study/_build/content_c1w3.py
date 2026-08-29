@@ -67,6 +67,15 @@ the boundary <em>most</em>.</p>""")
             ("decision boundary", "“the line between them”", "The set of inputs where the model switches from predicting 0 to predicting 1."),
         ])
 
+        + explain("""<p>Which class you call &ldquo;positive&rdquo; is your own choice. <b>Say why that choice, which
+changes nothing about the data, nevertheless changes the numbers you report.</b></p>""",
+                  """<p>Because precision and recall are both defined <em>with respect to the positive class</em>.
+Swap the labels and recall becomes a measurement of the other class entirely, and the same model
+produces a different pair of numbers.</p>
+<p>Accuracy is unaffected, which is one more reason it hides things. The convention that saves you is
+to make the positive class the <b>rare, costly thing you are looking for</b> — the fraud, the
+disease — so that recall means &ldquo;how much of it did we catch?&rdquo;</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Linear regression predicts −0.3 for a tumour. How do you interpret that?",
@@ -182,6 +191,15 @@ def predict(X, w, b):
     z = np.dot(X, w) + b
     return sigmoid(z)              # probabilities, one per row
 """)
+
+        + explain("""<p>Move a point that is already far on the correct side of the boundary further away still. The
+prediction barely changes. <b>Say why, and why that is the behaviour you wanted.</b></p>""",
+                  """<p>The sigmoid has <b>saturated</b>. Out at <var>z</var> = 6 the curve is almost flat, so a large
+change in <var>z</var> buys a tiny change in the output — it is already about 0.998 and cannot go
+much higher.</p>
+<p>That is what you wanted, because a case you are already sure about should not keep dominating the
+fit. It is also exactly the property that becomes a <em>problem</em> in Course 2: a flat curve means
+a near-zero gradient, so a saturated unit learns almost nothing. Same fact, opposite consequence.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -503,6 +521,15 @@ examples is convex too.</p>
 to use the result. What is worth taking away is that the sigmoid and the log loss are a matched pair —
 pairing the sigmoid with squared error, or the log loss with a different activation, loses the
 property.</p>"""
+
+        + explain("""<p>The sigmoid and the log loss are described as a matched pair. <b>Say what breaks if you keep the
+sigmoid and swap the loss for squared error.</b></p>""",
+                  """<p>You lose <b>convexity</b>. Squared error wrapped around a sigmoid produces a bumpy surface with
+local minima, so gradient descent's answer starts depending on where you happened to start — and you
+have no way to know whether you landed in the good valley.</p>
+<p>The log is chosen precisely because it undoes the sigmoid's exponential and leaves a convex
+surface. It is also why the final gradient comes out as the clean (<var>f</var> &minus;
+<var>y</var>)<var>x</var>: the two functions were built to cancel.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -995,6 +1022,15 @@ observed symptom — and it works remarkably well.</p>"""
             ("feature selection", "“feature selection”", "Dropping features by hand. Works, but throws away whatever information they carried."),
             ("generalisation", "“generalisation”", "Performance on data the model has never seen. The only thing that actually matters."),
         ])
+        + explain("""<p>Feature selection and regularization both reduce overfitting. <b>Say why regularization is
+usually preferred.</b></p>""",
+                  """<p>Feature selection makes an <b>irreversible</b> decision on the evidence of your training set. A
+feature that looked useless on 200 rows is gone, along with whatever it carried, and you will not
+find out what it cost you.</p>
+<p>Regularization keeps every feature and only shrinks its influence, letting the data decide how
+much through &lambda; — which you can tune, and undo. You reach for selection when you have a reason
+beyond fit: cost of collecting the feature, latency, or interpretability.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("You are overfitting and cannot collect more data. What are your options?",
@@ -1269,6 +1305,16 @@ gradient descent, vectorisation, feature scaling, feature engineering, and regul
 <p>Course 2 replaces the model with a neural network and keeps everything else. The cost function, the
 gradient descent, the scaling, the regularisation, the overfitting story — all of it carries straight
 over. That is why this course is worth doing properly before moving on.</p>"""
+
+        + explain("""<p>The regularized update multiplies <var>w</var> by a factor slightly below 1 before the usual
+step. <b>Say why that earns the name &ldquo;weight decay&rdquo;, and what happens to a weight that
+stops being useful.</b></p>""",
+                  """<p>Rearranging the update gives <var>w</var>(1 &minus; &alpha;&lambda;/<var>m</var>) minus the
+usual gradient term. That first part shrinks <var>w</var> towards zero on <em>every single step</em>,
+whether or not the data has anything to say about it — a constant, gentle decay.</p>
+<p>So a weight the data no longer supports has nothing pushing back, and it decays away on its own.
+A weight that genuinely earns its size gets pushed back up by the gradient each step and holds its
+ground. That tug-of-war is the whole mechanism.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([

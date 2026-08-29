@@ -499,6 +499,16 @@ Several sigmoids = several answers can be correct at once. Lesson 10 covers this
 zeros.</b> ReLU floors at 0, so the model can never predict a small positive value smoothly near the
 boundary. If some outputs really should be 0, that’s a feature; if not, use linear.</p>""")
 
+        + explain("""<p>Someone uses ReLU on the output of a house-price model and is surprised by a cluster of exact
+zeros. <b>Say what ReLU is doing, and when this would be the right choice rather than a bug.</b></p>""",
+                  """<p>ReLU is <code>max(0, z)</code>, so every negative <var>z</var> is clamped to exactly 0. The
+model cannot approach a small positive value smoothly from below — it hits a hard floor and produces
+0 for a whole region of inputs.</p>
+<p>That is a bug for prices, where you want a smooth continuous output and should use a linear
+activation. It is a <b>feature</b> when the quantity genuinely cannot be negative and exact zeros are
+real — counts of events, waiting times, quantities ordered. The activation encodes a claim about the
+target's range, so make the claim deliberately.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Predicting tomorrow’s temperature change in °C. Output activation?",
@@ -703,10 +713,14 @@ model produced.</p>""",
 single decision.""")
 
         + h2("🔢", "The maths, decoded")
-        + eq("""<var>y</var> <span class="op">∈</span> {1, 2, …, <var>N</var>}
-&nbsp;&nbsp;&nbsp;
-<var>P</var>(<var>y</var> = <var>j</var> | <var>x</var>) for each <var>j</var>""",
-             "the target is now one of N labels, not just 0 or 1")
+        + eqp([
+            ('<var>y</var> <span class="op">∈</span> {1, 2, …, <var>N</var>}', "softmax-native",
+             "one label out of N, exactly one true"),
+            ' &nbsp;&nbsp;&nbsp; ',
+            ('<var>P</var>(<var>y</var> = <var>j</var> | <var>x</var>)', "probability-f0",
+             "one probability per class — they sum to 1"),
+            ' for each <var>j</var>',
+        ], "the target is now one of N labels, not just 0 or 1 — hover or click a part")
         + decode([
             ("<var>N</var>", "“the number of classes”", "10 for digits, 3 for iris species, 2 for the binary case you already know."),
             ("<var>y</var> ∈ {1..N}", "“y is one of these”", "A category, not a quantity. Class 7 is not “bigger” than class 3 — the numbers are just names."),
@@ -734,6 +748,16 @@ reduces to when N = 2. Nothing is being replaced here — the general case is be
         + trap("""<p><b>Treating class labels as numbers.</b> If you feed “class = 7” into a regression, the
 model will think 7 is closer to 6 than to 2. For unordered categories that is nonsense — which is why
 you use N output units, not one.</p>""")
+
+        + explain("""<p>Disease stages 1 to 5 have a genuine order, and plain multiclass softmax ignores it entirely.
+<b>Say what that costs you.</b></p>""",
+                  """<p>Softmax treats the five classes as unrelated labels, so predicting stage 1 for a stage 5 patient
+is penalised <em>exactly as much</em> as predicting stage 4 — even though one error is catastrophic
+and the other is nearly right.</p>
+<p>The model therefore never learns that adjacent stages are similar, and it wastes capacity
+rediscovering an ordering you already knew. The fixes are ordinal regression, or predicting a number
+and thresholding it. Softmax is the right default only when the categories genuinely have no
+order.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1845,8 +1869,14 @@ weight:</p>"""
                  ["15 → 10", "150"],
                  ["<b>one example</b>", "<b>10,525</b>"]])
         + """<p>Now the training run: 5,000 examples, 40 epochs.</p>"""
-        + eq("""10,525 <span class="op">×</span> 5,000 <span class="op">×</span> 40
-<span class="op">=</span> <b>2.1 billion</b>""", "multiply-adds, just for the forward passes")
+        + eqp([
+            ('10,525', "func-f", "multiply-adds for one example, one pass"),
+            ' <span class="op">×</span> ',
+            ('5,000', "avg-factor", "training examples"),
+            ' <span class="op">×</span> ',
+            ('40', "epoch-native", "passes over the whole set"),
+            ' <span class="op">=</span> <b>2.1 billion</b>',
+        ], "multiply-adds, just for the forward passes — hover or click a part")
         + """<p>Backpropagation adds roughly two to three times that again, so the real figure is
 somewhere near six billion operations — for a network small enough to describe in four lines, on a
 data set that fits in memory. It finishes in under a minute, which is a fact about hardware, not

@@ -83,6 +83,15 @@ valid.</p>""")
 measured in dollars (0–100,000) will completely drown one measured in years (0–80). <b>Standardise
 first.</b></p>""")
 
+        + explain("""<p>A feature in dollars (0&ndash;100,000) sits beside one in years (0&ndash;80). <b>Say what
+happens to the clustering, and why the effect is worse here than it was for gradient descent.</b></p>""",
+                  """<p>Clustering <em>is</em> distance. The dollar feature contributes differences in the thousands and
+the years feature differences in the tens, so the squared distance is essentially the dollar column
+alone. Your clusters are income bands with the age column along for the ride.</p>
+<p>For gradient descent, bad scaling made convergence slow and the destination was unchanged. Here it
+changes the answer itself, silently and permanently — there is no minimum it eventually reaches
+anyway.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("You have customer purchase histories with no labels and want to find natural groups. Supervised or unsupervised?",
@@ -165,6 +174,15 @@ precise.</p>""")
         + trap("""<p><b>An empty cluster.</b> If a centroid ends up with no points, its mean is undefined
 (0/0). Standard fixes: delete it and continue with K−1, or re-initialise it at a random point. The
 assignment mentions this explicitly.</p>""")
+
+        + explain("""<p>Neither step of k-means is clever, and the algorithm reliably terminates. <b>Say what guarantees
+it stops.</b></p>""",
+                  """<p>Both steps reduce the same quantity, and neither can ever increase it. Reassigning a point to a
+nearer centroid cannot increase its distance; moving a centroid to the mean of its own points is by
+definition the position that minimises their squared distance.</p>
+<p>So the cost is non-increasing and bounded below by zero, and there are finitely many possible
+assignments — it must stop. That also gives you a free debugging assertion: if <var>J</var> ever rises
+in your implementation, you have a bug.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -754,6 +772,15 @@ never seen that class.</p>""")
 verification</b>, not a ban. Anomaly detectors produce suspicion, not proof — designing the human response
 matters as much as the model.</p>""")
 
+        + explain("""<p>Flagged accounts get additional verification rather than a ban. <b>Say why the design of the
+human response matters as much as the model's accuracy.</b></p>""",
+                  """<p>Because the model produces <b>suspicion, not proof</b>. It says &ldquo;this is unlike the normal
+I was shown&rdquo;, and unusual is not the same as fraudulent — a legitimate customer doing something
+unusual is exactly what a false positive is.</p>
+<p>So the action attached to a flag decides what a false positive costs. Verification is recoverable
+and cheap; a ban is not. Choosing the recoverable action is what lets you set &epsilon; aggressively
+enough to catch things, which is a system design decision the model cannot make for you.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("You have 10,000 normal engines and 20 faulty ones. Where do the 20 go?",
@@ -1005,6 +1032,15 @@ Happens when a column is constant. Drop the feature, or add a tiny epsilon to th
 always, and the algorithm works regardless. If correlated features genuinely matter, the multivariate
 Gaussian (with a full covariance matrix) is the extension — at the cost of needing far more data.</p>""")
 
+        + explain("""<p>The independence assumption is &ldquo;technically wrong almost always&rdquo; and the algorithm
+works anyway. <b>Say why being wrong is survivable here.</b></p>""",
+                  """<p>Because you are not trying to model the distribution accurately — you are trying to <b>rank</b>
+examples by how unusual they are. A model can be badly calibrated and still put the strange things at
+the bottom of the list, which is all &epsilon; needs.</p>
+<p>It fails specifically when the anomaly is <em>only</em> visible in the correlation — high CPU with
+low traffic, where each feature alone is unremarkable. That case needs a full covariance matrix, or an
+engineered ratio feature, which is the cheaper fix.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Three features, each with p = 0.1 for this example. What is p(x)?",
@@ -1248,6 +1284,15 @@ pressure is precisely why fraud is usually anomaly detection rather than classif
             ("novel anomaly", "“something new”", "A failure unlike anything in your data. Anomaly detection can catch these; a classifier cannot."),
             ("density estimation", "“how likely is this”", "Modelling what normal looks like, then flagging the improbable. What p(x) &lt; ε is doing."),
         ])
+        + explain("""<p>A classifier cannot catch a novel anomaly and density estimation can. <b>Say why, in terms of
+what each one actually learns.</b></p>""",
+                  """<p>A classifier learns a <b>boundary between the positives it was shown and the negatives</b>. A
+failure mode that has never occurred is on neither side of any boundary it drew, so it will be
+confidently assigned to whichever region it happens to land in.</p>
+<p>Density estimation learns only what <b>normal</b> looks like and flags everything improbable — so
+a failure nobody has ever seen is caught for the same reason as any other. That asymmetry is the whole
+basis for choosing between them, and why jet engines get density estimation.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Detecting previously unknown security exploits in server logs. Which?",

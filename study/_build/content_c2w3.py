@@ -82,6 +82,15 @@ themselves several times over.</p>""")
             ("variance", "“variance”, as in overfitting", "The model fits the training data and not much else."),
             ("baseline", "“baseline”", "What a reasonable alternative achieves — usually a human. Without it, an error rate means nothing."),
         ])
+        + explain("""<p>&ldquo;Bias&rdquo; appears twice in this week with two unrelated meanings. <b>Say what each one
+is, and why the collision is worth being careful about.</b></p>""",
+                  """<p>Bias as <b>underfitting</b> is a property of a model that is too simple to capture the pattern —
+a purely technical quantity, measured by the gap from the baseline to training error. Bias as
+<b>unfairness</b> is systematically worse outcomes for a group of people.</p>
+<p>They share a word and nothing else. The collision matters because &ldquo;we reduced bias&rdquo; is
+a sentence that can mean two entirely different pieces of work, and in a report to non-specialists it
+will be read the second way. Say which one you mean.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Your model has 0.1% error on training data and 30% on new data. Is more data likely to help?",
@@ -702,6 +711,16 @@ statistical model.</p>""")
         + trap("""<p><b>Assuming Bayes error is 0.</b> Some examples are genuinely ambiguous: audio nobody
 can transcribe, an X-ray two radiologists disagree about. Insisting on 0% error means fitting label noise.</p>""")
 
+        + explain("""<p>Human-level performance is the right baseline for transcribing speech and the wrong one for
+predicting stock prices. <b>Say what distinguishes the two cases.</b></p>""",
+                  """<p>Whether humans are good at the task. A baseline is an estimate of the <b>irreducible noise</b> —
+how much of the answer simply is not in the input — and human performance estimates that well only
+where humans are near the ceiling.</p>
+<p>Humans are terrible at predicting stock prices, so matching them tells you nothing about whether
+there is headroom. There the baseline has to come from a previous system or a simple statistical
+model. Insisting on 0% error means fitting the noise, which is the trap the whole lesson exists to
+prevent.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Baseline 8%, J_train 8.2%, J_cv 15%. Diagnosis?",
@@ -1069,6 +1088,15 @@ The claim is “bigger <em>with</em> appropriate regularisation”, and the seco
 count in that layer. Sometimes the honest answer is “a smaller model that we can actually afford to
 serve”.</p>""")
 
+        + explain("""<p>The claim is &ldquo;a bigger network <em>with appropriate regularisation</em> rarely does
+worse&rdquo;. <b>Say what the second half is doing, and what happens without it.</b></p>""",
+                  """<p>It is carrying the whole claim. An unregularised large network has more than enough capacity to
+memorise the training set outright, and it will — driving training error to near zero while
+cross-validation error climbs.</p>
+<p>Regularisation is what converts extra capacity from a liability into an option: the model
+<em>could</em> memorise and is penalised for doing it. Drop that half and you are back to the
+classical trade-off where bigger is straightforwardly worse.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Your network gets 20% training error against a 5% baseline. First move?",
@@ -1164,6 +1192,15 @@ cases look like. Build the crude version, look at what it gets wrong, and let th
         + trap("""<p><b>Changing three things per lap.</b> Then you cannot attribute the improvement, and
 your next decision is a guess again.</p>""")
 
+        + explain("""<p>You change three things in one lap and the model improves. <b>Say why you are no better off than
+before.</b></p>""",
+                  """<p>Because you cannot attribute the improvement. One change may have helped a lot, another hurt,
+and the third done nothing — and the net is positive. You have a better model and no new knowledge,
+so your next decision is another guess.</p>
+<p>The loop's value is entirely in what each lap <em>teaches</em>. One change per lap is slower per
+iteration and much faster overall, for the same reason a controlled experiment beats changing the
+whole recipe.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why build a quick, crude first model rather than a careful one?",
@@ -1255,6 +1292,15 @@ look at an example and tell what the right answer was.</p>""")
 examples, and your final estimate is compromised. Use the cross-validation set.</p>""")
         + trap("""<p><b>Skipping it because it feels unscientific.</b> It is the highest-value hour in most
 projects.</p>""")
+
+        + explain("""<p>Error analysis must be done on the cross-validation set, not the test set. <b>Say what breaks if
+you use the test set.</b></p>""",
+                  """<p>You will start designing features around the specific examples you looked at. The test set stops
+being data the model has never influenced, and its score stops being an unbiased estimate of new-data
+performance.</p>
+<p>It is the same principle as choosing a model on the test set, arriving through a different door:
+<b>every decision you make while looking at a set costs you the right to use it as an honest
+estimate</b>. The test set is spent once, at the end.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1359,6 +1405,15 @@ always upright, rotating them 90° adds noise, not signal.</p>""")
         + trap("""<p><b>Augmenting the cross-validation or test set.</b> Only augment the training set. Your
 evaluation must reflect the real distribution.</p>""")
         + trap("""<p><b>Adding data to fix high bias.</b> Still doesn’t work. Check the diagnostic first.</p>""")
+
+        + explain("""<p>Augmenting the training set helps; augmenting the cross-validation set is a mistake.
+<b>Say why the same operation is right in one place and wrong in the other.</b></p>""",
+                  """<p>The training set is what the model learns from, so adding realistic variation teaches it about
+conditions it will meet. The evaluation sets exist to <b>estimate performance on the real
+distribution</b>, and augmenting them changes the distribution you are measuring against.</p>
+<p>You would end up reporting accuracy on rotated, blurred, brightened images that nobody will
+actually send you — a number about a world that does not exist. Distort what the model learns from;
+never distort the yardstick.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1482,6 +1537,15 @@ the pre-trained features immediately.</p>""")
 scaling — some want [0,1], some [−1,1], some ImageNet mean-subtraction. Use the model’s own
 <code>preprocess_input</code> function.</p>""")
 
+        + explain("""<p>Pre-trained models expect their own input scaling — some want [0, 1], some [&minus;1, 1], some
+ImageNet mean-subtraction. <b>Say why the wrong one is so damaging.</b></p>""",
+                  """<p>Every weight in the network was learned against a specific input distribution. Feed it inputs
+centred somewhere else and the first layer's activations land in the wrong part of their range, and
+the error compounds through every subsequent layer.</p>
+<p>The features you were paying for are effectively destroyed at the front door, and the symptom is
+mystifying — a well-regarded pre-trained model that performs barely better than random. Use the
+model's own <code>preprocess_input</code>; it exists for exactly this.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("You have 100 labelled X-rays. Freeze or fine-tune?",
@@ -1591,6 +1655,15 @@ phase, which lasts as long as the product does.</p>""")
 never. Watching the <em>input</em> distribution shift gives you an early warning that needs no labels at
 all.</p>""")
 
+        + explain("""<p>Monitoring accuracy needs labels, which arrive late or never. Monitoring the input distribution
+needs none. <b>Say why that makes input monitoring the more useful alarm.</b></p>""",
+                  """<p>Because it fires <em>first</em>. If your users' inputs shift — a new device, a new market, a
+changed upstream field — you can see that today, whereas the accuracy consequence only becomes
+visible when labels eventually arrive, which for churn or fraud can be months.</p>
+<p>It cannot tell you how much harm the shift is doing, so it is an early warning rather than a
+measurement. That is still the difference between noticing drift in a week and noticing it in a
+quarter.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Your deployed spam filter's accuracy drops over six months with no code change. Why?",
@@ -1697,6 +1770,15 @@ lose the ability to measure the disparity.</p>""")
             ("adversarial attack", "“adversarial”", "A deliberately crafted input designed to fool the model."),
             ("audit", "“audit”", "Measuring performance separately per group <b>before</b> shipping. The single most useful concrete step."),
         ])
+        + explain("""<p>Removing the protected attribute from the features is the intuitive fix, and it usually does not
+work. <b>Say why.</b></p>""",
+                  """<p>Because other features carry the same information. Postcode, name, purchasing history and device
+type are all correlated with the attribute you removed, and a sufficiently flexible model reconstructs
+it from them without being asked to.</p>
+<p>Worse, you have now made the problem harder to <em>detect</em>: the attribute is not in your data,
+so you cannot easily audit performance by group. The workable approach is the opposite — keep the
+attribute for measurement, audit per group, and constrain the model where the gaps are.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Your loan model is 94% accurate overall. What is the next thing to measure?",

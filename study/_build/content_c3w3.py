@@ -168,6 +168,15 @@ takes <b>2 steps</b> to reach a reward of <b>40</b>.</p>
 <p>Nearer but smaller, or further but bigger? You cannot answer that without a rule for trading time
 against value — and that rule is the next lesson.</p>"""
 
+        + explain("""<p>From state 4: left is 3 steps to a reward of 100, right is 2 steps to a reward of 40.
+<b>Say why you cannot answer which is better yet, and what is missing.</b></p>""",
+                  """<p>Because you have no rule for <b>trading time against value</b>. 100 is bigger and 40 is nearer,
+and nothing said so far tells you what a step costs.</p>
+<p>The discount factor &gamma; is that rule, and it genuinely decides the answer rather than merely
+refining it. At &gamma; = 0.9 the left reward is worth 0.9&sup3; &times; 100 = 72.9 and left wins;
+at &gamma; = 0.5 it is 12.5 against 10 and left still wins, but only just. Change &gamma; and the
+optimal policy changes.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("How many states, and how many are terminal?",
@@ -335,8 +344,13 @@ problem.""")
                "the arrows are π(s); the green numbers are how much each state is worth under that policy")
 
         + h2("🔢", "The maths, decoded")
-        + eq("""<var class="hl-a">π</var>(<var>s</var>) <span class="op">=</span> <var>a</var>""",
-             "the policy: given state s, take action a")
+        + eqp([
+            ('<var class="hl-a">π</var>', "q-function", "the policy — a lookup, not a route"),
+            '(',
+            ('<var>s</var>', "reward-r", "whatever state you are actually in"),
+            ') <span class="op">=</span> ',
+            ('<var>a</var>', "argmax-f0", "the one action to take there"),
+        ], "the policy: given state s, take action a — hover or click a part")
         + decode([
             ("π", "“pi”, the policy", "Nothing to do with 3.14159. Just the conventional letter for a policy."),
             ("π*", "“pi star”", "The <b>optimal</b> policy — the one that maximises expected return from every state."),
@@ -359,6 +373,15 @@ changing γ moves it.</p>"""
         + trap("""<p><b>Thinking of a policy as a route.</b> It is not “go left, left, left”. It is a rule
 covering every square, including ones you might never visit. That matters the moment the environment is
 stochastic and you end up somewhere unplanned.</p>""")
+
+        + explain("""<p>A policy is a rule covering every square, including ones you may never visit. <b>Say when that
+apparently wasteful completeness starts to matter.</b></p>""",
+                  """<p>The moment the environment is stochastic. If an action succeeds only 90% of the time, you will
+sometimes end up in a square your plan never intended to reach — and a route has nothing to say
+there.</p>
+<p>A policy has an answer for that square already, so it simply carries on. That is the difference
+between a plan and a rule, and it is the reason RL is used for control problems rather than
+classical planning.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -443,6 +466,15 @@ the ball is moving.</p>""")
                  "visible state is not the true state. This is a POMDP, and it is substantially harder.</p>"),
             card("<h3>The usual fix</h3><p>Add history to the state: stack recent frames, or keep a "
                  "recurrent hidden state that summarises everything seen so far.</p>"))
+
+        + explain("""<p>Atari agents stack four consecutive frames instead of using one. <b>Say what a single frame
+fails to tell you, and what that reveals about the word &ldquo;state&rdquo;.</b></p>""",
+                  """<p>Which way the ball is moving. One frame gives position but not velocity, so two identical-looking
+frames can require opposite actions.</p>
+<p>The lesson is that a state must contain <b>everything needed to decide</b> — that is the Markov
+property, and it is a requirement on your representation rather than a fact about the world. When the
+raw observation is not enough, you fix it by adding history to the state, which is what stacking
+frames is.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -643,6 +675,15 @@ turns out not to be what you meant.</p>"""
             ("reward shaping", "“shaping”", "Adding extra rewards to guide learning. Easy to get wrong: the agent optimises what you wrote, not what you meant."),
             ("optimal policy", "“the best plan”", "The action choice in every state that maximises expected return. Read straight off Q by taking the largest value."),
         ])
+        + explain("""<p>A terminal state's value is just its own reward, with no discounting. <b>Say why that is not a
+special case bolted on.</b></p>""",
+                  """<p>Because there is no future to discount. The return is the reward now plus &gamma; times whatever
+comes next, and for a terminal state nothing comes next — the second term is zero, not
+&ldquo;ignored&rdquo;.</p>
+<p>That also makes terminal states the anchor the whole calculation is built from. Every other value is
+computed by working backwards from a state whose value is known outright, which is exactly what you do
+by hand on the six-square strip.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Set R(6) = 40 → 200 with γ = 0.5. What happens to π*(4)?",
@@ -867,6 +908,15 @@ different thing — the agent choosing randomly on purpose.</p>""")
         + trap("""<p><b>Evaluating a stochastic policy on one episode.</b> One run tells you almost nothing.
 Average over many.</p>""")
 
+        + explain("""<p>The world is random, and the policy still deterministically says &ldquo;go left&rdquo;. <b>Say
+why a stochastic environment does not require a stochastic policy.</b></p>""",
+                  """<p>They are randomness in two different places. The environment's randomness is in the
+<em>transition</em> — you asked for left and sometimes get right. The policy's job is only to name the
+action it wants, and naming one action every time is a perfectly good answer.</p>
+<p>A stochastic policy is the agent choosing randomly <em>on purpose</em>, which is a separate design
+choice — useful for exploration, or in games where being predictable is itself a weakness. Here the
+optimal policy remains deterministic; only the outcome is uncertain.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("90% chance of landing in a state worth 100, 10% chance of one worth 0. Expected value?",
@@ -1080,6 +1130,15 @@ the behaviour, and small changes produce qualitatively different pilots.</p>"""
 else is a real number. Feeding raw unnormalised state into a network mixes scales — the C2 W1 scaling
 lesson applies.</p>""")
 
+        + explain("""<p>The two leg-contact flags are 0 or 1 while the other six state values are real numbers.
+<b>Say why that matters, using the C2 Week 1 lesson.</b></p>""",
+                  """<p>Mixed scales. If velocity runs to &plusmn;5 and position to &plusmn;1.5 while the flags are 0 or
+1, the network's first layer sees inputs of wildly different magnitude, and the large ones dominate the
+weighted sum before any learning happens.</p>
+<p>It is exactly the feature-scaling problem from C1 Week 2 and C2 Week 1, arriving in a new costume.
+Nothing about reinforcement learning exempts you from it — the network in the middle is an ordinary
+network with ordinary requirements.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why include velocities in the state and not just positions?",
@@ -1194,9 +1253,16 @@ not an optimisation — it is load-bearing.</p>"""
 difficulty in reinforcement learning has never been the network.</p>
 <p>It is where the training data comes from. There is no labelled set; the agent manufactures one by
 flying badly. Each experience is a tuple (s, a, R, s′), and the target is built from Bellman:</p>"""
-        + eq("""<var>y</var> <span class="op">=</span> <var>R</var>
-<span class="op">+</span> γ <span class="op">·</span> max<sub>a′</sub>
-<var>Q̂</var>(<var>s</var>′, <var>a</var>′)""", "the label, computed from the network's own output")
+        + eqp([
+            ('<var>y</var>', "q-function", "the label to train towards"),
+            ' <span class="op">=</span> ',
+            ('<var>R</var>', "reward-r", "collected now — the only real number here"),
+            ' <span class="op">+</span> ',
+            ('γ', "gamma-discount", "what later is worth today"),
+            ' <span class="op">·</span> ',
+            ('max<sub>a′</sub> <var>Q̂</var>(<var>s</var>′, <var>a</var>′)', "future-value",
+             "the network's own guess about where you land"),
+        ], "the label, computed from the network's own output — hover or click a part")
         + """<p>Then it is ordinary supervised learning: input <var>s</var>, target <var>y</var>,
 mean squared error. Except for one thing that has no counterpart anywhere else in this course —
 <b>the labels are produced by the model being trained</b>. Improve <var>Q</var> and every target
@@ -1446,6 +1512,15 @@ learn”.</p>""")
         + trap("""<p><b>ε staying at 1.0.</b> Pure random play forever. It collects experience but never
 exploits what it learned, so performance never improves.</p>""")
 
+        + explain("""<p>&epsilon; = 0 from the start is &ldquo;the single most common reason a DQN does not learn&rdquo;.
+<b>Say why the failure is self-sustaining rather than merely unlucky.</b></p>""",
+                  """<p>Because a greedy agent only ever takes the action it currently rates highest, so it only ever
+collects evidence about that action. The actions it underrates are never tried, so the underrating is
+never corrected.</p>
+<p>The error is therefore <b>stable</b>: nothing in the loop can dislodge a bad initial estimate, and
+the agent locks onto whatever its random initialisation happened to favour. That is why the fix has to
+be forced randomness rather than more training.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Q = [12, 31, 24, 9] and ε = 0.05. What happens?",
@@ -1544,6 +1619,15 @@ keeps jumping. Slowing the network down slows the target down.</p>""")
 looks like a heart-rate monitor.</p>""")
         + trap("""<p><b>τ too small.</b> The target barely moves, and learning is glacial. 0.001 to 0.01 is
 the usual range.</p>""")
+
+        + explain("""<p>&tau; too large oscillates; &tau; too small learns glacially. <b>Say what &tau; is actually
+trading off.</b></p>""",
+                  """<p>How fast the target reflects new learning, against how stable it is to aim at. A large &tau;
+means the target jumps whenever the network does, so you are chasing something that keeps moving — the
+heart-rate-monitor loss curve.</p>
+<p>A small &tau; gives a nearly stationary target, which is what makes the supervised framing work at
+all, and the price is that genuine improvements take many updates to reach the target. 0.001 to 0.01
+is the usual compromise.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1662,6 +1746,15 @@ architecture.</p>""", "If you remember one thing")
             ("reward hacking", "“reward hacking”", "The agent finds a way to score highly that you never intended. Common, and instructive."),
             ("hype-to-use ratio", "“the honest caveat”", "RL gets research attention far out of proportion to its commercial deployment. Worth knowing before you specialise."),
         ])
+        + explain("""<p>Reward hacking is described as &ldquo;common, and instructive&rdquo;. <b>Say what it teaches
+you.</b></p>""",
+                  """<p>That the reward function <em>is</em> the specification, and the agent is a tireless adversary
+reading it literally. An agent spinning in circles for a proximity bonus has not malfunctioned — it has
+found a higher-scoring solution than the one you had in mind.</p>
+<p>So the failure is in the specification, not the algorithm, and the fix is to change what you asked
+for rather than how hard you trained. That is the same lesson as Goodhart's law, and the same one the
+recommender ethics lesson reaches from a different direction.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Why does RL work so much better in simulation than on real robots?",

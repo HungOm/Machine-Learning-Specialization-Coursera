@@ -82,6 +82,16 @@ wrong metric, wrong problem.</p>
 Course 2 Week 3 is the part of this specialization that teaches the carpentry, and it is the part
 practitioners come back to most.</p>"""
 
+        + explain("""<p>Andrew says the best set of tools does not make someone a good carpenter. <b>Say why a team
+with a state-of-the-art algorithm and a badly chosen metric usually loses to a team with plain
+logistic regression and the right one.</b></p>""",
+                  """<p>Because the algorithm optimises <em>exactly</em> what the metric says to optimise, and nothing
+else. If the metric is wrong, a more capable algorithm finds a better solution to the wrong problem —
+so the extra capability actively makes things worse, rather than being wasted.</p>
+<p>The plain model with the right metric is at least climbing the right hill. This is why C2 Week 3,
+which is entirely about choosing what to measure and what to do next, is the part practitioners come
+back to most.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("You have 10,000 emails, each labelled spam or not spam. Supervised or unsupervised?",
@@ -176,6 +186,14 @@ wrong is not a small mistake.</p>""")
 dog = 2, horse = 3” with regression tells the model that a dog is between a cat and a horse. It is not.
 Week 3 shows what to do instead.</p>""")
 
+        + explain("""<p>Someone encodes cat = 1, dog = 2, horse = 3 and fits a regression. The arithmetic runs and
+nothing errors. <b>Say what false statement the model has been given.</b></p>""",
+                  """<p>That the categories have an <b>order and a spacing</b>. Regression treats the target as a
+quantity, so it is penalised more for calling a horse a cat than for calling it a dog — which asserts
+that a dog is somehow between the two. Nobody claimed that, and it is not true.</p>
+<p>It also means the model can output 2.4, which is not any of the three animals. Both problems come
+from the same source: numbers carry an ordering that the labels do not have.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("Predicting tomorrow's rainfall in millimetres. Which?",
@@ -259,6 +277,14 @@ row is a gene. Nobody has labelled these people as belonging to type 1, 2 or 3. 
 finds that they fall into groups anyway — and those groups turn out to be biologically meaningful.</p>
 <p>That is the appeal of unsupervised learning: it can tell you something you did not know to ask
 about.</p>"""
+
+        + explain("""<p>Two teams cluster the same microarray and get different groupings. <b>Say why neither is wrong,
+and what would have to be true for one of them to be better.</b></p>""",
+                  """<p>With no labels there is no ground truth to be wrong about, so there is no accuracy to compute.
+Both groupings are defensible descriptions of the same data.</p>
+<p>One becomes better when its groups <b>predict something outside the clustering</b> — survival
+time, response to a drug, which patients relapse. That external check is doing the job labels would
+have done, and it is the only honest way to compare two unsupervised results.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -607,6 +633,15 @@ size. The curve is not a prediction — it is a score for each possible model.</
         + trap("""<p><b>Expecting J to reach zero.</b> It does here only because the toy data lies exactly
 on a line. Real data has noise, and the minimum of J sits well above zero. That is not a failure.</p>""")
 
+        + explain("""<p>On the right-hand graph the horizontal axis is <var>w</var>, not house size. <b>Say what a
+single point on that curve represents, and why sliding right along it changes the picture on the
+left.</b></p>""",
+                  """<p>One point on the right is <b>one entire line</b> on the left, scored by how badly it fits every
+training example at once. The height of the point is that score.</p>
+<p>Sliding right increases <var>w</var>, which tilts the line on the left steeper. So the right-hand
+curve is not data and not a prediction — it is a score for every possible model, laid out side by
+side. Keeping those two pictures apart is most of what this lesson is for.</p>""")
+
         + h2("✅", "Check yourself")
         + quiz([
             ("On the J(w) curve, what does a single point represent?",
@@ -809,6 +844,15 @@ out to be much less of a problem than expected.</p>
 single one</em> of thousands of directions simultaneously, which is rare. Most flat points are saddle
 points — up in some directions, down in others — and gradient descent slides off them eventually.</p>
 <p>Worth knowing, so the picture in this lesson does not leave you more worried than the field is.</p>"""
+
+        + explain("""<p>In two dimensions a local minimum looks like a serious threat, and with thousands of parameters
+it turns out to be rare. <b>Say why adding dimensions makes a genuine local minimum less likely.</b>""",
+                  """<p>A true local minimum requires the surface to curve <em>upwards in every single direction at
+once</em>. With two parameters that is two directions and quite possible. With ten thousand, all ten
+thousand would have to curve up together.</p>
+<p>If even one direction curves down, you are not trapped — you can leave along it. So the
+overwhelmingly likely flat point in high dimensions is a <b>saddle</b>: up some ways, down others, and
+gradient descent eventually slides off it.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1034,6 +1078,14 @@ stays put — which is the behaviour you want.</p>
 <p>This is also why a flat spot anywhere else is dangerous: if you land on a plateau or a saddle point, the
 gradient is near zero and progress stalls even though you are not at a good solution. It does not arise for
 linear regression, and it very much arises for deep networks.</p>"""
+
+        + explain("""<p>&alpha; is a fixed number, yet the steps get visibly smaller as the algorithm nears the bottom.
+<b>Say why, without using the word &ldquo;derivative&rdquo;.</b></p>""",
+                  """<p>The step length is &alpha; multiplied by <em>how steep the hill is where you are standing</em>.
+Near the bottom the hill flattens out, so that multiplier shrinks, so the step shrinks with it.</p>
+<p>The algorithm slows down on its own because the ground does — nobody has to schedule it. That is
+also why the same fixed &alpha; can work throughout, and why landing on a flat spot that is
+<em>not</em> the bottom is dangerous: the steps go tiny there for exactly the same reason.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
@@ -1286,6 +1338,15 @@ common bug in the Week 2 assignment. The symptom is that training converges to s
 wrong.</p>""")
         + trap("""<p><b>Dividing by m in the wrong place.</b> Divide once, after the loop. Dividing inside
 gives m² in the denominator.</p>""")
+
+        + explain("""<p>In the code, <code>dj_dw</code> multiplies each error by <code>x[i]</code> and
+<code>dj_db</code> does not. <b>Say why the <var>x</var> belongs in one and not the other.</b></p>""",
+                  """<p>Chain rule. Differentiating <var>wx</var> + <var>b</var> with respect to <var>w</var> gives
+<var>x</var>; with respect to <var>b</var> it gives 1. So each example's error is weighted by its own
+<var>x</var> when correcting <var>w</var>, and weighted equally when correcting <var>b</var>.</p>
+<p>There is a practical consequence worth carrying to Week 2: an example with a large <var>x</var>
+pulls <var>w</var> much harder than a small one. That is precisely why features with wildly different
+ranges make gradient descent struggle, and why scaling fixes it.</p>""")
 
         + h2("✅", "Check yourself")
         + quiz([
