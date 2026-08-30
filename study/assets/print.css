@@ -172,3 +172,8 @@
 
 /* the running head only exists on paper */
 .print-head { display: none; }
+
+/* week gists: the flow picture must survive paper */
+.fl, .fl-loop, .carry, .skel, .bynum, .retell, .ladder, .chainw, .ch-step {
+  break-inside: avoid; box-shadow: none; }
+.gistline { background: none; }

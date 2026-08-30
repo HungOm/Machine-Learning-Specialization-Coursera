@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The gist &#183; C1 W1</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
+</head>
+<body data-slug="gist-c11" data-printable="The gist &#183; C1 Week 1|Introduction to Machine Learning">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">The gist &#183; C1 W1 &#183; <b>Introduction to Machine Learning</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="done-btn">mark done</button>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<a href="../index.html" style="font-weight:700">← Study plan</a>
+<a href="../gist.html" style="font-weight:700">◉ Week gists</a>
+<a href="../mastery.html" style="font-weight:700">✓ Mastery plan</a>
+<a href="../review.html" style="font-weight:700">◆ Review (SRS)</a>
+<a href="../problems.html" style="font-weight:700">✎ Problem sets</a>
+<a href="../quizzes.html" style="font-weight:700">◎ Mock quizzes</a>
+<a href="../paper.html" style="font-weight:700">✐ On paper</a>
+<a href="../scratch.html" style="font-weight:700">⚙ From scratch</a>
+<a href="../labs.html" style="font-weight:700">⌨ Lab companions</a>
+<a href="../data.html" style="font-weight:700;margin-bottom:10px">⬇ Datasets</a>
+<a href="../progress.html" style="font-weight:700">▲ Progress</a>
+<a href="../reference.html" style="font-weight:700">☰ Reference sheet</a>
+<a href="../symbols.html" style="font-weight:700">∑ Symbol glossary</a>
+<a href="../map.html" style="font-weight:700">◈ Concept map</a>
+<a href="../book-index.html" style="font-weight:700;margin-bottom:10px">⌥ Index</a>
+<h4>F0 · W1 — The Maths You Actually Need</h4>
+<a class="" data-slug-link="f01-01-what-is-a-function" href="../f0/w1-01-what-is-a-function.html"><span class="n">01</span>What a function is</a>
+<a class="" data-slug-link="f01-02-reading-a-graph" href="../f0/w1-02-reading-a-graph.html"><span class="n">02</span>Reading a graph</a>
+<a class="" data-slug-link="f01-03-greek-letters" href="../f0/w1-03-greek-letters.html"><span class="n">03</span>Greek letters and other symbols</a>
+<a class="" data-slug-link="f01-04-slope" href="../f0/w1-04-slope.html"><span class="n">04</span>Slope — rise over run</a>
+<a class="" data-slug-link="f01-05-derivatives" href="../f0/w1-05-derivatives.html"><span class="n">05</span>What a derivative actually is</a>
+<a class="" data-slug-link="f01-06-partial-derivatives" href="../f0/w1-06-partial-derivatives.html"><span class="n">06</span>Partial derivatives</a>
+<a class="" data-slug-link="f01-07-sigma-notation" href="../f0/w1-07-sigma-notation.html"><span class="n">07</span>Σ — summation notation</a>
+<a class="" data-slug-link="f01-08-pi-notation" href="../f0/w1-08-pi-notation.html"><span class="n">08</span>Π — multiplying them all</a>
+<a class="" data-slug-link="f01-09-vectors" href="../f0/w1-09-vectors.html"><span class="n">09</span>Vectors</a>
+<a class="" data-slug-link="f01-10-dot-product" href="../f0/w1-10-dot-product.html"><span class="n">10</span>The dot product</a>
+<a class="" data-slug-link="f01-11-matrices" href="../f0/w1-11-matrices.html"><span class="n">11</span>Matrices and shapes</a>
+<a class="" data-slug-link="f01-12-matrix-multiplication" href="../f0/w1-12-matrix-multiplication.html"><span class="n">12</span>Matrix multiplication</a>
+<a class="" data-slug-link="f01-13-transpose" href="../f0/w1-13-transpose.html"><span class="n">13</span>Transpose</a>
+<a class="" data-slug-link="f01-14-exponentials" href="../f0/w1-14-exponentials.html"><span class="n">14</span>Exponentials and e</a>
+<a class="" data-slug-link="f01-15-logarithms" href="../f0/w1-15-logarithms.html"><span class="n">15</span>Logarithms</a>
+<a class="" data-slug-link="f01-16-probability" href="../f0/w1-16-probability.html"><span class="n">16</span>Probability basics</a>
+<a class="" data-slug-link="f01-17-mean-variance" href="../f0/w1-17-mean-variance.html"><span class="n">17</span>Mean, variance and standard deviation</a>
+<a class="" data-slug-link="f01-18-normal-distribution" href="../f0/w1-18-normal-distribution.html"><span class="n">18</span>The normal distribution</a>
+<a class="" data-slug-link="f01-19-min-max-argmax" href="../f0/w1-19-min-max-argmax.html"><span class="n">19</span>min, max, argmin and argmax</a>
+<h4>F0 · W2 — Python, NumPy and pandas</h4>
+<a class="" data-slug-link="f02-01-jupyter" href="../f0/w2-01-jupyter.html"><span class="n">01</span>Jupyter notebooks</a>
+<a class="" data-slug-link="f02-02-types" href="../f0/w2-02-types.html"><span class="n">02</span>Values and types</a>
+<a class="" data-slug-link="f02-03-lists-vs-arrays" href="../f0/w2-03-lists-vs-arrays.html"><span class="n">03</span>Lists vs NumPy arrays</a>
+<a class="" data-slug-link="f02-04-indexing-slicing" href="../f0/w2-04-indexing-slicing.html"><span class="n">04</span>Indexing and slicing</a>
+<a class="" data-slug-link="f02-05-shape-and-axis" href="../f0/w2-05-shape-and-axis.html"><span class="n">05</span>Shape and axis</a>
+<a class="" data-slug-link="f02-06-creating-arrays" href="../f0/w2-06-creating-arrays.html"><span class="n">06</span>Creating arrays</a>
+<a class="" data-slug-link="f02-07-elementwise" href="../f0/w2-07-elementwise.html"><span class="n">07</span>Elementwise arithmetic</a>
+<a class="" data-slug-link="f02-08-broadcasting" href="../f0/w2-08-broadcasting.html"><span class="n">08</span>Broadcasting</a>
+<a class="" data-slug-link="f02-09-dot-in-code" href="../f0/w2-09-dot-in-code.html"><span class="n">09</span>np.dot, matmul and @</a>
+<a class="" data-slug-link="f02-10-aggregations" href="../f0/w2-10-aggregations.html"><span class="n">10</span>sum, mean, max — along an axis</a>
+<a class="" data-slug-link="f02-11-boolean-masks" href="../f0/w2-11-boolean-masks.html"><span class="n">11</span>Boolean masks</a>
+<a class="" data-slug-link="f02-12-reshape" href="../f0/w2-12-reshape.html"><span class="n">12</span>reshape, flatten and T</a>
+<a class="" data-slug-link="f02-13-pandas-dataframes" href="../f0/w2-13-pandas-dataframes.html"><span class="n">13</span>pandas DataFrames</a>
+<a class="" data-slug-link="f02-14-pandas-to-numpy" href="../f0/w2-14-pandas-to-numpy.html"><span class="n">14</span>From pandas to NumPy</a>
+<a class="" data-slug-link="f02-15-reading-errors" href="../f0/w2-15-reading-errors.html"><span class="n">15</span>Reading an error message</a>
+<a class="" data-slug-link="f02-16-functions" href="../f0/w2-16-functions.html"><span class="n">16</span>Writing and reading functions</a>
+<h4>F0 · W3 — The Maths Behind the Curtain</h4>
+<a class="" data-slug-link="f03-01-eigenvectors" href="../f0/w3-01-eigenvectors.html"><span class="n">01</span>Eigenvectors — the directions a matrix leaves alone</a>
+<a class="" data-slug-link="f03-02-svd" href="../f0/w3-02-svd.html"><span class="n">02</span>SVD — the one factorisation worth knowing</a>
+<a class="" data-slug-link="f03-03-maximum-likelihood" href="../f0/w3-03-maximum-likelihood.html"><span class="n">03</span>Maximum likelihood — where the loss functions came from</a>
+<a class="" data-slug-link="f03-04-jacobian" href="../f0/w3-04-jacobian.html"><span class="n">04</span>The Jacobian — derivatives when everything is a vector</a>
+<a class="" data-slug-link="f03-05-softmax-gradient" href="../f0/w3-05-softmax-gradient.html"><span class="n">05</span>Why softmax and cross-entropy cancel</a>
+<h4>C1 · W1 — Introduction to Machine Learning</h4>
+<a class="" data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a>
+<a class="" data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a>
+<a class="" data-slug-link="c11-03-unsupervised-learning" href="../c1/w1-03-unsupervised-learning.html"><span class="n">03</span>Unsupervised learning</a>
+<a class="" data-slug-link="c11-04-linear-regression-model" href="../c1/w1-04-linear-regression-model.html"><span class="n">04</span>The linear regression model</a>
+<a class="" data-slug-link="c11-05-cost-function-formula" href="../c1/w1-05-cost-function-formula.html"><span class="n">05</span>The cost function formula</a>
+<a class="" data-slug-link="c11-06-cost-function-intuition" href="../c1/w1-06-cost-function-intuition.html"><span class="n">06</span>Cost function intuition</a>
+<a class="" data-slug-link="c11-07-visualizing-the-cost-function" href="../c1/w1-07-visualizing-the-cost-function.html"><span class="n">07</span>Visualizing the cost function</a>
+<a class="" data-slug-link="c11-08-gradient-descent" href="../c1/w1-08-gradient-descent.html"><span class="n">08</span>Gradient descent</a>
+<a class="" data-slug-link="c11-09-implementing-gradient-descent" href="../c1/w1-09-implementing-gradient-descent.html"><span class="n">09</span>Implementing gradient descent</a>
+<a class="" data-slug-link="c11-10-gradient-descent-intuition" href="../c1/w1-10-gradient-descent-intuition.html"><span class="n">10</span>Gradient descent intuition</a>
+<a class="" data-slug-link="c11-11-learning-rate" href="../c1/w1-11-learning-rate.html"><span class="n">11</span>The learning rate</a>
+<a class="" data-slug-link="c11-12-gradient-descent-for-linear-regression" href="../c1/w1-12-gradient-descent-for-linear-regression.html"><span class="n">12</span>Gradient descent for linear regression</a>
+<a class="" data-slug-link="c11-13-running-gradient-descent" href="../c1/w1-13-running-gradient-descent.html"><span class="n">13</span>Running gradient descent</a>
+<h4>C1 · W2 — Regression with Multiple Variables</h4>
+<a class="" data-slug-link="c12-01-multiple-features" href="../c1/w2-01-multiple-features.html"><span class="n">01</span>Multiple features</a>
+<a class="" data-slug-link="c12-02-vectorization" href="../c1/w2-02-vectorization.html"><span class="n">02</span>Vectorization</a>
+<a class="" data-slug-link="c12-03-why-vectorization-is-fast" href="../c1/w2-03-why-vectorization-is-fast.html"><span class="n">03</span>Why vectorization is fast</a>
+<a class="" data-slug-link="c12-04-gradient-descent-multiple-features" href="../c1/w2-04-gradient-descent-multiple-features.html"><span class="n">04</span>Gradient descent for multiple linear regression</a>
+<a class="" data-slug-link="c12-05-feature-scaling" href="../c1/w2-05-feature-scaling.html"><span class="n">05</span>Feature scaling</a>
+<a class="" data-slug-link="c12-06-checking-convergence" href="../c1/w2-06-checking-convergence.html"><span class="n">06</span>Checking gradient descent for convergence</a>
+<a class="" data-slug-link="c12-07-choosing-the-learning-rate" href="../c1/w2-07-choosing-the-learning-rate.html"><span class="n">07</span>Choosing the learning rate</a>
+<a class="" data-slug-link="c12-08-feature-engineering" href="../c1/w2-08-feature-engineering.html"><span class="n">08</span>Feature engineering</a>
+<a class="" data-slug-link="c12-09-polynomial-regression" href="../c1/w2-09-polynomial-regression.html"><span class="n">09</span>Polynomial regression</a>
+<h4>C1 · W3 — Classification</h4>
+<a class="" data-slug-link="c13-01-motivations" href="../c1/w3-01-motivations.html"><span class="n">01</span>Motivations: why not linear regression?</a>
+<a class="" data-slug-link="c13-02-logistic-regression" href="../c1/w3-02-logistic-regression.html"><span class="n">02</span>Logistic regression</a>
+<a class="" data-slug-link="c13-03-decision-boundary" href="../c1/w3-03-decision-boundary.html"><span class="n">03</span>The decision boundary</a>
+<a class="" data-slug-link="c13-04-cost-function-for-logistic-regression" href="../c1/w3-04-cost-function-for-logistic-regression.html"><span class="n">04</span>Cost function for logistic regression</a>
+<a class="" data-slug-link="c13-05-logistic-loss" href="../c1/w3-05-logistic-loss.html"><span class="n">05</span>The logistic loss, in detail</a>
+<a class="" data-slug-link="c13-06-simplified-cost-function" href="../c1/w3-06-simplified-cost-function.html"><span class="n">06</span>The simplified cost function</a>
+<a class="" data-slug-link="c13-07-gradient-descent-logistic" href="../c1/w3-07-gradient-descent-logistic.html"><span class="n">07</span>Gradient descent for logistic regression</a>
+<a class="" data-slug-link="c13-08-the-problem-of-overfitting" href="../c1/w3-08-the-problem-of-overfitting.html"><span class="n">08</span>The problem of overfitting</a>
+<a class="" data-slug-link="c13-09-addressing-overfitting" href="../c1/w3-09-addressing-overfitting.html"><span class="n">09</span>Addressing overfitting</a>
+<a class="" data-slug-link="c13-10-cost-function-with-regularization" href="../c1/w3-10-cost-function-with-regularization.html"><span class="n">10</span>The cost function with regularization</a>
+<a class="" data-slug-link="c13-11-regularized-gradient-descent" href="../c1/w3-11-regularized-gradient-descent.html"><span class="n">11</span>Regularized linear and logistic regression</a>
+<h4>C2 · W1 — Neural Networks</h4>
+<a class="" data-slug-link="c21-01-neurons-and-the-brain" href="../c2/w1-01-neurons-and-the-brain.html"><span class="n">01</span>Neurons and the brain</a>
+<a class="" data-slug-link="c21-02-demand-prediction" href="../c2/w1-02-demand-prediction.html"><span class="n">02</span>Demand prediction</a>
+<a class="" data-slug-link="c21-03-recognizing-images" href="../c2/w1-03-recognizing-images.html"><span class="n">03</span>Example: recognizing images</a>
+<a class="" data-slug-link="c21-04-neural-network-layer" href="../c2/w1-04-neural-network-layer.html"><span class="n">04</span>Neural network layer</a>
+<a class="" data-slug-link="c21-05-more-complex-networks" href="../c2/w1-05-more-complex-networks.html"><span class="n">05</span>More complex neural networks</a>
+<a class="" data-slug-link="c21-06-forward-propagation" href="../c2/w1-06-forward-propagation.html"><span class="n">06</span>Inference: making predictions (forward propagation)</a>
+<a class="" data-slug-link="c21-07-tensorflow-inference-code" href="../c2/w1-07-tensorflow-inference-code.html"><span class="n">07</span>Inference in code (TensorFlow)</a>
+<a class="" data-slug-link="c21-08-data-in-tensorflow" href="../c2/w1-08-data-in-tensorflow.html"><span class="n">08</span>Data in TensorFlow</a>
+<a class="" data-slug-link="c21-09-building-a-network-sequential" href="../c2/w1-09-building-a-network-sequential.html"><span class="n">09</span>Building a neural network (Sequential)</a>
+<a class="" data-slug-link="c21-10-forward-prop-single-layer" href="../c2/w1-10-forward-prop-single-layer.html"><span class="n">10</span>Forward prop in a single layer (NumPy)</a>
+<a class="" data-slug-link="c21-11-general-forward-prop" href="../c2/w1-11-general-forward-prop.html"><span class="n">11</span>General implementation of forward propagation</a>
+<a class="" data-slug-link="c21-12-path-to-agi" href="../c2/w1-12-path-to-agi.html"><span class="n">12</span>Is there a path to AGI?</a>
+<a class="" data-slug-link="c21-13-vectorization" href="../c2/w1-13-vectorization.html"><span class="n">13</span>How neural networks are implemented efficiently</a>
+<a class="" data-slug-link="c21-14-matrix-multiplication" href="../c2/w1-14-matrix-multiplication.html"><span class="n">14</span>Matrix multiplication</a>
+<a class="" data-slug-link="c21-15-matmul-rules" href="../c2/w1-15-matmul-rules.html"><span class="n">15</span>Matrix multiplication rules</a>
+<a class="" data-slug-link="c21-16-matmul-code" href="../c2/w1-16-matmul-code.html"><span class="n">16</span>Matrix multiplication code</a>
+<h4>C2 · W2 — Neural Network Training</h4>
+<a class="" data-slug-link="c22-01-tensorflow-training" href="../c2/w2-01-tensorflow-training.html"><span class="n">01</span>TensorFlow implementation of training</a>
+<a class="" data-slug-link="c22-02-training-details" href="../c2/w2-02-training-details.html"><span class="n">02</span>Training details</a>
+<a class="" data-slug-link="c22-03-sigmoid-alternatives" href="../c2/w2-03-sigmoid-alternatives.html"><span class="n">03</span>Alternatives to the sigmoid activation</a>
+<a class="" data-slug-link="c22-04-choosing-activations" href="../c2/w2-04-choosing-activations.html"><span class="n">04</span>Choosing activation functions</a>
+<a class="" data-slug-link="c22-05-why-activations" href="../c2/w2-05-why-activations.html"><span class="n">05</span>Why do we need activation functions?</a>
+<a class="" data-slug-link="c22-06-multiclass" href="../c2/w2-06-multiclass.html"><span class="n">06</span>Multiclass classification</a>
+<a class="" data-slug-link="c22-07-softmax" href="../c2/w2-07-softmax.html"><span class="n">07</span>Softmax</a>
+<a class="" data-slug-link="c22-08-softmax-output-layer" href="../c2/w2-08-softmax-output-layer.html"><span class="n">08</span>Neural network with Softmax output</a>
+<a class="" data-slug-link="c22-09-improved-softmax" href="../c2/w2-09-improved-softmax.html"><span class="n">09</span>Improved implementation of softmax</a>
+<a class="" data-slug-link="c22-10-multi-label" href="../c2/w2-10-multi-label.html"><span class="n">10</span>Classification with multiple outputs (multi-label)</a>
+<a class="" data-slug-link="c22-11-advanced-optimization" href="../c2/w2-11-advanced-optimization.html"><span class="n">11</span>Advanced optimization (Adam)</a>
+<a class="" data-slug-link="c22-12-additional-layer-types" href="../c2/w2-12-additional-layer-types.html"><span class="n">12</span>Additional layer types (convolutional)</a>
+<a class="" data-slug-link="c22-13-what-is-a-derivative" href="../c2/w2-13-what-is-a-derivative.html"><span class="n">13</span>What is a derivative? (optional)</a>
+<a class="" data-slug-link="c22-14-computation-graph" href="../c2/w2-14-computation-graph.html"><span class="n">14</span>Computation graph (optional)</a>
+<a class="" data-slug-link="c22-15-larger-network-example" href="../c2/w2-15-larger-network-example.html"><span class="n">15</span>Larger neural network example (optional)</a>
+<h4>C2 · W3 — Advice for Applying ML</h4>
+<a class="" data-slug-link="c23-01-deciding-what-to-try-next" href="../c2/w3-01-deciding-what-to-try-next.html"><span class="n">01</span>Deciding what to try next</a>
+<a class="" data-slug-link="c23-02-evaluating-a-model" href="../c2/w3-02-evaluating-a-model.html"><span class="n">02</span>Evaluating a model</a>
+<a class="" data-slug-link="c23-03-model-selection" href="../c2/w3-03-model-selection.html"><span class="n">03</span>Model selection and train / cross-validation / test</a>
+<a class="" data-slug-link="c23-04-bias-and-variance" href="../c2/w3-04-bias-and-variance.html"><span class="n">04</span>Diagnosing bias and variance</a>
+<a class="" data-slug-link="c23-05-regularization-bias-variance" href="../c2/w3-05-regularization-bias-variance.html"><span class="n">05</span>Regularization and bias/variance</a>
+<a class="" data-slug-link="c23-06-baseline-performance" href="../c2/w3-06-baseline-performance.html"><span class="n">06</span>Establishing a baseline level of performance</a>
+<a class="" data-slug-link="c23-07-learning-curves" href="../c2/w3-07-learning-curves.html"><span class="n">07</span>Learning curves</a>
+<a class="" data-slug-link="c23-08-what-to-try-revisited" href="../c2/w3-08-what-to-try-revisited.html"><span class="n">08</span>Deciding what to try next, revisited</a>
+<a class="" data-slug-link="c23-09-bias-variance-neural-networks" href="../c2/w3-09-bias-variance-neural-networks.html"><span class="n">09</span>Bias / variance and neural networks</a>
+<a class="" data-slug-link="c23-10-iterative-loop" href="../c2/w3-10-iterative-loop.html"><span class="n">10</span>The iterative loop of ML development</a>
+<a class="" data-slug-link="c23-11-error-analysis" href="../c2/w3-11-error-analysis.html"><span class="n">11</span>Error analysis</a>
+<a class="" data-slug-link="c23-12-adding-data" href="../c2/w3-12-adding-data.html"><span class="n">12</span>Adding data</a>
+<a class="" data-slug-link="c23-13-transfer-learning" href="../c2/w3-13-transfer-learning.html"><span class="n">13</span>Transfer learning</a>
+<a class="" data-slug-link="c23-14-full-cycle" href="../c2/w3-14-full-cycle.html"><span class="n">14</span>The full cycle of a machine learning project</a>
+<a class="" data-slug-link="c23-15-fairness-bias-ethics" href="../c2/w3-15-fairness-bias-ethics.html"><span class="n">15</span>Fairness, bias, and ethics</a>
+<a class="" data-slug-link="c23-16-skewed-datasets" href="../c2/w3-16-skewed-datasets.html"><span class="n">16</span>Error metrics for skewed datasets</a>
+<a class="" data-slug-link="c23-17-precision-recall-tradeoff" href="../c2/w3-17-precision-recall-tradeoff.html"><span class="n">17</span>Trading off precision and recall</a>
+<h4>C2 · W4 — Decision Trees</h4>
+<a class="" data-slug-link="c24-01-decision-tree-model" href="../c2/w4-01-decision-tree-model.html"><span class="n">01</span>Decision tree model</a>
+<a class="" data-slug-link="c24-02-learning-process" href="../c2/w4-02-learning-process.html"><span class="n">02</span>The learning process</a>
+<a class="" data-slug-link="c24-03-measuring-purity" href="../c2/w4-03-measuring-purity.html"><span class="n">03</span>Measuring purity (entropy)</a>
+<a class="" data-slug-link="c24-04-information-gain" href="../c2/w4-04-information-gain.html"><span class="n">04</span>Choosing a split: information gain</a>
+<a class="" data-slug-link="c24-05-putting-it-together" href="../c2/w4-05-putting-it-together.html"><span class="n">05</span>Putting it together</a>
+<a class="" data-slug-link="c24-06-one-hot-encoding" href="../c2/w4-06-one-hot-encoding.html"><span class="n">06</span>Using one-hot encoding of categorical features</a>
+<a class="" data-slug-link="c24-07-continuous-features" href="../c2/w4-07-continuous-features.html"><span class="n">07</span>Continuous valued features</a>
+<a class="" data-slug-link="c24-08-regression-trees" href="../c2/w4-08-regression-trees.html"><span class="n">08</span>Regression trees</a>
+<a class="" data-slug-link="c24-09-using-multiple-trees" href="../c2/w4-09-using-multiple-trees.html"><span class="n">09</span>Using multiple decision trees</a>
+<a class="" data-slug-link="c24-10-sampling-with-replacement" href="../c2/w4-10-sampling-with-replacement.html"><span class="n">10</span>Sampling with replacement</a>
+<a class="" data-slug-link="c24-11-random-forest" href="../c2/w4-11-random-forest.html"><span class="n">11</span>Random forest algorithm</a>
+<a class="" data-slug-link="c24-12-xgboost" href="../c2/w4-12-xgboost.html"><span class="n">12</span>XGBoost</a>
+<a class="" data-slug-link="c24-13-trees-vs-neural-networks" href="../c2/w4-13-trees-vs-neural-networks.html"><span class="n">13</span>When to use decision trees</a>
+<h4>C3 · W1 — Unsupervised Learning</h4>
+<a class="" data-slug-link="c31-01-what-is-clustering" href="../c3/w1-01-what-is-clustering.html"><span class="n">01</span>What is clustering?</a>
+<a class="" data-slug-link="c31-02-kmeans-intuition" href="../c3/w1-02-kmeans-intuition.html"><span class="n">02</span>K-means intuition</a>
+<a class="" data-slug-link="c31-03-kmeans-algorithm" href="../c3/w1-03-kmeans-algorithm.html"><span class="n">03</span>The K-means algorithm</a>
+<a class="" data-slug-link="c31-04-kmeans-cost" href="../c3/w1-04-kmeans-cost.html"><span class="n">04</span>The optimization objective</a>
+<a class="" data-slug-link="c31-05-initializing-kmeans" href="../c3/w1-05-initializing-kmeans.html"><span class="n">05</span>Initializing K-means</a>
+<a class="" data-slug-link="c31-06-choosing-k" href="../c3/w1-06-choosing-k.html"><span class="n">06</span>Choosing the number of clusters</a>
+<a class="" data-slug-link="c31-07-finding-unusual-events" href="../c3/w1-07-finding-unusual-events.html"><span class="n">07</span>Finding unusual events</a>
+<a class="" data-slug-link="c31-08-gaussian-distribution" href="../c3/w1-08-gaussian-distribution.html"><span class="n">08</span>The Gaussian (normal) distribution</a>
+<a class="" data-slug-link="c31-09-anomaly-detection-algorithm" href="../c3/w1-09-anomaly-detection-algorithm.html"><span class="n">09</span>The anomaly detection algorithm</a>
+<a class="" data-slug-link="c31-10-developing-anomaly-detection" href="../c3/w1-10-developing-anomaly-detection.html"><span class="n">10</span>Developing and evaluating an anomaly detection system</a>
+<a class="" data-slug-link="c31-11-anomaly-vs-supervised" href="../c3/w1-11-anomaly-vs-supervised.html"><span class="n">11</span>Anomaly detection vs. supervised learning</a>
+<a class="" data-slug-link="c31-12-choosing-features" href="../c3/w1-12-choosing-features.html"><span class="n">12</span>Choosing what features to use</a>
+<h4>C3 · W2 — Recommender Systems</h4>
+<a class="" data-slug-link="c32-01-making-recommendations" href="../c3/w2-01-making-recommendations.html"><span class="n">01</span>Making recommendations</a>
+<a class="" data-slug-link="c32-02-per-item-features" href="../c3/w2-02-per-item-features.html"><span class="n">02</span>Using per-item features</a>
+<a class="" data-slug-link="c32-03-collaborative-filtering" href="../c3/w2-03-collaborative-filtering.html"><span class="n">03</span>The collaborative filtering algorithm</a>
+<a class="" data-slug-link="c32-04-binary-labels" href="../c3/w2-04-binary-labels.html"><span class="n">04</span>Binary labels: favs, likes and clicks</a>
+<a class="" data-slug-link="c32-05-mean-normalization" href="../c3/w2-05-mean-normalization.html"><span class="n">05</span>Mean normalization</a>
+<a class="" data-slug-link="c32-06-tensorflow-collaborative" href="../c3/w2-06-tensorflow-collaborative.html"><span class="n">06</span>TensorFlow implementation of collaborative filtering</a>
+<a class="" data-slug-link="c32-07-finding-related-items" href="../c3/w2-07-finding-related-items.html"><span class="n">07</span>Finding related items</a>
+<a class="" data-slug-link="c32-08-collaborative-vs-content" href="../c3/w2-08-collaborative-vs-content.html"><span class="n">08</span>Collaborative filtering vs content-based filtering</a>
+<a class="" data-slug-link="c32-09-deep-content-based" href="../c3/w2-09-deep-content-based.html"><span class="n">09</span>Deep learning for content-based filtering</a>
+<a class="" data-slug-link="c32-10-large-catalogues" href="../c3/w2-10-large-catalogues.html"><span class="n">10</span>Recommending from a large catalogue</a>
+<a class="" data-slug-link="c32-11-ethics-recommenders" href="../c3/w2-11-ethics-recommenders.html"><span class="n">11</span>Ethical use of recommender systems</a>
+<a class="" data-slug-link="c32-12-tensorflow-content-based" href="../c3/w2-12-tensorflow-content-based.html"><span class="n">12</span>TensorFlow implementation of content-based filtering</a>
+<a class="" data-slug-link="c32-13-reducing-features-pca" href="../c3/w2-13-reducing-features-pca.html"><span class="n">13</span>Reducing the number of features (PCA)</a>
+<a class="" data-slug-link="c32-14-pca-algorithm" href="../c3/w2-14-pca-algorithm.html"><span class="n">14</span>The PCA algorithm</a>
+<a class="" data-slug-link="c32-15-pca-in-code" href="../c3/w2-15-pca-in-code.html"><span class="n">15</span>PCA in code</a>
+<h4>C3 · W3 — Reinforcement Learning</h4>
+<a class="" data-slug-link="c33-01-what-is-rl" href="../c3/w3-01-what-is-rl.html"><span class="n">01</span>What is reinforcement learning?</a>
+<a class="" data-slug-link="c33-02-mars-rover" href="../c3/w3-02-mars-rover.html"><span class="n">02</span>The Mars rover example</a>
+<a class="" data-slug-link="c33-03-the-return" href="../c3/w3-03-the-return.html"><span class="n">03</span>The Return in reinforcement learning</a>
+<a class="" data-slug-link="c33-04-policies" href="../c3/w3-04-policies.html"><span class="n">04</span>Making decisions: policies</a>
+<a class="" data-slug-link="c33-05-review-of-key-concepts" href="../c3/w3-05-review-of-key-concepts.html"><span class="n">05</span>Review of key concepts</a>
+<a class="" data-slug-link="c33-06-state-action-value-function" href="../c3/w3-06-state-action-value-function.html"><span class="n">06</span>State-action value function</a>
+<a class="" data-slug-link="c33-07-state-action-value-example" href="../c3/w3-07-state-action-value-example.html"><span class="n">07</span>State-action value function example</a>
+<a class="" data-slug-link="c33-08-bellman-equation" href="../c3/w3-08-bellman-equation.html"><span class="n">08</span>The Bellman equation</a>
+<a class="" data-slug-link="c33-09-stochastic-environments" href="../c3/w3-09-stochastic-environments.html"><span class="n">09</span>Random (stochastic) environments</a>
+<a class="" data-slug-link="c33-10-continuous-state-spaces" href="../c3/w3-10-continuous-state-spaces.html"><span class="n">10</span>Continuous state spaces</a>
+<a class="" data-slug-link="c33-11-lunar-lander" href="../c3/w3-11-lunar-lander.html"><span class="n">11</span>The lunar lander</a>
+<a class="" data-slug-link="c33-12-learning-the-state-value-function" href="../c3/w3-12-learning-the-state-value-function.html"><span class="n">12</span>Learning the state-value function</a>
+<a class="" data-slug-link="c33-13-improved-architecture" href="../c3/w3-13-improved-architecture.html"><span class="n">13</span>Algorithm refinement: improved neural network architecture</a>
+<a class="" data-slug-link="c33-14-epsilon-greedy" href="../c3/w3-14-epsilon-greedy.html"><span class="n">14</span>Algorithm refinement: ε-greedy policy</a>
+<a class="" data-slug-link="c33-15-minibatch-soft-updates" href="../c3/w3-15-minibatch-soft-updates.html"><span class="n">15</span>Algorithm refinement: mini-batch and soft updates</a>
+<a class="" data-slug-link="c33-16-state-of-rl" href="../c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
+</aside>
+<main>
+<p class="kicker">C1 &#183; Week 1 &#183; the whole week at once &#183; 12 min</p>
+<h1>The gist &mdash; Introduction to Machine Learning</h1>
+<p class="lede">Thirteen lessons, one loop. This page is the week with the lessons removed — what goes in, what happens to it, what comes out, and which part runs again.</p>
+<div class="callout kid"><span class="tag">What this page is for</span>
+<p>The 13 lesson pages for this week each teach <b>one</b> idea properly. That is the right shape
+for meeting an idea and the wrong shape for seeing how the ideas join &mdash; so this page is only
+the joins. Nothing here is new: if a claim on this page is not already in one of those lessons, it
+is a bug.</p>
+<p>Read it <b>after</b> the week for consolidation, or <b>before</b> it as a map you will
+recognise on the way through. Both work; reading it <i>instead</i> of the week does not.</p></div>
+<p class="gistline">Pick a formula with a couple of unknown numbers in it. Write down a score that
+says how wrong those numbers are. Then keep nudging them in whichever direction makes the score
+fall. That is the entire week — and every algorithm in the rest of the specialization is a
+variation on those three moves.</p><h2><span class="ico">🖼</span>The week in one picture</h2><figure class="flowd"><figcaption class="tag">The week in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">The data</span><span class="fl-b"><b>m</b> houses. Each one is a size <var>x</var> and the price <var>y</var> it actually sold for. The prices are the part that makes this <i>supervised</i> learning: someone already knew the right answer.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">start from any guess at all — <var>w</var> = 0, <var>b</var> = 0 will do</span></li><li class="fl-loop"><span class="fl-loop-t">repeat — typically a few hundred to a few thousand times</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Predict</span><span class="fl-b"><var>f</var> = <var>w</var><var>x</var> + <var>b</var>, for all m houses at once.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">subtract the real price from each prediction</span></li><li class="fl k-op"><span class="fl-t">Measure the miss</span><span class="fl-b"><var>J</var> = the average squared error, halved. <b>One number</b> standing for the whole line.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">ask which way that number falls</span></li><li class="fl k-op"><span class="fl-t">Slope of the cost</span><span class="fl-b">Two slopes, because there are two knobs: one for <var>w</var>, one for <var>b</var>. Together they point straight downhill.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">take one small step of size <var>α</var> in that direction</span></li><li class="fl k-back"><span class="fl-t">Move both knobs</span><span class="fl-b"><var>w</var> and <var>b</var> each drop by <var>α</var> × their own <span class="gterm" data-g="slope-f0">slope</span>, <b>at the same instant</b>.</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">until the cost stops falling</span></li><li class="fl k-out"><span class="fl-t">A fitted line</span><span class="fl-b">The <var>w</var> and <var>b</var> that no small change improves. Feed it a size it has never seen and it returns a price.</span></li></ol><p class="flow-cap">Everything else in the week is a detail hanging off one of these boxes. The
+learning rate is how big the step is. Cost-function intuition is what the third box looks like when
+you draw it. Nothing in Week 1 lives outside this picture.</p></figure><h2><span class="ico">🧱</span>What this week rests on</h2><div class="carry"><span class="tag">What this week rests on</span><p>Not one piece of maths in this week is new. All of it was met in Foundations;
+the week just puts it in a particular order and gives the arrangement a name.</p><table class="carrytab"><thead><tr><th>You already have</th><th>Where it came from</th><th>What it turns into here</th></tr></thead><tbody><tr><td><b>A <span class="gterm" data-g="derivative-f0">derivative</span></b></td><td>F0 W1 · 05</td><td>reads off which way the cost falls, and how steeply</td></tr><tr><td><b>A <span class="gterm" data-g="partial-f0">partial derivative</span></b></td><td>F0 W1 · 06</td><td>two knobs means two slopes — one per knob, each measured with the other held still</td></tr><tr><td><b><span class="gterm" data-g="sigma">Σ</span>, summation</b></td><td>F0 W1 · 07</td><td>adds the miss over all m houses</td></tr><tr><td><b>The mean</b></td><td>F0 W1 · 17</td><td>divides that sum by m, so a bigger dataset does not automatically look worse</td></tr><tr><td><b>NumPy arrays</b></td><td>F0 W2 · 03, 07</td><td>makes <code>f = w * x + b</code> compute all m predictions in one line</td></tr><tr><td><b>The <span class="gterm" data-g="dot-product-f0">dot product</span></b></td><td>F0 W1 · 10</td><td>not needed yet — one feature. Next week it replaces the sum entirely</td></tr></tbody></table></div><h2><span class="ico">⛓</span>The pieces, in the order they hand to each other</h2><div class="chainw"><span class="tag">The pieces, in the order they hand to each other</span><ol class="chain"><li class="ch-step"><div class="ch-h"><span class="ch-n">1</span><b>The model</b></div><p class="ch-does">A straight line with two knobs on it. <var>w</var> tilts the line; <var>b</var> slides it up and down.</p><div class="ch-f"><div class="fanat-eq"><span class="lbl">two unknown numbers, and that is the whole model</span><div class="fanat-row"><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="func-f"><var>f</var><sub><var>w</var>,<var>b</var></sub>(<var>x</var>)</span></span><span class="tick"></span><span class="tag">the prediction for one house</span></span><span class="fanat-part plain"><span class="term"> <span class="op">=</span> <var class="hl-a">w</var><var>x</var> <span class="op">+</span> <var class="hl-b">b</var></span></span></div></div></div><div class="ch-c"><span class="lbl">the same thing in code</span><pre><code>f = w * x + b</code></pre></div><p class="ch-t"><span class="lbl">where it goes wrong</span>Dropping <var>b</var> nails the line to the origin — it would insist a house of zero size is worth exactly nothing, and then bend the slope to compensate.</p><p class="ch-next"><span class="a">↓</span>a predicted price for every house. Useless on its own, until you can say how wrong it is.</p></li><li class="ch-step"><div class="ch-h"><span class="ch-n">2</span><b>The cost</b></div><p class="ch-does">Squash all m misses down to a single number, so that two candidate lines can be compared.</p><div class="ch-f"><div class="fanat-eq"><span class="lbl">the average squared miss, halved</span><div class="fanat-row"><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="cost-j"><var>J</var>(<var>w</var>,<var>b</var>)</span></span><span class="tick"></span><span class="tag">how bad this line is</span></span><span class="fanat-part plain"><span class="term"> <span class="op">=</span> </span></span><span class="fanat-part" data-c="2"><span class="term"><span class="gterm" data-g="avg-factor"><span class="frac"><span class="n">1</span><span class="d">2<var>m</var></span></span></span></span><span class="tick"></span><span class="tag">average, and halve</span></span><span class="fanat-part" data-c="3"><span class="term"><span class="gterm" data-g="squared-term"><span class="sum">Σ</span></span></span><span class="tick"></span><span class="tag">add over every house</span></span><span class="fanat-part plain"><span class="term"> (</span></span><span class="fanat-part" data-c="4"><span class="term"><span class="gterm" data-g="error-term"><var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup></span></span><span class="tick"></span><span class="tag">this house’s miss</span></span><span class="fanat-part plain"><span class="term">)<sup>2</sup></span></span></div></div></div><div class="ch-c"><span class="lbl">the same thing in code</span><pre><code>cost = <span class="gterm" data-g="npmean-api">np.mean</span>((f - y) ** <span class="tok-n">2</span>) / <span class="tok-n">2</span></code></pre></div><p class="ch-t"><span class="lbl">where it goes wrong</span>The square is not neutral. A single miss of 10 costs the same as a hundred misses of 1, so one strange house can drag the whole line towards itself.</p><p class="ch-next"><span class="a">↓</span>one number. The question becomes: which way should w and b move to make that number smaller?</p></li><li class="ch-step"><div class="ch-h"><span class="ch-n">3</span><b>The gradient</b></div><p class="ch-does">The slope of the cost with respect to each knob — steepness and direction in one quantity.</p><div class="ch-f"><div class="eq"><span class="lbl">same sum, twice — the w version carries an extra x</span><span class="frac"><span class="n">∂<var>J</var></span><span class="d">∂<var>w</var></span></span> <span class="op">=</span> <span class="frac"><span class="n">1</span><span class="d"><var>m</var></span></span><span class="sum">Σ</span>(<var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup>)<var>x</var><sup>(<var>i</var>)</sup><span class="gap"></span><span class="frac"><span class="n">∂<var>J</var></span><span class="d">∂<var>b</var></span></span> <span class="op">=</span> <span class="frac"><span class="n">1</span><span class="d"><var>m</var></span></span><span class="sum">Σ</span>(<var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) <span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup>)</div></div><div class="ch-c"><span class="lbl">the same thing in code</span><pre><code>err   = f - y
+dj_dw = <span class="gterm" data-g="npmean-api">np.mean</span>(err * x)
+dj_db = <span class="gterm" data-g="npmean-api">np.mean</span>(err)</code></pre></div><p class="ch-t"><span class="lbl">where it goes wrong</span>The extra <var>x</var> on the <var>w</var> slope is not a typo and not optional: it says a miss on a <i>large</i> house is stronger evidence that the <i>slope</i> is wrong. The bias has no such factor, because b affects every house equally.</p><p class="ch-next"><span class="a">↓</span>two numbers saying which way is downhill — but not how far to walk.</p></li><li class="ch-step"><div class="ch-h"><span class="ch-n">4</span><b>The update</b></div><p class="ch-does">Walk downhill. Both knobs move, each by its own slope times one shared step size.</p><div class="ch-f"><div class="fanat-eq"><span class="lbl">minus, because the slope points uphill and you want the other way</span><div class="fanat-row"><span class="fanat-part plain"><span class="term"><var class="hl-a">w</var> <span class="op">:=</span> <var class="hl-a">w</var> <span class="op">−</span> </span></span><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="alpha-lr"><var>α</var></span></span><span class="tick"></span><span class="tag">how big a step</span></span><span class="fanat-part plain"><span class="term"><span class="frac"><span class="n">∂<var>J</var></span><span class="d">∂<var>w</var></span></span><span class="gap"></span><var class="hl-b">b</var> <span class="op">:=</span> <var class="hl-b">b</var> <span class="op">−</span> </span></span><span class="fanat-part" data-c="1"><span class="term"><span class="gterm" data-g="alpha-lr"><var>α</var></span></span><span class="tick"></span><span class="tag">the same step size</span></span><span class="fanat-part plain"><span class="term"><span class="frac"><span class="n">∂<var>J</var></span><span class="d">∂<var>b</var></span></span></span></span></div></div></div><div class="ch-c"><span class="lbl">the same thing in code</span><pre><code>w = w - alpha * dj_dw
+b = b - alpha * dj_db</code></pre></div><p class="ch-t"><span class="lbl">where it goes wrong</span>Both updates must use the <b>old</b> w and b. Overwrite w first and the b update is computed on a line that no longer exists — the classic Week 1 bug, and it does not crash, it just quietly <span class="gterm" data-g="convergence-native">converges</span> to the wrong answer.</p></li></ol></div><h2><span class="ico">🔢</span>The same pass, on numbers you can check</h2><div class="bynum"><span class="tag">The same thing with numbers small enough to check</span><p>Three houses: sizes <b>1, 2, 3</b> thousand square feet, prices <b>3, 5, 8</b> hundred
+thousand. Start at <var>w</var> = 0 and <var>b</var> = 0, with <var>α</var> = 0.1. Here is
+<b>one</b> trip round the loop, in full.</p><table class="bynumtab"><tbody><tr><td class="lb">predictions <var>f</var></td><td class="vl">0, 0, 0</td><td>w = 0 and b = 0, so every house is predicted to be worth nothing</td></tr><tr><td class="lb">misses <var>f</var> − <var>y</var></td><td class="vl">-3, -5, -8</td><td>all negative — every prediction is too low</td></tr><tr><td class="lb">cost <var>J</var></td><td class="vl">16.3333</td><td>the average of those misses squared, halved</td></tr><tr><td class="lb">∂<var>J</var>/∂<var>w</var></td><td class="vl">-12.3333</td><td>each miss weighted by that house&#8217;s size, averaged</td></tr><tr><td class="lb">∂<var>J</var>/∂<var>b</var></td><td class="vl">-5.3333</td><td>the same misses, unweighted, averaged</td></tr><tr><td class="lb">new <var>w</var></td><td class="vl">1.2333</td><td>0 &minus; 0.1 &times; (-12.3333). Two minuses: the step goes <b>up</b></td></tr><tr><td class="lb">new <var>b</var></td><td class="vl">0.5333</td><td>0 &minus; 0.1 &times; (-5.3333)</td></tr><tr><td class="lb">cost after one step</td><td class="vl">3.2848</td><td>down from 16.3333. That fall is the only evidence that any of this works</td></tr></tbody></table><p>Run the same three lines 2,000 times and the cost settles at <b>0.0278</b>, with
+<var>w</var> = 2.5 and <var>b</var> = 0.333. Nothing else happens. There is no second idea in Week 1 —
+only this, repeated.</p></div><h2><span class="ico">🌀</span>The two loops people confuse</h2><div class="callout key"><span class="tag">The one thing to remember</span><p>There are two different repetitions in this week and they are easy to mistake for
+each other, because both are written with a Σ or a <code>for</code>.</p>
+<p><b>The inner one runs over the m houses</b> and it happens <i>inside a single step</i>. Its job is
+to produce two numbers, the gradients. It is finished before the knobs move at all.</p>
+<p><b>The outer one runs over the steps</b> — iteration 1, 2, 3, … Its job is to move the knobs a
+little each time.</p>
+<p>So one full trip round the outer loop looks at <b>every</b> house exactly once. If you find
+yourself updating <var>w</var> inside the loop over houses, you have merged the two, and you have
+accidentally invented a different algorithm (a real one — stochastic gradient descent — but not
+this one, and it will not match the lesson&#8217;s numbers).</p></div><h2><span class="ico">🔡</span>Every symbol this week, in one table</h2><table class="decode"><thead><tr><th>Symbol</th><th>Say it out loud</th><th>What it actually is</th></tr></thead><tbody><tr><td><var>x</var></td><td>“x”</td><td>The input. One number per house this week: its size.</td></tr><tr><td><var>y</var></td><td>“y”</td><td>The true answer from the data — what the house actually sold for.</td></tr><tr><td><var>ŷ</var></td><td>“y hat”</td><td>The <b>prediction</b>. Plain y is truth, y-hat is a guess.</td></tr><tr><td><var>m</var></td><td>“m”</td><td>How many <span class="gterm" data-g="trainingexample-native">training examples</span> there are.</td></tr><tr><td><var>x</var><sup>(<var>i</var>)</sup></td><td>“x superscript i”</td><td>The i-th example. <b>Round brackets always mean “which example”</b>, never a power.</td></tr><tr><td><var>w</var></td><td>“w”, weight or slope</td><td>How much the price rises per unit of size.</td></tr><tr><td><var>b</var></td><td>“b”, bias or intercept</td><td>The prediction when x is zero; slides the line vertically.</td></tr><tr><td><var>f</var></td><td>“f of x”</td><td>The model itself. Older material calls it h, for hypothesis.</td></tr><tr><td><var>J</var></td><td>“J of w, b”</td><td>The cost — one number saying how badly this line fits.</td></tr><tr><td><var>α</var></td><td>“alpha”</td><td>The learning rate: how far to step each iteration.</td></tr><tr><td>∂</td><td>“partial dee”</td><td>A derivative when there is more than one variable — the slope in one direction, others held still.</td></tr><tr><td>:=</td><td>“becomes”</td><td>Assignment, not a claim of equality. <code>w := w − …</code> means <i>replace</i> w.</td></tr></tbody></table><h2><span class="ico">🚧</span>What this week deliberately cannot do yet</h2><div class="callout trap"><span class="tag">Common trap</span><p>Knowing the edges of the week is what stops the next one feeling arbitrary.</p>
+<p><b>One input only.</b> Size, and nothing else. Bedrooms and age are Week 2.</p>
+<p><b>Straight lines only.</b> The model literally cannot bend. Curves arrive in Week 2 as feature
+engineering, not as a new algorithm.</p>
+<p><b>Numbers out, never categories.</b> “How much?” is answerable; “is this spam?” is not, because
+a straight line runs off to ±∞ and a <span class="gterm" data-g="probability-f0">probability</span> may not. That is Week 3, and it changes exactly
+two things: a squashing function on the output and a different cost.</p>
+<p><b>Every example, every step.</b> With a million houses each step reads all million. Real systems
+do not, and that is a later refinement — not a correction to anything here.</p></div><h2><span class="ico">🗣</span>Say the week back</h2><div class="retell"><span class="tag">Say the week back, with the page shut</span><p>Cover everything above. Say these out loud, in order, in your own words. The one you stumble on names the lesson to reopen &mdash; that stumble is the whole value of the exercise.</p><ol class="rt"><li>What makes a problem <i>supervised</i>, and which column of the table makes it so.</li><li>What the model is, in one line, and what each of its two numbers does to the line.</li><li>Why a cost function has to squash m misses into a single number.</li><li>Why the misses are squared, and one consequence of that choice.</li><li>What a gradient is, in plain words, without saying the word derivative.</li><li>Why the <var>w</var> gradient carries an extra <var>x</var> and the <var>b</var> gradient does not.</li><li>Why the update <b>subtracts</b> the gradient.</li><li>What <var>α</var> controls, and what going too large and too small each look like.</li><li>Why both knobs must be updated from the old values.</li><li>Which of the two loops runs over houses and which runs over steps.</li></ol></div><h2><span class="ico">🪜</span>Where this sits on the way to the translator</h2><div class="ladder"><span class="tag">Where this sits on the way to the translator</span><p class="dest"><span class="lbl">where the ladder goes</span>A K’Cho ↔ English translator, fine-tuned from a pretrained multilingual model</p><ol class="rungs"><li class="rung done"><span class="rw">F0</span><span class="rt">Arithmetic, slopes, <span class="gterm" data-g="vector-f0">vectors</span>, NumPy</span><span class="rn">the notation everything else is written in</span></li><li class="rung at"><span class="rw">C1 W1</span><span class="rt">Linear regression and gradient descent</span><span class="rn">predict a number; roll downhill to fit it</span></li><li class="rung ahead"><span class="rw">C1 W2</span><span class="rt">Many features, vectorised</span><span class="rn">the same fit, on wide data, fast</span></li><li class="rung ahead"><span class="rw">C1 W3</span><span class="rt">Logistic regression and <span class="gterm" data-g="regularization-native">regularization</span></span><span class="rn">predict a class; keep the weights sane</span></li><li class="rung ahead"><span class="rw">C2 W1</span><span class="rt">Forward propagation</span><span class="rn">stack the units — what a network computes</span></li><li class="rung ahead"><span class="rw">C2 W2</span><span class="rt">Training a network, <span class="gterm" data-g="softmax-native">softmax</span>, Adam</span><span class="rn">backprop: which weight caused the mistake</span></li><li class="rung ahead"><span class="rw">C2 W3</span><span class="rt">Bias, <span class="gterm" data-g="variance-f0">variance</span>, error analysis</span><span class="rn">what to actually do when it is wrong</span></li><li class="rung ahead"><span class="rw">C2 W4</span><span class="rt">Decision trees and ensembles</span><span class="rn">the other family, and when it wins</span></li><li class="rung ahead"><span class="rw">C3 W1</span><span class="rt">Clustering and anomaly detection</span><span class="rn">learning with no labels at all</span></li><li class="rung ahead"><span class="rw">C3 W2</span><span class="rt">Recommenders and PCA</span><span class="rn">learned features, and squeezing dimensions</span></li><li class="rung ahead"><span class="rw">C3 W3</span><span class="rt">Reinforcement learning</span><span class="rn">learning from a reward instead of an answer</span></li><li class="rung ahead"><span class="rw">C4 W1</span><span class="rt">Embeddings and tokenization</span><span class="rn">how text becomes numbers</span></li><li class="rung ahead"><span class="rw">C4 W2</span><span class="rt">Attention</span><span class="rn">how a model decides which words matter</span></li><li class="rung ahead"><span class="rw">C4 W3</span><span class="rt">Transformers</span><span class="rn">the architecture translation is built on</span></li><li class="rung ahead"><span class="rw">C4 W4</span><span class="rt">Fine-tuning a pretrained model</span><span class="rn">teach a multilingual model one more language</span></li></ol><p class="why"><span class="lbl">why this rung</span>This is the loop itself, met at the one size where it fits on a page.
+A translation model swaps the straight line for a network of millions of numbers, and the squared
+miss for a score over possible next words — but predict, measure the miss, find the slope, step
+downhill, repeat is <b>exactly</b> what fine-tuning a multilingual model on K&#8217;Cho sentence
+pairs does. Every later week changes one box in the picture above and leaves the shape alone. This
+is the shape.</p></div>
+<h2 id="compresses"><span class="ico">&#128218;</span>What this page compresses</h2><p>Every claim above is taught in full in one of these. If a line here went past too quickly, the lesson is where it slows down.</p><ol class="gistsrc"><li><a data-slug-link="c11-01-what-is-machine-learning" href="../c1/w1-01-what-is-machine-learning.html"><span class="n">01</span>What is machine learning?</a></li><li><a data-slug-link="c11-02-supervised-learning" href="../c1/w1-02-supervised-learning.html"><span class="n">02</span>Supervised learning</a></li><li><a data-slug-link="c11-03-unsupervised-learning" href="../c1/w1-03-unsupervised-learning.html"><span class="n">03</span>Unsupervised learning</a></li><li><a data-slug-link="c11-04-linear-regression-model" href="../c1/w1-04-linear-regression-model.html"><span class="n">04</span>The linear regression model</a></li><li><a data-slug-link="c11-05-cost-function-formula" href="../c1/w1-05-cost-function-formula.html"><span class="n">05</span>The cost function formula</a></li><li><a data-slug-link="c11-06-cost-function-intuition" href="../c1/w1-06-cost-function-intuition.html"><span class="n">06</span>Cost function intuition</a></li><li><a data-slug-link="c11-07-visualizing-the-cost-function" href="../c1/w1-07-visualizing-the-cost-function.html"><span class="n">07</span>Visualizing the cost function</a></li><li><a data-slug-link="c11-08-gradient-descent" href="../c1/w1-08-gradient-descent.html"><span class="n">08</span>Gradient descent</a></li><li><a data-slug-link="c11-09-implementing-gradient-descent" href="../c1/w1-09-implementing-gradient-descent.html"><span class="n">09</span>Implementing gradient descent</a></li><li><a data-slug-link="c11-10-gradient-descent-intuition" href="../c1/w1-10-gradient-descent-intuition.html"><span class="n">10</span>Gradient descent intuition</a></li><li><a data-slug-link="c11-11-learning-rate" href="../c1/w1-11-learning-rate.html"><span class="n">11</span>The learning rate</a></li><li><a data-slug-link="c11-12-gradient-descent-for-linear-regression" href="../c1/w1-12-gradient-descent-for-linear-regression.html"><span class="n">12</span>Gradient descent for linear regression</a></li><li><a data-slug-link="c11-13-running-gradient-descent" href="../c1/w1-13-running-gradient-descent.html"><span class="n">13</span>Running gradient descent</a></li></ol><p class="gistalso"><a href="../problems/c11.html">&#9998; the problem set</a> <span class="sep">&#183;</span> <a href="../quiz/c11.html">&#9678; the mock quiz</a> <span class="sep">&#183;</span> <a href="../scratch/01-linear-regression.html">&#9881; run it from scratch: Linear regression</a> <span class="sep">&#183;</span> <a href="../review.html">&#9670; the cards for this week</a></p>
+<nav class="pager">
+<span class="ghost"></span>
+<span class="ghost"></span>
+</nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+<script src="../assets/meta.js"></script>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -64,6 +64,16 @@ MOCK_MODULES = _shown_modules([
     "mock_c3w1", "mock_c3w2", "mock_c3w3",
 ])
 
+# one gist page per week — the whole week as a single connected picture. Same
+# order as MODULES, and a week without a module here simply has no gist page yet.
+GIST_MODULES = _shown_modules([
+    "gist_f0w1", "gist_f0w2", "gist_f0w3",
+    "gist_c1w1", "gist_c1w2", "gist_c1w3",
+    "gist_c2w1", "gist_c2w2", "gist_c2w3", "gist_c2w4",
+    "gist_c3w1", "gist_c3w2", "gist_c3w3",
+    "gist_c4w1", "gist_c4w2", "gist_c4w3", "gist_c4w4",
+])
+
 MODULES = _shown_modules([
     "content_f0w1", "content_f0w2", "content_f0w3",
     "content_c1w1", "content_c1w2", "content_c1w3",
@@ -659,6 +669,7 @@ def sidebar(weeks, flat, current_slug, depth):
     up = "../" * depth
     out = []
     out.append('<a href="%sindex.html" style="font-weight:700">← Study plan</a>' % up)
+    out.append('<a href="%sgist.html" style="font-weight:700">◉ Week gists</a>' % up)
     out.append('<a href="%smastery.html" style="font-weight:700">✓ Mastery plan</a>' % up)
     out.append('<a href="%sreview.html" style="font-weight:700">◆ Review (SRS)</a>' % up)
     out.append('<a href="%sproblems.html" style="font-weight:700">✎ Problem sets</a>' % up)
@@ -1520,6 +1531,209 @@ better. That is not a mistake in the ordering.</p></div>
 </body>
 </html>
 """
+
+
+GISTPAGE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The gist &#183; {course} W{week}</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/print.css" media="print">
+<script src="../assets/site.js"></script>
+<script src="../assets/search.js"></script>
+<script>window.GLOSS_UP="../";</script>
+<script src="../assets/gloss-data.js"></script>
+<script src="../assets/gloss.js"></script>
+<script src="../assets/reader.js"></script>
+</head>
+<body data-slug="gist-{course_l}{week}" data-printable="The gist &#183; {course} Week {week}|{title}">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">The gist &#183; {course} W{week} &#183; <b>{title}</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="done-btn">mark done</button>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="kicker">{course} &#183; Week {week} &#183; the whole week at once &#183; {mins} min</p>
+<h1>The gist &mdash; {title}</h1>
+<p class="lede">{lede}</p>
+<div class="callout kid"><span class="tag">What this page is for</span>
+<p>The {n} lesson pages for this week each teach <b>one</b> idea properly. That is the right shape
+for meeting an idea and the wrong shape for seeing how the ideas join &mdash; so this page is only
+the joins. Nothing here is new: if a claim on this page is not already in one of those lessons, it
+is a bug.</p>
+<p>Read it <b>after</b> the week for consolidation, or <b>before</b> it as a map you will
+recognise on the way through. Both work; reading it <i>instead</i> of the week does not.</p></div>
+{body}
+{compresses}
+<nav class="pager">
+{prev}
+{next}
+</nav>
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+<script src="../assets/meta.js"></script>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>
+"""
+
+GISTINDEX = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week gists</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/print.css" media="print">
+<script src="assets/site.js"></script>
+<script src="assets/search.js"></script>
+<script>window.GLOSS_UP="";</script>
+<script src="assets/gloss-data.js"></script>
+<script src="assets/gloss.js"></script>
+</head>
+<body data-slug="__gist__">
+<header class="topbar">
+  <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
+  <a class="brand" href="index.html">ML<span>&#183;</span>notes</a>
+  <span class="crumb">Week gists &#183; <b>one page per week, the whole thing at once</b></span>
+  <span class="spacer"></span>
+  <button class="btn" id="search-btn" title="search  (/)">&#8981;</button>
+  <button class="btn" id="theme-btn" title="theme">&#9689;</button>
+</header>
+<div class="layout">
+<aside class="sidebar">
+{sidebar}
+</aside>
+<main>
+<p class="kicker">{n} of {nw} weeks</p>
+<h1>Week gists</h1>
+<p class="lede">Each lesson in this site is self-contained, which is what makes it readable and
+also what makes the <b>joins</b> invisible. One gist page per week draws the joins: the week as a
+single picture, what carried over from last week, the pieces in the order they hand to each other,
+and the same algorithm on numbers small enough to check by hand.</p>
+<div class="callout key"><span class="tag">These add nothing new</span>
+<p>A gist page is a compression of lessons you already have, not a replacement for them. It exists
+because <b>knowing the shape of a week is a different skill from knowing its parts</b>, and the
+lesson pages can only teach the parts.</p></div>
+{body}
+<footer class="sitefoot">Study notes for the ML Specialization <span class="sep">&#183;</span> Hung Om</footer>
+</main>
+</div>
+</body>
+</html>
+"""
+
+
+def _gists():
+    """[GIST] for every week that has a gist module, in course order."""
+    out = []
+    for mname in GIST_MODULES:
+        try:
+            mod = importlib.import_module(mname)
+        except ModuleNotFoundError:
+            continue
+        importlib.reload(mod)
+        out.append(mod.GIST)
+    return out
+
+
+def build_gist(weeks, flat):
+    """One page per week: the week as a single connected picture.
+
+    The page body is authored; the closing "what this compresses" block is
+    DERIVED from the week's own lesson records, so a renamed or reordered
+    lesson cannot leave a stale link behind on the gist page.
+    """
+    import scratchkit  # noqa: F401  (only to fail early if the lane is broken)
+    gists = _gists()
+    if not gists:
+        return 0
+
+    try:
+        import scratch_meta
+        scratch_title = {d["slug"]: d["title"] for d in scratch_meta.LANE}
+    except ModuleNotFoundError:
+        scratch_title = {}
+
+    files = ["gist/%s%s.html" % (G["course"].lower(), G["week"]) for G in gists]
+    for i, G in enumerate(gists):
+        recs = [r for r in flat
+                if r["week"]["course"] == G["course"] and str(r["week"]["week"]) == str(G["week"])]
+        lis = "".join(
+            '<li><a data-slug-link="%s" href="../%s"><span class="n">%02d</span>%s</a></li>'
+            % (r["slug"], r["file"], r["n"], html.escape(r["L"]["title"])) for r in recs)
+        extra = []
+        pf = os.path.join(ROOT, "problems", "%s%s.html" % (G["course"].lower(), G["week"]))
+        if os.path.exists(pf):
+            extra.append('<a href="../problems/%s%s.html">&#9998; the problem set</a>'
+                         % (G["course"].lower(), G["week"]))
+        qf = os.path.join(ROOT, "quiz", "%s%s.html" % (G["course"].lower(), G["week"]))
+        if os.path.exists(qf):
+            extra.append('<a href="../quiz/%s%s.html">&#9678; the mock quiz</a>'
+                         % (G["course"].lower(), G["week"]))
+        for sl in G.get("scratch", []):
+            if sl in scratch_title:
+                extra.append('<a href="../scratch/%s.html">&#9881; run it from scratch: %s</a>'
+                             % (sl, html.escape(scratch_title[sl])))
+        extra.append('<a href="../review.html">&#9670; the cards for this week</a>')
+        compresses = (
+            '<h2 id="compresses"><span class="ico">&#128218;</span>What this page compresses</h2>'
+            '<p>Every claim above is taught in full in one of these. If a line here went past too '
+            'quickly, the lesson is where it slows down.</p>'
+            '<ol class="gistsrc">%s</ol>'
+            '<p class="gistalso">%s</p>' % (lis, ' <span class="sep">&#183;</span> '.join(extra)))
+
+        prev = ('<a class="prev" href="../%s"><span class="dir">&#8249; previous</span>'
+                '<span class="ttl">%s W%s gist</span></a>'
+                % (files[i - 1], gists[i - 1]["course"], gists[i - 1]["week"])) if i else '<span class="ghost"></span>'
+        nxt = ('<a class="next" href="../%s"><span class="dir">next &#8250;</span>'
+               '<span class="ttl">%s W%s gist</span></a>'
+               % (files[i + 1], gists[i + 1]["course"], gists[i + 1]["week"])) if i < len(gists) - 1 else '<span class="ghost"></span>'
+
+        page = GISTPAGE.format(
+            course=G["course"], course_l=G["course"].lower(), week=G["week"],
+            title=html.escape(G["title"]), lede=G["lede"], mins=G.get("mins", 10),
+            n=len(recs), body=G["body"], compresses=compresses,
+            sidebar=sidebar(weeks, flat, "gist-%s%s" % (G["course"].lower(), G["week"]), 1),
+            prev=prev, next=nxt)
+        wr(os.path.join(ROOT, files[i]), page)
+
+    have = {"%s%s" % (G["course"].lower(), G["week"]) for G in gists}
+    rows = []
+    for w in weeks:
+        k = "%s%s" % (w["course"].lower(), w["week"])
+        if k in have:
+            G = next(g for g in gists if "%s%s" % (g["course"].lower(), g["week"]) == k)
+            rows.append(
+                '<li><a data-slug-link="gist-%s" href="gist/%s.html">'
+                '<span class="n">%s W%s</span><span class="pt"><b>%s</b>'
+                '<span class="pgs">%s</span></span>'
+                '<span class="tag2">%s min</span></a></li>'
+                % (k, k, w["course"], w["week"], html.escape(G["title"]),
+                   strip_tags(G["lede"])[:150], G.get("mins", 10)))
+        else:
+            rows.append(
+                '<li class="soon"><span class="n">%s W%s</span>'
+                '<span class="pt"><b>%s</b><span class="pgs">gist not written yet</span></span>'
+                '<span class="tag2">&mdash;</span></li>'
+                % (w["course"], w["week"], html.escape(w["title"])))
+    body = ('<h2><span class="ico">&#9673;</span>Every week, in course order</h2>'
+            '<ol class="problist gistlist">%s</ol>' % "".join(rows))
+    wr(os.path.join(ROOT, "gist.html"),
+       GISTINDEX.format(sidebar=sidebar(weeks, flat, "__gist__", 0),
+                        n=len(gists), nw=len(weeks), body=body))
+    return len(gists)
 
 
 def build_problems(weeks, flat):
@@ -2504,6 +2718,18 @@ def build_search(weeks, flat, cards):
                 "h": pr["tag"],
                 "b": strip_tags(" ".join([pr["ask"], pr["answer"], pr.get("why") or ""]))[:800].lower(),
             })
+    # week gists — the whole-week pages
+    for G in _gists():
+        u = "gist/%s%s.html" % (G["course"].lower(), G["week"])
+        heads = [strip_tags(m) for m in re.findall(r"<h2[^>]*>(.*?)</h2>", G["body"], re.S)]
+        idx.append({
+            "t": "gist", "u": u,
+            "ti": "The gist — %s" % G["title"],
+            "w": "%s W%s" % (G["course"], G["week"]),
+            "s": strip_tags(G["lede"])[:190],
+            "h": " · ".join(heads)[:260],
+            "b": strip_tags(G["body"])[:1500].lower(),
+        })
     # from-scratch sections
     try:
         import scratch_meta
@@ -2813,6 +3039,7 @@ def build():
     n_gloss = build_gloss()
     n_paper = build_paper(weeks, flat)
     n_sets, n_prob = build_problems(weeks, flat)
+    n_gist = build_gist(weeks, flat)
     n_mock, n_mq = build_mock(weeks, flat)
     n_sc, n_sl, n_ss = build_scratch(weeks, flat)
     n_lab, n_grad, n_ex = build_labs(weeks, flat)
@@ -2843,6 +3070,8 @@ def build():
         print("       + mastery.html (%d weeks, ~%d h budgeted)" % (len(weeks), n_hours))
     if n_sets:
         print("       + %d problem sets (%d problems)" % (n_sets, n_prob))
+    if n_gist:
+        print("       + %d week gists (gist.html)" % n_gist)
     if n_mock:
         print("       + %d mock quizzes (%d questions, graded in browser)" % (n_mock, n_mq))
     if n_sc:

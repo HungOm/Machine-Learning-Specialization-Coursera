@@ -275,10 +275,18 @@ actually <em>is</em>. The maths stops being scary once you can pronounce it.</p>
        "Course 3 notebooks in this repository",
        "K-means, anomaly detection, both recommender assignments, and the lunar lander."),
   ])
-  + h2("🧭", "The six ways to use this site", "lanes")
-  + """<p>Reading is only one of them, and on its own it is the weakest. The other four exist because
+  + h2("🧭", "The ways to use this site", "lanes")
+  + """<p>Reading is only one of them, and on its own it is the weakest. The others exist because
 recognising an idea on a page and being able to produce it from nothing are completely different
 skills, and only the second one survives contact with an assignment.</p>"""
+  + card('<h3><a href="gist.html">◉ Orient — the gist of each week</a></h3>'
+         '<p>Every lesson page here is self-contained, which is what makes it readable and also '
+         'what makes the <b>joins</b> invisible. One gist page per week draws only the joins: the '
+         'whole week as a single picture, what carried over from last week, the pieces in the order '
+         'they hand to each other, the same algorithm on numbers small enough to check by hand, and '
+         'where the week sits on the way to something you actually want to build. Nothing on a gist '
+         'page is new &mdash; it is a compression of lessons you already have.</p>'
+         '<p style="margin-bottom:0"><a class="btn primary" href="gist.html">open the week gists</a></p>')
   + grid2(
       card('<h3><a href="index.html#lessons">📚 Read — 172 lessons</a></h3>'
            '<p>One lesson per page, each with a live animation, every symbol decoded, and links to '
