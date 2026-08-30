@@ -177,3 +177,9 @@
 .fl, .fl-loop, .carry, .skel, .bynum, .retell, .ladder, .chainw, .ch-step {
   break-inside: avoid; box-shadow: none; }
 .gistline { background: none; }
+
+/* walkthrough components: keep each piece whole on paper */
+.sx-walk, .cwalk, .wx, .wchain, .wchainset, .wsteps li, .wk-case, .wvals, .wpoint, .wart {
+  break-inside: avoid; }
+.wpoint, .wx, .wchain, .wchainset, .wk-case, .wart pre { background: none;
+  border: 1px solid #ddd; }

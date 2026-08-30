@@ -6,6 +6,8 @@ scratch_meta put together, and because it is a different KIND of writing: the
 prose notes say why a block exists, this says what each line does. Every number
 quoted here is one this file actually printed at build time.
 """
+from walkkit import (p, expr, chain, chainset, steps, cases, values, point,
+                     ascii_art)
 
 PICTURE = ([
     ("in", "Eighty students",
@@ -71,73 +73,105 @@ what <code>m = 80, n = 2</code> in the output means: <b>m</b> is how many studen
 weights grow forever and would hide everything this file is trying to show about λ.</p>
 """,
 
-"sigmoid": """
-<p>This is the one genuinely new idea in the file. The weighted sum can come out as any
-number at all — −40, 0, +17. A probability may not. The sigmoid is the funnel between
-them:</p>
-<ul>
-<li>a big negative number → almost <b>0</b></li>
-<li>exactly zero → exactly <b>0.5</b></li>
-<li>a big positive number → almost <b>1</b></li>
-</ul>
-<p>You can read that straight off the output: <code>sigmoid([-2, 0, 2])</code> gives
-<b>0.1192, 0.5, 0.8808</b>. Symmetric around the middle, and it never quite reaches either
-end.</p>
-<p><b>Why the function is written in two halves.</b> The textbook formula is
-<code>1 / (1 + exp(-z))</code>. Try it at z = −1000 and the machine has to work out
-<code>exp(1000)</code>, a number with 435 digits, which does not fit in a float. It
-overflows and warns.</p>
-<p>So the code splits: for <code>z ≥ 0</code> it uses <code>1/(1+exp(-z))</code>, and for
-<code>z &lt; 0</code> it uses <code>exp(z)/(1+exp(z))</code>. Multiply the top and bottom
-of the first by <code>exp(z)</code> and you get the second — they are the <b>same
-formula rearranged</b>. Each half is chosen so the exponent it feeds to <code>exp</code>
-is never positive, and <code>exp</code> of a negative number is a safe little value
-between 0 and 1.</p>
-<p>Hence the first output line: <code>sigmoid(-1000) = 0.0</code>, no warning.</p>
-<p><b>You will meet a second spelling of this.</b> File 03 writes the same function as a
-single <code>np.where(z >= 0, 1/(1+exp(-|z|)), exp(-|z|)/(1+exp(-|z|)))</code>. It is not
-a different sigmoid &mdash; the two agree to the last bit over 20,001 values from −800 to
-+800 and at ±10,000 as well.</p>
-<p>But the reason it is safe is subtly different, and worth knowing.
+"sigmoid": (
+    p("""This is the one genuinely new idea in the file. The weighted sum can come out as
+<b>any</b> number at all. A probability may not &mdash; it has to sit between 0 and 1. The
+sigmoid is the funnel between them.""")
+    + ascii_art("""  1.0 |                        _____----------
+      |                  __--
+      |               _--
+  0.5 |- - - - - - - -*
+      |            _--
+      |       __---
+  0.0 |------
+      +----------------------------------------
+           negative        0        positive
+                        z""",
+       "Very negative goes to 0, very positive goes to 1, and it passes through "
+       "exactly 0.5 at z = 0.")
+    + values([("sigmoid(&minus;2)", "0.1192", "well below the middle &mdash; probably no"),
+              ("sigmoid(0)", "0.5", "exactly undecided"),
+              ("sigmoid(2)", "0.8808", "well above &mdash; probably yes"),
+              ("sigmoid(&minus;1000)", "0.0", "and no overflow warning, which is the point "
+                                              "of the next bit")],
+             "what this block actually printed")
+    + p("""Notice it is symmetric: 0.1192 and 0.8808 add to exactly 1. That is the last
+line of the output checking itself &mdash; the chance of passing at <b>z</b> and the chance
+of failing at <b>&minus;z</b> are the same number.""")
+    + p("""<b>Now, why is the function written in two halves?</b> The textbook formula is
+one line:""")
+    + expr("1 / (1 + exp(-z))", "the version in every textbook, and it breaks")
+    + p("""Try it at <b>z = &minus;1000</b>. The machine has to work out
+<code>exp(1000)</code> &mdash; a number with 435 digits. It does not fit in a float. It
+overflows and warns, and you get nonsense.""")
+    + cases([("When z is 0 or above",
+              "<code>1 / (1 + exp(-z))</code><br>The exponent <b>&minus;z</b> is negative "
+              "or zero, so <code>exp</code> stays small and safe."),
+             ("When z is below 0",
+              "<code>exp(z) / (1 + exp(z))</code><br>Now the exponent <b>z</b> is the "
+              "negative one, so again <code>exp</code> stays small and safe.")],
+            "so the code splits in two, and each half is safe where it is used")
+    + point("""These are not two different formulas. Multiply the top and bottom of the
+first by <code>exp(z)</code> and you get the second exactly. Same maths, rearranged so that
+whichever side of zero you are on, <b>the thing being exponentiated is never
+positive</b>.""")
+    + p("""<b>You will meet a second spelling of this.</b> File 03 writes it as a single
+<code>np.where</code>. It is not a different sigmoid &mdash; the two agree to the last bit
+over 20,001 values from &minus;800 to +800, and at &plusmn;10,000 too.""")
+    + p("""But it is safe for a different reason, and the difference is worth knowing.
 <code>np.where</code> does <b>not</b> pick a branch and skip the other: it computes
-<b>both</b> branches over the <b>whole</b> array and then chooses element by element. So
-writing the obvious two formulas inside an <code>np.where</code> would still overflow —
-the doomed half gets evaluated anyway. Both branches there use <code>-|z|</code>, which is
-never positive whichever side you are on, and that is what makes it safe.</p>
-<p>So: the version on this page is safe because each formula <b>only ever runs on the half
-of the data it suits</b>. File 03's is safe because <b>neither formula can overflow in the
-first place</b>. Same answer, two different ways of avoiding the same cliff.</p>
-<p>The last line, <code>g(-z) == 1 - g(z)</code>, checks the symmetry: the chance of
-passing at z and the chance of failing at −z are the same number. It prints
-<b>True</b>.</p>
-""",
+<b>both</b> branches over the <b>whole</b> array, then chooses element by element. So
+putting the obvious two formulas inside an <code>np.where</code> would still overflow
+&mdash; the doomed half runs anyway. File 03 uses <code>-|z|</code> in <i>both</i>
+branches, which is never positive whichever side you are on.""")
+    + cases([("This page's version is safe because&hellip;",
+              "each formula <b>only ever runs on the half of the data it suits</b>."),
+             ("File 03's version is safe because&hellip;",
+              "<b>neither formula can overflow in the first place</b>.")],
+            "same answer, two different ways of avoiding the same cliff")
+),
 
-"cost": """
-<p>The cost answers one question: <b>how bad is this set of weights?</b> One number, so
-two candidate models can be compared.</p>
-<p>File 01 squared the miss. That will not do here. Suppose the model says “99% sure this
-student passed” and the student failed. The plain error is 0.99 — which sounds small, and
-it is not small at all. It is a catastrophe.</p>
-<p><code>loss = -(y*log(f) + (1-y)*log(1-f))</code> looks forbidding and is really two
-cases wearing one coat, because <b>y is always 0 or 1</b>, so one of the two terms is
-always multiplied by zero and vanishes:</p>
-<ul>
-<li>The student <b>passed</b> (y = 1) → only <code>-log(f)</code> survives. Predict 0.99
-and the cost is 0.01. Predict 0.01 and the cost is <b>4.6</b>.</li>
-<li>The student <b>failed</b> (y = 0) → only <code>-log(1-f)</code> survives, and it
-punishes confidence the other way.</li>
-</ul>
-<p>That is the whole design: right and confident is nearly free, unsure costs a little,
-<b>wrong and confident costs enormously</b> — and it heads for infinity as the model
-approaches total certainty about something false.</p>
-<p><code>eps = 1e-12</code> and the <code>np.clip</code> line exist because of that
-infinity. <code>log(0)</code> is undefined, so a probability that rounds to exactly 0 or 1
-would crash the sum. Clipping nudges them to 0.000000000001 and 0.999999999999 — far
-enough from the edge to be safe, close enough to change no answer.</p>
-<p>The final term, <code>(lam / (2*len(y))) * np.sum(w**2)</code>, is the fine for large
-weights. Note what is <b>not</b> in it: <code>b</code>. The bias is never penalised,
-because it only shifts the boundary rather than steepening it.</p>
-""",
+"cost": (
+    p("""The cost answers one question: <b>how bad is this set of weights?</b> One number,
+so that two candidate models can be compared.""")
+    + p("""File 01 squared the miss. That will not do here. Suppose the model says
+&ldquo;99% sure this student passed&rdquo; and the student <b>failed</b>. The plain error
+is 0.99, which <i>sounds</i> small. It is a catastrophe, and the cost has to say so.""")
+    + expr("loss = -( y * log(f) + (1 - y) * log(1 - f) )",
+           "&ldquo;minus, y times log f, plus one minus y times log one minus f&rdquo;",
+           "the log loss")
+    + p("""It looks forbidding and it is really <b>two cases wearing one coat</b>. Because
+<b>y is always 0 or 1</b>, one of the two halves is always multiplied by zero and
+disappears.""")
+    + cases([("If the student PASSED &nbsp;(y = 1)",
+              "<code>1 - y</code> is 0, so the right half vanishes.<br>Only "
+              "<code>-log(f)</code> is left."),
+             ("If the student FAILED &nbsp;(y = 0)",
+              "<code>y</code> is 0, so the left half vanishes.<br>Only "
+              "<code>-log(1-f)</code> is left.")],
+            "one of these two is always zero")
+    + chainset([(["said 0.99", "cost 0.01"], "confident and right &mdash; almost free"),
+                (["said 0.60", "cost 0.51"], "unsure &mdash; charged a little"),
+                (["said 0.01", "cost 4.61"], "confident and <b>wrong</b> &mdash; 460&times; more")],
+               "the student passed. What each guess costs")
+    + point("""Right and confident is nearly free. Unsure costs a little. <b>Wrong and
+confident costs enormously</b> &mdash; and the cost runs off towards infinity as the model
+approaches total certainty about something false. That asymmetry is not a side effect. It
+is the entire reason this cost exists instead of the squared error.""")
+    + p("""Which is also why the next two lines are there:""")
+    + expr("eps = 1e-12\nf = np.clip(f, eps, 1 - eps)", "keep f away from the cliff edges")
+    + p("""<code>log(0)</code> is undefined &mdash; it heads for minus infinity &mdash; so a
+probability that rounds all the way to 0 or 1 would poison the whole sum.
+<code>np.clip</code> nudges them to 0.000000000001 and 0.999999999999: far enough from the
+edge to be safe, close enough to change no answer you care about.""")
+    + p("""The last term is the fine for large weights:""")
+    + expr("(lam / (2 * len(y))) * np.sum(w ** 2)",
+           "&lambda; times how big the weights have grown")
+    + point("""Notice what is <b>not</b> in that term: <code>b</code>. The bias is never
+penalised. Shrinking <b>w</b> flattens the model&rsquo;s confidence, which is the point;
+shrinking <b>b</b> would only drag the boundary towards the origin, for no reason at
+all.""")
+),
 
 "gradient": """
 <p>Here is the payoff for all of file 01. Read these two lines next to the linear

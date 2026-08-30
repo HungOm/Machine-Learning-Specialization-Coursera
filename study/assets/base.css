@@ -1715,13 +1715,101 @@ ol.gistlist li.soon .tag2 { margin-left: auto; font-size: 11px; color: var(--ink
    The short prose note above a block says WHY it exists. This says what each
    line does. Two different jobs, so this is additive and sits below the code:
    you look at the block, then have it read to you, then see what it printed. */
-.sx-walk { margin: 10px 0 12px; padding: 13px 16px; border: 1px solid var(--line);
-  border-left: 3px solid var(--green); background: var(--bg-panel);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-.sx-walk > .tag { display: block; font-size: 10.5px; letter-spacing: .08em;
-  text-transform: uppercase; font-weight: 700; color: var(--green); margin-bottom: 7px; }
-.sx-walk p { font-size: 14px; line-height: 1.62; margin: 0 0 10px; }
-.sx-walk p:last-child { margin-bottom: 0; }
-.sx-walk ul { margin: 0 0 10px; padding-left: 20px; }
-.sx-walk li { font-size: 14px; line-height: 1.6; margin-bottom: 4px; }
-.sx-walk code { font-size: .87em; }
+.sx-walk, .cwalk { margin: 14px 0 16px; padding: 20px 24px 22px;
+  border: 1px solid var(--line); border-left: 3px solid var(--green);
+  background: var(--bg-panel); border-radius: 0 var(--radius) var(--radius) 0; }
+.sx-walk > .tag, .cwalk > .cwalk-tag { display: block; font-size: 10.5px;
+  letter-spacing: .09em; text-transform: uppercase; font-weight: 700;
+  color: var(--green); margin-bottom: 14px; }
+.sx-walk p, .cwalk p { font-size: 15px; line-height: 1.75; margin: 0 0 16px; }
+.sx-walk p:last-child, .cwalk p:last-child { margin-bottom: 0; }
+.sx-walk ul, .cwalk ul { margin: 0 0 16px; padding-left: 22px; }
+.sx-walk li, .cwalk li { font-size: 15px; line-height: 1.7; margin-bottom: 9px; }
+.sx-walk code, .cwalk code { font-size: .86em; padding: 2px 6px; border-radius: 5px;
+  background: var(--bg-sunk); border: 1px solid var(--line-soft); }
+
+/* ---- walkthrough visual pieces (walkkit.py) ----
+   A walkthrough written as paragraphs is a wall, however plain the words. These
+   pull the load-bearing bits OUT of the sentence flow and give them room. */
+
+/* one expression, on its own line, with a plain reading under it */
+.wx { margin: 18px 0; padding: 16px 18px; background: var(--bg-sunk);
+  border-radius: var(--radius); text-align: center; }
+.wx-l { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 9px; }
+.wx-c { display: block; font-family: var(--mono); font-size: 15.5px; line-height: 1.6;
+  color: var(--ink); background: none; border: 0; padding: 0; white-space: pre-wrap; }
+.wx-s { display: block; margin-top: 10px; font-size: 13.5px; font-style: italic;
+  color: var(--ink-soft); }
+
+/* a short run of values with arrows */
+.wchain { display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  gap: 6px 10px; margin: 18px 0; padding: 14px 16px; background: var(--bg-sunk);
+  border-radius: var(--radius); }
+.wc-i { font-family: var(--mono); font-size: 14px; font-weight: 600; padding: 6px 12px;
+  background: var(--bg-panel); border: 1px solid var(--line); border-radius: 999px;
+  white-space: nowrap; }
+.wc-a { color: var(--accent); font-size: 16px; font-weight: 700; }
+.wc-cap { flex: 0 0 100%; text-align: center; font-size: 12.5px; color: var(--ink-faint);
+  font-style: italic; margin-top: 6px; }
+
+/* numbered steps, number set big so the sequence is visible at a glance */
+.wsteps { margin: 18px 0; }
+.ws-t { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+.wsteps ol { list-style: none; margin: 0; padding: 0; }
+.wsteps li { display: flex; gap: 14px; align-items: baseline; margin-bottom: 12px;
+  padding: 0; }
+.ws-n { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--accent-soft);
+  color: var(--accent); font: 700 12px/26px var(--sans); text-align: center; }
+.ws-b { flex: 1; font-size: 15px; line-height: 1.7; }
+
+/* parallel cases, side by side rather than stacked in prose */
+.wcases { margin: 18px 0; }
+.wk-t { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+.wk-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px; }
+.wk-case { border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--bg-sunk); padding: 14px 16px; }
+.wk-h { display: block; font: 700 13px/1.4 var(--sans); color: var(--accent);
+  margin-bottom: 8px; }
+.wk-b { font-size: 14px; line-height: 1.65; }
+.wk-b p:last-child { margin-bottom: 0; }
+
+/* label / value / aside */
+.wvals { margin: 18px 0; }
+.wv-t { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+.wvals table { width: 100%; border-collapse: collapse; }
+.wvals td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line-soft);
+  vertical-align: top; font-size: 14px; line-height: 1.6; }
+.wvals tr:last-child td { border-bottom: 0; }
+.wv-l { color: var(--ink-soft); white-space: nowrap; width: 1%; }
+.wv-v { font-family: var(--mono); font-weight: 700; color: var(--accent);
+  white-space: nowrap; width: 1%; padding-right: 16px; }
+
+/* the one sentence to keep */
+.wpoint { margin: 18px 0; padding: 15px 18px; background: var(--amber-soft);
+  border-radius: var(--radius); font-size: 15px; line-height: 1.7; }
+.wp-t { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 7px; }
+
+/* a rare, tiny drawing */
+.wart { margin: 18px 0; }
+.wart pre { margin: 0; padding: 16px 18px; background: var(--bg-sunk);
+  border-radius: var(--radius); font-family: var(--mono); font-size: 12.5px;
+  line-height: 1.45; overflow-x: auto; color: var(--ink-soft); }
+.wa-cap { display: block; margin-top: 8px; font-size: 12.5px; color: var(--ink-faint);
+  font-style: italic; text-align: center; }
+
+/* several arrow-chains in one panel — the same quantity at three settings */
+.wchainset { margin: 18px 0; padding: 14px 16px; background: var(--bg-sunk);
+  border-radius: var(--radius); }
+.wcs-t { display: block; font: 700 10px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+.wcs-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px;
+  padding: 8px 0; border-bottom: 1px solid var(--line-soft); }
+.wcs-row:last-child { border-bottom: 0; }
+.wcs-c { display: inline-flex; align-items: center; gap: 8px; }
+.wcs-n { font-size: 13px; color: var(--ink-soft); font-style: italic; margin-left: auto; }

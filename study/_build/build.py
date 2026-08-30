@@ -1102,7 +1102,7 @@ def build_reference(weeks, flat, cards):
                 '<div class="a"><div class="formal">%s%s</div>%s%s'
                 '<a class="srs-lesson" href="%s">&#8599; lesson</a></div></div>'
                 % (c["kind"], c["kind"], c["front"], c["back"], c["extra"],
-                   c["plain"],
+                   c["plain"] + walk_for(c),
                    code_for(c) +
                    (('<div class="scribble"><span class="lbl">&#9998; on paper</span>%s</div>'
                      % scribble_for(c)) if scribble_for(c) else ""),
@@ -2537,6 +2537,38 @@ def code_for(card):
             for cid, e in fails[:6]:
                 print("     %s  %s" % (cid, e))
     return _CODE_CACHE.get(card["id"], "")
+
+
+WALK_MODULES = ["walk_ref_f0", "walk_ref_c1", "walk_ref_c2", "walk_ref_c3", "walk_ref_c4"]
+_WALK = None
+
+
+def walk_for(card):
+    """The long, worked, plain-words note for one reference entry.
+
+    The card's `plain` block is a GIST — one analogy, a decode table, one line
+    of code, and it is deliberately short because the same block is shown on a
+    flashcard. This is the other thing a reference sheet is for: the slow read,
+    with a number small enough to check by hand.
+
+    Reference sheet only. Putting it on the review card would defeat the card:
+    a flashcard you scroll is a flashcard you are no longer testing yourself on.
+    """
+    global _WALK
+    if _WALK is None:
+        _WALK = {}
+        for name in _shown_modules(WALK_MODULES):
+            try:
+                mod = importlib.import_module(name)
+            except ModuleNotFoundError:
+                continue
+            importlib.reload(mod)
+            _WALK.update(getattr(mod, "W", {}))
+    body = _WALK.get(card["id"])
+    if not body:
+        return ""
+    return ('<div class="cwalk"><span class="cwalk-tag">Walk me through it</span>'
+            '%s</div>' % body)
 
 
 def scribble_for(card):

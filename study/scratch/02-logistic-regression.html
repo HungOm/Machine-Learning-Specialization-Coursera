@@ -300,46 +300,33 @@ weights grow forever and would hide everything this file is trying to show about
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid(-1000) =&quot;</span>, sigmoid(-<span class="tok-n">1000.0</span>), <span class="tok-s">&quot; (no overflow warning)&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid([-2, 0, 2]) =&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(sigmoid([-<span class="tok-n">2</span>, <span class="tok-n">0</span>, <span class="tok-n">2</span>]), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;g(-z) == 1 - g(z):&quot;</span>, np.allclose(sigmoid(-<span class="tok-n">3.7</span>), <span class="tok-n">1</span> - sigmoid(<span class="tok-n">3.7</span>)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
-<p>This is the one genuinely new idea in the file. The weighted sum can come out as any
-number at all — −40, 0, +17. A probability may not. The sigmoid is the funnel between
-them:</p>
-<ul>
-<li>a big negative number → almost <b>0</b></li>
-<li>exactly zero → exactly <b>0.5</b></li>
-<li>a big positive number → almost <b>1</b></li>
-</ul>
-<p>You can read that straight off the output: <code>sigmoid([-2, 0, 2])</code> gives
-<b>0.1192, 0.5, 0.8808</b>. Symmetric around the middle, and it never quite reaches either
-end.</p>
-<p><b>Why the function is written in two halves.</b> The textbook formula is
-<code>1 / (1 + exp(-z))</code>. Try it at z = −1000 and the machine has to work out
-<code>exp(1000)</code>, a number with 435 digits, which does not fit in a float. It
-overflows and warns.</p>
-<p>So the code splits: for <code>z ≥ 0</code> it uses <code>1/(1+exp(-z))</code>, and for
-<code>z &lt; 0</code> it uses <code>exp(z)/(1+exp(z))</code>. Multiply the top and bottom
-of the first by <code>exp(z)</code> and you get the second — they are the <b>same
-formula rearranged</b>. Each half is chosen so the exponent it feeds to <code>exp</code>
-is never positive, and <code>exp</code> of a negative number is a safe little value
-between 0 and 1.</p>
-<p>Hence the first output line: <code>sigmoid(-1000) = 0.0</code>, no warning.</p>
-<p><b>You will meet a second spelling of this.</b> File 03 writes the same function as a
-single <code>np.where(z >= 0, 1/(1+exp(-|z|)), exp(-|z|)/(1+exp(-|z|)))</code>. It is not
-a different sigmoid &mdash; the two agree to the last bit over 20,001 values from −800 to
-+800 and at ±10,000 as well.</p>
-<p>But the reason it is safe is subtly different, and worth knowing.
+<span class="tok-k">print</span>(<span class="tok-s">&quot;g(-z) == 1 - g(z):&quot;</span>, np.allclose(sigmoid(-<span class="tok-n">3.7</span>), <span class="tok-n">1</span> - sigmoid(<span class="tok-n">3.7</span>)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>This is the one genuinely new idea in the file. The weighted sum can come out as
+<b>any</b> number at all. A probability may not &mdash; it has to sit between 0 and 1. The
+sigmoid is the funnel between them.</p><div class="wart"><pre>  1.0 |                        _____----------
+      |                  __--
+      |               _--
+  0.5 |- - - - - - - -*
+      |            _--
+      |       __---
+  0.0 |------
+      +----------------------------------------
+           negative        0        positive
+                        z</pre><span class="wa-cap">Very negative goes to 0, very positive goes to 1, and it passes through exactly 0.5 at z = 0.</span></div><div class="wvals"><span class="wv-t">what this block actually printed</span><table><tr><td class="wv-l">sigmoid(&minus;2)</td><td class="wv-v">0.1192</td><td class="wv-n">well below the middle &mdash; probably no</td></tr><tr><td class="wv-l">sigmoid(0)</td><td class="wv-v">0.5</td><td class="wv-n">exactly undecided</td></tr><tr><td class="wv-l">sigmoid(2)</td><td class="wv-v">0.8808</td><td class="wv-n">well above &mdash; probably yes</td></tr><tr><td class="wv-l">sigmoid(&minus;1000)</td><td class="wv-v">0.0</td><td class="wv-n">and no overflow warning, which is the point of the next bit</td></tr></table></div><p>Notice it is symmetric: 0.1192 and 0.8808 add to exactly 1. That is the last
+line of the output checking itself &mdash; the chance of passing at <b>z</b> and the chance
+of failing at <b>&minus;z</b> are the same number.</p><p><b>Now, why is the function written in two halves?</b> The textbook formula is
+one line:</p><div class="wx"><code class="wx-c">1 / (1 + exp(-z))</code><span class="wx-s">the version in every textbook, and it breaks</span></div><p>Try it at <b>z = &minus;1000</b>. The machine has to work out
+<code>exp(1000)</code> &mdash; a number with 435 digits. It does not fit in a float. It
+overflows and warns, and you get nonsense.</p><div class="wcases"><span class="wk-t">so the code splits in two, and each half is safe where it is used</span><div class="wk-row"><div class="wk-case"><span class="wk-h">When z is 0 or above</span><div class="wk-b"><code>1 / (1 + exp(-z))</code><br>The exponent <b>&minus;z</b> is negative or zero, so <code>exp</code> stays small and safe.</div></div><div class="wk-case"><span class="wk-h">When z is below 0</span><div class="wk-b"><code>exp(z) / (1 + exp(z))</code><br>Now the exponent <b>z</b> is the negative one, so again <code>exp</code> stays small and safe.</div></div></div></div><div class="wpoint"><span class="wp-t">The point</span>These are not two different formulas. Multiply the top and bottom of the
+first by <code>exp(z)</code> and you get the second exactly. Same maths, rearranged so that
+whichever side of zero you are on, <b>the thing being exponentiated is never
+positive</b>.</div><p><b>You will meet a second spelling of this.</b> File 03 writes it as a single
+<code>np.where</code>. It is not a different sigmoid &mdash; the two agree to the last bit
+over 20,001 values from &minus;800 to +800, and at &plusmn;10,000 too.</p><p>But it is safe for a different reason, and the difference is worth knowing.
 <code>np.where</code> does <b>not</b> pick a branch and skip the other: it computes
-<b>both</b> branches over the <b>whole</b> array and then chooses element by element. So
-writing the obvious two formulas inside an <code>np.where</code> would still overflow —
-the doomed half gets evaluated anyway. Both branches there use <code>-|z|</code>, which is
-never positive whichever side you are on, and that is what makes it safe.</p>
-<p>So: the version on this page is safe because each formula <b>only ever runs on the half
-of the data it suits</b>. File 03's is safe because <b>neither formula can overflow in the
-first place</b>. Same answer, two different ways of avoiding the same cliff.</p>
-<p>The last line, <code>g(-z) == 1 - g(z)</code>, checks the symmetry: the chance of
-passing at z and the chance of failing at −z are the same number. It prints
-<b>True</b>.</p>
-</div><div class="sx-out"><span class="lbl">output</span><pre>sigmoid(-1000) = 0.0  (no overflow warning)
+<b>both</b> branches over the <b>whole</b> array, then chooses element by element. So
+putting the obvious two formulas inside an <code>np.where</code> would still overflow
+&mdash; the doomed half runs anyway. File 03 uses <code>-|z|</code> in <i>both</i>
+branches, which is never positive whichever side you are on.</p><div class="wcases"><span class="wk-t">same answer, two different ways of avoiding the same cliff</span><div class="wk-row"><div class="wk-case"><span class="wk-h">This page's version is safe because&hellip;</span><div class="wk-b">each formula <b>only ever runs on the half of the data it suits</b>.</div></div><div class="wk-case"><span class="wk-h">File 03's version is safe because&hellip;</span><div class="wk-b"><b>neither formula can overflow in the first place</b>.</div></div></div></div></div><div class="sx-out"><span class="lbl">output</span><pre>sigmoid(-1000) = 0.0  (no overflow warning)
 sigmoid([-2, 0, 2]) = [0.1192 0.5    0.8808]
 g(-z) == 1 - g(z): True</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Two details. <code>np.clip</code> keeps the <span class="gterm" data-g="logarithm-f0">log</span> away from 0, where it would return −inf. And the penalty is on <code>w</code> only — <b>never on b</b>, because shrinking the model's baseline towards zero buys nothing.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_cost(X, y, w, b, lam=<span class="tok-n">0.0</span>):
@@ -348,32 +335,22 @@ g(-z) == 1 - g(z): True</pre></div></section>
     eps = <span class="tok-n">1e-12</span>                                  <span class="tok-c"># keeps log() away from 0</span>
     f = np.clip(f, eps, <span class="tok-n">1</span> - eps)
     <span class="gterm" data-g="kwloss-api">loss =</span> -(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f))
-    <span class="tok-k">return</span> float(loss<span class="gterm" data-g="npmean-api">.mean(</span>) + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
-<p>The cost answers one question: <b>how bad is this set of weights?</b> One number, so
-two candidate models can be compared.</p>
-<p>File 01 squared the miss. That will not do here. Suppose the model says “99% sure this
-student passed” and the student failed. The plain error is 0.99 — which sounds small, and
-it is not small at all. It is a catastrophe.</p>
-<p><code><span class="gterm" data-g="kwloss-api">loss =</span> -(y*log(f) + (1-y)*log(1-f))</code> looks forbidding and is really two
-cases wearing one coat, because <b>y is always 0 or 1</b>, so one of the two terms is
-always multiplied by zero and vanishes:</p>
-<ul>
-<li>The student <b>passed</b> (y = 1) → only <code>-log(f)</code> survives. Predict 0.99
-and the cost is 0.01. Predict 0.01 and the cost is <b>4.6</b>.</li>
-<li>The student <b>failed</b> (y = 0) → only <code>-log(1-f)</code> survives, and it
-punishes confidence the other way.</li>
-</ul>
-<p>That is the whole design: right and confident is nearly free, unsure costs a little,
-<b>wrong and confident costs enormously</b> — and it heads for infinity as the model
-approaches total certainty about something false.</p>
-<p><code>eps = 1e-12</code> and the <code>np.clip</code> line exist because of that
-infinity. <code>log(0)</code> is undefined, so a probability that rounds to exactly 0 or 1
-would crash the sum. Clipping nudges them to 0.000000000001 and 0.999999999999 — far
-enough from the edge to be safe, close enough to change no answer.</p>
-<p>The final term, <code>(lam / (2*len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w**2)</code>, is the fine for large
-weights. Note what is <b>not</b> in it: <code>b</code>. The bias is never penalised,
-because it only shifts the boundary rather than steepening it.</p>
-</div></section>
+    <span class="tok-k">return</span> float(loss<span class="gterm" data-g="npmean-api">.mean(</span>) + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The cost answers one question: <b>how bad is this set of weights?</b> One number,
+so that two candidate models can be compared.</p><p>File 01 squared the miss. That will not do here. Suppose the model says
+&ldquo;99% sure this student passed&rdquo; and the student <b>failed</b>. The plain error
+is 0.99, which <i>sounds</i> small. It is a catastrophe, and the cost has to say so.</p><div class="wx"><span class="wx-l">the log loss</span><code class="wx-c">loss = -( y * log(f) + (1 - y) * log(1 - f) )</code><span class="wx-s">&ldquo;minus, y times log f, plus one minus y times log one minus f&rdquo;</span></div><p>It looks forbidding and it is really <b>two cases wearing one coat</b>. Because
+<b>y is always 0 or 1</b>, one of the two halves is always multiplied by zero and
+disappears.</p><div class="wcases"><span class="wk-t">one of these two is always zero</span><div class="wk-row"><div class="wk-case"><span class="wk-h">If the student PASSED &nbsp;(y = 1)</span><div class="wk-b"><code>1 - y</code> is 0, so the right half vanishes.<br>Only <code>-log(f)</code> is left.</div></div><div class="wk-case"><span class="wk-h">If the student FAILED &nbsp;(y = 0)</span><div class="wk-b"><code>y</code> is 0, so the left half vanishes.<br>Only <code>-log(1-f)</code> is left.</div></div></div></div><div class="wchainset"><span class="wcs-t">the student passed. What each guess costs</span><div class="wcs-row"><span class="wcs-c"><span class="wc-i">said 0.99</span><span class="wc-a">→</span><span class="wc-i">cost 0.01</span></span><span class="wcs-n">confident and right &mdash; almost free</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i">said 0.60</span><span class="wc-a">→</span><span class="wc-i">cost 0.51</span></span><span class="wcs-n">unsure &mdash; charged a little</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i">said 0.01</span><span class="wc-a">→</span><span class="wc-i">cost 4.61</span></span><span class="wcs-n">confident and <b>wrong</b> &mdash; 460&times; more</span></div></div><div class="wpoint"><span class="wp-t">The point</span>Right and confident is nearly free. Unsure costs a little. <b>Wrong and
+confident costs enormously</b> &mdash; and the cost runs off towards infinity as the model
+approaches total certainty about something false. That asymmetry is not a side effect. It
+is the entire reason this cost exists instead of the squared error.</div><p>Which is also why the next two lines are there:</p><div class="wx"><code class="wx-c">eps = 1e-12
+f = np.clip(f, eps, 1 - eps)</code><span class="wx-s">keep f away from the cliff edges</span></div><p><code>log(0)</code> is undefined &mdash; it heads for minus infinity &mdash; so a
+probability that rounds all the way to 0 or 1 would poison the whole sum.
+<code>np.clip</code> nudges them to 0.000000000001 and 0.999999999999: far enough from the
+edge to be safe, close enough to change no answer you care about.</p><p>The last term is the fine for large weights:</p><div class="wx"><code class="wx-c">(lam / (2 * len(y))) * np.sum(w ** 2)</code><span class="wx-s">&lambda; times how big the weights have grown</span></div><div class="wpoint"><span class="wp-t">The point</span>Notice what is <b>not</b> in that term: <code>b</code>. The bias is never
+penalised. Shrinking <b>w</b> flattens the model&rsquo;s confidence, which is the point;
+shrinking <b>b</b> would only drag the boundary towards the origin, for no reason at
+all.</div></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>Compare this line with the linear-regression version: <code>(X.T @ err) / m</code>. Character for character the same. Only the definition of <code>err</code> changed, because a sigmoid's <span class="gterm" data-g="derivative-f0">derivative</span> and a log's derivative cancel exactly. That cancellation is the real reason these two are always paired.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_gradient(X, y, w, b, lam=<span class="tok-n">0.0</span>):
     <span class="tok-d">&quot;&quot;&quot;Character for character the same as linear regression, except f.&quot;&quot;&quot;</span>
     m = len(y)
