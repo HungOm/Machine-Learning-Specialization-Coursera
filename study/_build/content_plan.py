@@ -285,7 +285,8 @@ skills, and only the second one survives contact with an assignment.</p>"""
          'whole week as a single picture, what carried over from last week, the pieces in the order '
          'they hand to each other, the same algorithm on numbers small enough to check by hand, and '
          'where the week sits on the way to something you actually want to build. Nothing on a gist '
-         'page is new &mdash; it is a compression of lessons you already have.</p>'
+         'page is new &mdash; it is a compression of lessons you already have. '
+         '<b>All 13 weeks.</b></p>'
          '<p style="margin-bottom:0"><a class="btn primary" href="gist.html">open the week gists</a></p>')
   + grid2(
       card('<h3><a href="index.html#lessons">📚 Read — 172 lessons</a></h3>'
