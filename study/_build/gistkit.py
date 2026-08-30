@@ -105,6 +105,7 @@ def chain(steps, tag="The pieces, in the order they hand to each other"):
       name    — what the piece is called
       does    — one line: what it does, in plain words
       formula — the formula, in the site's usual eq/eqp markup (optional)
+      say     — the formula read aloud as an English sentence (optional)
       code    — the NumPy line that is this formula (optional)
       trap    — the one thing that goes wrong here (optional)
       feeds   — what it hands to the next link (omit on the last)
@@ -115,6 +116,12 @@ def chain(steps, tag="The pieces, in the order they hand to each other"):
                    '<b>%s</b></div><p class="ch-does">%s</p>' % (i, s["name"], s["does"]))
         if s.get("formula"):
             out.append('<div class="ch-f">%s</div>' % s["formula"])
+        if s.get("say"):
+            # A formula nobody has pronounced is not readable, however simple it
+            # is. The lessons always say one out loud before using it; a page
+            # that gathers four formulas in a row needs it more, not less.
+            out.append('<p class="ch-say"><span class="lbl">say it out loud</span>'
+                       '&ldquo;%s&rdquo;</p>' % s["say"])
         if s.get("code"):
             from kit import highlight
             out.append('<div class="ch-c"><span class="lbl">the same thing in code</span>'

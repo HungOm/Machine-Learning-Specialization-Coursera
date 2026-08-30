@@ -8,7 +8,7 @@ are exactly what a lesson-per-idea layout cannot show.
 The arithmetic in the worked pass is COMPUTED below, not typed, so the page and
 the numbers on it cannot disagree.
 """
-from kit import decode, eq, eqp, key, trap
+from kit import decode, eq, eqp, key, kid, trap
 from gistkit import (gistline, flow, carried, chain, bynumbers, retell, ladder, h2)
 
 # ------------------------------------------------------------------ arithmetic
@@ -102,6 +102,21 @@ variation on those three moves.""")
 learning rate is how big the step is. Cost-function intuition is what the third box looks like when
 you draw it. Nothing in Week 1 lives outside this picture."""),
 
+        kid("""<p>You have a list of houses. For each one you know its size, and you know the
+price it sold for.</p>
+<p>You want a rule that turns a size into a price. The rule here is about as simple as a rule can
+be: take the size, multiply it by one number, then add a second number. Those two numbers are the
+only things you get to choose. Everything else is fixed.</p>
+<p>At the start you have no idea what they should be, so you guess. Zero and zero will do.</p>
+<p>Now check the guess. Go through every house. Work out what your rule predicts. See how far off
+it is. Square each miss, so that being too high and being too low both count as bad, and take the
+average. That gives you one number, and it tells you how bad your guess was.</p>
+<p>Here is the only clever part. For each of your two numbers, you work out which way to nudge it
+to make that average smaller. Then you nudge it — not far, just a small step.</p>
+<p>Then you do the whole thing again. And again. A few thousand times.</p>
+<p>Each time round, the average gets a little smaller. When it stops getting smaller, you stop.
+The two numbers you are holding at that point are the answer.</p>"""),
+
         h2("🧱", "What this week rests on"),
         carried("""Not one piece of maths in this week is new. All of it was met in Foundations;
 the week just puts it in a particular order and gives the arrangement a name.""",
@@ -129,6 +144,7 @@ the week just puts it in a particular order and gives the arrangement a name."""
                      ' <span class="op">=</span> <var class="hl-a">w</var><var>x</var> '
                      '<span class="op">+</span> <var class="hl-b">b</var>',
                  ], "two unknown numbers, and that is the whole model"),
+                 say="f of x equals w times x, plus b.",
                  code="f = w * x + b",
                  trap="Dropping <var>b</var> nails the line to the origin — it would insist a "
                       "house of zero size is worth exactly nothing, and then bend the slope to "
@@ -149,6 +165,8 @@ the week just puts it in a particular order and gives the arrangement a name."""
                       "error-term", "this house’s miss"),
                      ')<sup>2</sup>',
                  ], "the average squared miss, halved"),
+                 say="J of w and b equals one over two m, times the sum over every house of the "
+                     "miss squared. The miss is the prediction minus the real price.",
                  code="cost = np.mean((f - y) ** 2) / 2",
                  trap="The square is not neutral. A single miss of 10 costs the same as a hundred "
                       "misses of 1, so one strange house can drag the whole line towards itself.",
@@ -172,6 +190,9 @@ the week just puts it in a particular order and gives the arrangement a name."""
                             '<span class="sum">Σ</span>(<var>f</var>(<var>x</var><sup>(<var>i</var>)</sup>) '
                             '<span class="op">−</span> <var>y</var><sup>(<var>i</var>)</sup>)',
                             "same sum, twice — the w version carries an extra x"),
+                 say="The slope of J in the w direction equals one over m, times the sum of "
+                     "every miss times that house&#8217;s size. The b slope is the same sum, "
+                     "without the size.",
                  code="err   = f - y\ndj_dw = np.mean(err * x)\ndj_db = np.mean(err)",
                  trap="The extra <var>x</var> on the <var>w</var> slope is not a typo and not "
                       "optional: it says a miss on a <i>large</i> house is stronger evidence that "
@@ -190,6 +211,8 @@ the week just puts it in a particular order and gives the arrangement a name."""
                      ('<var>α</var>', "alpha-lr", "the same step size"),
                      '<span class="frac"><span class="n">∂<var>J</var></span><span class="d">∂<var>b</var></span></span>',
                  ], "minus, because the slope points uphill and you want the other way"),
+                 say="w becomes w minus alpha times the w slope. b becomes b minus alpha times "
+                     "the b slope.",
                  code="w = w - alpha * dj_dw\nb = b - alpha * dj_db",
                  trap="Both updates must use the <b>old</b> w and b. Overwrite w first and the "
                       "b update is computed on a line that no longer exists — the classic Week 1 "
