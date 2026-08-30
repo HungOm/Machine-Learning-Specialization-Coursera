@@ -45,6 +45,7 @@ and Course 3 (clustering, recommenders, reinforcement learning). <b>{total} less
   <div class="stat"><div class="k">Problems</div><div class="v"><a href="problems.html">156</a></div></div>
   <div class="stat"><div class="k">From scratch</div><div class="v"><a href="scratch.html">10</a></div></div>
   <div class="stat"><div class="k">Lab guides</div><div class="v"><a href="labs.html">41</a></div></div>
+  <div class="stat"><div class="k">Datasets</div><div class="v"><a href="data.html">7</a></div></div>
   <div class="stat"><div class="k">Review cards</div><div class="v"><a href="review.html">161</a></div></div>
   <div class="stat"><div class="k">Paper sheets</div><div class="v"><a href="paper.html">12</a></div></div>
   <div class="stat"><div class="k">Weeks mastered</div><div class="v"><a href="mastery.html">0&#8202;/&#8202;12</a></div></div>
@@ -298,7 +299,8 @@ skills, and only the second one survives contact with an assignment.</p>"""
            '<p>A companion for every notebook in this repository: what it is for, which lessons it '
            'uses, the one thing to watch, and for the 11 graded assignments, what each of the 31 '
            'exercises asks and how it usually goes wrong. No solutions.</p>'
-           '<p style="margin-bottom:0"><a class="btn" href="labs.html">open the lab guides</a></p>'))
+           '<p style="margin-bottom:0"><a class="btn" href="labs.html">open the lab guides</a> '
+           '<a class="btn" href="data.html">&#8595; the datasets</a></p>'))
   + grid3(
       card('<h3><a href="review.html">◆ Remember — 161 cards</a></h3>'
            '<p>Spaced repetition over every formula and algorithm, each with a plain-English '

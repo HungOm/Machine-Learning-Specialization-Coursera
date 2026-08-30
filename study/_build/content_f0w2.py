@@ -1313,6 +1313,17 @@ df['price'].mean()          # aggregations work like NumPy
 df[df['beds'] > 2].shape    # how many have more than 2 bedrooms
 df.isnull().sum()           # missing values per column
 """)
+    + note("""<p><b>That file exists.</b> <code>houses.csv</code> — 1,000 houses, five columns —
+is in this repository, so every line above runs exactly as written and gives exactly the shapes
+in the comments. <a href="../data.html#houses-csv">Download it</a>, or skip the download
+altogether: pandas reads a URL as happily as a path.</p>""", tag="Get the file")
+    + code("""
+DATA = ('https://raw.githubusercontent.com/HungOm/'
+        'Machine-Learning-Specialization-Coursera/main/study/data/')
+
+df = pd.read_csv(DATA + 'houses.csv')     # nothing on disk, works from a cold notebook
+df.shape                                  # (1000, 5)
+""")
 
     + h2("🔬", "What is actually happening")
     + """<p>A DataFrame is really a collection of columns, each of which is a <b>Series</b> — a 1-D array
@@ -1334,6 +1345,14 @@ stray spaces. <code>print(df.columns)</code> shows exactly what they are.</p>"""
 <code>object</code> and every sum misbehaves. <code>df.info()</code> reveals it instantly.</p>""")
     + trap("""<p><b>SettingWithCopyWarning.</b> pandas warning you that you may be modifying a copy rather
 than the original. Use <code>.loc</code> for assignments and it goes away.</p>""")
+    + note("""<p>All three of those traps are sitting in
+<a href="../data.html#houses_messy-csv"><code>houses_messy.csv</code></a> — the same 1,000 houses,
+saved the way a file really arrives. <code>df['price']</code> raises <code>KeyError</code> there
+(the column is <code>Price</code>), <code>df['beds']</code> raises it too (trailing space), and
+<code>size</code> comes back as text because two cells were written <code>1,240</code>. Reading
+about a trap does nothing; walking into one and getting out with
+<code>df.columns</code> and <code>df.info()</code> is the whole lesson.</p>""",
+           tag="Walk into them on purpose")
 
     + h2("✅", "Check yourself")
     + quiz([
@@ -1356,6 +1375,9 @@ than the original. Use <code>.loc</code> for assignments and it goes away.</p>""
         ("docs", "https://pandas.pydata.org/docs/user_guide/indexing.html",
          "pandas — indexing and selecting",
          "The <code>.loc</code> vs <code>.iloc</code> distinction, properly explained."),
+        ("data", "../data.html", "The datasets on this site",
+         "All seven files the lessons read, with their shapes, their columns and a raw URL "
+         "you can hand straight to <code>read_csv</code>."),
     ]))
 
 # ============================================================ 14
@@ -1397,6 +1419,12 @@ X.shape, y.shape          # ((1000, 4), (1000,))
 # now everything from the NumPy lessons applies:
 X = (X - X.mean(axis=0)) / X.std(axis=0)                # feature scaling
 """)
+    + note("""<p>Those are the <b>real</b> shapes: run this on the
+<a href="../data.html#houses-csv"><code>houses.csv</code></a> in this repository and you get
+<code>(1000, 4)</code> and <code>(1000,)</code> back. It is worth doing once rather than taking
+it on trust — and worth printing <code>X.mean(axis=0)</code> before and after the scaling line,
+because <code>size</code> in the thousands next to <code>beds</code> between 1 and 5 is the
+entire argument for that line.</p>""", tag="Run it, do not trust it")
     + warn("""<p>Note the shapes. <code>df[['price']]</code> would give <b>(1000, 1)</b>, while
 <code>df['price']</code> gives <b>(1000,)</b>. Most scikit-learn and TensorFlow code wants y as
 <code>(m,)</code> and X as <code>(m, n)</code>. Getting y as (m,1) produces confusing broadcasting bugs
@@ -1436,6 +1464,8 @@ If you already have a (m,1), fix it with <code>y.ravel()</code>.</p>""")
     + links([
         ("docs", "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_numpy.html",
          "pandas — DataFrame.to_numpy", "Note what happens to mixed-type columns."),
+        ("data", "../data.html", "The datasets on this site",
+         "<code>houses.csv</code> and six others, each with its shape and a raw URL."),
     ]))
 
 # ============================================================ 15

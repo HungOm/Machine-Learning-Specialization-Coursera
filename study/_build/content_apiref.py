@@ -601,8 +601,11 @@ TERMS = [
       gist="Loads a CSV file straight into a pandas DataFrame.",
       body="<div class='gq'>df = pd.read_csv('houses.csv')</div>"
            "<p>The single most common way real data actually arrives in this course — as rows "
-           "and named columns, not a NumPy array.</p>",
-      ml="Almost always the very first line of any real (non-synthetic) dataset on this site.",
+           "and named columns, not a NumPy array. It takes a URL as readily as a filename, so "
+           "the <a href='../data.html'>datasets page</a> lets you run any of this without "
+           "downloading anything.</p>",
+      ml="Almost always the very first line of any real (non-synthetic) dataset on this site — "
+         "and houses.csv is a real file in this repository, not a placeholder.",
       more_href=F0W2 % "13-pandas-dataframes", more_label="F0 W2 · pandas DataFrames"),
 
  dict(key="pdgetdummies-api", label="pd.get_dummies(...)", say="“get dummies”",
