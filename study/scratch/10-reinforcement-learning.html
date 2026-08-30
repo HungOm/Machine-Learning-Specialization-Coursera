@@ -244,7 +244,7 @@ python3 10_reinforcement_learning.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built the discounted return, value iteration, Q-values, a policy, tabular Q-learning, and a demonstration of why ε-greedy exploration is required.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A world, not a dataset</span><span class="fl-b">Six states in a row. Reward <b>100</b> at the left end, <b>40</b> at the right, nothing in between.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">no labels &mdash; nobody says which move was right</span></li><li class="fl k-op"><span class="fl-t">Guess a value for every state</span><span class="fl-b">Start at zero. They are all wrong.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">one step of lookahead</span></li><li class="fl-loop"><span class="fl-loop-t">sweep until nothing changes</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Bellman update</span><span class="fl-b">Each state's value = the reward here + &gamma; &times; the best you can do from wherever you land.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">true values leak outwards from the ends</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl k-out"><span class="fl-t">A value for every state, and a policy</span><span class="fl-b">The policy is just: from here, move towards the higher neighbour.</span></li></ol><p class="flow-cap">The rewards at the two ends are the only real numbers in the system. Everything else is computed backwards from them.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Reinforcement learning from scratch — C3 W3, on the Mars rover.
 
 Run me:  python3 10_reinforcement_learning.py
@@ -253,7 +253,10 @@ Three algorithms on the same six-state world: value iteration (knows the
 rules), Q-learning (does not), and epsilon-greedy exploration. Every number
 matches the lectures, so you can check them against the slides.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>No dataset. No labels. An <b>environment</b> that hands out rewards, and an agent
+that has to work out what to do.</p><div class="wpoint"><span class="wp-t">The point</span>And the agent <b>generates its own training data by acting</b>. That single
+difference is what makes reinforcement learning a different kind of problem: a bad early
+policy produces bad experience, which teaches a bad policy.</div></div></section>
 <section class="sx" id="sx-world"><div class="sx-prose"><p>Six states in a line, 100 at the left end, 40 at the right. Small enough to solve on paper, which is exactly why the lectures use it.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Six states in a line. State 0 pays 100, state 5 pays 40, both terminal.</span>
 N_STATES = <span class="tok-n">6</span>
 REWARD = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">100</span>., <span class="tok-n">0</span>., <span class="tok-n">0</span>., <span class="tok-n">0</span>., <span class="tok-n">0</span>., <span class="tok-n">40</span>.])
@@ -265,7 +268,12 @@ GAMMA = <span class="tok-n">0.5</span>
     <span class="tok-d">&quot;&quot;&quot;Take one action. Returns the next state.&quot;&quot;&quot;</span>
     <span class="tok-k">return</span> max(<span class="tok-n">0</span>, s - <span class="tok-n">1</span>) <span class="tok-k">if</span> a == <span class="tok-n">0</span> <span class="tok-k">else</span> min(N_STATES - <span class="tok-n">1</span>, s + <span class="tok-n">1</span>)
 
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;{N_STATES} states, rewards {REWARD.tolist()}, gamma = {GAMMA}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>6 states, rewards [100.0, 0.0, 0.0, 0.0, 0.0, 40.0], gamma = 0.5</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;{N_STATES} states, rewards {REWARD.tolist()}, gamma = {GAMMA}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Six states in a row, like squares on a board.</p><div class="wart"><pre>   [1]---[2]---[3]---[4]---[5]---[6]
+   100    0     0     0     0     40
+    ^                              ^
+  terminal                     terminal</pre></div><div class="wvals"><span class="wv-t">the world</span><table><tr><td class="wv-l">rewards</td><td class="wv-v">[100, 0, 0, 0, 0, 40]</td><td class="wv-n">only the two ends pay anything</td></tr><tr><td class="wv-l">&gamma;</td><td class="wv-v">0.5</td><td class="wv-n">each step away halves the value</td></tr><tr><td class="wv-l">actions</td><td class="wv-v">left or right</td><td class="wv-n">that is the whole action space</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>&gamma; = 0.5 is <b>aggressive impatience</b>. It means a reward two steps
+away is worth a quarter of one you can have now. Real problems use 0.9 to 0.99; 0.5 is
+chosen here so the arithmetic stays checkable.</div></div><div class="sx-out"><span class="lbl">output</span><pre>6 states, rewards [100.0, 0.0, 0.0, 0.0, 0.0, 40.0], gamma = 0.5</pre></div></section>
 <section class="sx" id="sx-return_by_hand"><div class="sx-prose"><p>The return is the discounted sum of rewards along a path. From state 4, going left reaches the 100 in three steps and is worth 12.5; going right reaches the 40 in two and is worth 10. Left wins — but only just, and that margin is the whole story.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> episode_return(start, policy, gamma=GAMMA, max_steps=<span class="tok-n">20</span>):
     <span class="tok-d">&quot;&quot;&quot;Sum of discounted rewards along one path: R0 + g*R1 + g^2*R2 + ...&quot;&quot;&quot;</span>
     s, total, g = start, <span class="tok-n">0.0</span>, <span class="tok-n">1.0</span>
@@ -281,7 +289,10 @@ GAMMA = <span class="tok-n">0.5</span>
 
 <span class="tok-k">for</span> name, pol <span class="tok-k">in</span> [(<span class="tok-s">&quot;always left&quot;</span>, <span class="tok-k">lambda</span> s: <span class="tok-n">0</span>), (<span class="tok-s">&quot;always right&quot;</span>, <span class="tok-k">lambda</span> s: <span class="tok-n">1</span>)]:
     r, path = episode_return(<span class="tok-n">3</span>, pol)
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nfrom state 4, {name}: path {[p+1 for p in path]}  return {r}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nfrom state 4, {name}: path {[p+1 for p in path]}  return {r}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Before any algorithm, compute two returns by hand from state 4.</p><div class="wchainset"><span class="wcs-t">from state 4, the two possible plans</span><div class="wcs-row"><span class="wcs-c"><span class="wc-i">4 &rarr; 3 &rarr; 2 &rarr; 1</span><span class="wc-a">→</span><span class="wc-i">return 12.5</span></span><span class="wcs-n">three steps to the <b>100</b>: 0.5&sup3; &times; 100</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i">4 &rarr; 5 &rarr; 6</span><span class="wc-a">→</span><span class="wc-i">return 10.0</span></span><span class="wcs-n">two steps to the <b>40</b>: 0.5&sup2; &times; 40</span></div></div><div class="wpoint"><span class="wp-t">The point</span>So from state 4, walking <b>away</b> from the bigger prize is worse &mdash;
+but only just, <b>12.5 against 10</b>. The 100 is two and a half times the 40 and it is one
+step further, and the discount very nearly eats the whole advantage.</div><p>That closeness is the point. Change &gamma; slightly and the answer flips, which
+is exactly what the gamma sweep below demonstrates.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 from state 4, always left: path [4, 3, 2, 1]  return 12.5
 
 from state 4, always right: path [4, 5, 6]  return 10.0</pre></div></section>
@@ -306,7 +317,11 @@ from state 4, always right: path [4, 5, 6]  return 10.0</pre></div></section>
 
 V, sweeps = value_iteration()
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nvalue iteration converged in {sweeps} sweeps&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;V* =&quot;</span>, V.tolist())</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;V* =&quot;</span>, V.tolist())</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now compute every value at once, by repeatedly applying the Bellman equation.</p><div class="wx"><code class="wx-c">V(s) = max&#8336; [ R(s) + &gamma; V(s&prime;) ]</code><span class="wx-s">the best of: what you get here, plus the discounted value of where you land</span></div><div class="wvals"><span class="wv-t">value iteration</span><table><tr><td class="wv-l">V*</td><td class="wv-v">[100, 50, 25, 12.5, 20, 40]</td><td class="wv-n">the converged values</td></tr><tr><td class="wv-l">sweeps</td><td class="wv-v">4</td><td class="wv-n">that is all it took</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Read the values outwards from the ends. <b>50</b> is half of 100. <b>25</b> is
+half of 50. <b>12.5</b> is half of 25. And on the right, <b>20</b> is half of 40. The true
+rewards at the two terminals <b>leak inwards</b>, halving at each step.</div><p>Four sweeps for six states is not a coincidence &mdash; information travels one
+state per sweep, and the furthest any state is from a terminal is about four steps. That is
+also why value iteration is slow on large problems.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 value iteration converged in 4 sweeps
 V* = [100.0, 50.0, 25.0, 12.5, 20.0, 40.0]</pre></div></section>
 <section class="sx" id="sx-q_and_policy"><div class="sx-prose"><p>Q(s, a) answers “what if I take this action once, then behave optimally forever after”. The optimal policy is simply the <span class="gterm" data-g="argmax-f0">argmax</span> over Q, which is why Q is the more useful of the two functions.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> q_from_v(V, gamma=GAMMA):
@@ -322,7 +337,11 @@ Q = q_from_v(V)
     pol = <span class="tok-s">&quot;terminal&quot;</span> <span class="tok-k">if</span> s <span class="tok-k">in</span> TERMINAL <span class="tok-k">else</span> ACTIONS[int(Q[s].argmax())]
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{s+1:5d} {Q[s,0]:9.3f} {Q[s,1]:10.3f} {V[s]:7.2f}   {pol}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nOptimal policy: left, left, left, right for states 2-5.&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;State 5 goes right because the 40 is one step away and the 100 is four.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;State 5 goes right because the 40 is one step away and the 100 is four.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Q separates &ldquo;how good is this state&rdquo; from &ldquo;how good is this
+<b>action</b> in this state&rdquo;, which is what you actually need in order to decide.</p><div class="wvals"><span class="wv-t">every action in every state</span><table><tr><td class="wv-l">state 2</td><td class="wv-v">Q(left) 50.000, Q(right) 12.500</td><td class="wv-n">&rarr; <b>left</b></td></tr><tr><td class="wv-l">state 3</td><td class="wv-v">Q(left) 25.000, Q(right) 6.250</td><td class="wv-n">&rarr; <b>left</b></td></tr><tr><td class="wv-l">state 4</td><td class="wv-v">Q(left) 12.500, Q(right) 10.000</td><td class="wv-n">&rarr; <b>left</b>, narrowly</td></tr><tr><td class="wv-l">state 5</td><td class="wv-v">Q(left) 6.250, Q(right) 20.000</td><td class="wv-n">&rarr; <b>right</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The policy is simply <b>argmax over each row</b>: &larr; &larr; &larr; &rarr;.
+And <b>V(s) = max over the row</b>. Both fall straight out of Q, which is why Q is the thing
+worth learning.</div><p>The boundary sits between states <b>4 and 5</b>. State 4 still walks the long way
+to the 100; state 5 gives up and takes the 40.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 state   Q(left)   Q(right)   V*      policy
     1   100.000    100.000  100.00   terminal
     2    50.000     12.500   50.00   left
@@ -338,7 +357,11 @@ State 5 goes right because the 40 is one step away and the 100 is four.</pre></d
 <span class="tok-k">for</span> g <span class="tok-k">in</span> [<span class="tok-n">0.2</span>, <span class="tok-n">0.3</span>, <span class="tok-n">0.4</span>, <span class="tok-n">0.5</span>, <span class="tok-n">0.9</span>]:
     left, right = <span class="tok-n">100</span> * g ** <span class="tok-n">3</span>, <span class="tok-n">40</span> * g ** <span class="tok-n">2</span>
     <span class="tok-k">print</span>(f&quot;{g:<span class="tok-n">7.</span>2f} {left:<span class="tok-n">12.</span>3f} {right:<span class="tok-n">12.</span>3f}   {<span class="tok-s">&#x27;left&#x27;</span> <span class="tok-k">if</span> left &gt; right <span class="tok-k">else</span> <span class="tok-s">&#x27;right&#x27;</span> <span class="tok-k">if</span> right &gt; left <span class="tok-k">else</span> <span class="tok-s">&#x27;tie&#x27;</span>}&quot;)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;The tie is at 100g^3 = 40g^2, i.e. g = 0.4 exactly.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;The tie is at 100g^3 = 40g^2, i.e. g = 0.4 exactly.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Change nothing but &gamma;, and watch the rover change its mind at state 4.</p><div class="wvals"><span class="wv-t">the same state, four different discount rates</span><table><tr><td class="wv-l">&gamma; = 0.20</td><td class="wv-v">left 0.800 vs right 1.600</td><td class="wv-n">&rarr; <b>right</b></td></tr><tr><td class="wv-l">&gamma; = 0.30</td><td class="wv-v">left 2.700 vs right 3.600</td><td class="wv-n">&rarr; <b>right</b></td></tr><tr><td class="wv-l">&gamma; = 0.40</td><td class="wv-v">left 6.400 vs right 6.400</td><td class="wv-n">&rarr; an exact <b>tie</b></td></tr><tr><td class="wv-l">&gamma; = 0.50</td><td class="wv-v">left 12.500 vs right 10.000</td><td class="wv-n">&rarr; <b>left</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>At <b>&gamma; = 0.4</b> the two options are worth <b>exactly the same</b>
+&mdash; 6.400 each. Below it the agent grabs the near 40; above it the agent walks for the
+distant 100.</div><p>So &gamma; is not a tuning knob you set by validation. It is a <b>statement about
+how much the future matters</b>, and it changes the optimal behaviour, not just how fast you
+find it. Two agents with different &gamma; want genuinely different things.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 how gamma changes the rover&#x27;s mind at state 4:
   gamma   left (100)   right (40)   choice
    0.20        0.800        1.600   right
@@ -376,7 +399,12 @@ learned_pol = [ACTIONS[int(Qh[s].argmax())] <span class="tok-k">for</span> s <sp
 true_pol = [ACTIONS[int(Q[s].argmax())] <span class="tok-k">for</span> s <span class="tok-k">in</span> [<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">4</span>]]
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nlearned policy: {learned_pol}&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;true policy   : {true_pol}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;match: {learned_pol == true_pol}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;match: {learned_pol == true_pol}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Everything so far <b>knew the world</b> &mdash; the rewards, the transitions, all of
+it. Q-learning knows none of that. It only gets to act and see what happens.</p><div class="wvals"><span class="wv-t">Q-learning (told nothing) vs value iteration (told everything)</span><table><tr><td class="wv-l">state 2</td><td class="wv-v">learned 50.000 / true 50.000</td><td class="wv-n">and 12.500 / 12.500</td></tr><tr><td class="wv-l">state 3</td><td class="wv-v">learned 25.000 / true 25.000</td><td class="wv-n">and 6.250 / 6.250</td></tr><tr><td class="wv-l">state 4</td><td class="wv-v">learned 12.500 / true 12.500</td><td class="wv-n">and 10.000 / 10.000</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Identical, to three decimal places.</b> One method was handed the complete
+model of the world; the other worked it out by wandering around and remembering what
+happened.</div><p>This is the result that makes RL interesting. You do not need to <b>know</b> the
+world to <b>act optimally</b> in it &mdash; and in most real problems you could never write
+the world down anyway.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 Q-learning (never told the model) vs value iteration (told everything):
  state  learned L   true L  learned R   true R
      2     50.000   50.000     12.500   12.500
@@ -396,7 +424,14 @@ match: True</pre></div></section>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nEpsilon = 0 is pure greed: whichever action looked good first is the&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;only one ever tried again, so the other one keeps its initial estimate&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;forever. Epsilon = 1 explores perfectly but never exploits what it learnt&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;-- though for Q-learning that still finds the right Q, just inefficiently.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;-- though for Q-learning that still finds the right Q, just inefficiently.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last section, and the one with the sharpest lesson. Same algorithm, only
+&epsilon; changes.</p><div class="wvals"><span class="wv-t">the policy each run found</span><table><tr><td class="wv-l">&epsilon; = 0.00</td><td class="wv-v">[left, left, left, left]</td><td class="wv-n"><b>WRONG</b></td></tr><tr><td class="wv-l">&epsilon; = 0.05</td><td class="wv-v">[left, left, left, right]</td><td class="wv-n">correct</td></tr><tr><td class="wv-l">&epsilon; = 0.20</td><td class="wv-v">[left, left, left, right]</td><td class="wv-n">correct</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>With <b>no exploration at all</b>, the agent gets state 5 wrong &mdash; it
+walks left, away from a reward that is one step to its right.</div><p>And it is not a bug. The agent's initial Q happened to favour left; it therefore
+never went right from state 5; so it <b>never discovered the 40</b>; so its belief was never
+corrected. The false belief protected itself.</p><div class="wpoint"><span class="wp-t">The point</span><b>Five percent</b> random actions is enough to fix it entirely. That is the
+whole explore/exploit trade-off in three rows: without exploration you get stuck in a
+<b>local policy</b> &mdash; and unlike a local minimum, nothing about the training curve tells
+you it happened.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 why epsilon matters — same algorithm, different exploration:
  epsilon                       policy found  correct
     0.00   [&#x27;left&#x27;, &#x27;left&#x27;, &#x27;left&#x27;, &#x27;left&#x27;]  False

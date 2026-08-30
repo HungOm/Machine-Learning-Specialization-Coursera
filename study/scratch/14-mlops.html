@@ -244,7 +244,7 @@ python3 14_mlops.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a content-addressed model registry, a demonstration of skew costing real accuracy, PSI per feature, two cases that break naive drift monitoring, proxy metrics for the label-lag window, a bootstrap confidence interval for a canary, and a one-line rollback.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A model that works</span><span class="fl-b">0.8375 on held-out test data. This is where courses stop.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">write down exactly what produced it</span></li><li class="fl k-op"><span class="fl-t">Registry</span><span class="fl-b">Hash the data, the weights and the scaler. A version you can <b>return to</b>.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">serve it &mdash; and now the ways to be wrong are different</span></li><li class="fl k-op"><span class="fl-t">Training / serving skew</span><span class="fl-b">Scale live traffic with the <b>training</b> statistics. Recomputing them costs 10 accuracy points and raises no error.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">watch it over months</span></li><li class="fl k-op"><span class="fl-t">Drift &mdash; and false alarms</span><span class="fl-b">Inputs can move a long way and be fine. Inputs can be identical and the model be broken.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">ship the replacement carefully</span></li><li class="fl k-op"><span class="fl-t">Canary</span><span class="fl-b">A small slice, and a confidence interval that says whether you can read anything from it yet.</span></li><li class="fl k-out"><span class="fl-t">A rollback that is one string</span><span class="fl-b">Which only works because of the registry, four steps earlier.</span></li></ol><p class="flow-cap">Every box after the first is a way a working model quietly stops working. None of them raises an exception.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;What happens after the model works -- versioning, skew, drift, rollout.
 
 Run me:  python3 14_mlops.py
@@ -259,7 +259,9 @@ breaking anything. None of it is clever. All of it is the part that fails.
 
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
-rng = np.random.default_rng(<span class="tok-n">3</span>)</code></pre></div></section>
+rng = np.random.default_rng(<span class="tok-n">3</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Every other file in this lane ends when the model works. This one <b>starts</b>
+there.</p><div class="wpoint"><span class="wp-t">The point</span>Everything below is a way a working model quietly stops working. Not one of
+them raises an error, and that is precisely the difficulty.</div></div></section>
 <section class="sx" id="sx-task"><div class="sx-prose"><p>A loan-approval shape: two features, one decision. Small enough to see everything that follows.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A loan-approval-shaped problem: two features, one binary decision. Small</span>
 <span class="tok-c"># enough to see everything, structured enough that the failures below are real.</span>
 <span class="tok-k">def</span> make(n, seed, income_shift=<span class="tok-n">0.0</span>, rule_shift=<span class="tok-n">0.0</span>):
@@ -274,7 +276,7 @@ X_tr, y_tr = make(<span class="tok-n">4000</span>, <span class="tok-n">1</span>)
 X_te, y_te = make(<span class="tok-n">4000</span>, <span class="tok-n">2</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;features: income (mean %.1f) and years (mean %.1f)&quot;</span>
       % (X_tr[:, <span class="tok-n">0</span>]<span class="gterm" data-g="npmean-api">.mean(</span>), X_tr[:, <span class="tok-n">1</span>]<span class="gterm" data-g="npmean-api">.mean(</span>)))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;approval rate in training data: %.3f&quot;</span> % y_tr<span class="gterm" data-g="npmean-api">.mean(</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>features: income (mean 49.8) and years (mean 6.0)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;approval rate in training data: %.3f&quot;</span> % y_tr<span class="gterm" data-g="npmean-api">.mean(</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A loan-approval model. Two features, and a roughly balanced outcome.</p><div class="wvals"><span class="wv-t">the training data</span><table><tr><td class="wv-l">income</td><td class="wv-v">mean 49.8</td><td class="wv-n"></td></tr><tr><td class="wv-l">years</td><td class="wv-v">mean 6.0</td><td class="wv-n"></td></tr><tr><td class="wv-l">approval rate</td><td class="wv-v">0.486</td><td class="wv-n">close to half, so accuracy is a fair measure here</td></tr></table></div></div><div class="sx-out"><span class="lbl">output</span><pre>features: income (mean 49.8) and years (mean 6.0)
 approval rate in training data: 0.486</pre></div></section>
 <section class="sx" id="sx-train"><div class="sx-prose"><p><code>standardise</code> returns the statistics as well as the data, because <b>those statistics are part of the model</b>. They are the most commonly lost artefact in this entire file.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> standardise(X, mu=<span class="tok-k">None</span>, sd=<span class="tok-k">None</span>):
     <span class="tok-d">&quot;&quot;&quot;Returns the stats as well as the data. Those stats are PART OF THE MODEL
@@ -304,7 +306,9 @@ CHAMP = fit(X_tr, y_tr)
 BASE_ACC = float(<span class="gterm" data-g="npmean-api">np.mean</span>(predict(CHAMP, X_te) == y_te))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;weights %s  bias %.4f&quot;</span> % (<span class="gterm" data-g="npround-api">np.round</span>(CHAMP[<span class="tok-s">&quot;w&quot;</span>], <span class="tok-n">4</span>), CHAMP[<span class="tok-s">&quot;b&quot;</span>]))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;scaling stats mu=%s sd=%s&quot;</span> % (<span class="gterm" data-g="npround-api">np.round</span>(CHAMP[<span class="tok-s">&quot;mu&quot;</span>], <span class="tok-n">3</span>), <span class="gterm" data-g="npround-api">np.round</span>(CHAMP[<span class="tok-s">&quot;sd&quot;</span>], <span class="tok-n">3</span>)))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;test accuracy: %.4f&quot;</span> % BASE_ACC)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>weights [2.3632 2.2416]  bias -0.1357
+<span class="tok-k">print</span>(<span class="tok-s">&quot;test accuracy: %.4f&quot;</span> % BASE_ACC)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Train it. Nothing new &mdash; this is file 02's logistic regression.</p><div class="wvals"><span class="wv-t">the trained model</span><table><tr><td class="wv-l">weights</td><td class="wv-v">[2.3632, 2.2416]</td><td class="wv-n"></td></tr><tr><td class="wv-l">bias</td><td class="wv-v">&minus;0.1357</td><td class="wv-n"></td></tr><tr><td class="wv-l">scaling &mu;</td><td class="wv-v">[49.849, 5.965]</td><td class="wv-n"><b>remember these two rows</b></td></tr><tr><td class="wv-l">scaling &sigma;</td><td class="wv-v">[15.046, 2.975]</td><td class="wv-n"></td></tr><tr><td class="wv-l">test accuracy</td><td class="wv-v"><b>0.8375</b></td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The <b>scaling statistics are part of the model</b>. Not a preprocessing
+detail, not something you recompute later &mdash; they are as much a learned parameter as the
+weights, and the next-but-one section shows what happens when you forget that.</div></div><div class="sx-out"><span class="lbl">output</span><pre>weights [2.3632 2.2416]  bias -0.1357
 scaling stats mu=[49.849  5.965] sd=[15.046  2.975]
 test accuracy: 0.8375</pre></div></section>
 <section class="sx" id="sx-registry"><div class="sx-prose"><p>A version is not a number someone increments. It is a hash of everything that could change the answer: data, weights, scaler. Retrain on identical data and the version is identical; nudge one feature by 0.001 and it is not. If a version can stay the same while the data changed, the version is decoration.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> fingerprint(a):
@@ -341,7 +345,12 @@ changed = register(fit(X2, y_tr), X2, y_tr, <span class="tok-s">&quot;champion&q
 <span class="tok-k">print</span>(&quot;one feature nudged by <span class="tok-n">0.001</span> -&gt; version %s  (same: %s)&quot;
       % (changed[<span class="tok-s">&quot;version&quot;</span>], changed[<span class="tok-s">&quot;version&quot;</span>] == m1[<span class="tok-s">&quot;version&quot;</span>]))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;That sensitivity is the point. If a version can stay the same while the&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;data changed, the version is decoration.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>{
+<span class="tok-k">print</span>(<span class="tok-s">&quot;data changed, the version is decoration.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Write down exactly what produced this model, by <b>hashing</b> each piece.</p><div class="wvals"><span class="wv-t">the registry entry</span><table><tr><td class="wv-l">data</td><td class="wv-v">1f5e44413023</td><td class="wv-n">which rows it was trained on</td></tr><tr><td class="wv-l">weights</td><td class="wv-v">e37aae5b5b41</td><td class="wv-n">the parameters themselves</td></tr><tr><td class="wv-l">scaler</td><td class="wv-v">52135bcb4e84</td><td class="wv-n">the &mu; and &sigma;</td></tr><tr><td class="wv-l">n_train</td><td class="wv-v">4000</td><td class="wv-n"></td></tr><tr><td class="wv-l">note</td><td class="wv-v">champion</td><td class="wv-n">the one currently serving traffic</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>A hash gives you an <b>exact</b> answer to &ldquo;is this the same
+thing?&rdquo; &mdash; a question you cannot answer by eye and will need urgently at 3am.</div><p>&ldquo;Version 3&rdquo; is a label somebody types and can retype. A hash is
+computed from the content, so two artefacts with the same hash <b>are</b> the same
+artefact.</p><div class="wpoint"><span class="wp-t">The point</span>This section looks like bureaucracy. The <b>rollback</b> section at the end of
+this file is what it buys, and it is the difference between a five-second fix and a
+five-hour one.</div></div><div class="sx-out"><span class="lbl">output</span><pre>{
   &quot;data&quot;: &quot;1f5e44413023&quot;,
   &quot;weights&quot;: &quot;e37aae5b5b41&quot;,
   &quot;scaler&quot;: &quot;52135bcb4e84&quot;,
@@ -369,7 +378,15 @@ wrong = float(<span class="gterm" data-g="npmean-api">np.mean</span>(predict(CHA
 <span class="tok-k">print</span>(&quot;weights were learned <span class="tok-k">in</span> the training data&<span class="tok-c">#x27;s units; recomputing mu and sd&quot;)</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;silently changes what every weight means. This is training/serving skew,&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;and the only reliable defence is that ONE piece of code does the&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;transform for both paths.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>serving traffic where incomes run 12.6 higher than training
+<span class="tok-k">print</span>(<span class="tok-s">&quot;transform for both paths.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The most expensive mistake in this file, and it produces no error at all.</p><p>Live traffic arrives where incomes run <b>12.6 higher</b> than in training &mdash;
+a perfectly ordinary shift.</p><div class="wcases"><span class="wk-t">the same traffic, the same model, two ways of scaling it</span><div class="wk-row"><div class="wk-case"><span class="wk-h">Scale with the TRAINING &mu;/&sigma;</span><div class="wk-b">accuracy <b>0.8545</b><br><b>Correct.</b> The model sees the same distribution it learned on.</div></div><div class="wk-case"><span class="wk-h">Recompute &mu;/&sigma; at serve time</span><div class="wk-b">accuracy <b>0.7530</b><br><b>Wrong</b>, by <b>10.2 accuracy points</b>.</div></div></div></div><div class="wpoint"><span class="wp-t">The point</span>Recomputing looks <b>more</b> correct &mdash; surely you should standardise
+against the data you actually have? No. The weights were learned in a coordinate system
+defined by the training &mu; and &sigma;. Change the coordinate system and the weights mean
+something else.</div><p>And the second version <b>throws no error and returns sensible-looking
+probabilities</b>. There is no symptom. You find it by knowing the rule, or you find it in a
+quarterly review months later.</p><div class="wpoint"><span class="wp-t">The point</span>This is <b>training/serving skew</b>, and it is the reason
+<code>sklearn</code> splits <code>fit</code> from <code>transform</code>: to make the correct
+thing the easy thing.</div></div><div class="sx-out"><span class="lbl">output</span><pre>serving traffic where incomes run 12.6 higher than training
   scaled with the TRAINING mu/sd (correct): 0.8545
   scaled with stats recomputed at serve time: 0.7530
   difference: 10.2 accuracy points
@@ -402,7 +419,13 @@ transform for both paths.</pre></div></section>
           % (month, psi(X_tr[:, <span class="tok-n">0</span>], Xm[:, <span class="tok-n">0</span>]), psi(X_tr[:, <span class="tok-n">1</span>], Xm[:, <span class="tok-n">1</span>]),
              float(<span class="gterm" data-g="npmean-api">np.mean</span>(predict(CHAMP, Xm) == ym))))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Income moves, years does not, and PSI says so per feature. Per-feature&quot;</span>)
-<span class="tok-k">print</span>(&quot;<span class="tok-k">is</span> the useful granularity: <span class="tok-s">&#x27;something drifted&#x27;</span> <span class="tok-k">is</span> <span class="tok-k">not</span> actionable.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  month  income PSI  years PSI   accuracy
+<span class="tok-k">print</span>(&quot;<span class="tok-k">is</span> the useful granularity: <span class="tok-s">&#x27;something drifted&#x27;</span> <span class="tok-k">is</span> <span class="tok-k">not</span> actionable.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Watch the inputs drift over five months, with <b>PSI</b> &mdash; a standard measure
+of how far a distribution has moved.</p><div class="wvals"><span class="wv-t">input drift against actual accuracy</span><table><tr><td class="wv-l">month 1</td><td class="wv-v">income PSI 0.0041</td><td class="wv-n">accuracy 0.8458</td></tr><tr><td class="wv-l">month 3</td><td class="wv-v">income PSI 0.1310</td><td class="wv-n">accuracy 0.8470</td></tr><tr><td class="wv-l">month 4</td><td class="wv-v">income PSI 0.3193</td><td class="wv-n">accuracy 0.8455</td></tr><tr><td class="wv-l">month 5</td><td class="wv-v">income PSI <b>0.8660</b></td><td class="wv-n">accuracy <b>0.8660</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>PSI climbs by a factor of <b>200</b>. Accuracy does <b>not move</b> &mdash; in
+fact it ends slightly higher than it started.</div><p>The conventional PSI thresholds (0.1 = investigate, 0.25 = act) would have had you
+retraining in month 3 and paging someone in month 4, for a model that was working
+perfectly.</p><div class="wpoint"><span class="wp-t">The point</span>Drift in the <b>inputs</b> is not damage. It is a <b>hypothesis</b> that
+something might be wrong, and it is worth exactly as much as its false-alarm rate &mdash;
+which the next section measures.</div></div><div class="sx-out"><span class="lbl">output</span><pre>  month  income PSI  years PSI   accuracy
     1      0.0041     0.0062     0.8458
     2      0.0139     0.0050     0.8450
     3      0.1310     0.0059     0.8470
@@ -426,7 +449,12 @@ X_quiet, y_quiet = make(<span class="tok-n">4000</span>, <span class="tok-n">42<
 <span class="tok-k">print</span>(<span class="tok-s">&quot;with every input monitor reading zero. Input drift is a proxy for the&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;thing you care about, and a weak one in both directions.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Drift detection tells you the world moved. Only labels tell you the&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;model is wrong, and labels are exactly what arrives late.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>A. inputs move a long way:
+<span class="tok-k">print</span>(<span class="tok-s">&quot;model is wrong, and labels are exactly what arrives late.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Two scenarios, side by side. They are the reason input monitoring alone is not
+enough.</p><div class="wcases"><span class="wk-t">the two cases that matter</span><div class="wk-row"><div class="wk-case"><span class="wk-h">A &mdash; the inputs move a long way</span><div class="wk-b">income PSI <b>2.4719</b><br>accuracy <b>0.9137</b>, up from 0.8375<br><b>A loud alarm about a model that got better.</b></div></div><div class="wk-case"><span class="wk-h">B &mdash; the inputs are identical, the RULE changed</span><div class="wk-b">income PSI <b>0.0037</b><br>accuracy <b>0.5215</b>, down from 0.8375<br><b>Real damage, and every input monitor is silent.</b></div></div></div></div><div class="wpoint"><span class="wp-t">The point</span>Scenario B is the one that should frighten you. The relationship between
+features and outcome changed &mdash; years of employment now matters far less &mdash; and
+<b>nothing on the input side can see that</b>, because the inputs are unchanged.</div><p>Accuracy fell to <b>0.52</b>: barely better than a coin flip, on a model that
+looks completely healthy from the outside. This is <b>concept drift</b>, and only
+<b>outcomes</b> reveal it.</p></div><div class="sx-out"><span class="lbl">output</span><pre>A. inputs move a long way:
      income PSI 2.4719, years PSI 0.0044, accuracy 0.9137 (was 0.8375)
 B. inputs identical, the RULE changes -- years now matters far less:
      income PSI 0.0037, years PSI 0.0079, accuracy 0.5215 (was 0.8375)
@@ -448,7 +476,12 @@ model is wrong, and labels are exactly what arrives late.</pre></div></section>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;The approval rate is available the instant you make a prediction; the&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;accuracy is not available for three months. Watch what you can see, and&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;be honest that it is a proxy: a stable approval rate is consistent with&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;a model that has quietly stopped working.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  week  approval rate  mean score  accuracy (known 90 days later)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;a model that has quietly stopped working.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>So watch outcomes. Except you usually cannot, for months.</p><div class="wpoint"><span class="wp-t">The point</span>On a loan model the <b>approval rate is available instantly</b>. Whether those
+loans were repaid is available in <b>90 days</b>.</div><p>So the metric you can see is a <b>proxy</b>, and it is important to be honest
+about that: a perfectly stable approval rate is entirely consistent with a model that has
+quietly stopped working. It says the model still <i>decides</i> the same way, not that it
+decides <i>well</i>.</p><div class="wpoint"><span class="wp-t">The point</span><b>Watch what you can see, and be honest that it is a proxy.</b> That is the
+whole discipline: not pretending the fast number answers the slow question.</div></div><div class="sx-out"><span class="lbl">output</span><pre>  week  approval rate  mean score  accuracy (known 90 days later)
     1       0.4985        0.5004       0.8395
     2       0.4785        0.4815       0.7815
     3       0.4753        0.4797       0.6960
@@ -501,7 +534,15 @@ truth = float(b_ok<span class="gterm" data-g="npmean-api">.mean(</span>) - a_ok<
 <span class="tok-k">print</span>(<span class="tok-s">&quot;this model on a coin flip.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Work out the traffic you need BEFORE the canary, from the smallest gain&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;you would actually act on. A canary that cannot resolve that gain is not&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;a safety measure, it is a delay.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>champion 0.7515, challenger 0.7814 on all 8000 live users -&gt; true gain +0.0299
+<span class="tok-k">print</span>(<span class="tok-s">&quot;a safety measure, it is a delay.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A challenger model, and the question of how much traffic you need before you can
+believe a result.</p><p>The true effect, measured on all 8,000 users, is <b>+0.0299</b>. Now pretend you
+do not know that and read it off a canary.</p><div class="wvals"><span class="wv-t">one challenger, one true effect, five readings</span><table><tr><td class="wv-l">0.5% &mdash; 40 users</td><td class="wv-v">+0.1013</td><td class="wv-n">CI [+0.0000, +0.2250] &rarr; <b>keep waiting</b></td></tr><tr><td class="wv-l">2.5% &mdash; 200 users</td><td class="wv-v">+0.0298</td><td class="wv-n">CI [&minus;0.0050, +0.0650] &rarr; <b>keep waiting</b></td></tr><tr><td class="wv-l">12.5% &mdash; 1000 users</td><td class="wv-v">+0.0271</td><td class="wv-n">CI [+0.0140, +0.0410] &rarr; <b>ship</b></td></tr><tr><td class="wv-l">50% &mdash; 4000 users</td><td class="wv-v">+0.0267</td><td class="wv-n">CI [+0.0198, +0.0335] &rarr; <b>ship</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Look at the <b>40-user</b> row: it reports <b>+0.1013</b> &mdash; more than
+three times the truth. A tiny canary does not give you a small amount of evidence; it gives
+you a <b>wildly wrong number</b> with total confidence.</div><p>The 200-user row has the point estimate almost exactly right (+0.0298 against
++0.0299) and its interval <b>still straddles zero</b>. Being right by luck is not the same as
+having evidence.</p><div class="wpoint"><span class="wp-t">The point</span><b>The small canaries are not wrong about the data they saw.</b> They are being
+asked a question their sample cannot answer, and &ldquo;keep waiting&rdquo; is the correct
+reading of an interval that includes zero &mdash; not a failure of the test.</div></div><div class="sx-out"><span class="lbl">output</span><pre>champion 0.7515, challenger 0.7814 on all 8000 live users -&gt; true gain +0.0299
 Now pretend you do not know that number, and read it off a canary:
     0.5% of traffic (  40 users): +0.1013  95% CI [+0.0000, +0.2250]  -&gt; keep waiting
     2.5% of traffic ( 200 users): +0.0298  95% CI [-0.0050, +0.0650]  -&gt; keep waiting
@@ -533,7 +574,13 @@ preds, used = serve(m1[<span class="tok-s">&quot;version&quot;</span>], live_X[:
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nThat is only true because both versions are still loadable and both&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;carry their own scaling stats. A rollback plan that requires retraining&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;is not a rollback plan. The registry section at the top of this file is&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;what buys you this line at the bottom.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>registry holds 2 versions:
+<span class="tok-k">print</span>(<span class="tok-s">&quot;what buys you this line at the bottom.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last section, and the payoff for the registry at the top.</p><div class="wvals"><span class="wv-t">the registry now holds two versions</span><table><tr><td class="wv-l">fe7074bb3f1f</td><td class="wv-v">n_train=4000</td><td class="wv-n">champion</td></tr><tr><td class="wv-l">0aeb5ebe5181</td><td class="wv-v">n_train=6000</td><td class="wv-n">challenger, retrained on recent traffic</td></tr></table></div><div class="wchainset"><span class="wcs-t">the same five requests</span><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> serve with 0aeb5ebe </span><span class="wc-a">→</span><span class="wc-i">[0, 0, 0, 0, 0]</span></span><span class="wcs-n">the challenger rejects everyone</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> serve with fe7074bb </span><span class="wc-a">→</span><span class="wc-i">[1, 0, 1, 0, 0]</span></span><span class="wcs-n">the champion, restored</span></div></div><div class="wpoint"><span class="wp-t">The point</span><b>Rolling back is: change one string.</b> Not retrain, not rebuild, not
+find the notebook. One identifier.</div><p>And that is <b>only</b> true because both versions are still <b>loadable</b> and
+each carries <b>its own scaling statistics</b>. Load the old weights with the new scaler and
+you have reproduced the skew bug from earlier in this file, while believing you rolled
+back.</p><div class="wpoint"><span class="wp-t">The point</span><b>A rollback plan that requires retraining is not a rollback plan.</b> The
+registry section at the top of this file is what buys you this line at the bottom &mdash;
+which is the argument for doing the boring part first.</div></div><div class="sx-out"><span class="lbl">output</span><pre>registry holds 2 versions:
    fe7074bb3f1f  n_train=4000  champion
    0aeb5ebe5181  n_train=6000  challenger: retrained on recent traffic
 
@@ -557,7 +604,11 @@ what buys you this line at the bottom.</pre></div></section>
         <span class="tok-s">&quot;Can you roll back without retraining, and has anyone tried it recently?&quot;</span>], <span class="tok-n">1</span>):
     <span class="tok-k">print</span>(<span class="tok-s">&quot;  %d. %s&quot;</span> % (i, q))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nNone of these are modelling questions. That is the lesson: after the&quot;</span>)
-<span class="tok-k">print</span>(&quot;model works, almost nothing that goes wrong <span class="tok-k">is</span> the model&<span class="tok-c">#x27;s fault.&quot;)</span></code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>Everything above, as questions you can answer before shipping:
+<span class="tok-k">print</span>(&quot;model works, almost nothing that goes wrong <span class="tok-k">is</span> the model&<span class="tok-c">#x27;s fault.&quot;)</span></code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Everything above, turned into questions you can actually answer before shipping.</p><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b">Can you name the <b>exact</b> data, weights and preprocessing behind any past decision?</span></li><li><span class="ws-n">2</span><span class="ws-b">Does <b>one</b> piece of code do the feature transform for both training and serving?</span></li><li><span class="ws-n">3</span><span class="ws-b">Are the scaling statistics <b>stored with the weights</b>, not recomputed?</span></li><li><span class="ws-n">4</span><span class="ws-b">Is drift measured <b>per feature</b>, against a <b>fixed</b> reference window?</span></li><li><span class="ws-n">5</span><span class="ws-b">Do you know which of your monitors would catch a change in <b>P(y|x)</b>?</span></li><li><span class="ws-n">6</span><span class="ws-b">What do you watch in the gap <b>before labels arrive</b>, and what does it miss?</span></li><li><span class="ws-n">7</span><span class="ws-b">Is your canary <b>big enough</b> for its confidence interval to exclude zero?</span></li><li><span class="ws-n">8</span><span class="ws-b">Can you <b>roll back without retraining</b> &mdash; and has anyone tried it recently?</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span><b>None of these is a modelling question.</b> Not one mentions architecture,
+loss functions, learning rates or accuracy.</div><p>That is the lesson of the whole file, and the reason it exists at the end of this
+lane: <b>after the model works, almost nothing that goes wrong is the model's fault</b>.</p><div class="wpoint"><span class="wp-t">The point</span>Question 8 is the one people answer wrongly most often. &ldquo;We could roll
+back&rdquo; and &ldquo;we have rolled back, recently, and it took under a minute&rdquo; are
+very different claims, and only the second one is a plan.</div></div><div class="sx-out"><span class="lbl">output</span><pre>Everything above, as questions you can answer before shipping:
   1. Can you name the exact data, weights and preprocessing behind any past decision?
   2. Does ONE piece of code do the feature transform for training and serving?
   3. Are the scaling statistics stored with the weights, not recomputed?

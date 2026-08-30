@@ -244,7 +244,7 @@ python3 08_pca.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built centring, covariance, eigendecomposition, <span class="gterm" data-g="projection">projection</span> and reconstruction, and PCA recovering a known true dimensionality.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">Data with many columns</span><span class="fl-b">Some of them saying much the same thing as others.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">subtract each column's mean &mdash; this is not optional</span></li><li class="fl k-op"><span class="fl-t">Centre it</span><span class="fl-b">Every column now has mean 0, so &ldquo;spread&rdquo; is measured from the origin.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">how does each column vary WITH each other column?</span></li><li class="fl k-op"><span class="fl-t">Covariance matrix</span><span class="fl-b">A square grid of how the features move together.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">find the directions this matrix does not rotate</span></li><li class="fl k-op"><span class="fl-t">Eigenvectors</span><span class="fl-b">The principal components. Their eigenvalues ARE the <span class="gterm" data-g="variance-f0">variance</span> along each one.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">keep the biggest few, throw the rest away</span></li><li class="fl k-out"><span class="fl-t">Fewer numbers per point</span><span class="fl-b">50 columns become 2, chosen to lose as little spread as possible.</span></li></ol><p class="flow-cap">PCA is a rotation followed by a truncation. Turn the data so the most interesting direction is first, then stop keeping the boring ones.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;PCA from scratch — C3 W2, via the covariance matrix and its eigenvectors.
 
 Run me:  python3 08_pca.py
@@ -252,15 +252,21 @@ Run me:  python3 08_pca.py
 Also does it a second way (the SVD) and shows the two agree, because that is
 what every library actually uses.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
-<section class="sx" id="sx-centre"><div class="sx-prose"><p>PCA is about <span class="gterm" data-g="variance-f0">variance</span>, and variance is measured around the mean. Skip this and the first component points at the mean rather than along the spread — a silent error that produces plausible nonsense.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> centre(X):
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>PCA reduces the number of columns while throwing away as little information as
+possible. This file builds it twice &mdash; once through eigenvectors, once through SVD
+&mdash; and shows they agree.</p></div></section>
+<section class="sx" id="sx-centre"><div class="sx-prose"><p>PCA is about variance, and variance is measured around the mean. Skip this and the first component points at the mean rather than along the spread — a silent error that produces plausible nonsense.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> centre(X):
     <span class="tok-d">&quot;&quot;&quot;PCA is about variance, and variance is measured around the mean.
 
     Skipping this step makes the first component point at the mean instead of
     along the spread — a silent and very common error.
     &quot;&quot;&quot;</span>
     mu = X<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)
-    <span class="tok-k">return</span> X - mu, mu</code></pre></div></section>
+    <span class="tok-k">return</span> X - mu, mu</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Subtract each column's mean. Every column now has mean <b>0</b>.</p><div class="wpoint"><span class="wp-t">The point</span>This is not tidying. PCA looks for <b>directions of greatest spread measured
+from the origin</b> &mdash; so if the data sits far from the origin, the first component
+just points at the data's location rather than at its shape.</div><p>Scaling is usually done too. Otherwise a column measured in thousands dominates
+one measured in fractions, and PCA reports which column has the biggest <b>units</b> rather
+than which carries the most structure.</p></div></section>
 <section class="sx" id="sx-covariance"><div class="sx-prose"><p>The diagonal holds each feature's variance; the off-diagonal says how strongly the features move together. That single matrix is all PCA ever looks at — note it never sees <code>y</code>.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> covariance(Xc):
     <span class="tok-d">&quot;&quot;&quot;(1/m) Xc^T Xc — entry (i,j) is how features i and j vary together.&quot;&quot;&quot;</span>
     m = Xc.shape[<span class="tok-n">0</span>]
@@ -272,7 +278,12 @@ C = covariance(Xc)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;data:\n&quot;</span>, X)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;column means:&quot;</span>, mu)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;covariance:\n&quot;</span>, C)
-<span class="tok-k">print</span>(&quot;diagonal = each feature&<span class="tok-c">#x27;s variance; off-diagonal = how they move together&quot;)</span></code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>data:
+<span class="tok-k">print</span>(&quot;diagonal = each feature&<span class="tok-c">#x27;s variance; off-diagonal = how they move together&quot;)</span></code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Five points, two columns, and column means of exactly <b>[3, 3]</b> &mdash; chosen
+so the arithmetic stays checkable.</p><p>The covariance matrix answers: <b>how does each column vary with each other
+column?</b> Its diagonal holds each column's own variance; the off-diagonal holds how much
+they move <b>together</b>.</p><div class="wpoint"><span class="wp-t">The point</span>It is <b>symmetric</b> by construction &mdash; how x varies with y is the same
+as how y varies with x. That symmetry is what makes PCA well behaved, and the next section
+is where it pays off.</div></div><div class="sx-out"><span class="lbl">output</span><pre>data:
  [[1. 2.]
  [2. 1.]
  [3. 5.]
@@ -299,7 +310,14 @@ diagonal = each feature&#x27;s variance; off-diagonal = how they move together</
 W, vals, mu = pca_eig(X, <span class="tok-n">1</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\neigenvalues: {<span class="gterm" data-g="npround-api">np.round</span>(vals, 4)}   (variance along each direction)&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;first principal component: {<span class="gterm" data-g="npround-api">np.round</span>(W[:, 0], 4)}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;variance explained by PC1: {vals[0] / vals<span class="gterm" data-g="npsum-api">.sum(</span>):.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;variance explained by PC1: {vals[0] / vals<span class="gterm" data-g="npsum-api">.sum(</span>):.4f}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The eigenvectors of the covariance matrix are the principal components.</p><div class="wvals"><span class="wv-t">what this block printed</span><table><tr><td class="wv-l">eigenvalues</td><td class="wv-v">[3.0, 1.0]</td><td class="wv-n">the variance along each direction</td></tr><tr><td class="wv-l">first component</td><td class="wv-v">[0.7071, 0.7071]</td><td class="wv-n">a 45&deg; diagonal</td></tr><tr><td class="wv-l">variance explained by PC1</td><td class="wv-v">0.7500</td><td class="wv-n">3 out of 3+1</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Each eigenvalue IS the variance along its own eigenvector.</b> That single
+fact is why &ldquo;find the direction of greatest spread&rdquo; and &ldquo;find the largest
+eigenvector of the covariance matrix&rdquo; are the same instruction.</div><p>0.7071 is <b>1/&radic;2</b>, so the first component points at exactly 45&deg;
+&mdash; equal parts of both columns. And it has length 1, which is what makes
+<code>z = x &middot; u</code> a distance rather than a distance times something.</p><div class="wpoint"><span class="wp-t">The point</span>Because covariance matrices are symmetric, the eigenvalues are guaranteed
+<b>real</b> and the eigenvectors guaranteed <b><span class="gterm" data-g="perpendicular">perpendicular</span></b>. Perpendicular means the
+second component measures something the first one <b>cannot see</b> &mdash; no double
+counting.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 eigenvalues: [3. 1.]   (variance along each direction)
 first principal component: [0.7071 0.7071]
 variance explained by PC1: 0.7500</pre></div></section>
@@ -317,7 +335,11 @@ err = <span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm"
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nprojected to 1-D:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Z.ravel(), <span class="tok-n">4</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;reconstructed:\n&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xr, <span class="tok-n">3</span>))
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;mean squared reconstruction error: {err:.4f}&quot;</span>)
-<span class="tok-k">print</span>(f&quot;discarded eigenvalue was {vals[<span class="tok-n">1</span>]:.4f}  &lt;- the error equals it&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f&quot;discarded eigenvalue was {vals[<span class="tok-n">1</span>]:.4f}  &lt;- the error equals it&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Project onto the first component: two numbers per point become one.</p><div class="wx"><code class="wx-c">z = x &middot; u</code><span class="wx-s">how far along u this point's shadow falls</span></div><div class="wvals"><span class="wv-t">down to 1-D, then back again</span><table><tr><td class="wv-l">projected</td><td class="wv-v">[&minus;2.121, &minus;2.121, 1.414, 1.414, 1.414]</td><td class="wv-n">one number per point</td></tr><tr><td class="wv-l">reconstructed</td><td class="wv-v">[1.5, 1.5], [1.5, 1.5], [4, 4] &hellip;</td><td class="wv-n">back to two, approximately</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The reconstruction is <b>not exact</b>, and that is the whole trade. The first
+two points both come back as [1.5, 1.5] &mdash; they were different, and after squashing to
+one dimension they are the same point. That difference lived entirely in the direction you
+threw away.</div><p>What survives is everything along the 45&deg; line; what is lost is everything
+perpendicular to it. PCA chose that line precisely because losing it costs the least.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 projected to 1-D: [-2.1213 -2.1213  1.4142  1.4142  1.4142]
 reconstructed:
  [[1.5 1.5]
@@ -344,7 +366,12 @@ W2, vals2, _ = pca_svd(X, <span class="tok-n">1</span>)
 <span class="tok-c"># Components are only defined up to a sign — both directions span the same line.</span>
 same = np.allclose(np.abs(W[:, <span class="tok-n">0</span>]), np.abs(W2[:, <span class="tok-n">0</span>]))
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  same direction as eigen route (up to sign): {same}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  same eigenvalues: {np.allclose(np.sort(vals), np.sort(vals2))}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  same eigenvalues: {np.allclose(np.sort(vals), np.sort(vals2))}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The same answer by a completely different route.</p><div class="wvals"><span class="wv-t">SVD against the eigenvector route</span><table><tr><td class="wv-l">component</td><td class="wv-v">[0.7071, 0.7071]</td><td class="wv-n">same direction</td></tr><tr><td class="wv-l">eigenvalues</td><td class="wv-v">[3.0, 1.0]</td><td class="wv-n">same values</td></tr><tr><td class="wv-l">same up to sign</td><td class="wv-v">True</td><td class="wv-n"></td></tr><tr><td class="wv-l">same eigenvalues</td><td class="wv-v">True</td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>&ldquo;<b>Up to sign</b>&rdquo; matters. An eigenvector points along a line,
+and a line has <b>two</b> directions &mdash; [0.707, 0.707] and [&minus;0.707, &minus;0.707]
+describe the same axis. Sign flips between implementations are normal and mean nothing.</div><p>Real PCA uses <b>SVD</b>, not the covariance route. Forming the covariance matrix
+means <b>squaring</b> the numbers, which throws away precision you cannot get back. SVD works
+on the data directly. Same answer, better conditioned &mdash; and it works on non-square data
+too.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 SVD route:
   component  [0.7071 0.7071]
   eigenvalues [3. 1.]
@@ -358,7 +385,13 @@ Zp = project(Xp, Wp, mup)
 <span class="tok-k">print</span>(f&quot;  eigenvalues {<span class="gterm" data-g="npround-api">np.round</span>(valsp, <span class="tok-n">6</span>)}  &lt;- the second <span class="tok-k">is</span> exactly <span class="tok-n">0</span>&quot;)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  variance explained by PC1: {valsp[0] / valsp<span class="gterm" data-g="npsum-api">.sum(</span>):.4f}&quot;</span>)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;  reconstruction error: &quot;</span>
-      f&quot;{<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((Xp - reconstruct(Zp, Wp, mup))**<span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)):.2e}  &lt;- lossless&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+      f&quot;{<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((Xp - reconstruct(Zp, Wp, mup))**<span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)):.2e}  &lt;- lossless&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A deliberately extreme case: data where the second column is a perfect function of
+the first.</p><div class="wvals"><span class="wv-t">perfectly correlated data</span><table><tr><td class="wv-l">eigenvalues</td><td class="wv-v">[4.0, 0.0]</td><td class="wv-n">the second is <b>exactly</b> zero</td></tr><tr><td class="wv-l">variance explained by PC1</td><td class="wv-v">1.0000</td><td class="wv-n">all of it</td></tr><tr><td class="wv-l">reconstruction error</td><td class="wv-v">7.89e&minus;32</td><td class="wv-n"><b>lossless</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>A <b>zero</b> eigenvalue means there is <b>no spread at all</b> in that
+direction. The second column carried no information the first did not already have, so
+discarding it costs literally nothing &mdash; and the error confirms it, at the limit of
+floating point.</div><p>This is the clean version of what PCA does on real data. Real columns are
+partially redundant, so eigenvalues are small rather than zero, and discarding them costs a
+little rather than nothing.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 perfectly correlated data:
   eigenvalues [4. 0.]  &lt;- the second is exactly 0
   variance explained by PC1: 1.0000
@@ -373,7 +406,13 @@ cum = np.cumsum(vh) / vh<span class="gterm" data-g="npsum-api">.sum(</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\n50 noisy features generated from 3 latent ones:&quot;</span>)
 <span class="tok-k">for</span> k <span class="tok-k">in</span> [<span class="tok-n">1</span>, <span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">4</span>, <span class="tok-n">10</span>]:
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  first {k:2d} components explain {cum[k-1]:.4f} of the variance&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;The cliff after 3 is PCA finding the true dimensionality on its own.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;The cliff after 3 is PCA finding the true dimensionality on its own.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The realistic case: <b>50</b> noisy features, all generated from just <b>3</b>
+underlying ones.</p><div class="wvals"><span class="wv-t">cumulative variance explained</span><table><tr><td class="wv-l">first 1 component</td><td class="wv-v">0.3848</td><td class="wv-n">of the variance</td></tr><tr><td class="wv-l">first 2</td><td class="wv-v">0.7353</td><td class="wv-n"></td></tr><tr><td class="wv-l">first 3</td><td class="wv-v"><b>0.9991</b></td><td class="wv-n">essentially everything</td></tr><tr><td class="wv-l">first 4</td><td class="wv-v">0.9992</td><td class="wv-n">the 4th buys <b>0.0001</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>PCA <b>found the 3</b>. It was never told there were three latent factors, or
+that 50 columns were redundant. It read it off the eigenvalues.</div><p>And the shape of the curve is what you look for in practice: a steep climb, then a
+sharp flattening. The place it flattens is how many components are worth keeping &mdash; the
+same elbow logic as choosing K in k-means, and rather more reliable here.</p><div class="wpoint"><span class="wp-t">The point</span>So 50 columns become 3, losing <b>0.09%</b> of the variance. That is the case
+PCA was built for, and it is why the honest modern use is <b>visualisation</b>: squash to 2
+and you can actually look at your data.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 50 noisy features generated from 3 latent ones:
   first  1 components explain 0.3848 of the variance
   first  2 components explain 0.7353 of the variance

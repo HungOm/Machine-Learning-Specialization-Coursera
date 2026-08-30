@@ -244,7 +244,7 @@ python3 07_kmeans.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built assignment, centroid movement, the cost function, random restarts, and an elbow plot on data with a known answer.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">Points, and no labels at all</span><span class="fl-b">This is the difference from everything before it. Nobody tells you the answer, because there is no answer to tell.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">pick K starting centroids &mdash; at K of the actual data points</span></li><li class="fl-loop"><span class="fl-loop-t">repeat until nothing changes</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">ASSIGN</span><span class="fl-b">Give every point to its nearest centroid. <b>Centroids are held fixed.</b></span></li><li class="fl-arw"><span class="a">↓</span><span class="l">now the groups have changed, so the middles have moved</span></li><li class="fl k-op"><span class="fl-t">MOVE</span><span class="fl-b">Put each centroid at the mean of its own points. <b>Assignments are held fixed.</b></span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">nothing moved this round</span></li><li class="fl k-out"><span class="fl-t">K groups</span><span class="fl-b">And a cost, J, which you can compare against another run.</span></li></ol><p class="flow-cap">Each step freezes what the other one changes. That is not a detail &mdash; it is the entire <span class="gterm" data-g="convergence-native">convergence</span> proof.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;k-means from scratch — C3 W1.
 
 Run me:  python3 07_kmeans.py
@@ -252,10 +252,25 @@ Run me:  python3 07_kmeans.py
 Two functions, ten lines each. The interesting part is what the cost function
 is for: it is how you choose between runs that disagree.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The first <b>unsupervised</b> file in the lane. There is no y. Nobody knows the
+right answer, and there is no right answer to know &mdash; only groupings that are more or
+less useful.</p><div class="wpoint"><span class="wp-t">The point</span>That changes what &ldquo;working&rdquo; means. There is no accuracy to
+report, so the algorithm has to bring its own measure of quality, and choosing <b>K</b>
+becomes a question the data cannot answer.</div></div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p>Six points, chosen so you can do the whole algorithm on paper and compare. These are the same six points as the C3 W1 problem set.</p></div><div class="sx-code"><pre><code>X = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">1.0</span>, <span class="tok-n">1.0</span>], [<span class="tok-n">1.5</span>, <span class="tok-n">2.0</span>], [<span class="tok-n">3.0</span>, <span class="tok-n">4.0</span>],
               [<span class="tok-n">5.0</span>, <span class="tok-n">7.0</span>], [<span class="tok-n">3.5</span>, <span class="tok-n">5.0</span>], [<span class="tok-n">4.5</span>, <span class="tok-n">5.0</span>]])
-<span class="tok-k">print</span>(<span class="tok-s">&quot;six points:\n&quot;</span>, X)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>six points:
+<span class="tok-k">print</span>(<span class="tok-s">&quot;six points:\n&quot;</span>, X)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Six points, in two dimensions, chosen so you can see the answer before the
+algorithm finds it.</p><div class="wart"><pre>   7 |              *  (5, 7)
+   6 |
+   5 |        *  *     (3.5,5) (4.5,5)
+   4 |      *          (3, 4)
+   3 |
+   2 |   *             (1.5, 2)
+   1 | *               (1, 1)
+     +--------------------------
+       1  2  3  4  5</pre></div><p>Two obvious clumps: the bottom-left pair, and the four up and to the right. Or is
+it three clumps? That ambiguity is real, and it is what the local-optima section is
+about.</p></div><div class="sx-out"><span class="lbl">output</span><pre>six points:
  [[1.  1. ]
  [1.5 2. ]
  [3.  4. ]
@@ -269,7 +284,11 @@ is for: it is how you choose between runs that disagree.
     them together gives every point-centroid difference at once, shape (m,k,n).
     &quot;&quot;&quot;</span>
     d = <span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(X[:, <span class="tok-k">None</span>, :] - centroids[<span class="tok-k">None</span>, :, :], <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">2</span>)   <span class="tok-c"># (m, k)</span>
-    <span class="tok-k">return</span> d.argmin(<span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)</code></pre></div></section>
+    <span class="tok-k">return</span> d.argmin(<span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Step one. <b>Centroids are fixed.</b> Give every point to its nearest one.</p><div class="wx"><code class="wx-c">c[i] = argmin&#8342; &#8214; x[i] - &mu;[k] &#8214;&sup2;</code><span class="wx-s">for each point, which centroid is closest</span></div><div class="wpoint"><span class="wp-t">The point</span><b><span class="gterm" data-g="argmax-f0">argmin</span></b>, not <b>min</b> &mdash; you want <b>which</b> centroid, not how
+far away it was. That distinction is exactly the one in the Foundations entry on max
+versus argmax.</div><p>The distance is <b>squared</b> and never square-rooted. The square root would not
+change which centroid is nearest &mdash; it is a monotonic function &mdash; so it is skipped.
+And squared distance is what makes the mean the right answer in the next step.</p></div></section>
 <section class="sx" id="sx-move"><div class="sx-prose"><p>The empty-cluster case is real and has to be handled — the mean of no points is 0/0. Here it re-seeds at a random point, which keeps k intact; the alternative is to drop the centroid and accept k − 1.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> move(X, idx, k):
     <span class="tok-d">&quot;&quot;&quot;Each centroid becomes the mean of the points assigned to it.
 
@@ -280,10 +299,22 @@ is for: it is how you choose between runs that disagree.
     <span class="tok-k">for</span> j <span class="tok-k">in</span> range(k):
         pts = X[idx == j]
         out[j] = pts<span class="gterm" data-g="npmean-api">.mean(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>) <span class="tok-k">if</span> len(pts) <span class="tok-k">else</span> X[np.random.randint(len(X))]
-    <span class="tok-k">return</span> out</code></pre></div></section>
+    <span class="tok-k">return</span> out</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Step two. <b>Assignments are fixed.</b> Move each centroid to the mean of its own
+points.</p><div class="wx"><code class="wx-c">&mu;[k] = mean of the points currently assigned to k</code></div><div class="wpoint"><span class="wp-t">The point</span>Why the <b>mean</b> specifically? Because the mean is the <b>exact
+minimiser</b> of squared distance. Not a sensible heuristic &mdash; the provably optimal
+answer to &ldquo;what single point is closest to all of these?&rdquo;</div><p>If you measured with absolute distance instead, the optimal answer would be the
+<b>median</b>, and you would have a different algorithm (k-medians). The choice of distance
+picks the choice of centre.</p></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p><code>centroids[idx]</code> is fancy <span class="gterm" data-g="indexing-f0">indexing</span>: it builds an array the same length as X holding each point's own centroid, so the whole cost is one vectorized expression.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> cost(X, idx, centroids):
     <span class="tok-d">&quot;&quot;&quot;Mean squared distance from each point to its own centroid.&quot;&quot;&quot;</span>
-    <span class="tok-k">return</span> float(<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((X - centroids[idx]) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)))</code></pre></div></section>
+    <span class="tok-k">return</span> float(<span class="gterm" data-g="npmean-api">np.mean</span>(<span class="gterm" data-g="npsum-api">np.sum</span>((X - centroids[idx]) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The cost, called <b>distortion</b>: the average squared distance from each point to
+its own centroid.</p><div class="wx"><code class="wx-c">J = (1/m) &Sigma; &#8214; x[i] - &mu;[c[i]] &#8214;&sup2;</code></div><div class="wpoint"><span class="wp-t">The point</span><b>J can never increase.</b> Step 1 gives every point its <i>nearest</i>
+centroid, which cannot be worse than where it was. Step 2 moves each centroid to the point
+that minimises distance to its own group.</div><p>Since J only falls and cannot fall forever, the algorithm <b>must</b> stop. That
+is the entire convergence proof, in two sentences, and it is unusually clean for a machine
+learning algorithm.</p><div class="wpoint"><span class="wp-t">The point</span>It also gives you a free debugging rule: <b>if your implementation ever shows
+J rising, you have a bug</b> &mdash; almost always moving some centroids before finishing all
+the assignments.</div></div></section>
 <section class="sx" id="sx-fit"><div class="sx-prose"><p>Alternate the two steps until nothing moves. It always terminates, because both steps can only lower J and there are finitely many assignments.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> kmeans(X, k, init, iters=<span class="tok-n">50</span>):
     c = <span class="gterm" data-g="nparray-api">np.array</span>(init, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">for</span> _ <span class="tok-k">in</span> range(iters):
@@ -293,15 +324,23 @@ is for: it is how you choose between runs that disagree.
             <span class="tok-k">break</span>
         c = new
     idx = assign(X, c)
-    <span class="tok-k">return</span> idx, c, cost(X, idx, c)</code></pre></div></section>
-<section class="sx" id="sx-local_optima"><div class="sx-prose"><p>The demonstration that matters. Same data, same algorithm, two starting points, two different <span class="gterm" data-g="convergence-native">converged</span> answers — 1.778 and 1.313. Neither can improve by another step. k-means finds a <b>local</b> optimum, and J is the only thing that tells you which run was better.</p></div><div class="sx-code"><pre><code><span class="tok-k">print</span>(<span class="tok-s">&quot;\nsame data, same algorithm, two different starting points:&quot;</span>)
+    <span class="tok-k">return</span> idx, c, cost(X, idx, c)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The two steps in a loop, until nothing changes. Convergence is detected by
+assignments <b>not moving</b>, not by a tolerance on J &mdash; because assignments are
+discrete, so &ldquo;nothing changed&rdquo; is exact rather than approximate.</p></div></section>
+<section class="sx" id="sx-local_optima"><div class="sx-prose"><p>The demonstration that matters. Same data, same algorithm, two starting points, two different converged answers — 1.778 and 1.313. Neither can improve by another step. k-means finds a <b>local</b> optimum, and J is the only thing that tells you which run was better.</p></div><div class="sx-code"><pre><code><span class="tok-k">print</span>(<span class="tok-s">&quot;\nsame data, same algorithm, two different starting points:&quot;</span>)
 <span class="tok-k">for</span> label, init <span class="tok-k">in</span> [(<span class="tok-s">&quot;A: points 1 and 4&quot;</span>, [X[<span class="tok-n">0</span>], X[<span class="tok-n">3</span>]]),
                     (<span class="tok-s">&quot;B: points 1 and 3&quot;</span>, [X[<span class="tok-n">0</span>], X[<span class="tok-n">2</span>]])]:
     idx, c, J = kmeans(X, <span class="tok-n">2</span>, init)
     <span class="tok-k">print</span>(f&quot;  {label}  -&gt;  clusters {idx}  J = {J:.4f}&quot;)
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;      centroids {<span class="gterm" data-g="npround-api">np.round</span>(c, 3).tolist()}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nBoth are converged — neither can improve by another step. They are&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;different LOCAL optima, and J is the only thing that tells them apart.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;different LOCAL optima, and J is the only thing that tells them apart.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The same data, the same algorithm, two different starting points. This is the
+section that matters.</p><div class="wvals"><span class="wv-t">two runs, two different answers</span><table><tr><td class="wv-l">start at points 1 and 4</td><td class="wv-v">J = 1.7778</td><td class="wv-n">clusters [0,0,0,1,1,1]</td></tr><tr><td class="wv-l">start at points 1 and 3</td><td class="wv-v">J = 1.3125</td><td class="wv-n">clusters [0,0,1,1,1,1]</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Both runs converged.</b> Neither is broken. They landed on genuinely
+different groupings, and one of them is <b>26% worse</b> than the other.</div><p>That is a <b>local optimum</b>: a grouping where no single point wants to move
+and no centroid wants to shift, but which is still not the best available. Course 1's convex
+cost bowl guaranteed this could not happen. K-means has no such guarantee.</p><div class="wpoint"><span class="wp-t">The point</span>Look at the difference: run A put the point at (3, 4) with the bottom-left
+pair; run B put it with the top-right group. Both are defensible groupings of an ambiguous
+point &mdash; and the numbers say B fits better.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 same data, same algorithm, two different starting points:
   A: points 1 and 4  -&gt;  clusters [0 0 0 1 1 1]  J = 1.7778
       centroids [[1.833, 2.333], [4.333, 5.667]]
@@ -322,7 +361,12 @@ different LOCAL optima, and J is the only thing that tells them apart.</pre></di
     <span class="tok-k">return</span> best
 
 idx, c, J = kmeans_best(X, <span class="tok-n">2</span>)
-<span class="tok-k">print</span>(f&quot;\n50 random restarts -&gt; best J = {J:.4f}, clusters {idx}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f&quot;\n50 random restarts -&gt; best J = {J:.4f}, clusters {idx}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The fix, and it is refreshingly blunt: <b>run it many times and keep the best</b>.</p><div class="wchain"><span class="wc-i">50 random restarts</span><span class="wc-a">→</span><span class="wc-i">best J = 1.3125</span><span class="wc-cap">which is run B, the better one</span></div><div class="wpoint"><span class="wp-t">The point</span>The tiebreaker is <b>free</b>. J is already computed, it is exactly what the
+algorithm was minimising, and lower is unambiguously better. No held-out set, no judgement
+call &mdash; which is unusual enough to be worth appreciating.</div><p>Note the cluster labels came back as <code>[1,1,0,0,0,0]</code> rather than
+<code>[0,0,1,1,1,1]</code>. That is the <b>same grouping</b> with the two labels swapped.
+Cluster numbers are arbitrary names, never meaningful &mdash; and comparing two runs by
+label equality is a classic mistake.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 50 random restarts -&gt; best J = 1.3125, clusters [1 1 0 0 0 0]</pre></div></section>
 <section class="sx" id="sx-elbow"><div class="sx-prose"><p>120 points from three real blobs. The drops collapse after k = 3, which is the right answer. Note J never rises with k: at k = m every point is its own cluster and J is exactly zero, so you can never choose k by minimising J.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">4</span>)
 blobs = np.vstack([rng.normal(mu, <span class="tok-n">0.6</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
@@ -337,7 +381,15 @@ prev = <span class="tok-k">None</span>
     prev = J
 <span class="tok-k">print</span>(<span class="tok-s">&quot;The drops collapse after k = 3, which is where the blobs actually are.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Note J never rises with k: at k = m every point is its own cluster and&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;J is exactly 0, so you can never pick k by minimising J.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;J is exactly 0, so you can never pick k by minimising J.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last section: how do you choose <b>K</b>? Here are 120 points drawn from
+<b>3</b> genuine blobs, so the right answer is known.</p><div class="wvals"><span class="wv-t">distortion as K rises, and how much each K bought</span><table><tr><td class="wv-l">K = 1</td><td class="wv-v">J = 23.648</td><td class="wv-n"></td></tr><tr><td class="wv-l">K = 2</td><td class="wv-v">J = 9.094</td><td class="wv-n">a drop of <b>14.554</b></td></tr><tr><td class="wv-l">K = 3</td><td class="wv-v">J = 0.722</td><td class="wv-n">a drop of <b>8.372</b></td></tr><tr><td class="wv-l">K = 4</td><td class="wv-v">J = 0.616</td><td class="wv-n">a drop of <b>0.106</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Read the <b>drops</b>, not the values. Going to 3 bought <b>8.372</b>. Going
+to 4 bought <b>0.106</b> &mdash; about eighty times less. That collapse is the
+&ldquo;elbow&rdquo;, and here it points squarely at <b>K = 3</b>, which is the truth.</div><p>So the method works &mdash; on data with three <b>clearly separated</b> blobs.
+Real data rarely obliges, and the curve usually bends smoothly with no obvious corner. Andrew
+says he rarely uses it, and that is an honest assessment rather than a modesty.</p><div class="wpoint"><span class="wp-t">The point</span>You <b>cannot</b> choose K by minimising J, because J falls forever: at
+K = m every point is its own cluster and J = 0 exactly. The elbow is an attempt to work
+around that, and the more reliable alternative is to judge K by <b>what the clusters are
+for</b>.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 120 points drawn from 3 real blobs — the elbow test:
   k         J       drop
   1    23.648   

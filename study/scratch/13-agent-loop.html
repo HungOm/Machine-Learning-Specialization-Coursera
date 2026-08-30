@@ -244,7 +244,7 @@ python3 13_agent_loop.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a safe arithmetic tool, argument validation, a tool runner that never raises, an action parser, the think-act-observe loop, a repeat guard, token accounting, and an evaluation suite with deliberate failures in it.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A task, in words</span><span class="fl-b">&ldquo;what is 3*(4+5)&rdquo;</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the model writes a line of text saying what it wants to do</span></li><li class="fl-loop"><span class="fl-loop-t">repeat, up to a step budget</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Think, and name an action</span><span class="fl-b"><code>Action: calc(expr='3*(4+5)')</code></span></li><li class="fl-arw"><span class="a">↓</span><span class="l">parse it &mdash; and this is where most failures happen</span></li><li class="fl k-op"><span class="fl-t">Validate</span><span class="fl-b">Does that tool exist? Are the arguments right? Reject before running anything.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">run it, inside a try/except</span></li><li class="fl k-op"><span class="fl-t">Observe</span><span class="fl-b">The result &mdash; <b>or the error</b>. An error is an observation, not a crash.</span></li><li class="fl k-back"><span class="fl-t">Feed it back in</span><span class="fl-b">and let the model decide the next step.</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the model says Final:, or the budget runs out</span></li><li class="fl k-out"><span class="fl-t">An answer, or an honest failure</span><span class="fl-b">&ldquo;I could not do this&rdquo; is a valid outcome and must be reachable.</span></li></ol><p class="flow-cap">The loop itself is about fifteen lines. Everything else in this file is the guard rails, which is roughly the ratio in a real agent too.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;An agent loop from scratch -- tools, parsing, and the ways it goes wrong.
 
 Run me:  python3 13_agent_loop.py
@@ -261,7 +261,10 @@ budget -- is exactly what you would keep when you swapped the stub for a real
 model. That plumbing is the part you have to get right.
 &quot;&quot;&quot;</span>
 <span class="tok-k">import</span> ast
-<span class="tok-k">import</span> re</code></pre></div></section>
+<span class="tok-k">import</span> re</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>An agent is a loop: <b>think, act, observe, repeat</b>. The loop is trivial. What
+makes an agent work or fail is everything around it.</p><div class="wpoint"><span class="wp-t">The point</span>This file has no language model in it. The &ldquo;planner&rdquo; is a scripted
+stand-in, so the loop, the parsing and the failure modes can be examined without any
+randomness. The failures shown here are the real ones.</div></div></section>
 <section class="sx" id="sx-tools"><div class="sx-prose"><p>A tool is a name, a declared argument shape, and a function. The declared shape is not paperwork — it is the only thing between a wrong guess and a stack trace in production. Note that <code>calc</code> parses to a syntax tree and refuses anything not on a list; never hand a string from a model straight to <code>eval</code>.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A tool is three things: a name, a declared shape for its arguments, and a</span>
 <span class="tok-c"># function. The declared shape is not paperwork -- it is the only thing</span>
 <span class="tok-c"># standing between a wrong guess and a stack trace in production.</span>
@@ -315,7 +318,10 @@ TOOLS = {
                 <span class="tok-s">&quot;help&quot;</span>: &quot;look a term up <span class="tok-k">in</span> the notes, e.g. lookup(topic=<span class="tok-s">&#x27;entropy&#x27;</span>)&quot;},
 }
 <span class="tok-k">for</span> name, t <span class="tok-k">in</span> TOOLS.items():
-    <span class="tok-k">print</span>(<span class="tok-s">&quot;%-8s %-38s args %s&quot;</span> % (name, t[<span class="tok-s">&quot;help&quot;</span>][:<span class="tok-n">38</span>], list(t[<span class="tok-s">&quot;args&quot;</span>])))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     evaluate an arithmetic expression, e.g args [&#x27;expr&#x27;]
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;%-8s %-38s args %s&quot;</span> % (name, t[<span class="tok-s">&quot;help&quot;</span>][:<span class="tok-n">38</span>], list(t[<span class="tok-s">&quot;args&quot;</span>])))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Three tools, each with a name, a description, and a declared list of
+arguments.</p><div class="wvals"><span class="wv-t">the tool registry</span><table><tr><td class="wv-l">calc</td><td class="wv-v">evaluate an arithmetic expression</td><td class="wv-n">args: <code>expr</code></td></tr><tr><td class="wv-l">convert</td><td class="wv-v">convert one unit to another</td><td class="wv-n">args: <code>value, frm, to</code></td></tr><tr><td class="wv-l">lookup</td><td class="wv-v">look a term up in the notes</td><td class="wv-n">args: <code>topic</code></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The <b>declared argument list</b> is the important part. It is what the
+description shown to the model is built from, and it is what makes validation possible before
+anything runs.</div></div><div class="sx-out"><span class="lbl">output</span><pre>calc     evaluate an arithmetic expression, e.g args [&#x27;expr&#x27;]
 convert  convert one unit to another, e.g. conv args [&#x27;value&#x27;, &#x27;frm&#x27;, &#x27;to&#x27;]
 lookup   look a term up in the notes, e.g. look args [&#x27;topic&#x27;]</pre></div></section>
 <section class="sx" id="sx-validate"><div class="sx-prose"><p>Check before running, and return something the caller can act on. <i>unknown argument radius</i> is repairable. A traceback is not.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> validate(name, kwargs):
@@ -343,7 +349,12 @@ lookup   look a term up in the notes, e.g. look args [&#x27;topic&#x27;]</pre></
                  (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-s">&quot;two&quot;</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;m&quot;</span>}),
                  (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;entropy&quot;</span>, <span class="tok-s">&quot;depth&quot;</span>: <span class="tok-n">3</span>}),
                  (<span class="tok-s">&quot;browse&quot;</span>, {<span class="tok-s">&quot;url&quot;</span>: <span class="tok-s">&quot;x&quot;</span>})]:
-    <span class="tok-k">print</span>(&quot;%-8s %-42s -&gt; %s<span class="tok-s">&quot; % (name, str(kw), validate(name, dict(kw)) or &quot;</span>ok&quot;))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;2+2&#x27;}                            -&gt; ok
+    <span class="tok-k">print</span>(&quot;%-8s %-42s -&gt; %s<span class="tok-s">&quot; % (name, str(kw), validate(name, dict(kw)) or &quot;</span>ok&quot;))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Check the call <b>before</b> executing it. Five ways a call can be wrong, each
+caught with a specific message.</p><div class="wvals"><span class="wv-t">validation results</span><table><tr><td class="wv-l">calc {'expr': '2+2'}</td><td class="wv-v">ok</td><td class="wv-n"></td></tr><tr><td class="wv-l">calc {}</td><td class="wv-v">rejected</td><td class="wv-n">missing argument(s): expr</td></tr><tr><td class="wv-l">convert {'value': 'two', ...}</td><td class="wv-v">rejected</td><td class="wv-n">value should be float</td></tr><tr><td class="wv-l">lookup {'topic': 'x', 'depth': 3}</td><td class="wv-v">rejected</td><td class="wv-n">unexpected argument(s): depth</td></tr><tr><td class="wv-l">browse {'url': 'x'}</td><td class="wv-v">rejected</td><td class="wv-n">no such tool; available: calc, convert, lookup</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Every message says <b>what was wrong</b> and, for the unknown tool, <b>what
+was available</b>. That is deliberate: the message goes back to the model as an observation,
+so it is a <b>prompt</b>, not a <span class="gterm" data-g="logarithm-f0">log</span> line.</div><p>&ldquo;no such tool 'browse'&rdquo; on its own invites another guess.
+&ldquo;available: calc, convert, lookup&rdquo; lets the model recover on the next step. Error
+text is part of the interface.</p></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;2+2&#x27;}                            -&gt; ok
 calc     {}                                         -&gt; calc is missing argument(s): expr
 convert  {&#x27;value&#x27;: &#x27;two&#x27;, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;: &#x27;m&#x27;}   -&gt; convert: argument value should be float, got &#x27;two&#x27;
 lookup   {&#x27;topic&#x27;: &#x27;entropy&#x27;, &#x27;depth&#x27;: 3}           -&gt; lookup got unexpected argument(s): depth
@@ -367,7 +378,13 @@ browse   {&#x27;url&#x27;: &#x27;x&#x27;}                               -&gt; no
                  (<span class="tok-s">&quot;calc&quot;</span>, {<span class="tok-s">&quot;expr&quot;</span>: <span class="tok-s">&quot;1/0&quot;</span>}), (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-n">2.5</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;m&quot;</span>}),
                  (<span class="tok-s">&quot;convert&quot;</span>, {<span class="tok-s">&quot;value&quot;</span>: <span class="tok-n">1</span>, <span class="tok-s">&quot;frm&quot;</span>: <span class="tok-s">&quot;km&quot;</span>, <span class="tok-s">&quot;to&quot;</span>: <span class="tok-s">&quot;kg&quot;</span>}),
                  (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;entropy&quot;</span>}), (<span class="tok-s">&quot;lookup&quot;</span>, {<span class="tok-s">&quot;topic&quot;</span>: <span class="tok-s">&quot;the offside rule&quot;</span>})]:
-    <span class="tok-k">print</span>(&quot;%-8s %-34s -&gt; %s&quot; % (name, str(kw)[:<span class="tok-n">34</span>], run_tool(name, kw)[:<span class="tok-n">64</span>]))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;}                -&gt; 27
+    <span class="tok-k">print</span>(&quot;%-8s %-34s -&gt; %s&quot; % (name, str(kw)[:<span class="tok-n">34</span>], run_tool(name, kw)[:<span class="tok-n">64</span>]))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now run it &mdash; with everything wrapped so that <b>nothing a tool does can kill
+the loop</b>.</p><div class="wvals"><span class="wv-t">the tool runner</span><table><tr><td class="wv-l">calc 3*(4+5)</td><td class="wv-v">27</td><td class="wv-n">fine</td></tr><tr><td class="wv-l">calc __import__('os')</td><td class="wv-v">ERROR</td><td class="wv-n"><b>blocked</b>: not allowed in an expression</td></tr><tr><td class="wv-l">calc 1/0</td><td class="wv-v">ERROR</td><td class="wv-n">ZeroDivisionError, caught</td></tr><tr><td class="wv-l">convert 2.5 km to m</td><td class="wv-v">2500.0</td><td class="wv-n">fine</td></tr><tr><td class="wv-l">convert 1 km to kg</td><td class="wv-v">ERROR</td><td class="wv-n">no conversion from km to kg</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The second row is the one that matters. A calculator that evaluates arbitrary
+text is a <b>remote code execution hole</b> &mdash; and the input comes from a model, which
+takes its input from a user. The expression is checked against an allowlist before
+evaluation.</div><p>Every other error becomes a <b>string</b>. Division by zero does not crash the
+agent; it becomes an observation the model can read and respond to. That is the design rule
+for the whole loop.</p></div><div class="sx-out"><span class="lbl">output</span><pre>calc     {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;}                -&gt; 27
 calc     {&#x27;expr&#x27;: &quot;__import__(&#x27;os&#x27;)&quot;}       -&gt; ERROR: ValueError: not allowed in an expression: Call
 calc     {&#x27;expr&#x27;: &#x27;1/0&#x27;}                    -&gt; ERROR: ZeroDivisionError: division by zero
 convert  {&#x27;value&#x27;: 2.5, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;:  -&gt; 2500.0
@@ -402,7 +419,12 @@ KWARG = re.compile(r&quot;(\w+)\s*=\s*(?:<span class="tok-s">&#x27;([^&#x27;</sp
              <span class="tok-s">&quot;Action: calc(3*(4+5))&quot;</span>,
              &quot;Action: calc(expr=<span class="tok-s">&#x27;3*(4+5)&#x27;</span>&quot;]:
     got, err = parse_action(text)
-    <span class="tok-k">print</span>(&quot;%-46s -&gt; %s<span class="tok-s">&quot; % (repr(text.replace(&quot;</span>\n<span class="tok-s">&quot;, &quot;</span> | <span class="tok-s">&quot;))[:46], got or &quot;</span>FAILED: &quot; + err))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>&quot;Thought: I should multiply. | Action: calc(ex -&gt; (&#x27;calc&#x27;, {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;})
+    <span class="tok-k">print</span>(&quot;%-46s -&gt; %s<span class="tok-s">&quot; % (repr(text.replace(&quot;</span>\n<span class="tok-s">&quot;, &quot;</span> | <span class="tok-s">&quot;))[:46], got or &quot;</span>FAILED: &quot; + err))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Reading the model's intention out of free text. This is where real agents break most
+often.</p><div class="wvals"><span class="wv-t">five inputs, three of them failures</span><table><tr><td class="wv-l">Thought: ... | Action: calc(expr='3*(4+5)')</td><td class="wv-v">parsed</td><td class="wv-n">the happy path</td></tr><tr><td class="wv-l">Action: convert(value=2.5, frm='km', to='m')</td><td class="wv-v">parsed</td><td class="wv-n">three arguments</td></tr><tr><td class="wv-l">I think the answer is 27.</td><td class="wv-v">FAILED</td><td class="wv-n">no Action: line</td></tr><tr><td class="wv-l">Action: calc(3*(4+5))</td><td class="wv-v">FAILED</td><td class="wv-n">positional, not named</td></tr><tr><td class="wv-l">Action: calc(expr='3*(4+5)'</td><td class="wv-v">FAILED</td><td class="wv-n">unclosed bracket</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Three of the five fail</b>, and none of them is exotic. A model that
+answers in prose instead of calling a tool, forgets to name its arguments, or drops a
+bracket &mdash; these are the everyday failures, not the edge cases.</div><p>Which is why modern APIs offer <b>structured tool calling</b>: the model emits
+JSON against a schema and the parsing problem largely disappears. This file parses text to
+show you what that feature is <b>for</b>.</p></div><div class="sx-out"><span class="lbl">output</span><pre>&quot;Thought: I should multiply. | Action: calc(ex -&gt; (&#x27;calc&#x27;, {&#x27;expr&#x27;: &#x27;3*(4+5)&#x27;})
 &quot;Action: convert(value=2.5, frm=&#x27;km&#x27;, to=&#x27;m&#x27;)&quot; -&gt; (&#x27;convert&#x27;, {&#x27;value&#x27;: &#x27;2.5&#x27;, &#x27;frm&#x27;: &#x27;km&#x27;, &#x27;to&#x27;: &#x27;m&#x27;})
 &#x27;I think the answer is 27.&#x27;                    -&gt; FAILED: no Action: line found
 &#x27;Action: calc(3*(4+5))&#x27;                        -&gt; FAILED: could not read the arguments: &#x27;3*(4+5)&#x27;
@@ -443,7 +465,9 @@ NUM = r<span class="tok-s">&quot;[-+]?\d*\.?\d+&quot;</span>
             <span class="tok-k">return</span> &quot;Thought: arithmetic.\nAction: calc(expr=<span class="tok-s">&#x27;%s&#x27;</span>)&quot; % expr.group(<span class="tok-n">1</span>).strip()
     <span class="tok-k">if</span> observations:
         <span class="tok-k">return</span> <span class="tok-s">&quot;Final: %s&quot;</span> % observations[-<span class="tok-n">1</span>]
-    <span class="tok-k">return</span> <span class="tok-s">&quot;Final: I do not know.&quot;</span></code></pre></div></section>
+    <span class="tok-k">return</span> <span class="tok-s">&quot;Final: I do not know.&quot;</span></code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The planner &mdash; the piece a real system replaces with a language model. Here it
+is scripted, so the loop's behaviour is completely reproducible and every failure below is
+deliberate rather than lucky.</p></div></section>
 <section class="sx" id="sx-loop"><div class="sx-prose"><p>Think, act, observe, repeat. Four tasks, and the third one needs two tools where the second feeds the first. That is the whole architecture; everything else on this page is a guard rail.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> agent(task, max_steps=<span class="tok-n">4</span>, feed_observations=<span class="tok-k">True</span>, verbose=<span class="tok-k">False</span>):
     <span class="tok-d">&quot;&quot;&quot;think -&gt; act -&gt; observe -&gt; repeat. Everything else is a guard rail.&quot;&quot;&quot;</span>
     observations, transcript, seen = [], [], []
@@ -471,7 +495,14 @@ NUM = r<span class="tok-s">&quot;[-+]?\d*\.?\d+&quot;</span>
              <span class="tok-s">&quot;convert 3 day in hour then divided by 4&quot;</span>, <span class="tok-s">&quot;what does entropy mean&quot;</span>]:
     <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntask:&quot;</span>, task)
     answer, tr, why = agent(task, verbose=<span class="tok-k">True</span>)
-    <span class="tok-k">print</span>(&quot;   -&gt; %s   (%s, %d steps)&quot; % (answer, why, len(tr)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(&quot;   -&gt; %s   (%s, %d steps)&quot; % (answer, why, len(tr)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The loop itself. Note how short the trace is.</p><div class="wart"><pre>  task: what is 3*(4+5)
+     step 1: Action: calc(expr='3*(4+5)')
+             observation: 27
+     step 2: Final: 27
+     -> 27   (finished, 2 steps)</pre></div><div class="wpoint"><span class="wp-t">The point</span>Think, act, observe, repeat, stop. The observation from step 1 is what lets
+step 2 finish &mdash; the model does not compute anything itself, it <b>reads the result of
+the tool</b>.</div><p>That is the whole mechanism. Everything that makes agents hard is in the guards
+around this, not in the loop.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 task: what is 3*(4+5)
    step 1: Thought: arithmetic. | Action: calc(expr=&#x27;3*(4+5)&#x27;)
       observation: 27
@@ -515,7 +546,11 @@ ans, tr, why = agent(<span class="tok-s">&quot;anything&quot;</span>, max_steps=
 policy = _real
 <span class="tok-k">print</span>(&quot;    -&gt; %r  (%s after %d steps, <span class="tok-k">not</span> <span class="tok-n">20</span>)&quot; % (ans, why, len(tr)))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Without that guard this is the classic runaway agent: a model that keeps&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;choosing the same action, each step costing a full call.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>1. a tool that errors -- the error is an observation, not a crash
+<span class="tok-k">print</span>(<span class="tok-s">&quot;choosing the same action, each step costing a full call.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Four things that must not kill the agent, each demonstrated.</p><div class="wcases"><span class="wk-t">the two shown in the output</span><div class="wk-row"><div class="wk-case"><span class="wk-h">1 &middot; A tool that errors</span><div class="wk-b">The error becomes an <b>observation</b>, not a crash. The agent reports it and stops cleanly.</div></div><div class="wk-case"><span class="wk-h">2 &middot; A task it cannot progress on</span><div class="wk-b">It must <b>give up</b>, not loop forever. A step budget makes that guaranteed rather than hopeful.</div></div></div></div><div class="wpoint"><span class="wp-t">The point</span>&ldquo;<b>I could not do this</b>&rdquo; has to be a <b>reachable</b> outcome.
+An agent with no way to fail does not succeed more often &mdash; it just fails in a more
+expensive and less legible way, usually by looping.</div><p>A repeated-action check matters too: if the agent proposes the <b>same call
+twice</b> and got the same observation, it is stuck. Nothing about the next iteration will
+differ, so stopping is correct.</p></div><div class="sx-out"><span class="lbl">output</span><pre>1. a tool that errors -- the error is an observation, not a crash
    step 1: Thought: convert first. | Action: convert(value=1, frm=&#x27;km&#x27;, to=&#x27;minute&#x27;)
       observation: ERROR: ValueError: no conversion from km to minute
    step 2: Final: ERROR: ValueError: no conversion from km to minute
@@ -551,7 +586,12 @@ choosing the same action, each step costing a full call.</pre></div></section>
     <span class="tok-k">print</span>(<span class="tok-s">&quot;%-42s %d steps, ~%d tokens, ~$%.5f&quot;</span> % (task, steps, tok, cost))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Now imagine 30 steps and a 4000-token system prompt resent every time.&quot;</span>)
 <span class="tok-k">print</span>(&quot;Step count <span class="tok-k">is</span> the cost driver, which <span class="tok-k">is</span> why <span class="tok-s">&#x27;let it keep trying&#x27;</span> <span class="tok-k">is</span> an&quot;)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;expensive default.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>what is 3*(4+5)                            2 steps, ~12 tokens, ~$0.00004
+<span class="tok-k">print</span>(<span class="tok-s">&quot;expensive default.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Finally, count what it cost. This is the number that decides whether an agent is
+viable in production.</p><div class="wchain"><span class="wc-i">what is 3*(4+5)</span><span class="wc-a">→</span><span class="wc-i">2 steps</span><span class="wc-a">→</span><span class="wc-i">~12 tokens</span><span class="wc-a">→</span><span class="wc-i">~$0.00004</span><span class="wc-cap">one simple task, fully costed</span></div><div class="wpoint"><span class="wp-t">The point</span>Fractions of a penny here &mdash; but the loop sends <b>the whole growing
+transcript</b> on every step. Costs rise <b><span class="gterm" data-g="cubic">quadratically</span></b> with steps, not linearly,
+because step 10 re-sends everything from steps 1 to 9.</div><p>So a ten-step agent is not five times a two-step agent. It is more like twenty-five
+times. That is why step budgets are a <b>cost control</b> as much as a safety measure, and
+why compacting the transcript is one of the first optimisations any real agent needs.</p></div><div class="sx-out"><span class="lbl">output</span><pre>what is 3*(4+5)                            2 steps, ~12 tokens, ~$0.00004
 convert 3 day in hour then divided by 4    3 steps, ~47 tokens, ~$0.00014
 Now imagine 30 steps and a 4000-token system prompt resent every time.
 Step count is the cost driver, which is why &#x27;let it keep trying&#x27; is an
@@ -596,7 +636,18 @@ survivors = [t <span class="tok-k">for</span> t, w <span class="tok-k">in</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;every tool, guard, validator and budget above stays exactly as written.&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nIt also brings a failure the stub cannot have -- proposing a call that&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;is well-formed, plausible, and wrong. That is what the validator, the&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;repeat guard and the step budget are really defending against.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>solved 10 of 12 with observations fed back
+<span class="tok-k">print</span>(<span class="tok-s">&quot;repeat guard and the step budget are really defending against.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last experiment, and it isolates what the loop is actually <b>for</b>. Twelve
+tasks, run twice.</p><div class="wchainset"><span class="wcs-t">the only difference is whether the tool result comes back in</span><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> observations fed back </span><span class="wc-a">→</span><span class="wc-i">solved 10 of 12</span></span><span class="wcs-n">the normal loop</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> observations NOT fed back </span><span class="wc-a">→</span><span class="wc-i">solved <b>1</b> of 12</span></span><span class="wcs-n">the same planner, blind</span></div></div><div class="wpoint"><span class="wp-t">The point</span>And the single task that still &ldquo;works&rdquo; blind is <b>&ldquo;write me
+a poem about eigenvalues&rdquo;</b> &mdash; which works by <b>declining</b>. It needs no
+tool, so there is nothing to feed back.</div><p>Nothing that requires a tool completes, multi-step or not. Without the observation
+the planner cannot tell it has <b>finished</b>, so it proposes the same action again, and the
+repeat guard stops it.</p><div class="wpoint"><span class="wp-t">The point</span><b>The loop is not a refinement. It is the mechanism.</b> An agent is not a
+model that calls a tool &mdash; it is a model that <b>reads the result</b>.</div><p>The two failures are worth naming too: <i>&ldquo;remind me what entropy is&rdquo;</i>
+and <i>&ldquo;take 3 days in hours and halve it&rdquo;</i>. Both need exactly the same tools as
+tasks that pass &mdash; they are <b>phrasings</b> the scripted stub cannot recognise, not new
+capabilities.</p><div class="wpoint"><span class="wp-t">The point</span>That gap is precisely what a real language model buys you, and it is the
+<b>only</b> thing it buys. Every tool, guard, validator, parser and budget above stays exactly
+as it is.</div></div><div class="sx-out"><span class="lbl">output</span><pre>solved 10 of 12 with observations fed back
 solved 1 of 12 WITHOUT feeding observations back
 the only thing that still works blind: [&#x27;write me a poem about eigenvalues&#x27;]
 

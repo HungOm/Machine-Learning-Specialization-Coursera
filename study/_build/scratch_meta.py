@@ -5,6 +5,16 @@ import walk_01
 import walk_02
 import walk_03
 import walk_04
+import walk_05
+import walk_06
+import walk_07
+import walk_08
+import walk_09
+import walk_10
+import walk_11
+import walk_12
+import walk_13
+import walk_14
 
 LANE = [
 dict(file="01_linear_regression.py", slug="01-linear-regression",
@@ -234,7 +244,9 @@ dict(file="05_softmax.py", slug="05-softmax",
               "same three logits give a softmax that sums to 1 — the classes compete "
               "— or three independent sigmoids that do not. A photo can contain a car "
               "and a bus; softmax structurally cannot say so.</p>",
-     }),
+     },
+     walk=walk_05.WALK,
+     picture=walk_05.PICTURE),
 
 dict(file="06_decision_tree.py", slug="06-decision-tree",
      title="A decision tree",
@@ -270,7 +282,9 @@ dict(file="06_decision_tree.py", slug="06-decision-tree",
            "there is nothing to learn — and watch training accuracy climb towards "
            "1.0 as depth increases. A tree can always memorise. 100% training "
            "accuracy from a tree is a warning, not a result.</p>",
-     }),
+     },
+     walk=walk_06.WALK,
+     picture=walk_06.PICTURE),
 
 dict(file="07_kmeans.py", slug="07-kmeans",
      title="k-means",
@@ -311,7 +325,9 @@ dict(file="07_kmeans.py", slug="07-kmeans",
          "is the right answer. Note J never rises with k: at k = m every point is "
          "its own cluster and J is exactly zero, so you can never choose k by "
          "minimising J.</p>",
-     }),
+     },
+     walk=walk_07.WALK,
+     picture=walk_07.PICTURE),
 
 dict(file="08_pca.py", slug="08-pca",
      title="PCA",
@@ -348,7 +364,9 @@ dict(file="08_pca.py", slug="08-pca",
               "ones plus noise — and the cumulative variance jumps to 0.999 at "
               "exactly three components. PCA found the true dimensionality without "
               "being told it.</p>",
-     }),
+     },
+     walk=walk_08.WALK,
+     picture=walk_08.PICTURE),
 
 dict(file="09_collaborative_filtering.py", slug="09-collaborative-filtering",
      title="Collaborative filtering",
@@ -390,7 +408,9 @@ dict(file="09_collaborative_filtering.py", slug="09-collaborative-filtering",
 "related": "<p>Similar films fall out for free, with no user involved: just compare "
            "the learned feature vectors. The three romances cluster and the two "
            "action films cluster, and nobody ever told the model what a genre is.</p>",
-     }),
+     },
+     walk=walk_09.WALK,
+     picture=walk_09.PICTURE),
 
 dict(file="10_reinforcement_learning.py", slug="10-reinforcement-learning",
      title="Reinforcement learning",
@@ -429,7 +449,9 @@ dict(file="10_reinforcement_learning.py", slug="10-reinforcement-learning",
                "never tries the action that looked worse first, so that action keeps "
                "its initial estimate forever and the policy comes out wrong. Any "
                "exploration at all fixes it.</p>",
-     }),
+     },
+     walk=walk_10.WALK,
+     picture=walk_10.PICTURE),
 
 dict(file="11_retrieval.py", slug="11-retrieval",
      title="Retrieval, the R in RAG",
@@ -506,7 +528,9 @@ knowing when to return <em>nothing</em> matters as much as ranking well.</p>""",
            "always returns its top k however irrelevant, and a model handed irrelevant "
            "notes still answers, fluently. A good share of what gets called "
            "hallucination is retrieval that should have said nothing.</p>",
-     }),
+     },
+     walk=walk_11.WALK,
+     picture=walk_11.PICTURE),
 
 dict(file="12_fine_tuning.py", slug="12-fine-tuning",
      title="Fine-tuning: head, full, and LoRA",
@@ -573,7 +597,9 @@ same reason it always did.</p>""",
 "data_size": "<p>And the other axis. By 5000 examples every method lands within a point "
              "or two of every other. Fine-tuning pays in the middle band, where you "
              "have enough data to steer a model but not enough to raise one.</p>",
-     }),
+     },
+     walk=walk_12.WALK,
+     picture=walk_12.PICTURE),
 
 dict(file="13_agent_loop.py", slug="13-agent-loop",
      title="An agent loop, and how it breaks",
@@ -638,7 +664,9 @@ loop needs a repeat guard, a step budget, and an evaluation suite with deliberat
             "capabilities \u2014 which is precisely what a real model buys you, and the "
             "only thing it buys. Every tool, guard and validator above stays as "
             "written.</p>",
-     }),
+     },
+     walk=walk_13.WALK,
+     picture=walk_13.PICTURE),
 
 dict(file="14_mlops.py", slug="14-mlops",
      title="After the model works",
@@ -691,5 +719,7 @@ dict(file="14_mlops.py", slug="14-mlops",
 "checklist": "<p>Eight questions, none of them modelling questions. That is the "
              "lesson of the lane's last file: once the model works, almost nothing "
              "that goes wrong afterwards is the model's fault.</p>",
-     }),
+     },
+     walk=walk_14.WALK,
+     picture=walk_14.PICTURE),
 ]

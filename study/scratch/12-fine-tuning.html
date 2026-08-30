@@ -244,7 +244,7 @@ python3 12_fine_tuning.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a pretrained network, a from-scratch baseline, head-only training, full fine-tuning, LoRA with its own gradients derived by hand, a rank sweep, and two sweeps that show what actually decides whether transfer works.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A model that already knows a lot</span><span class="fl-b">Pretrained on <b>20,000</b> examples of task A. Scores 0.8870 on it.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">and now a new task, with only 60 examples</span></li><li class="fl k-op"><span class="fl-t">Three ways to adapt it</span><span class="fl-b">Train the <b>head</b> only, train <b>everything</b>, or bolt on a small <b>adapter</b> and train that.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">each one costs something different</span></li><li class="fl k-op"><span class="fl-t">Measure BOTH tasks</span><span class="fl-b">Not just the new one. What the model <b>forgot</b> is the number nobody reports.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">and compare against the honest baseline</span></li><li class="fl k-out"><span class="fl-t">A verdict table</span><span class="fl-b">How many parameters moved, what you gained on B, and what you lost on A.</span></li></ol><p class="flow-cap">The point of this file is the second column of that final table. Fine-tuning papers report task B; the cost is always paid on task A.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Fine-tuning from scratch -- head-only, full, and LoRA, in pure NumPy.
 
 Run me:  python3 12_fine_tuning.py
@@ -256,7 +256,9 @@ related task three different ways and measures what each one costs and breaks.
 &quot;&quot;&quot;</span>
 <span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
-rng = np.random.default_rng(<span class="tok-n">7</span>)</code></pre></div></section>
+rng = np.random.default_rng(<span class="tok-n">7</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>This is the practical shape of most modern machine learning: somebody else trained
+a large model, and you have a small amount of data for a related task.</p><div class="wpoint"><span class="wp-t">The point</span>The file measures <b>three</b> ways of adapting it, and &mdash; crucially
+&mdash; measures what each one <b>destroys</b> as well as what it gains.</div></div></section>
 <section class="sx" id="sx-tasks"><div class="sx-prose"><p>20000 examples of the task you do not care about, 60 of the task you do. That ratio is the entire situation and it is why any of this exists.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Two tasks over the same 20 inputs. Task A (pretraining) has 20000 examples;</span>
 <span class="tok-c"># task B (the downstream job) has 60. That ratio is the whole situation: you</span>
 <span class="tok-c"># have a lot of general data and very little of the data you actually care</span>
@@ -285,7 +287,11 @@ XB_te, yB_te = make_task(<span class="tok-n">4000</span>, MIX_B, <span class="to
 <span class="tok-k">print</span>(&quot;task B (downstream): %d train, %d test  &lt;- this <span class="tok-k">is</span> the realistic part&quot;
       % (len(XB), len(XB_te)))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;both label rules read the same 6 latent directions, weighted differently&quot;</span>)
-<span class="tok-k">print</span>(&quot;-- which <span class="tok-k">is</span> what <span class="tok-s">&#x27;a related task&#x27;</span> means <span class="tok-k">and</span> why transfer can work at all&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>task A (pretrain) : 20000 train, 4000 test
+<span class="tok-k">print</span>(&quot;-- which <span class="tok-k">is</span> what <span class="tok-s">&#x27;a related task&#x27;</span> means <span class="tok-k">and</span> why transfer can work at all&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Two tasks, deliberately <b>related</b>.</p><div class="wvals"><span class="wv-t">the setup</span><table><tr><td class="wv-l">task A (pretrain)</td><td class="wv-v">20,000 train</td><td class="wv-n">the big one somebody else paid for</td></tr><tr><td class="wv-l">task B (downstream)</td><td class="wv-v"><b>60</b> train</td><td class="wv-n">yours. This is the realistic part</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Both label rules read the <b>same 6 latent directions</b>, weighted
+differently. That is what &ldquo;a related task&rdquo; means, made precise &mdash; and it is
+the whole reason transfer can work at all.</div><p>If the two tasks shared no structure, the pretrained weights would be worth
+nothing and starting from scratch would be just as good. The <b>relatedness sweep</b> later
+in this file tests exactly that.</p></div><div class="sx-out"><span class="lbl">output</span><pre>task A (pretrain) : 20000 train, 4000 test
 task B (downstream): 60 train, 4000 test  &lt;- this is the realistic part
 both label rules read the same 6 latent directions, weighted differently
 -- which is what &#x27;a related task&#x27; means and why transfer can work at all</pre></div></section>
@@ -322,7 +328,9 @@ both label rules read the same 6 latent directions, weighted differently
 P0 = init(<span class="tok-n">0</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;parameters: %d&quot;</span> % n_params(P0))
 <span class="tok-k">for</span> k, v <span class="tok-k">in</span> P0.items():
-    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %-3s %-9s %6d&quot;</span> % (k, str(v.shape), v.size))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>parameters: 5764
+    <span class="tok-k">print</span>(<span class="tok-s">&quot;   %-3s %-9s %6d&quot;</span> % (k, str(v.shape), v.size))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A small network, so every experiment runs in seconds.</p><div class="wvals"><span class="wv-t">parameters</span><table><tr><td class="wv-l">W1 (20, 64)</td><td class="wv-v">1,280</td><td class="wv-n"></td></tr><tr><td class="wv-l">b1 (64,)</td><td class="wv-v">64</td><td class="wv-n"></td></tr><tr><td class="wv-l">W2 (64, 64)</td><td class="wv-v">4,096</td><td class="wv-n"></td></tr><tr><td class="wv-l">b2 (64,)</td><td class="wv-v">64</td><td class="wv-n"></td></tr><tr><td class="wv-l">total</td><td class="wv-v"><b>5,764</b></td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>5,764 parameters is tiny, and the <b>proportions</b> are what matter. A real
+model has billions arranged the same way, and the ratios between the three methods below
+hold up at that scale.</div></div><div class="sx-out"><span class="lbl">output</span><pre>parameters: 5764
    W1  (20, 64)    1280
    b1  (64,)         64
    W2  (64, 64)    4096
@@ -373,7 +381,10 @@ sgd(BASE, XA, yA, <span class="gterm" data-g="kwepochs-api">epochs=</span><span 
 ACC_A = accuracy(BASE, XA_te, yA_te)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;pretrained model on task A: %.4f&quot;</span> % ACC_A)
 <span class="tok-k">print</span>(&quot;the same model on task B  : %.4f  &lt;- related <span class="tok-k">is</span> <span class="tok-k">not</span> the same&quot; %
-      accuracy(BASE, XB_te, yB_te))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>   epoch  2  loss 0.2382
+      accuracy(BASE, XB_te, yB_te))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Train on task A's 20,000 examples. This is the expensive step you are trying to
+avoid repeating.</p><div class="wchain"><span class="wc-i">20,000 examples</span><span class="wc-a">→</span><span class="wc-i">0.8870 on task A</span><span class="wc-cap">the model you are starting from</span></div><p>Note the loss wobbles &mdash; 0.2382, 0.2026, 0.2176, then <b>0.7154</b>. That is
+<span class="gterm" data-g="minibatch-native">mini-batch</span> noise, not divergence: each <span class="gterm" data-g="epoch-native">epoch</span> sees different batches, and small batches give
+noisy estimates. Only the trend matters.</p></div><div class="sx-out"><span class="lbl">output</span><pre>   epoch  2  loss 0.2382
    epoch  4  loss 0.2026
    epoch  6  loss 0.2176
    epoch  8  loss 0.7154
@@ -386,7 +397,11 @@ sgd(SCRATCH, XB, yB, <span class="gterm" data-g="kwepochs-api">epochs=</span><sp
 ACC_SCRATCH = accuracy(SCRATCH, XB_te, yB_te)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;trained from scratch on 60 examples: %.4f&quot;</span> % ACC_SCRATCH)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;train accuracy on those same 60    : %.4f&quot;</span> % accuracy(SCRATCH, XB, yB))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;Memorising 60 points is easy. Generalising from them is not.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>trained from scratch on 60 examples: 0.7400
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Memorising 60 points is easy. Generalising from them is not.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The honest comparison: <b>ignore the pretrained model entirely</b> and train from
+scratch on the 60 examples.</p><div class="wvals"><span class="wv-t">trained from scratch on 60 examples</span><table><tr><td class="wv-l">test accuracy</td><td class="wv-v">0.7400</td><td class="wv-n">on unseen task B data</td></tr><tr><td class="wv-l">train accuracy</td><td class="wv-v"><b>1.0000</b></td><td class="wv-n">on those same 60 examples</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Memorising 60 points is easy. Generalising from them is not.</b> Perfect
+training accuracy and 0.74 on new data is textbook <span class="gterm" data-g="overfitting-native">overfitting</span>, and with 60 examples and
+5,764 parameters it is unavoidable.</div><p>0.7400 is the number every other method has to beat. Without it, &ldquo;fine-tuning
+got 0.76&rdquo; means nothing at all.</p></div><div class="sx-out"><span class="lbl">output</span><pre>trained from scratch on 60 examples: 0.7400
 train accuracy on those same 60    : 1.0000
 Memorising 60 points is easy. Generalising from them is not.</pre></div></section>
 <section class="sx" id="sx-head_only"><div class="sx-prose"><p>Read the task A line twice. It got <b>worse</b>, even though the body never moved — because the head belongs to task A too, and you just retrained it on something else. Freezing the body is not the same as keeping the old behaviour, and almost every explanation of this implies that it is.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> clone(p):
@@ -402,7 +417,11 @@ n_head = BASE[<span class="tok-s">&quot;W3&quot;</span>].size + BASE[<span class
 <span class="tok-k">print</span>(<span class="tok-s">&quot;task A accuracy: %.4f  (was %.4f)&quot;</span> % (accuracy(HEAD, XA_te, yA_te), ACC_A))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Task A got worse even though the body never moved -- because the head is&quot;</span>)
 <span class="tok-k">print</span>(&quot;part of task A&<span class="tok-c">#x27;s model too, and you just retrained it on something else.&quot;)</span>
-<span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;Freezing the body&#x27;</span> does <span class="tok-k">not</span> mean <span class="tok-s">&#x27;keeping the old behaviour&#x27;</span>.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>head only: trained 260 of 5764 parameters (4.5%)
+<span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;Freezing the body&#x27;</span> does <span class="tok-k">not</span> mean <span class="tok-s">&#x27;keeping the old behaviour&#x27;</span>.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Method one: <b>freeze the body</b>, train only the final layer.</p><div class="wvals"><span class="wv-t">head-only fine-tuning</span><table><tr><td class="wv-l">trained</td><td class="wv-v">260 of 5,764</td><td class="wv-n"><b>4.5%</b></td></tr><tr><td class="wv-l">task B</td><td class="wv-v">0.7060</td><td class="wv-n"><b>worse</b> than from scratch (0.7400)</td></tr><tr><td class="wv-l">task A</td><td class="wv-v">0.6967</td><td class="wv-n">was 0.8870</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>It <b>lost</b> to training from scratch. With 60 examples the frozen features
+were not quite right for task B, and only 260 parameters were free to compensate.</div><p>And now the genuinely surprising row: <b>task A got worse too</b> &mdash; from
+0.8870 down to 0.6967 &mdash; <b>even though the body never moved</b>.</p><div class="wpoint"><span class="wp-t">The point</span>Why? Because <b>the head is part of task A's model too</b>. You froze the
+body and then retrained the one layer task A also depended on. &ldquo;Freezing&rdquo;
+protects the weights you froze, not the model as a whole.</div></div><div class="sx-out"><span class="lbl">output</span><pre>head only: trained 260 of 5764 parameters (4.5%)
 task B accuracy: 0.7060
 task A accuracy: 0.6967  (was 0.8870)
 Task A got worse even though the body never moved -- because the head is
@@ -415,7 +434,12 @@ ACC_FULL = accuracy(FULL, XB_te, yB_te)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;task B accuracy: %.4f&quot;</span> % ACC_FULL)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;task A accuracy: %.4f  (was %.4f)&quot;</span> % (accuracy(FULL, XA_te, yA_te), ACC_A))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;That drop is catastrophic forgetting. Nothing went wrong -- you asked&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;for the weights that fit 60 examples and you got them.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>full fine-tune: trained all 5764 parameters
+<span class="tok-k">print</span>(<span class="tok-s">&quot;for the weights that fit 60 examples and you got them.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Method two: <b>train everything</b>, starting from the pretrained weights.</p><div class="wvals"><span class="wv-t">full fine-tuning</span><table><tr><td class="wv-l">trained</td><td class="wv-v">5,764 of 5,764</td><td class="wv-n">all of them</td></tr><tr><td class="wv-l">task B</td><td class="wv-v"><b>0.7628</b></td><td class="wv-n">the best result so far</td></tr><tr><td class="wv-l">task A</td><td class="wv-v">0.7025</td><td class="wv-n">was 0.8870 &mdash; a drop of <b>0.18</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Best on task B, and it destroyed <b>18 accuracy points</b> on task A. That
+drop has a name: <b>catastrophic forgetting</b>.</div><p>And nothing went wrong. You asked gradient descent for the weights that fit 60
+examples of task B, and it gave you exactly that. It was never asked to preserve task A, so
+it did not.</p><div class="wpoint"><span class="wp-t">The point</span>This is why a fine-tuned model is a <b>different model</b>, not an upgraded
+one. If you need both tasks, you need both sets of weights &mdash; which for a large model
+means storing the whole thing twice.</div></div><div class="sx-out"><span class="lbl">output</span><pre>full fine-tune: trained all 5764 parameters
 task B accuracy: 0.7628
 task A accuracy: 0.7025  (was 0.8870)
 That drop is catastrophic forgetting. Nothing went wrong -- you asked
@@ -456,7 +480,13 @@ n_lora = LORA[<span class="tok-s">&quot;A&quot;</span>].size + LORA[<span class=
 <span class="tok-k">print</span>(&quot;task A accuracy WITHOUT the adapter: %.4f  &lt;- base weights never changed&quot;
       % accuracy(BASE, XA_te, yA_te))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;You can detach it. That is the property the parameter count does not&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;show and the reason one base model can serve many customers at once.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>LoRA r=4: trained 512 of 5764 parameters (8.9%)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;show and the reason one base model can serve many customers at once.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Method three: leave the base weights <b>untouched</b> and add a small trainable
+adapter alongside them.</p><div class="wvals"><span class="wv-t">LoRA, rank 4</span><table><tr><td class="wv-l">trained</td><td class="wv-v">512 of 5,764</td><td class="wv-n"><b>8.9%</b></td></tr><tr><td class="wv-l">task B</td><td class="wv-v">0.7435</td><td class="wv-n">beats from-scratch, beats head-only</td></tr><tr><td class="wv-l">task A with the adapter</td><td class="wv-v">0.6655</td><td class="wv-n"></td></tr><tr><td class="wv-l">task A <b>without</b> it</td><td class="wv-v"><b>0.8870</b></td><td class="wv-n"><b>exactly the original</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>That last row is the whole point. <b>0.8870 &mdash; the original number,
+unchanged.</b> The base weights were never modified, so removing the adapter restores the
+original model <b>exactly</b>. Not approximately.</div><p><b>You can detach it.</b> That is the property the parameter count does not show,
+and it is the reason one base model can serve many customers at once: one copy of the
+expensive weights, plus a small adapter per customer, swapped in per request.</p><div class="wpoint"><span class="wp-t">The point</span>Full fine-tuning cannot do this at any price. Its forgetting is baked into
+the weights.</div></div><div class="sx-out"><span class="lbl">output</span><pre>LoRA r=4: trained 512 of 5764 parameters (8.9%)
 task B accuracy: 0.7435
 task A accuracy WITH the adapter   : 0.6655
 task A accuracy WITHOUT the adapter: 0.8870  &lt;- base weights never changed
@@ -480,7 +510,10 @@ show and the reason one base model can serve many customers at once.</pre></div>
           % (d, d, d * d, <span class="tok-n">2</span> * d * <span class="tok-n">8</span>, <span class="tok-n">100</span> * <span class="tok-n">2</span> * <span class="tok-n">8.0</span> / d))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;That last line is why LoRA matters on real models and barely registers&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;here. And rank r can only move the weights in r directions -- if the task&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;needs more than that, the adapter cannot follow it.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  r   params  taskB   taskA(+adapter)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;needs more than that, the adapter cannot follow it.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>LoRA's rank <b>r</b> controls how big the adapter is. Sweep it.</p><div class="wvals"><span class="wv-t">rank against accuracy</span><table><tr><td class="wv-l">r = 1</td><td class="wv-v">128 params</td><td class="wv-n">task B 0.7183</td></tr><tr><td class="wv-l">r = 2</td><td class="wv-v">256 params</td><td class="wv-n">task B 0.7370</td></tr><tr><td class="wv-l">r = 4</td><td class="wv-v">512 params</td><td class="wv-n">task B 0.7435</td></tr><tr><td class="wv-l">r = 8</td><td class="wv-v">1,024 params</td><td class="wv-n">task B 0.7368</td></tr><tr><td class="wv-l">r = 16</td><td class="wv-v">2,048 params</td><td class="wv-n">task B 0.7532</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The curve is <b>flat and noisy</b>. Sixteen times the parameters buys about
+<b>0.035</b> accuracy, and it is not even monotonic &mdash; r = 8 scores worse than r = 4.</div><p>So the honest reading: with 60 examples, <b>rank barely matters</b>. There is not
+enough data to exploit a bigger adapter, and the variation between rows is mostly noise. Pick
+a small r and spend your attention elsewhere.</p></div><div class="sx-out"><span class="lbl">output</span><pre>  r   params  taskB   taskA(+adapter)
    1     128  0.7183  0.7115
    2     256  0.7370  0.6452
    4     512  0.7435  0.6655
@@ -507,7 +540,12 @@ needs more than that, the adapter cannot follow it.</pre></div></section>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  %-16s %7s    %.4f   %.4f&quot;</span> % (<span class="tok-s">&quot;(base, untouched)&quot;</span>, <span class="tok-s">&quot;0&quot;</span>,
                                       accuracy(BASE, XB_te, yB_te), ACC_A))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nThere is no winner column. Pick by what you are short of: data, compute,&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;memory, or the need to keep the original behaviour intact.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  method            trained    task B   task A after
+<span class="tok-k">print</span>(<span class="tok-s">&quot;memory, or the need to keep the original behaviour intact.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Everything in one table &mdash; and read the <b>last</b> column, which papers rarely
+print.</p><div class="wvals"><span class="wv-t">trained parameters, task B accuracy, task A afterwards</span><table><tr><td class="wv-l">from scratch</td><td class="wv-v">5,764 trained</td><td class="wv-n">B <b>0.7400</b> &middot; A after 0.6358</td></tr><tr><td class="wv-l">head only</td><td class="wv-v">260 trained</td><td class="wv-n">B 0.7060 &middot; A after 0.6967</td></tr><tr><td class="wv-l">full fine-tune</td><td class="wv-v">5,764 trained</td><td class="wv-n">B <b>0.7628</b> &middot; A after 0.7025</td></tr><tr><td class="wv-l">LoRA r=4</td><td class="wv-v">512 trained</td><td class="wv-n">B 0.7435 &middot; A after 0.6655</td></tr><tr><td class="wv-l">base, untouched</td><td class="wv-v">0 trained</td><td class="wv-n">B 0.6500 &middot; A <b>0.8870</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The bottom row is the reference point. The untouched base model already scores
+<b>0.65</b> on a task it was never trained for &mdash; that is transfer happening for free,
+before you do anything.</div><p>Full fine-tuning wins on B by about <b>2 points</b> over LoRA, and trains
+<b>11&times;</b> as many parameters to get them. Whether that is worth it depends entirely on
+whether you still need task A.</p></div><div class="sx-out"><span class="lbl">output</span><pre>  method            trained    task B   task A after
   from scratch        5764    0.7400   0.6358
   head only            260    0.7060   0.6967
   full fine-tune      5764    0.7628   0.7025
@@ -541,7 +579,13 @@ PERT = np.random.default_rng(<span class="tok-n">21</span>).normal(<span class="
 <span class="tok-k">print</span>(<span class="tok-s">&quot;That is the point most explanations skip: what transfers is not the&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;answers, it is the FEATURES. Both tasks read the same latent directions,&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;and a body that already knows how to extract them is worth having even&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;when it has been asked a completely different question.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  drift   base as-is   scratch   full FT   LoRA r=4
+<span class="tok-k">print</span>(<span class="tok-s">&quot;when it has been asked a completely different question.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Transfer works because the tasks are related. So how related do they have to be?
+This sweeps a <b>drift</b> parameter that pulls task B away from task A.</p><div class="wvals"><span class="wv-t">as task B drifts away from task A</span><table><tr><td class="wv-l">drift 0.0</td><td class="wv-v">base 0.8905</td><td class="wv-n">scratch 0.7250 &middot; full 0.8417 &middot; LoRA 0.8150</td></tr><tr><td class="wv-l">drift 0.3</td><td class="wv-v">base 0.8095</td><td class="wv-n">scratch 0.7228 &middot; full 0.8360</td></tr><tr><td class="wv-l">drift 0.6</td><td class="wv-v">base 0.7218</td><td class="wv-n">scratch 0.7205 &middot; full 0.7920</td></tr><tr><td class="wv-l">drift 0.9</td><td class="wv-v">base 0.6525</td><td class="wv-n">scratch 0.7103 &middot; full 0.8023</td></tr><tr><td class="wv-l">drift 1.5</td><td class="wv-v">base <b>0.5605</b></td><td class="wv-n">scratch 0.7087 &middot; full <b>0.8115</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Watch the <b>base as-is</b> column collapse: 0.89 &rarr; 0.56, until it is
+barely better than a coin flip. That is transfer failing, exactly as you would expect.</div><p>But look at <b>full fine-tune</b>: it stays around <b>0.80&ndash;0.84 the whole
+way</b>, and at drift 1.5 it beats from-scratch by <b>0.10</b>. Even when the tasks have
+almost nothing in common, starting from pretrained weights <b>still helps</b>.</p><div class="wpoint"><span class="wp-t">The point</span>So the pretrained model contributes two different things: <b>task-specific
+knowledge</b>, which drift destroys, and <b>generally useful structure</b>, which survives.
+The second is why pretraining is worth doing even for a distant task.</div></div><div class="sx-out"><span class="lbl">output</span><pre>  drift   base as-is   scratch   full FT   LoRA r=4
     0.0     0.8905     0.7250    0.8417    0.8150
     0.3     0.8095     0.7228    0.8360    0.8343
     0.6     0.7218     0.7205    0.7920    0.7640
@@ -578,7 +622,13 @@ when it has been asked a completely different question.</pre></div></section>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;than the differences at n=200 -- with 20 examples nothing works well&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;enough for the choice of method to matter. Fine-tuning pays in the&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;middle band, where you have enough data to steer a model but not enough&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;to raise one.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>   n_B   scratch   head   full   LoRA r=4
+<span class="tok-k">print</span>(<span class="tok-s">&quot;to raise one.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last question, and the one that decides which method you should use: <b>how much
+task B data do you have?</b></p><div class="wvals"><span class="wv-t">accuracy against how much task B data you have</span><table><tr><td class="wv-l">n = 20</td><td class="wv-v">scratch 0.6637</td><td class="wv-n">full 0.6683 &middot; LoRA 0.6530 &mdash; all equally bad</td></tr><tr><td class="wv-l">n = 60</td><td class="wv-v">scratch 0.7400</td><td class="wv-n">full <b>0.7628</b> &middot; LoRA 0.7435</td></tr><tr><td class="wv-l">n = 200</td><td class="wv-v">scratch 0.8195</td><td class="wv-n">full 0.8247 &middot; LoRA 0.7815</td></tr><tr><td class="wv-l">n = 1000</td><td class="wv-v">scratch 0.8452</td><td class="wv-n">full 0.8655 &middot; LoRA <b>0.8690</b></td></tr><tr><td class="wv-l">n = 5000</td><td class="wv-v">scratch <b>0.8708</b></td><td class="wv-n">full 0.8790 &middot; LoRA 0.8620</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The gap <b>closes</b>. At n = 60 fine-tuning beats scratch by 0.023; at
+n = 5000 it beats it by <b>0.008</b>, which is inside the noise.</div><p>That is the honest conclusion of the whole file: <b>fine-tuning is a fix for not
+having much data.</b> With plenty of task B data, training from scratch catches up &mdash;
+and you avoid the forgetting entirely.</p><div class="wpoint"><span class="wp-t">The point</span>It also explains why n = 20 shows nothing. Twenty examples is too few for
+<b>any</b> method to learn from; the differences between clever adaptation strategies only
+appear once there is something to adapt <b>to</b>.</div></div><div class="sx-out"><span class="lbl">output</span><pre>   n_B   scratch   head   full   LoRA r=4
      20   0.6637  0.6505  0.6683  0.6530
      60   0.7400  0.7060  0.7628  0.7435
     200   0.8195  0.7728  0.8247  0.7815

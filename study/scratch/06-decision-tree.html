@@ -244,7 +244,7 @@ python3 06_decision_tree.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built entropy, information gain, a recursive tree builder, continuous-feature thresholds, and a live demonstration of <span class="gterm" data-g="overfitting-native">overfitting</span>.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">Ten animals</span><span class="fl-b">Three yes/no features each, and whether it is a cat.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">measure the mess you are starting from</span></li><li class="fl k-op"><span class="fl-t">Entropy of the whole group</span><span class="fl-b">5 cats out of 10 is maximum mess: <b>H = 1.0</b>, exactly one bit.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">try every feature</span></li><li class="fl k-op"><span class="fl-t">Information gain, per feature</span><span class="fl-b">How much mess does splitting on this feature remove? <b>Weighted</b> by how many examples go each way.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">keep the best one</span></li><li class="fl k-back"><span class="fl-t">Split, and recurse</span><span class="fl-b">Each half becomes a new problem. Repeat on it, with fewer examples.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">pure enough, or too deep, or too few left</span></li><li class="fl k-out"><span class="fl-t">A tree of yes/no questions</span><span class="fl-b">Follow it down and the leaf you land on is the answer.</span></li></ol><p class="flow-cap">No gradients, no learning rate, no initialisation. Just counting, comparing and recursion &mdash; which is why it is the odd one out in this lane.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;A decision tree from scratch — C2 W4, no gradients anywhere.
 
 Run me:  python3 06_decision_tree.py
@@ -252,7 +252,10 @@ Run me:  python3 06_decision_tree.py
 Uses the exact ten-animal dataset from the lectures, so every number printed
 below can be checked against the slides.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Everything else in this lane descends a gradient. This file does not. There is no
+learning rate, no initialisation, nothing random, and no cost to minimise by stepping.</p><div class="wpoint"><span class="wp-t">The point</span>A decision tree is <b>greedy search</b>: take the best split available right
+now, recurse into both halves, stop when a rule says to. That is a genuinely different way
+of learning, and it is why trees need no feature scaling.</div></div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p>The lecture's dataset exactly: ten animals, three binary features, five cats. Everything below can be checked against the course slides.</p></div><div class="sx-code"><pre><code><span class="tok-c"># ear shape (1 = pointy), face shape (1 = round), whiskers (1 = present)</span>
 FEATURES = [<span class="tok-s">&quot;ear shape&quot;</span>, <span class="tok-s">&quot;face shape&quot;</span>, <span class="tok-s">&quot;whiskers&quot;</span>]
 X = <span class="gterm" data-g="nparray-api">np.array</span>([
@@ -260,7 +263,10 @@ X = <span class="gterm" data-g="nparray-api">np.array</span>([
     [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>], [<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>],
 ])
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>])
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;{len(y)} animals, {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))} of them cats&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>10 animals, 5 of them cats</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;{len(y)} animals, {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))} of them cats&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Ten animals, five of them cats. Three yes/no features: ear shape, face shape,
+whiskers.</p><div class="wpoint"><span class="wp-t">The point</span>Ten examples is far too few for anything real and exactly right for
+<b>checking by hand</b>. Every number this file prints can be verified with a pencil, which
+is the point.</div></div><div class="sx-out"><span class="lbl">output</span><pre>10 animals, 5 of them cats</pre></div></section>
 <section class="sx" id="sx-entropy"><div class="sx-prose"><p>Entropy is “how surprised would a random pick from this node make you”. Maximum at 50/50, zero when the node is pure. The 0·<span class="gterm" data-g="logarithm-f0">log</span> 0 case has to be special-cased because the formula would otherwise be 0 × −∞.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> entropy(y):
     <span class="tok-d">&quot;&quot;&quot;H(p) = -p log2 p - (1-p) log2 (1-p), with 0 log 0 taken as 0.&quot;&quot;&quot;</span>
     <span class="tok-k">if</span> len(y) == <span class="tok-n">0</span>:
@@ -273,7 +279,18 @@ y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nentropy at a few purities:&quot;</span>)
 <span class="tok-k">for</span> cats, total <span class="tok-k">in</span> [(<span class="tok-n">5</span>, <span class="tok-n">10</span>), (<span class="tok-n">8</span>, <span class="tok-n">10</span>), (<span class="tok-n">10</span>, <span class="tok-n">10</span>), (<span class="tok-n">0</span>, <span class="tok-n">10</span>), (<span class="tok-n">1</span>, <span class="tok-n">10</span>)]:
     yy = np.r_[<span class="gterm" data-g="npcreate-api">np.ones</span>(cats), <span class="gterm" data-g="npcreate-api">np.zeros</span>(total - cats)]
-    <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {cats}/{total} cats  p = {cats/total:.1f}  H = {entropy(yy):.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {cats}/{total} cats  p = {cats/total:.1f}  H = {entropy(yy):.4f}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Entropy measures <b>mess</b>. Read the table and the shape of the function becomes
+obvious.</p><div class="wvals"><span class="wv-t">entropy at a few purities</span><table><tr><td class="wv-l">5/10 cats</td><td class="wv-v">p = 0.5</td><td class="wv-n">H = <b>1.0000</b> &mdash; maximum mess</td></tr><tr><td class="wv-l">8/10 cats</td><td class="wv-v">p = 0.8</td><td class="wv-n">H = 0.7219</td></tr><tr><td class="wv-l">10/10 cats</td><td class="wv-v">p = 1.0</td><td class="wv-n">H = <b>0.0000</b> &mdash; perfectly pure</td></tr><tr><td class="wv-l">0/10 cats</td><td class="wv-v">p = 0.0</td><td class="wv-n">H = <b>0.0000</b> &mdash; also perfectly pure</td></tr><tr><td class="wv-l">1/10 cats</td><td class="wv-v">p = 0.1</td><td class="wv-n">H = 0.4690</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Note that <b>p = 0 and p = 1 both give zero</b>. Entropy measures mess, not
+cat-ness. All cats and no cats are equally tidy.</div><div class="wart"><pre>  H
+  1.0 |         ___
+      |      __/   \__
+      |    _/         \_
+      |  _/             \_
+  0.0 |_/                 \_
+      +----------------------- p
+      0        0.5         1</pre></div><p>Base <b>2</b> gives the answer in <b>bits</b>, which is why a 50/50 split comes
+out at exactly 1 &mdash; one yes/no question's worth of uncertainty. The intuition:
+<b>&ldquo;if I reach into this bag, how surprised will I be?&rdquo;</b></p></div><div class="sx-out"><span class="lbl">output</span><pre>
 entropy at a few purities:
   5/10 cats  p = 0.5  H = 1.0000
   8/10 cats  p = 0.8  H = 0.7219
@@ -299,7 +316,12 @@ entropy at a few purities:
           f<span class="tok-s">&quot;  right {len(right)} ({int(right<span class="gterm" data-g="npsum-api">.sum(</span>))} cats, H={entropy(right):.4f})&quot;</span>
           f<span class="tok-s">&quot;  gain = {information_gain(X, y, j):.4f}&quot;</span>)
 best = max(range(<span class="tok-n">3</span>), key=<span class="tok-k">lambda</span> j: information_gain(X, y, j))
-<span class="tok-k">print</span>(f&quot;-&gt; split on {FEATURES[best]}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f&quot;-&gt; split on {FEATURES[best]}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Try every feature, and measure how much mess each one removes.</p><div class="wx"><code class="wx-c">gain = H(root) - ( w_left &middot; H(left) + w_right &middot; H(right) )</code><span class="wx-s">the mess before, minus the WEIGHTED mess after</span></div><div class="wvals"><span class="wv-t">root entropy is 1.0000. Here is what each split buys</span><table><tr><td class="wv-l">ear shape</td><td class="wv-v">gain = 0.2781</td><td class="wv-n">5 left (4 cats), 5 right (1 cat)</td></tr><tr><td class="wv-l">face shape</td><td class="wv-v">gain = 0.0349</td><td class="wv-n">7 left (4 cats), 3 right (1 cat)</td></tr><tr><td class="wv-l">whiskers</td><td class="wv-v">gain = 0.1245</td><td class="wv-n">4 left (3 cats), 6 right (2 cats)</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Ear shape wins</b>, by a factor of eight over face shape. Look at why: it
+splits 5/5 and leaves each half at H = 0.7219, whereas face shape leaves 0.9852 and 0.9183
+&mdash; barely less messy than where it started.</div><p>The <b>weights</b> are the part people forget when implementing this, and dropping
+them breaks the algorithm entirely. Without them, splitting a single example into its own
+perfectly pure branch scores brilliantly every time, so the tree would learn to shave off
+one example per split forever.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 root entropy: 1.0000
 information gain per feature:
   ear shape   left 5 (4 cats, H=0.7219)  right 5 (1 cats, H=0.7219)  gain = 0.2781
@@ -339,7 +361,16 @@ information gain per feature:
 
 tree = build(X, y)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nthe tree:&quot;</span>)
-show(tree)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+show(tree)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now recurse. Same procedure, on each half.</p><div class="wart"><pre>  root: ear shape?   (n=10, gain=0.2781)
+     |
+     +-- yes: face shape?   (n=5, gain=0.7219)
+     |        +-- yes: LEAF -> CAT      (4/4 cats)
+     |        +-- no:  LEAF -> NOT CAT  (0/1 cats)
+     |
+     +-- no:  whiskers?     (n=5, gain=0.7219)</pre></div><div class="wpoint"><span class="wp-t">The point</span>Notice the gain <b>rises</b> as you go down &mdash; 0.2781 at the root,
+0.7219 one level in. That is normal: the sub-groups are smaller and more homogeneous, so a
+single question can settle far more of what is left.</div><p>The recursion is the whole algorithm. &ldquo;Build a tree&rdquo; is: find the best
+split, then <b>build a tree</b> on each half. It bottoms out when a stopping rule fires.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 the tree:
 root: ear shape?  (n=10, gain=0.2781)
     yes: face shape?  (n=5, gain=0.7219)
@@ -359,7 +390,10 @@ root: ear shape?  (n=10, gain=0.2781)
 pred = predict(tree, X)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\ntraining accuracy: {(pred == y)<span class="gterm" data-g="npmean-api">.mean(</span>):.2f}  ({(pred == y)<span class="gterm" data-g="npsum-api">.sum(</span>)}/{len(y)})&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;predictions:&quot;</span>, pred)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;actual     :&quot;</span>, y)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;actual     :&quot;</span>, y)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Run all ten training animals back through the finished tree.</p><div class="wvals"><span class="wv-t">the result</span><table><tr><td class="wv-l">training accuracy</td><td class="wv-v">1.00</td><td class="wv-n">10 out of 10</td></tr><tr><td class="wv-l">predicted</td><td class="wv-v">[1,1,0,0,1,1,0,1,0,0]</td><td class="wv-n"></td></tr><tr><td class="wv-l">actual</td><td class="wv-v">[1,1,0,0,1,1,0,1,0,0]</td><td class="wv-n">identical</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Perfect training accuracy should worry you, not please you.</b> The tree
+was allowed to grow until every leaf was pure, so of course it reproduces the data it was
+built from &mdash; that is what it was optimising.</div><p>It tells you nothing about a new animal. The next two sections are about exactly
+this problem.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 training accuracy: 1.00  (10/10)
 predictions: [1 1 0 0 1 1 0 1 0 0]
 actual     : [1 1 0 0 1 1 0 1 0 0]</pre></div></section>
@@ -382,7 +416,13 @@ actual     : [1 1 0 0 1 1 0 1 0 0]</pre></div></section>
 weight = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">7.2</span>, <span class="tok-n">8.8</span>, <span class="tok-n">15.0</span>, <span class="tok-n">9.2</span>, <span class="tok-n">8.4</span>, <span class="tok-n">7.6</span>, <span class="tok-n">11.0</span>, <span class="tok-n">10.2</span>, <span class="tok-n">18.0</span>, <span class="tok-n">20.0</span>])
 t, g = best_threshold(weight, y)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\ncontinuous feature (weight): best threshold {t:.2f} kg, gain {g:.4f}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  tried {len(np.unique(weight)) - 1} candidate midpoints&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  tried {len(np.unique(weight)) - 1} candidate midpoints&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Trees split on yes/no questions. A continuous feature like weight has no natural
+yes/no, so the tree invents one.</p><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b"><b>Sort</b> the examples by weight.</span></li><li><span class="ws-n">2</span><span class="ws-b">Consider each <b>midpoint</b> between consecutive distinct values &mdash; here, <b>9 candidates</b> for 10 animals.</span></li><li><span class="ws-n">3</span><span class="ws-b">Compute the information gain for each.</span></li><li><span class="ws-n">4</span><span class="ws-b">Keep the best. Here that is a threshold of <b>9.00 kg</b>, with gain <b>0.6100</b>.</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>0.6100 beats every yes/no feature in this dataset &mdash; more than double
+ear shape's 0.2781. A well-chosen numeric threshold is often far more informative than a
+categorical flag.</div><p>And this is exactly why <b>trees need no feature scaling</b>. The algorithm only
+ever asks &ldquo;is this above or below that?&rdquo; &mdash; a comparison, unchanged if you
+multiply every weight by a thousand. Gradient descent cares about scale because it takes
+<i>steps</i>; a tree never does.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 continuous feature (weight): best threshold 9.00 kg, gain 0.6100
   tried 9 candidate midpoints</pre></div></section>
 <section class="sx" id="sx-overfit"><div class="sx-prose"><p>The point of the file. Generate labels that are <b>pure noise</b> — there is nothing to learn — and watch training accuracy climb towards 1.0 as depth increases. A tree can always memorise. 100% training accuracy from a tree is a warning, not a result.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Grow it without limits on noisy data and watch training accuracy hit 1.0</span>
@@ -395,7 +435,13 @@ yn = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, <s
     t2 = build(Xn, yn, max_depth=d, used=())
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{d:10d} {(predict(t2, Xn) == yn)<span class="gterm" data-g="npmean-api">.mean(</span>):10.3f}&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Training accuracy climbs towards 1.0 on data with no signal at all.&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;That is overfitting in its purest form — and why depth limits exist.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;That is overfitting in its purest form — and why depth limits exist.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last section is a warning, built out of <b>pure noise</b>. Forty examples, six
+random binary features, and labels with <b>no relationship to them whatsoever</b>.</p><div class="wvals"><span class="wv-t">training accuracy on random noise</span><table><tr><td class="wv-l">max depth 1</td><td class="wv-v">0.675</td><td class="wv-n">already above 0.5</td></tr><tr><td class="wv-l">max depth 2</td><td class="wv-v">0.700</td><td class="wv-n"></td></tr><tr><td class="wv-l">max depth 3</td><td class="wv-v">0.800</td><td class="wv-n"></td></tr><tr><td class="wv-l">max depth 6</td><td class="wv-v">0.900</td><td class="wv-n"><b>90% on data with no pattern in it</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>There is <b>nothing to learn here</b> &mdash; the labels were generated
+independently of the features. Every point of that 90% is memorisation.</div><p>And notice how smoothly it climbs. Nothing warns you. The tree does not know it is
+memorising, the training accuracy looks better at every depth, and on a real dataset this
+curve looks exactly like progress.</p><div class="wpoint"><span class="wp-t">The point</span>This is why every stopping rule in the algorithm exists, and why a single
+tree is almost never used alone. It is also the clearest possible argument for a
+<b>validation set</b>: training accuracy simply cannot distinguish these two situations.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 pure-noise data, 40 examples, 6 binary features:
  max depth  train acc
          1      0.675

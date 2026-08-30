@@ -244,7 +244,7 @@ python3 09_collaborative_filtering.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a masked cost function, gradients for both unknowns, mean normalisation, and a related-items lookup that falls out for free.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A ratings table, mostly empty</span><span class="fl-b">5 films, 4 users, and only <b>15 of the 20</b> cells filled in. The gaps are the whole problem.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">subtract each film's mean rating</span></li><li class="fl k-op"><span class="fl-t">Guess BOTH sides at once</span><span class="fl-b">Invent a feature <span class="gterm" data-g="vector-f0">vector</span> <b>x</b> for every film and a taste vector <b>w</b> for every user. Both start as small random numbers.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">predict only the cells that were actually rated</span></li><li class="fl-loop"><span class="fl-loop-t">repeat until the cost stops falling</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Score the guesses</span><span class="fl-b">Squared error on the rated cells only, plus a penalty on both w and x.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">one gradient for w, one for x</span></li><li class="fl k-back"><span class="fl-t">Move BOTH</span><span class="fl-b">This is the unusual part: <b>x is a parameter too</b>.</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">add each film's mean back on</span></li><li class="fl k-out"><span class="fl-t">Every empty cell, filled in</span><span class="fl-b">And, for free, which films are similar.</span></li></ol><p class="flow-cap">Every other file in this lane treats x as fixed data. Here the algorithm invents the features as it goes, which is what 'collaborative' means.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Collaborative filtering from scratch — C3 W2.
 
 Run me:  python3 09_collaborative_filtering.py
@@ -252,7 +252,10 @@ Run me:  python3 09_collaborative_filtering.py
 Learns BOTH the user preferences and the movie features at the same time,
 from nothing but the ratings. Uses the lecture&#x27;s five-film dataset.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>In every previous file, <b>x was your data</b> &mdash; fixed, given, never touched.
+Here it is a <b>parameter</b>. The algorithm works out what the films are like at the same
+time as it works out what each user wants.</p><div class="wpoint"><span class="wp-t">The point</span>That is what <b>collaborative</b> means: the users teach the algorithm what
+the films are, and the films teach it what the users like. Neither was described to it.</div></div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p>The lecture's five films and four users. Note the <code>nan</code>s: most of a real ratings <span class="gterm" data-g="matrix-f0">matrix</span> is missing, and the entire algorithm is about respecting those gaps rather than reading them as zeros.</p></div><div class="sx-code"><pre><code><span class="tok-c"># nan = not rated. The whole algorithm is about respecting those gaps.</span>
 FILMS = [<span class="tok-s">&quot;Love at Last&quot;</span>, <span class="tok-s">&quot;Romance Forever&quot;</span>, <span class="tok-s">&quot;Cute Puppies of Love&quot;</span>,
          <span class="tok-s">&quot;Nonstop Car Chases&quot;</span>, <span class="tok-s">&quot;Swords vs Karate&quot;</span>]
@@ -268,7 +271,10 @@ R = (~np.isnan(Y)).astype(float)          <span class="tok-c"># 1 where a rating
 Yf = np.nan_to_num(Y)                      <span class="tok-c"># zeros where it does not (masked out below)</span>
 n_m, n_u = Y.shape
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;{n_m} films, {n_u} users, {int(R<span class="gterm" data-g="npsum-api">.sum(</span>))} of {n_m*n_u} cells rated &quot;</span>
-      f<span class="tok-s">&quot;({100*R<span class="gterm" data-g="npmean-api">.mean(</span>):.0f}% dense)&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>5 films, 4 users, 15 of 20 cells rated (75% dense)</pre></div></section>
+      f<span class="tok-s">&quot;({100*R<span class="gterm" data-g="npmean-api">.mean(</span>):.0f}% dense)&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Five films, four users, and a table with holes in it.</p><div class="wvals"><span class="wv-t">the ratings matrix</span><table><tr><td class="wv-l">cells</td><td class="wv-v">20</td><td class="wv-n">5 films &times; 4 users</td></tr><tr><td class="wv-l">rated</td><td class="wv-v">15</td><td class="wv-n">75% dense</td></tr><tr><td class="wv-l">empty</td><td class="wv-v">5</td><td class="wv-n">the cells you are trying to predict</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>A real ratings matrix is <b>99.9% empty</b>, not 25%. This one is dense enough
+to print and check by hand, which is the only reason it looks manageable.</div><p>The critical distinction: an empty cell means <b>&ldquo;not rated&rdquo;</b>, not
+&ldquo;rated zero&rdquo;. Treat a question mark as a 0 and you teach the model that everything
+unwatched is hated &mdash; which is most of the catalogue.</p></div><div class="sx-out"><span class="lbl">output</span><pre>5 films, 4 users, 15 of 20 cells rated (75% dense)</pre></div></section>
 <section class="sx" id="sx-normalise"><div class="sx-prose"><p>Subtract each film's mean over the users who actually rated it. The reason will be obvious in the cold-start block at the bottom, but briefly: without it, a user who has rated nothing is predicted to hate everything.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> mean_normalise(Y, R):
     <span class="tok-d">&quot;&quot;&quot;Subtract each film&#x27;s mean over the users who actually rated it.
 
@@ -281,7 +287,13 @@ n_m, n_u = Y.shape
     <span class="tok-k">return</span> (Y - mu[:, <span class="tok-k">None</span>]) * R, mu
 
 Yn, mu = mean_normalise(Yf, R)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nper-film mean rating:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(mu, <span class="tok-n">3</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nper-film mean rating:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(mu, <span class="tok-n">3</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Subtract each film's own mean rating before training.</p><div class="wvals"><span class="wv-t">per-film mean rating</span><table><tr><td class="wv-l">Love at Last</td><td class="wv-v">2.500</td><td class="wv-n"></td></tr><tr><td class="wv-l">Romance Forever</td><td class="wv-v">2.500</td><td class="wv-n"></td></tr><tr><td class="wv-l">Cute Puppies of Love</td><td class="wv-v">2.000</td><td class="wv-n"></td></tr><tr><td class="wv-l">Nonstop Car Chases</td><td class="wv-v">2.250</td><td class="wv-n"></td></tr><tr><td class="wv-l">Swords vs Karate</td><td class="wv-v">1.667</td><td class="wv-n">averaged over its rated cells only</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>This is the <b>cold start</b> fix. A brand-new user appears in no fitting term
+&mdash; they have rated nothing &mdash; so only <span class="gterm" data-g="regularization-native">regularisation</span> touches their <b>w</b>, which
+drives it to <b>0</b>, and every prediction becomes exactly 0.</div><p>With mean normalisation, that user gets <b>0 + the film's average</b> instead
+&mdash; which is the best available guess with no information, and a perfectly sensible
+first impression.</p><div class="wpoint"><span class="wp-t">The point</span>Note the means are computed over <b>rated cells only</b>. Including the empty
+ones would drag every average towards zero, which is the same bug in a different
+place.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Multiplying the error by <code>R</code> is the whole trick. It switches off every unrated cell, so “not rated” and “rated 0” stay different things. Without it the model would learn from 99% fake zeros.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> cost(X, W, b, Yn, R, lam):
     <span class="tok-d">&quot;&quot;&quot;Squared error over RATED cells only, plus regularization on X and W.
@@ -292,7 +304,13 @@ per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
     err = (X @ W.T + b) - Yn
     J = <span class="tok-n">0.5</span> * <span class="gterm" data-g="npsum-api">np.sum</span>((err * R) ** <span class="tok-n">2</span>)
     J += (lam / <span class="tok-n">2</span>) * (<span class="gterm" data-g="npsum-api">np.sum</span>(X ** <span class="tok-n">2</span>) + <span class="gterm" data-g="npsum-api">np.sum</span>(W ** <span class="tok-n">2</span>))
-    <span class="tok-k">return</span> float(J)</code></pre></div></section>
+    <span class="tok-k">return</span> float(J)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The cost has three parts, and the third one is the tell.</p><div class="wx"><code class="wx-c">J = &frac12; &Sigma;&#8331;&#8336;&#8348;&#8337;&#8340; (w&middot;x + b - y)&sup2;  +  (&lambda;/2)&Sigma;w&sup2;  +  (&lambda;/2)&Sigma;x&sup2;</code><span class="wx-s">fit the rated cells, and keep BOTH sets of parameters small</span></div><div class="wpoint"><span class="wp-t">The point</span>The <b>&Sigma;x&sup2;</b> term is the giveaway that <b>x is being learned</b>.
+You do not regularise your data.</div><p>And the fitting sum runs over <b>rated cells only</b>. In the vectorised code that
+restriction is a single multiplication by <b>R</b>, the 0/1 mask &mdash; which zeroes every
+unrated cell <b>before squaring</b>, so it contributes nothing to the cost and, having zero
+<span class="gterm" data-g="derivative-f0">derivative</span>, nothing to the gradient either.</p><div class="wpoint"><span class="wp-t">The point</span>Regularisation is not optional here for a second reason. Without &lambda;
+there are <b>infinitely many equivalent solutions</b>: scale every w up by 10 and every x
+down by 10 and every prediction is identical. The penalty picks one.</div></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>Two gradients, because there are two sets of unknowns. <code>X</code> is not data here — it is a parameter being optimised alongside <code>W</code>. That is what makes this collaborative rather than content-based.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradients(X, W, b, Yn, R, lam):
     <span class="tok-d">&quot;&quot;&quot;Derivatives with respect to the film features AND the user weights.
 
@@ -302,7 +320,10 @@ per-film mean rating: [2.5   2.5   2.    2.25  1.667]</pre></div></section>
     dX = err @ W + lam * X                  <span class="tok-c"># (n_m,n_u)@(n_u,k) -&gt; (n_m,k)</span>
     dW = err.T @ X + lam * W                <span class="tok-c"># (n_u,n_m)@(n_m,k) -&gt; (n_u,k)</span>
     db = err<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                    <span class="tok-c"># (n_u,)</span>
-    <span class="tok-k">return</span> dX, dW, db</code></pre></div></section>
+    <span class="tok-k">return</span> dX, dW, db</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Two gradients instead of one, because there are two sets of parameters to
+move.</p><div class="wcases"><span class="wk-t">and they are computed from each other</span><div class="wk-row"><div class="wk-case"><span class="wk-h">dJ/dW</span><div class="wk-b">how each user's taste should change, given the current guess at what the films are</div></div><div class="wk-case"><span class="wk-h">dJ/dX</span><div class="wk-b">how each film's features should change, given the current guess at what the users like</div></div></div></div><div class="wpoint"><span class="wp-t">The point</span>They are updated <b>simultaneously</b>, from the same old values &mdash; the
+same rule as w and b in Course 1, for the same reason. Update X first and the W gradient is
+computed against films that no longer exist.</div></div></section>
 <section class="sx" id="sx-gradcheck"><div class="sx-prose"><p>Both gradients checked numerically before any training. With two interacting unknowns this is not optional.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">1</span>)
 k = <span class="tok-n">3</span>
 X = rng.normal(<span class="tok-n">0</span>, .<span class="tok-n">5</span>, (n_m, k)); W = rng.normal(<span class="tok-n">0</span>, .<span class="tok-n">5</span>, (n_u, k)); b = <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_u)
@@ -318,7 +339,9 @@ dX, dW, db = gradients(X, W, b, Yn, R, lam)
         g<span class="gterm" data-g="npreshape-api">.reshape(</span>-<span class="tok-n">1</span>)[i] = (a - c) / <span class="tok-n">2e-6</span>
     <span class="tok-k">return</span> g
 <span class="tok-k">print</span>(f&quot;\ngradient check  dX: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(dX - num_grad(X, <span class="tok-s">&#x27;X&#x27;</span>))):.2e}   &quot;
-      f&quot;dW: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(dW - num_grad(W, <span class="tok-s">&#x27;W&#x27;</span>))):.2e}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+      f&quot;dW: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(dW - num_grad(W, <span class="tok-s">&#x27;W&#x27;</span>))):.2e}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Both gradients, checked against a numerical measurement.</p><div class="wvals"><span class="wv-t">hand-derived against numerical</span><table><tr><td class="wv-l">dX</td><td class="wv-v">5.56e&minus;09</td><td class="wv-n">PASS</td></tr><tr><td class="wv-l">dW</td><td class="wv-v">5.11e&minus;09</td><td class="wv-n">PASS</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Nine decimal places on <b>both</b>. Worth doing here more than anywhere:
+there are two coupled gradients, it is easy to get a sign or an index wrong in one of them,
+and a wrong gradient does not crash &mdash; it just trains to a worse answer.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 gradient check  dX: 5.56e-09   dW: 5.11e-09</pre></div></section>
 <section class="sx" id="sx-train"><div class="sx-prose"><p>Plain gradient descent on all three parameter sets at once.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> fit(Yn, R, k=<span class="tok-n">3</span>, lam=<span class="tok-n">1.0</span>, alpha=<span class="tok-n">0.02</span>, iters=<span class="tok-n">3000</span>, seed=<span class="tok-n">1</span>):
     rng = np.random.default_rng(seed)
@@ -334,7 +357,11 @@ gradient check  dX: 5.56e-09   dW: 5.11e-09</pre></div></section>
     <span class="tok-k">return</span> X, W, b
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntraining (learning X and W together):&quot;</span>)
-X, W, b = fit(Yn, R)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+X, W, b = fit(Yn, R)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Learning X and W together, from small random starting values.</p><div class="wvals"><span class="wv-t">training</span><table><tr><td class="wv-l">iter 0</td><td class="wv-v">cost 44.357</td><td class="wv-n">random features, random tastes</td></tr><tr><td class="wv-l">iter 600</td><td class="wv-v">cost 9.505</td><td class="wv-n">essentially <span class="gterm" data-g="convergence-native">converged</span></td></tr><tr><td class="wv-l">iter 1800</td><td class="wv-v">cost 9.503</td><td class="wv-n">polishing</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>It settles at <b>9.5</b>, not near zero. That is <b>regularisation</b> doing
+its job &mdash; the penalty terms never go away, so the cost has a floor well above zero. A
+collaborative filtering cost that reaches zero has &lambda; = 0 and is <span class="gterm" data-g="overfitting-native">overfitting</span>.</div><p>Both sets of parameters must start <b>random</b>. Initialise everything to zero
+and all the gradients are symmetric, so nothing ever differentiates &mdash; every user ends
+up with identical taste. Same failure as a neural network, same fix.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 training (learning X and W together):
   iter     0  cost  44.35675
   iter   600  cost   9.50458
@@ -352,7 +379,11 @@ training (learning X and W together):
 
 rated = R.astype(bool)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\nerror on the ratings it was shown: &quot;</span>
-      f<span class="tok-s">&quot;{<span class="gterm" data-g="npsqrt-api">np.sqrt</span>(<span class="gterm" data-g="npmean-api">np.mean</span>((P[rated] - Yf[rated])**2)):.4f} RMSE&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+      f<span class="tok-s">&quot;{<span class="gterm" data-g="npsqrt-api">np.sqrt</span>(<span class="gterm" data-g="npmean-api">np.mean</span>((P[rated] - Yf[rated])**2)):.4f} RMSE&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now fill in the gaps. Existing ratings are shown in brackets for comparison.</p><div class="wvals"><span class="wv-t">predicted ratings</span><table><tr><td class="wv-l">Love at Last / Alice</td><td class="wv-v">4.88 [5]</td><td class="wv-n">close</td></tr><tr><td class="wv-l">Romance Forever / Bob</td><td class="wv-v">4.44</td><td class="wv-n"><b>never rated it</b> &mdash; predicted</td></tr><tr><td class="wv-l">Cute Puppies / Alice</td><td class="wv-v">3.93</td><td class="wv-n"><b>never rated it</b> &mdash; predicted</td></tr><tr><td class="wv-l">Love at Last / Dave</td><td class="wv-v">0.10 [0]</td><td class="wv-n">close</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Look at the pattern rather than the numbers. Alice and Bob both score the
+romances high and the action films low; Carol and Dave do the opposite. <b>Nobody told the
+algorithm that some of these films are romances.</b></div><p>It worked that out from ratings alone, and the film features it invented encode
+it &mdash; even though no dimension is labelled &ldquo;romance&rdquo; and none of them means
+anything on its own.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 predicted ratings (existing ratings in brackets):
                              Alice       Bob     Carol      Dave
 Love at Last               4.88[5]   4.72[5]   0.31[0]   0.10[0]
@@ -362,7 +393,7 @@ Nonstop Car Chases         0.44[0]   0.44[0]   5.09[5]   3.54[4]
 Swords vs Karate           0.08[0]   0.07[0]   4.24[5]   2.76   
 
 error on the ratings it was shown: 0.3530 RMSE</pre></div></section>
-<section class="sx" id="sx-cold_start"><div class="sx-prose"><p>Eve has rated nothing. Her <code>w</code> <span class="gterm" data-g="convergence-native">converges</span> to exactly zero, because the only term in the cost that mentions it is the <span class="gterm" data-g="regularization-native">regularization</span> penalty and nothing pushes back. Without mean normalisation she would be predicted 0.00 for every film; with it, she gets each film's average — a far better first guess.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A brand-new user who has rated nothing at all.</span>
+<section class="sx" id="sx-cold_start"><div class="sx-prose"><p>Eve has rated nothing. Her <code>w</code> converges to exactly zero, because the only term in the cost that mentions it is the regularization penalty and nothing pushes back. Without mean normalisation she would be predicted 0.00 for every film; with it, she gets each film's average — a far better first guess.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A brand-new user who has rated nothing at all.</span>
 Y2 = <span class="gterm" data-g="npc-api">np.c_</span>[Yf, <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_m)]
 R2 = <span class="gterm" data-g="npc-api">np.c_</span>[R, <span class="gterm" data-g="npcreate-api">np.zeros</span>(n_m)]
 Yn2, mu2 = mean_normalise(Y2, R2)
@@ -374,7 +405,11 @@ P2 = X2 @ W2.T + b2 + mu2[:, <span class="tok-k">None</span>]
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  film                      predicted   film average&quot;</span>)
 <span class="tok-k">for</span> i, f <span class="tok-k">in</span> enumerate(FILMS):
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {f:24s} {P2[i,-1]:9.3f} {mu2[i]:14.3f}&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  Without mean normalisation she would be predicted 0.00 for everything.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  iter     0  cost  44.38929
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  Without mean normalisation she would be predicted 0.00 for everything.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A user who has rated nothing, run through the same training.</p><div class="wpoint"><span class="wp-t">The point</span>The cost converges to <b>9.50309</b> &mdash; effectively the same as without
+them. A user with no ratings contributes <b>nothing</b> to the fitting term, so they cannot
+change what the model learns about anyone else.</div><p>And thanks to mean normalisation, they still get sensible recommendations: each
+film's average, which is the best guess available. Without it they would get <b>0.0</b> for
+everything and be shown the worst films in the catalogue.</p></div><div class="sx-out"><span class="lbl">output</span><pre>  iter     0  cost  44.38929
   iter   600  cost   9.50458
   iter  1200  cost   9.50315
   iter  1800  cost   9.50310
@@ -390,13 +425,20 @@ cold start — a new user, Eve, who has rated nothing:
   Nonstop Car Chases           2.250          2.250
   Swords vs Karate             1.667          1.667
   Without mean normalisation she would be predicted 0.00 for everything.</pre></div></section>
-<section class="sx" id="sx-related"><div class="sx-prose"><p>Similar films fall out for free, with no user involved: just compare the learned feature <span class="gterm" data-g="vector-f0">vectors</span>. The three romances cluster and the two action films cluster, and nobody ever told the model what a genre is.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Similar films fall out for free: compare the learned feature vectors.</span>
+<section class="sx" id="sx-related"><div class="sx-prose"><p>Similar films fall out for free, with no user involved: just compare the learned feature vectors. The three romances cluster and the two action films cluster, and nobody ever told the model what a genre is.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Similar films fall out for free: compare the learned feature vectors.</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nmost similar film to each (squared distance in learned feature space):&quot;</span>)
 <span class="tok-k">for</span> i, f <span class="tok-k">in</span> enumerate(FILMS):
     d = <span class="gterm" data-g="npsum-api">np.sum</span>((X - X[i]) ** <span class="tok-n">2</span>, <span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">1</span>)
     d[i] = np.inf
     j = int(d.argmin())
-    <span class="tok-k">print</span>(f&quot;  {f:24s} -&gt; {FILMS[j]:24s} (d = {d[j]:.3f})&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f&quot;  {f:24s} -&gt; {FILMS[j]:24s} (d = {d[j]:.3f})&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>One more thing falls out for free, without any extra training.</p><div class="wvals"><span class="wv-t">nearest neighbour in the learned feature space</span><table><tr><td class="wv-l">Love at Last</td><td class="wv-v">&rarr; Romance Forever</td><td class="wv-n">d = 0.040</td></tr><tr><td class="wv-l">Romance Forever</td><td class="wv-v">&rarr; Cute Puppies of Love</td><td class="wv-n">d = 0.013</td></tr><tr><td class="wv-l">Nonstop Car Chases</td><td class="wv-v">&rarr; Swords vs Karate</td><td class="wv-n">d = 0.024</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The romances found each other. The action films found each other. This came
+out of <b>squared distance between learned vectors</b> &mdash; and nobody ever labelled a
+genre.</div><p>You never need to know what the features <b>mean</b>. The numbers are
+uninterpretable and the <b>distances between them</b> are meaningful anyway. That is exactly
+the principle embeddings run on, and it is the bridge from here to how retrieval works.</p><div class="wpoint"><span class="wp-t">The point</span>At scale, comparing every item to every other is far too slow &mdash; ten
+million items per query. Production systems use <b>approximate nearest neighbour</b>
+indexes, trading a small chance of missing the true closest item for a thousandfold
+speed-up.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 most similar film to each (squared distance in learned feature space):
   Love at Last             -&gt; Romance Forever          (d = 0.040)
   Romance Forever          -&gt; Cute Puppies of Love     (d = 0.013)

@@ -244,7 +244,7 @@ python3 11_retrieval.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built chunking with overlap, a tf-idf index, cosine search, LSA embeddings, a hybrid ranker measured on three query sets, a prompt assembler with a token budget, and a threshold for saying nothing.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A pile of documents</span><span class="fl-b">14 notes here. A real system has millions.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">cut into pieces small enough to be useful</span></li><li class="fl k-op"><span class="fl-t">Chunk</span><span class="fl-b">Overlapping windows, so a sentence split down the middle still appears whole somewhere.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">count words, then weight them by how rare they are</span></li><li class="fl k-op"><span class="fl-t">TF-IDF <span class="gterm" data-g="vector-f0">vectors</span></span><span class="fl-b">One number per vocabulary word. Mostly zeros.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the query becomes a vector the same way</span></li><li class="fl k-op"><span class="fl-t">Cosine similarity</span><span class="fl-b">Which document points most nearly the same way as the question?</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">and when the words simply do not match, this fails</span></li><li class="fl k-op"><span class="fl-t">Dense vectors, via SVD</span><span class="fl-b">Squash the sparse space so related words end up near each other.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">combine both scores</span></li><li class="fl k-out"><span class="fl-t">A handful of passages</span><span class="fl-b">Trimmed to a token budget, or nothing at all if nothing is relevant.</span></li></ol><p class="flow-cap">This is the R in RAG. Everything here is retrieval; the generation step is somebody else's problem, and it can only ever be as good as this.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Retrieval from scratch -- the R in RAG, built with nothing but NumPy.
 
 Run me:  python3 11_retrieval.py
@@ -256,7 +256,9 @@ linear algebra you have already met: counting, weighting, cosine, SVD.
 &quot;&quot;&quot;</span>
 <span class="tok-k">import</span> re
 
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Retrieval is the part of RAG that decides <b>what the model gets to see</b>. It is
+also the part that fails first, and this file builds it up until it breaks and then fixes
+it.</p></div></section>
 <section class="sx" id="sx-corpus"><div class="sx-prose"><p>Fourteen sentences, and two of them are the experiment: some notes say <i>cost</i> and some say <i>loss</i> for the same idea. Every retrieval system you will ever build has this problem somewhere in it.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Fourteen short notes. Deliberately written so that some say &quot;cost&quot; and some</span>
 <span class="tok-c"># say &quot;loss&quot; for the same idea, because that mismatch is the whole lesson.</span>
 DOCS = [
@@ -278,7 +280,9 @@ DOCS = [
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;%d documents, %d words total&quot;</span> % (len(DOCS), sum(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS)))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;shortest %d words, longest %d words&quot;</span>
-      % (min(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS), max(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>14 documents, 179 words total
+      % (min(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS), max(len(d.split()) <span class="tok-k">for</span> d <span class="tok-k">in</span> DOCS)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Fourteen short notes, 179 words in total.</p><div class="wpoint"><span class="wp-t">The point</span>Small enough that you can read every document and check every result by hand.
+That is the whole reason for the size &mdash; on a real corpus you cannot tell a good
+retrieval from a lucky one.</div></div><div class="sx-out"><span class="lbl">output</span><pre>14 documents, 179 words total
 shortest 11 words, longest 14 words</pre></div></section>
 <section class="sx" id="sx-chunk"><div class="sx-prose"><p>Before anything can be searched it has to be cut up. Overlap is the only knob here and it buys exactly one thing — a fact that straddles a boundary stays findable. Look at what happens to <i>minimise the cost</i> at overlap 0: it is in neither chunk, and nothing warns you.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> chunk(text, size, overlap):
     <span class="tok-d">&quot;&quot;&quot;Cut a long text into overlapping windows of `size` words.
@@ -308,7 +312,14 @@ long_note = <span class="tok-s">&quot; &quot;</span>.join(DOCS[:<span class="tok
         <span class="tok-k">print</span>(<span class="tok-s">&quot;   |&quot;</span>, p)
 <span class="tok-k">print</span>(&quot;\nAt overlap <span class="tok-n">0</span> the phrase <span class="tok-s">&#x27;minimise the cost&#x27;</span> <span class="tok-k">is</span> split between chunks <span class="tok-n">1</span>&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;and 2, so no single chunk contains it. At overlap 4 one chunk does.&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;Overlap costs storage and buys recall. That is the entire trade.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;Overlap costs storage and buys recall. That is the entire trade.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Documents get cut into pieces. The size and the <b>overlap</b> are both real
+decisions.</p><p>With <code><span class="gterm" data-g="kwsize-api">size=</span>10, overlap=0</code>, one sentence about the cost function gets
+sliced straight down the middle &mdash; half of it in one chunk, half in the next, and
+neither chunk answers the question on its own.</p><div class="wpoint"><span class="wp-t">The point</span>That is why chunks <b>overlap</b> in practice. A window that slides rather
+than jumps means any given sentence appears <b>whole</b> in at least one chunk, at the cost
+of storing some text twice.</div><p>Too small and you lose context; too large and one chunk covers five topics, so
+its vector is an average of five things and matches none of them well. There is no correct
+answer, only a trade you make deliberately.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 size=10 overlap=0 -&gt; 4 chunks
    | gradient descent repeatedly nudges the weights downhill to minimise the
    | cost the cost function measures how wrong the model is
@@ -355,7 +366,12 @@ INV = {j: w <span class="tok-k">for</span> w, j <span class="tok-k">in</span> VO
 <span class="tok-k">print</span>(<span class="tok-s">&quot;count matrix:&quot;</span>, COUNTS.shape, &quot;-&gt; one row per document, one column per word&quot;)
 <span class="tok-k">print</span>(&quot;%.1f%% of it <span class="tok-k">is</span> zeros, which <span class="tok-k">is</span> what <span class="tok-s">&#x27;sparse&#x27;</span> means <span class="tok-k">in</span> practice&quot;
       % (<span class="tok-n">100.0</span> * (COUNTS == <span class="tok-n">0</span>)<span class="gterm" data-g="npmean-api">.mean(</span>)))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;A real corpus is 99.99%% zeros. Nobody stores this as a dense array.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>vocabulary: 116 distinct words
+<span class="tok-k">print</span>(<span class="tok-s">&quot;A real corpus is 99.99%% zeros. Nobody stores this as a dense array.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Turn text into numbers by counting words.</p><div class="wvals"><span class="wv-t">the bag-of-words <span class="gterm" data-g="matrix-f0">matrix</span></span><table><tr><td class="wv-l">vocabulary</td><td class="wv-v">116 distinct words</td><td class="wv-n">from 179 total words</td></tr><tr><td class="wv-l">count matrix</td><td class="wv-v">(14, 116)</td><td class="wv-n">one row per document, one column per word</td></tr><tr><td class="wv-l">zeros</td><td class="wv-v">89.8%</td><td class="wv-n">and this is a <b>tiny</b> corpus</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>89.8% zeros</b> here; a real corpus is <b>99.99%</b> zeros. Every document
+contains almost none of the vocabulary. That is what &ldquo;sparse&rdquo; means in practice,
+and nobody stores this as a dense array &mdash; you store only the positions that are not
+zero.</div><p>Note what this representation throws away: <b>word order</b>. &ldquo;the dog bit
+the man&rdquo; and &ldquo;the man bit the dog&rdquo; are the same vector. It works anyway,
+which is either encouraging or depressing depending on your mood.</p></div><div class="sx-out"><span class="lbl">output</span><pre>vocabulary: 116 distinct words
 count matrix: (14, 116) -&gt; one row per document, one column per word
 89.8% of it is zeros, which is what &#x27;sparse&#x27; means in practice
 A real corpus is 99.99%% zeros. Nobody stores this as a dense array.</pre></div></section>
@@ -389,7 +405,13 @@ order = np.argsort(IDF)
           % (w, DF[VOCAB[w]], len(DOCS), IDF[VOCAB[w]]))
 <span class="tok-k">print</span>(&quot;<span class="tok-s">&#x27;how&#x27;</span> scores higher than <span class="tok-s">&#x27;cost&#x27;</span>. idf <span class="tok-k">is</span> a statistic OF THIS CORPUS, <span class="tok-k">and</span>&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;in a small one a rare function word looks exactly like a rare technical&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;word. idf alone does not identify meaning; it identifies rarity.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>lowest idf : [&#x27;the&#x27;, &#x27;and&#x27;, &#x27;a&#x27;, &#x27;is&#x27;, &#x27;one&#x27;, &#x27;on&#x27;]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;word. idf alone does not identify meaning; it identifies rarity.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Raw counts are dominated by words that appear everywhere and mean nothing. IDF
+fixes that by weighting each word by <b>how rare</b> it is.</p><div class="wvals"><span class="wv-t">IDF sorts the vocabulary by informativeness, automatically</span><table><tr><td class="wv-l">lowest idf</td><td class="wv-v">the, and, a, is, one, on</td><td class="wv-n">everywhere &mdash; worth almost nothing</td></tr><tr><td class="wv-l">highest idf</td><td class="wv-v"><span class="gterm" data-g="convergence-native">converge</span>, scaling, regression, error</td><td class="wv-n">rare &mdash; worth a lot</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Nobody wrote that list. <b>&ldquo;the&rdquo; is uninformative because it is in
+everything</b>, and the maths discovers that by counting. IDF is
+<code>log(N / documents containing the word)</code> and nothing more.</div><p>But the block also prints a warning case: <b>&ldquo;how&rdquo;</b> appears in
+<b>1 of 14</b> documents, so it gets a high IDF of <b>2.639</b> &mdash; as if it were a
+technical term. It is a question word that happens to be rare <i>in this corpus</i>. IDF
+measures rarity, not meaning, and on a small corpus those come apart.</p></div><div class="sx-out"><span class="lbl">output</span><pre>lowest idf : [&#x27;the&#x27;, &#x27;and&#x27;, &#x27;a&#x27;, &#x27;is&#x27;, &#x27;one&#x27;, &#x27;on&#x27;]
 highest idf: [&#x27;converge&#x27;, &#x27;scaling&#x27;, &#x27;regression&#x27;, &#x27;error&#x27;, &#x27;adds&#x27;, &#x27;views&#x27;]
 
 But look at these two:
@@ -426,7 +448,9 @@ killed = sum(<span class="tok-n">1</span> <span class="tok-k">for</span> w <span
     qv = embed_query(q, vocab, idf)
     per = mat[doc_i] * qv
     idx = np.argsort(per)[::-<span class="tok-n">1</span>][:top]
-    <span class="tok-k">return</span> [(INV[j], float(per[j])) <span class="tok-k">for</span> j <span class="tok-k">in</span> idx <span class="tok-k">if</span> per[j] &gt; <span class="tok-n">0</span>]</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>silenced 21 of 116 vocabulary entries
+    <span class="tok-k">return</span> [(INV[j], float(per[j])) <span class="tok-k">for</span> j <span class="tok-k">in</span> idx <span class="tok-k">if</span> per[j] &gt; <span class="tok-n">0</span>]</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>So silence the obvious offenders by hand.</p><div class="wvals"><span class="wv-t">stopword removal</span><table><tr><td class="wv-l">silenced</td><td class="wv-v">21 of 116</td><td class="wv-n">vocabulary entries zeroed</td></tr><tr><td class="wv-l">row length</td><td class="wv-v">1.0000</td><td class="wv-n">still exactly 1 after re-normalising</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Renormalising afterwards matters. Removing words shortens every vector, and
+<span class="gterm" data-g="cosine-similarity">cosine similarity</span> is about <b>direction</b> &mdash; so you scale each row back to length 1
+and the comparison stays fair.</div></div><div class="sx-out"><span class="lbl">output</span><pre>silenced 21 of 116 vocabulary entries
 every document row still has length 1.0000</pre></div></section>
 <section class="sx" id="sx-retrieve"><div class="sx-prose"><p>Cosine similarity is a <span class="gterm" data-g="dot-product-f0">dot product</span> once both sides have length 1, which is the whole reason the rows were normalised. Each result prints the words that actually earned the score.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> embed_query(q, vocab, idf):
     <span class="tok-d">&quot;&quot;&quot;Put the query through exactly the same pipeline as the documents.
@@ -452,7 +476,12 @@ every document row still has length 1.0000</pre></div></section>
         <span class="tok-k">print</span>(<span class="tok-s">&quot;   %.3f  [%2d]  %s&quot;</span> % (s, i, d))
     top = search(q, DOCS, TFIDF, VOCAB, IDF_S, k=<span class="tok-n">1</span>)[<span class="tok-n">0</span>][<span class="tok-n">0</span>]
     <span class="tok-k">print</span>(<span class="tok-s">&quot;   won on:&quot;</span>, contributions(q, top, VOCAB, IDF_S, TFIDF))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nScores are cosines: 1.0 is the same direction, 0.0 shares no word.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nScores are cosines: 1.0 is the same direction, 0.0 shares no word.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Score every document against a query by <b>cosine similarity</b>: the angle between
+the two vectors.</p><div class="wvals"><span class="wv-t">query: &ldquo;how does gradient descent choose its step&rdquo;</span><table><tr><td class="wv-l">0.275</td><td class="wv-v">the elbow of the distortion curve&hellip;</td><td class="wv-n"><b>wrong document</b></td></tr><tr><td class="wv-l">0.232</td><td class="wv-v">gradient descent repeatedly nudges the weights&hellip;</td><td class="wv-n">correct</td></tr><tr><td class="wv-l">0.191</td><td class="wv-v">a large learning rate makes gradient descent overshoot&hellip;</td><td class="wv-n">correct</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The <b>top hit is wrong</b>, and you can see why: that document contains
+&ldquo;<b>choose</b>&rdquo; and &ldquo;<b>one</b>&rdquo;, which the query also has. It shares
+words without sharing meaning.</div><p>This is lexical search being exactly what it is: a word-overlap counter. It has no
+idea that &ldquo;step&rdquo; and &ldquo;learning rate&rdquo; are related, or that
+&ldquo;elbow&rdquo; belongs to a different topic entirely.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 query: how does gradient descent choose its step
    0.275  [10]  the elbow of the distortion curve is one way people choose k for clustering
    0.232  [ 0]  gradient descent repeatedly nudges the weights downhill to minimise the cost
@@ -478,7 +507,12 @@ found = sorted(COST_DOCS &amp; {i <span class="tok-k">for</span> i, s, d <span c
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Retrieved from that set: %s&quot;</span> % (found <span class="tok-k">if</span> found <span class="tok-k">else</span> <span class="tok-s">&quot;none&quot;</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;They contain no query word at all, so they score exactly 0.000. Matching&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;letters is not matching meaning, and no tuning of tf-idf repairs it,&quot;</span>)
-<span class="tok-k">print</span>(&quot;because tf-idf never sees that <span class="tok-s">&#x27;cost&#x27;</span> <span class="tok-k">and</span> <span class="tok-s">&#x27;loss&#x27;</span> are the same thing.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>query: how do I make the loss smaller
+<span class="tok-k">print</span>(&quot;because tf-idf never sees that <span class="tok-s">&#x27;cost&#x27;</span> <span class="tok-k">and</span> <span class="tok-s">&#x27;loss&#x27;</span> are the same thing.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now the failure that motivates everything after it. Same corpus, a query using
+<b>synonyms</b>.</p><div class="wvals"><span class="wv-t">query: &ldquo;how do I make the loss smaller&rdquo;</span><table><tr><td class="wv-l">0.327</td><td class="wv-v">we minimise the loss by taking the <span class="gterm" data-g="derivative-f0">derivative</span>&hellip;</td><td class="wv-n">correct</td></tr><tr><td class="wv-l">0.316</td><td class="wv-v">the loss for one <span class="gterm" data-g="trainingexample-native">training example</span> is squared error&hellip;</td><td class="wv-n">correct</td></tr><tr><td class="wv-l"><b>0.000</b></td><td class="wv-v">the query key and value vectors&hellip;</td><td class="wv-n"><b>exactly zero</b></td></tr><tr><td class="wv-l"><b>0.000</b></td><td class="wv-v">attention lets every token look at&hellip;</td><td class="wv-n"><b>exactly zero</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Exactly zero</b>, not merely low. If a document shares <b>no words</b> with
+the query, cosine similarity is 0 &mdash; and a perfectly relevant document written in
+different vocabulary is <b>invisible</b>, not merely ranked badly.</div><p>This is the <b>vocabulary mismatch</b> problem, and it is the reason dense
+retrieval exists. No amount of better weighting fixes it, because the information was never
+in the representation.</p></div><div class="sx-out"><span class="lbl">output</span><pre>query: how do I make the loss smaller
    0.327  [ 3]  we minimise the loss by taking the derivative and stepping against it
    0.316  [ 4]  the loss for one training example is squared error for regression
    0.000  [13]  the query key and value vectors are three different linear views of one token
@@ -489,7 +523,7 @@ Retrieved from that set: none
 They contain no query word at all, so they score exactly 0.000. Matching
 letters is not matching meaning, and no tuning of tf-idf repairs it,
 because tf-idf never sees that &#x27;cost&#x27; and &#x27;loss&#x27; are the same thing.</pre></div></section>
-<section class="sx" id="sx-dense"><div class="sx-prose"><p>The SVD from file 08, pointed at a word <span class="gterm" data-g="matrix-f0">matrix</span> instead of a feature matrix. Words that keep the same company end up with similar coordinates, so a note can now score against a word it does not contain. The cost documents come back. This is 1990s technology and a modern embedding model does the same job far better — but it does <i>this</i> job.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> lsa(mat, k):
+<section class="sx" id="sx-dense"><div class="sx-prose"><p>The SVD from file 08, pointed at a word matrix instead of a feature matrix. Words that keep the same company end up with similar coordinates, so a note can now score against a word it does not contain. The cost documents come back. This is 1990s technology and a modern embedding model does the same job far better — but it does <i>this</i> job.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> lsa(mat, k):
     <span class="tok-d">&quot;&quot;&quot;Compress the sparse rows to k dense dimensions with the SVD -- the same
     machinery as file 08, pointed at a word matrix instead of a feature matrix.
 
@@ -518,7 +552,13 @@ DENSE, COMPS = lsa(TFIDF, DIM)
     <span class="tok-k">print</span>(<span class="tok-s">&quot;   %+.3f  [%2d]  %s&quot;</span> % (s, i, d))
 dfound = sorted(COST_DOCS &amp; {i <span class="tok-k">for</span> i, s, d <span class="tok-k">in</span>
                              dense_search(q, DOCS, DENSE, COMPS, VOCAB, IDF_S, k=<span class="tok-n">4</span>)})
-<span class="tok-k">print</span>(<span class="tok-s">&quot;\nCost documents now retrieved: %s&quot;</span> % (dfound <span class="tok-k">if</span> dfound <span class="tok-k">else</span> <span class="tok-s">&quot;none&quot;</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>compressed 116 sparse dimensions down to 6 dense ones
+<span class="tok-k">print</span>(<span class="tok-s">&quot;\nCost documents now retrieved: %s&quot;</span> % (dfound <span class="tok-k">if</span> dfound <span class="tok-k">else</span> <span class="tok-s">&quot;none&quot;</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The fix: squash the sparse space down so that words which <b>appear in the same
+documents</b> end up pointing in similar directions.</p><div class="wchain"><span class="wc-i">116 sparse dimensions</span><span class="wc-a">→</span><span class="wc-i">6 dense ones</span><span class="wc-cap">via SVD &mdash; the same SVD as file 08</span></div><div class="wvals"><span class="wv-t">the same synonym query, now</span><table><tr><td class="wv-l">+0.968</td><td class="wv-v">we minimise the loss by taking the derivative&hellip;</td><td class="wv-n">was 0.327</td></tr><tr><td class="wv-l">+0.940</td><td class="wv-v">the loss for one training example&hellip;</td><td class="wv-n">was 0.316</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The scores are far higher <b>and</b> the previously invisible documents now
+score above zero. Because &ldquo;minimise&rdquo; and &ldquo;smaller&rdquo; co-occur with the
+same other words across the corpus, SVD places them near each other &mdash; so a query using
+one partially matches a document using the other.</div><p>This is the same machinery as PCA, pointed at text. Real systems use trained
+embedding models instead of SVD, but the idea being exploited is identical: <b>related things
+should be near each other in the space</b>.</p></div><div class="sx-out"><span class="lbl">output</span><pre>compressed 116 sparse dimensions down to 6 dense ones
 
 same query: how do I make the loss smaller
    +0.968  [ 3]  we minimise the loss by taking the derivative and stepping against it
@@ -569,7 +609,12 @@ den = <span class="tok-k">lambda</span> q, k: dense_search(q, DOCS, DENSE, COMPS
 <span class="tok-k">print</span>(<span class="tok-s">&quot;range does not misbehave here, and it cannot: this matrix has rank 14, so&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;k=14 is the original data back. On a real corpus of millions of documents&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;that ceiling is thousands of times further away, and the curve keeps&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;mattering all the way up.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>                      plain  mismatch  exact
+<span class="tok-k">print</span>(<span class="tok-s">&quot;mattering all the way up.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Measure both methods honestly, on three kinds of query.</p><div class="wvals"><span class="wv-t"><span class="gterm" data-g="precisionrecall-native">recall</span> at 1 and 3, by query type</span><table><tr><td class="wv-l">lexical recall@1</td><td class="wv-v">1.00 / 0.00 / 1.00</td><td class="wv-n">plain / mismatch / exact</td></tr><tr><td class="wv-l">lexical recall@3</td><td class="wv-v">1.00 / 0.33 / 1.00</td><td class="wv-n"></td></tr><tr><td class="wv-l">dense recall@1</td><td class="wv-v">1.00 / 0.00 / 0.78</td><td class="wv-n"></td></tr><tr><td class="wv-l">dense recall@3</td><td class="wv-v">1.00 / <b>1.00</b> / 0.78</td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Read the columns. On <b>mismatch</b> queries, dense wins outright &mdash;
+1.00 against 0.33 at rank 3. On <b>exact</b> queries, lexical wins &mdash; 1.00 against
+0.78.</div><p>That second column is the one people forget. Dense retrieval is <b>worse</b> when
+the user typed the exact technical term, because squashing to 6 dimensions genuinely
+<b>lost</b> the precision that made an exact match unambiguous.</p><div class="wpoint"><span class="wp-t">The point</span>So neither method dominates. Which is the entire argument for the next
+section.</div></div><div class="sx-out"><span class="lbl">output</span><pre>                      plain  mismatch  exact
   lexical recall@1 :   1.00     0.00    1.00
   lexical recall@3 :   1.00     0.33    1.00
   dense   recall@1 :   1.00     0.00    0.78
@@ -621,7 +666,10 @@ ties = [a <span class="tok-k">for</span> a <span class="tok-k">in</span> [<span 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;Both ends give up something. The blend keeps the exact matches that dense&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;blurs and the synonyms that lexical cannot see, and it costs one extra&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;dot product. Where the best alpha sits depends entirely on your corpus&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;and your queries, so measure it -- this number is not transferable.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>           plain  mismatch  exact   mean
+<span class="tok-k">print</span>(<span class="tok-s">&quot;and your queries, so measure it -- this number is not transferable.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Combine the two scores with a weight &alpha;, and sweep it.</p><div class="wvals"><span class="wv-t">plain / mismatch / exact, and the mean</span><table><tr><td class="wv-l">&alpha; = 0.0</td><td class="wv-v">1.00 / 0.33 / 1.00</td><td class="wv-n">mean <b>0.78</b> &mdash; pure lexical</td></tr><tr><td class="wv-l">&alpha; = 0.2</td><td class="wv-v">1.00 / 1.00 / 1.00</td><td class="wv-n">mean <b>1.00</b></td></tr><tr><td class="wv-l">&alpha; = 0.4</td><td class="wv-v">1.00 / 1.00 / 1.00</td><td class="wv-n">mean <b>1.00</b></td></tr><tr><td class="wv-l">&alpha; = 0.5</td><td class="wv-v">1.00 / 1.00 / 1.00</td><td class="wv-n">mean <b>1.00</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Twenty percent</b> of the dense score is enough to fix the mismatch column
+completely <b>without giving up anything</b> on the exact column. Perfect on all three.</div><p>And it is not a knife edge &mdash; anything from 0.2 to 0.5 works. That flatness is
+what makes hybrid retrieval the practical default: you get both strengths, and you do not
+have to tune it precisely to get them.</p></div><div class="sx-out"><span class="lbl">output</span><pre>           plain  mismatch  exact   mean
   alpha=0.0  1.00    0.33     1.00   0.78
   alpha=0.2  1.00    1.00     1.00   1.00
   alpha=0.4  1.00    1.00     1.00   1.00
@@ -662,7 +710,11 @@ hits = search(question, DOCS, TFIDF, VOCAB, IDF_S, k=<span class="tok-n">5</span
     <span class="tok-k">if</span> budget == <span class="tok-n">40</span>:
         <span class="tok-k">print</span>(<span class="tok-s">&quot;---&quot;</span>)
         <span class="tok-k">print</span>(prompt)
-        <span class="tok-k">print</span>(<span class="tok-s">&quot;---&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+        <span class="tok-k">print</span>(<span class="tok-s">&quot;---&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Retrieved passages have to fit in a <b>token budget</b>, because the model's context
+window is finite and you are paying per token.</p><div class="wvals"><span class="wv-t">the same five notes, two budgets</span><table><tr><td class="wv-l">budget 200 words</td><td class="wv-v">kept 5 of 5</td><td class="wv-n">used 89 words &mdash; everything fits</td></tr><tr><td class="wv-l">budget 40 words</td><td class="wv-v">kept <b>1</b> of 5</td><td class="wv-n">used 35 words</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>At 40 words you keep <b>one</b> passage. Not a slightly worse answer &mdash;
+four fifths of the evidence is simply not there, and the model will answer confidently from
+what remains.</div><p>This is why retrieval quality matters more than it looks. Rank the right passage
+second instead of first and, on a tight budget, it never reaches the model at all.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 budget 200 words -&gt; kept 5 of 5 notes, used 89 words
 
 budget 40 words -&gt; kept 1 of 5 notes, used 35 words
@@ -700,7 +752,11 @@ floor = (min(in_scope) + max(out_scope)) / <span class="tok-n">2</span>
     <span class="tok-k">print</span>(&quot;   %-38s -&gt; %s<span class="tok-s">&quot; % (q, &quot;</span>answer<span class="tok-s">&quot; if ok else &quot;</span>say you do <span class="tok-k">not</span> know&quot;))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nFour probes is not a calibration. The method is right and the sample is&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;far too small: collect the queries you actually get, score them, and put&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;the floor where the two groups stop overlapping -- if they ever do.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>           query                          best score
+<span class="tok-k">print</span>(<span class="tok-s">&quot;the floor where the two groups stop overlapping -- if they ever do.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The last and most under-appreciated piece: knowing when to return <b>nothing</b>.</p><div class="wvals"><span class="wv-t">best score per query</span><table><tr><td class="wv-l">what is entropy</td><td class="wv-v">0.644</td><td class="wv-n">answer it</td></tr><tr><td class="wv-l">how does k means pick centroids</td><td class="wv-v">0.684</td><td class="wv-n">answer it</td></tr><tr><td class="wv-l">what is the capital of Norway</td><td class="wv-v"><b>0.000</b></td><td class="wv-n"><b>abstain</b></td></tr><tr><td class="wv-l">how do I renew a passport</td><td class="wv-v"><b>0.000</b></td><td class="wv-n"><b>abstain</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The corpus contains nothing about Norway or passports, and the scores say so
+<b>unambiguously</b> &mdash; exactly 0, not merely low. A threshold separates these cleanly.</div><p>Without an abstain rule, a RAG system hands the model its <b>least irrelevant</b>
+passages and asks it to answer anyway. The model obliges, because that is what it does, and
+you get a confident answer grounded in something about gradient descent.</p><div class="wpoint"><span class="wp-t">The point</span><b>&ldquo;I do not have information about that&rdquo; is a correct answer</b>,
+and the retrieval score is the cheapest possible way to know when to give it.</div></div><div class="sx-out"><span class="lbl">output</span><pre>           query                          best score
    what is entropy                        0.644
    how does k means pick centroids        0.684
    what is the capital of Norway          0.000
