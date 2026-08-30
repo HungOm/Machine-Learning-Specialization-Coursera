@@ -349,3 +349,355 @@ off-by-one is the single most common slip with this pair.""")
 when a layer says it wanted 3 and got 4.""")
 ),
 }
+
+# ---------------------------------------------------------------- W2, NumPy and pandas
+W.update({
+
+"f0-list-vs-array": (
+    p("""Two things that look identical and behave completely differently. Neither errors,
+which is what makes it a trap rather than a bug you would notice.""")
+    + cases([("x is a LIST",
+              "<code>[1, 2, 3] * 2</code><br>gives <b>[1, 2, 3, 1, 2, 3]</b><br>"
+              "It <b>repeated the list</b>. To Python, <code>*</code> on a list means "
+              "&ldquo;give me two of these&rdquo;."),
+             ("x is a NumPy ARRAY",
+              "<code>np.array([1,2,3]) * 2</code><br>gives <b>[2, 4, 6]</b><br>"
+              "It <b>doubled each number</b>, which is what you meant.")],
+            "the same three characters, two different answers")
+    + point("""So: <b>always <code>np.array(my_list)</code> before doing maths.</b> If a
+result is suddenly twice as long as it should be, this is why.""")
+    + p("""The reason underneath is memory. A Python list holds <i>pointers</i> to objects
+that could each be anything &mdash; a number, a string, another list &mdash; scattered
+around. A NumPy array holds <b>raw numbers of one type in a solid block</b>. That layout is
+where the speed comes from, and it is why an array will not let you mix types.""")
+),
+
+"f0-slicing": (
+    p("""A slice takes a run of elements. The rule everybody gets wrong is the second
+number.""")
+    + expr("x[1:4]", "&ldquo;from 1, stop before 4&rdquo; &mdash; positions 1, 2 and 3")
+    + p("""With <code>x = [0,1,2,3,4,5,6,7,8,9]</code>, <code>x[1:4]</code> gives
+<b>[1, 2, 3]</b>. Three elements, not four. The end is <b>excluded</b>.""")
+    + point("""The handy consequence: the number of elements is just
+<b>end &minus; start</b>. 4 &minus; 1 = 3. You never have to count.""")
+    + values([("x[0]", "first", "counting starts at zero"),
+              ("x[-1]", "last", "negative counts back from the end"),
+              ("x[:3]", "from the start", "a missing number means &ldquo;all the way&rdquo;"),
+              ("x[3:]", "to the end", "same rule, other side"),
+              ("M[:, 2]", "all rows, column 2", "comma separates the dimensions")],
+             "the whole vocabulary")
+    + point("""One more, and it bites: a slice is a <b>view</b>, not a copy. Change the
+slice and you have changed the original array. Use <code>.copy()</code> when you mean a
+copy.""")
+),
+
+"f0-axis": (
+    p("""<code>axis</code> is the single most confusing argument in NumPy, and there is one
+rule that makes it permanent.""")
+    + point("""<b>The axis you name is the one that disappears.</b>""")
+    + p("""Take a table of shape <b>(3, 4)</b> &mdash; 3 rows, 4 columns.""")
+    + cases([("axis=0",
+              "The <b>3</b> disappears.<br>Result shape <b>(4,)</b><br>"
+              "One answer <b>per column</b> &mdash; it went down the rows."),
+             ("axis=1",
+              "The <b>4</b> disappears.<br>Result shape <b>(3,)</b><br>"
+              "One answer <b>per row</b> &mdash; it went across the columns.")],
+            "(3, 4) with a sum applied")
+    + p("""So do not try to remember which is which. Ask: <b>what shape do I want out?</b>
+Then name the number that has to go.""")
+    + cases([("One statistic per feature", "&rarr; <code>axis=0</code>. The mean of each "
+                                           "column, for scaling."),
+             ("One prediction per example", "&rarr; <code>axis=1</code>. The argmax across "
+                                            "the classes, for classifying.")],
+            "the two you will actually use")
+),
+
+"f0-broadcast": (
+    p("""Broadcasting lets NumPy add a small array to a big one by silently stretching the
+small one. It is enormously useful and it is the source of the nastiest silent bug in
+NumPy.""")
+    + steps(["<b>Line the two shapes up from the RIGHT.</b>",
+             "They are compatible at a position if the numbers are <b>equal</b>, or if one "
+             "of them is <b>1</b>.",
+             "A dimension of 1 gets <b>stretched</b> to match the other."])
+    + cases([("The one you want",
+              "<code>(1000, 4) + (4,)</code> &rarr; <b>(1000, 4)</b><br>"
+              "One bias per feature, added to all 1000 examples. Exactly right."),
+             ("The one that ruins your day",
+              "<code>(3, 1) + (1, 3)</code> &rarr; <b>(3, 3)</b><br>"
+              "<b>Both</b> stretched. You wanted three numbers and got nine, and "
+              "<b>nothing warned you</b>.")],
+            "the same rule, two very different outcomes")
+    + point("""When a result has a surprising shape, broadcasting is almost always what
+happened. The fix is a habit, not a cleverness: <b>print the shapes</b> either side of the
+line that surprised you.""")
+),
+
+"f0-star-vs-at": (
+    p("""One character apart, and they do genuinely different things.""")
+    + cases([("a * b &mdash; elementwise",
+              "<code>[1,2,3] * [4,5,6]</code><br>gives <b>[4, 10, 18]</b><br>"
+              "Same length in, same length out. Nothing is added up."),
+             ("a @ b &mdash; dot / matmul",
+              "<code>[1,2,3] @ [4,5,6]</code><br>gives <b>32</b><br>"
+              "It multiplies <i>and then adds</i>. Collapses to one number.")],
+            "note that 4 + 10 + 18 = 32 &mdash; @ is * with a sum on the end")
+    + point("""Here is why it is dangerous rather than merely different: on two <b>square</b>
+matrices, both operations run and both return the <b>same shape</b>. Only one of them is
+the one you meant, and nothing warns you. The model just trains badly.""")
+    + p("""Prefer <code>@</code> to <code>np.dot</code>. They agree on 1-D and 2-D, and
+<code>np.dot</code> starts doing something different once you go past two dimensions
+&mdash; which you will, the moment you touch batches.""")
+),
+
+"f0-mask": (
+    p("""This one line computes accuracy, and it works because of a small piece of Python
+that is easy to miss.""")
+    + expr("(preds == y).mean()", "the fraction that match")
+    + steps(["<code>preds == y</code> compares the two arrays position by position. It "
+             "gives back an array of <b>True/False</b> &mdash; a <i>mask</i>.",
+             "In arithmetic, <b>True counts as 1</b> and <b>False counts as 0</b>.",
+             "So the <b>mean</b> of that array is exactly the fraction that are True."])
+    + chain(["[T, F, T, T]", "[1, 0, 1, 1]", "mean = 0.75"],
+            "three right out of four")
+    + point("""Combining conditions: use <code>&amp;</code> and <code>|</code>, <b>not</b>
+<code>and</code> / <code>or</code>. And give every condition its own brackets &mdash;
+<code>(a &gt; 1) &amp; (b &lt; 2)</code>. Without the brackets Python reads the operators in
+the wrong order and the error message will not tell you that.""")
+),
+
+"f0-reshape": (
+    p("""Both turn a <b>(2, 3)</b> into a <b>(3, 2)</b>. They do not give the same numbers,
+and confusing them silently scrambles your data.""")
+    + p("""Start from <code>[[1, 2, 3], [4, 5, 6]]</code>.""")
+    + cases([("reshape(3, 2)",
+              "<b>[[1, 2], [3, 4], [5, 6]]</b><br>It read the numbers out in order "
+              "&mdash; 1,2,3,4,5,6 &mdash; and <b>re-cut</b> them into rows of two."),
+             (".T  (transpose)",
+              "<b>[[1, 4], [2, 5], [3, 6]]</b><br>It <b>mirrored</b> the positions. The "
+              "first row became the first column.")],
+            "same shape out, different numbers in it")
+    + point("""<code>reshape</code> re-cuts a sequence. <code>.T</code> tips the table on
+its side. If your model suddenly learns nothing, check you did not reshape where you meant
+to transpose.""")
+    + values([("reshape(1, -1)", "one row", "the fix when a library insists on 2-D; "
+                                            "<b>&minus;1</b> means &ldquo;work it out&rdquo;"),
+              (".T on a 1-D array", "nothing", "no second dimension to swap with. A real "
+                                               "and very common surprise")])
+),
+
+"f0-pandas-five": (
+    p("""Five calls, in this order, on every dataset before you model anything. It takes
+about twenty seconds and it saves hours.""")
+    + steps(["<code>df.head()</code> &mdash; <b>look at it</b>. Actually look. Half the "
+             "problems are visible here.",
+             "<code>df.shape</code> &mdash; how much data is there? (rows, columns).",
+             "<code>df.info()</code> &mdash; the <b>types</b> of each column, and how many "
+             "values are missing.",
+             "<code>df.describe()</code> &mdash; min, max, mean per column. Tells you "
+             "whether you need feature scaling.",
+             "<code>df.columns</code> &mdash; the <b>exact spelling</b> of the names, "
+             "including capitals and stray spaces."])
+    + point("""Step 3 is the one that earns its keep. <code>info()</code> catches the
+classic bug: a column of numbers that arrived as <b>text</b> because one row contains
+&ldquo;N/A&rdquo;. Everything downstream then behaves bizarrely and the error surfaces
+somewhere far away.""")
+),
+
+"f0-to-numpy": (
+    p("""Getting <b>X</b> and <b>y</b> out of a DataFrame, and the shape trap waiting at the
+end of it.""")
+    + expr("X = df[['size', 'beds']].to_numpy()   # (m, 2)\ny = df['price'].to_numpy()            # (m,)",
+           "pick the columns first, then convert")
+    + point("""Select the columns <b>before</b> converting. Afterwards the names are gone
+&mdash; a NumPy array has no column headings, only positions.""")
+    + cases([("df['price']  &mdash; one bracket",
+              "gives shape <b>(m,)</b><br>A flat list of m numbers. <b>This is what you "
+              "want for y.</b>"),
+             ("df[['price']]  &mdash; two brackets",
+              "gives shape <b>(m, 1)</b><br>A table with one column. Looks the same when "
+              "printed. Is not.")],
+            "one bracket versus two")
+    + point("""If you end up with <b>(m, 1)</b> where a library wanted <b>(m,)</b>, the fix
+is <code>y.ravel()</code>. The symptom is usually a broadcasting surprise several lines
+later, not an error here.""")
+),
+
+"f0-traceback": (
+    p("""A traceback looks like a wall of unfamiliar file paths. Almost none of it is yours,
+and you read it <b>from the bottom</b>.""")
+    + steps(["<b>Read the LAST line first.</b> It names the error and describes it in "
+             "plain English. This is the answer about 80% of the time.",
+             "<b>Then the frame just above it</b> &mdash; that is the line of your code "
+             "where it broke.",
+             "<b>Only then</b> work upwards, and only if you still need to know how you "
+             "got there."])
+    + point("""The middle is just the chain of calls that led in &mdash; mostly library
+files you did not write and do not need to read. Length is not difficulty: a fifty-line
+traceback and a five-line one are usually equally easy.""")
+    + p("""Two habits fix most of what you will hit here:""")
+    + expr("print(X.shape, y.shape)\nprint(type(X), X.dtype)",
+           "print the shapes, print the types")
+),
+
+"f0-five-errors": (
+    p("""These five account for nearly everything you will hit in the labs.""")
+    + values([("ValueError: shapes not aligned", "shape bug",
+               "print both shapes; one probably needs <code>.T</code>"),
+              ("IndexError: out of bounds", "counting",
+               "positions start at <b>0</b>; the last is <code>x[-1]</code>"),
+              ("TypeError: can only concatenate list", "list, not array",
+               "wrap it: <code>np.array(my_list)</code>"),
+              ("NameError: not defined", "typo, or unrun cell",
+               "in Jupyter, usually an import cell you never ran"),
+              ("KeyError: 'Price'", "wrong column name",
+               "<code>print(df.columns)</code> &mdash; it is probably lowercase")],
+             "the error, what it really means, and the fix")
+    + point("""Notice that four of the five are <b>not</b> mistakes about machine learning.
+They are mistakes about shapes, types and spelling. That ratio holds up in real work
+too.""")
+),
+
+"f0-function-read": (
+    p("""You will constantly meet functions you have never seen. You almost never need to
+read the body. Three things tell you nearly everything.""")
+    + steps(["<b>Its name.</b> Decent code names things honestly: "
+             "<code>compute_cost</code> computes the cost.",
+             "<b>Its parameters</b> &mdash; what it needs from you, matched <b>in order</b> "
+             "unless you name them.",
+             "<b>What it returns</b> &mdash; one value, or a tuple of several."])
+    + point("""That is enough to <i>use</i> it, which is exactly what every graded exercise
+asks of you. The exercises hand you the signature and the docstring precisely because
+reading the body is not the skill being tested.""")
+    + p("""One trap: a function with <b>no</b> <code>return</code> hands back
+<code>None</code>. Nothing complains at the time; you get a confusing failure several lines
+later when something tries to do arithmetic on <code>None</code>.""")
+),
+
+})
+
+# ---------------------------------------------------------------- W3, behind the curtain
+W.update({
+
+"f0-eigen": (
+    p("""Most directions get rotated when you multiply them by a matrix. A few special ones
+do not &mdash; they only get longer or shorter, and keep pointing the same way. Those are
+the <b>eigenvectors</b>.""")
+    + expr("A v = &lambda; v",
+           "&ldquo;A times v equals lambda times v&rdquo; &mdash; a whole matrix acting "
+           "like a single number")
+    + p("""Try it on <b>A = [[2, 1], [1, 2]]</b>.""")
+    + cases([("Direction [1, 1]",
+              "A &times; [1, 1] = <b>[3, 3]</b><br>Same direction, <b>3&times;</b> as long. "
+              "So &lambda; = <b>3</b>."),
+             ("Direction [1, &minus;1]",
+              "A &times; [1, &minus;1] = <b>[1, &minus;1]</b><br>Unchanged. So &lambda; = "
+              "<b>1</b>.")],
+            "two directions this matrix does not rotate")
+    + point("""That is the whole appeal. Along those directions only, a matrix &mdash; a
+grid of numbers doing something complicated &mdash; collapses to <b>one number</b>. Find
+them and you have found the axes the matrix is really working in.""")
+),
+
+"f0-pca-why": (
+    p("""PCA says &ldquo;find the direction of greatest variance&rdquo;. Linear algebra says
+&ldquo;find the largest eigenvector of the covariance matrix&rdquo;. Those sound like two
+different instructions and they are the same one.""")
+    + point("""The link is one sentence: <b>each eigenvalue IS the variance along its own
+eigenvector.</b> So sorting eigenvalues largest-first <i>is</i> sorting directions by how
+much the data spreads along them.""")
+    + p("""Covariance matrices are also <b>symmetric</b>, which buys two guarantees that
+make PCA well behaved rather than merely plausible:""")
+    + cases([("The eigenvalues are real",
+              "No imaginary numbers turn up in the middle of your variances, which for a "
+              "general matrix they can."),
+             ("The eigenvectors are perpendicular",
+              "So the second component measures something the first one <b>cannot see</b>. "
+              "No double counting.")],
+            "why symmetry matters here")
+),
+
+"f0-svd": (
+    p("""Every matrix, without exception, is three simple things done in a row.""")
+    + expr("A = U &Sigma; V&#7488;", "&ldquo;U sigma V transpose&rdquo;")
+    + steps(["<b>V&#7488;</b> &mdash; a <b>rotation</b>. Turn the space.",
+             "<b>&Sigma;</b> &mdash; a <b>stretch</b>. Scale each axis, by the singular "
+             "values.",
+             "<b>U</b> &mdash; another <b>rotation</b>. Turn it again."])
+    + point("""Rotate, stretch, rotate. That is all any matrix ever does, however
+complicated it looks.""")
+    + cases([("Why it beats eigendecomposition",
+              "Eigendecomposition needs a <b>square</b> matrix. SVD works on <b>any</b> "
+              "matrix &mdash; and your data table is 1000&times;4, not square."),
+             ("Why truncating it is safe",
+              "&Sigma; comes back <b>sorted, largest first</b>. Keep the top k and you have "
+              "the <b>provably best</b> rank-k approximation. Not a heuristic &mdash; a "
+              "theorem.")],
+            "two reasons it is the factorisation worth knowing")
+    + p("""And the bridge back to PCA: a singular value <b>squared, divided by n</b>, is
+exactly a covariance eigenvalue. Real PCA implementations use SVD, because building the
+covariance matrix first squares the numbers and throws away precision you did not have to
+lose.""")
+),
+
+"f0-mle": (
+    p("""Where do loss functions come from? They are not invented. They are derived, from
+one principle.""")
+    + point("""<b>Choose the parameters that make the data you actually saw as probable as
+possible.</b> That is maximum likelihood, in full.""")
+    + p("""Work it on ten coin flips that came up <b>7 heads</b>. If the coin lands heads
+with probability p, the chance of seeing exactly that is:""")
+    + expr("L(p) = p&#8311; (1 - p)&sup3;", "how likely this exact result was, for each p")
+    + chain(["p = 0.5 &rarr; 0.00098", "p = 0.7 &rarr; 0.00222", "p = 0.9 &rarr; 0.00048"],
+            "the peak is at p = 0.7 &mdash; which is just 7 out of 10")
+    + p("""The answer is the obvious one, which is the point: the principle agrees with
+common sense on an easy case, and then keeps working on hard ones.""")
+    + cases([("Assume Gaussian noise", "&rarr; you <b>derive</b> squared error."),
+             ("Assume a yes/no outcome", "&rarr; you <b>derive</b> cross-entropy.")],
+            "and here is what it gives you")
+    + point("""So the loss function stops being an arbitrary choice someone made and becomes
+a <b>consequence of what you assumed about the noise</b>. Take the negative log of it and
+products become sums, and nothing underflows &mdash; which is exactly why every loss you
+meet has a log in it.""")
+),
+
+"f0-jacobian": (
+    p("""A gradient is what you get when a function has <b>one</b> output. A Jacobian is
+what you get when it has several.""")
+    + expr("J&#7522;&#11388; = &part;f&#7522; / &part;x&#11388;",
+           "row i, column j: how much output i moves when input j moves")
+    + cases([("Rows are OUTPUTS", "one row per thing the function returns."),
+             ("Columns are INPUTS", "one column per thing you could change.")],
+            "the only thing to remember about the layout")
+    + p("""So a function taking <b>n</b> numbers in and giving <b>m</b> out has an
+<b>m &times; n</b> grid of slopes.""")
+    + point("""And the gradient you already use is just <b>a Jacobian with one row</b>
+&mdash; because a cost function has exactly one output. It was never a different object.""")
+    + p("""This is also what backpropagation <i>is</i>. The chain rule, in many dimensions,
+becomes matrix multiplication; backprop evaluates that product <b>right to left</b>, which
+keeps a single row vector at every step instead of ever building the enormous square
+matrices in the middle. That ordering is the entire trick.""")
+),
+
+"f0-softmax-grad": (
+    p("""Two intimidating pieces of calculus &mdash; the derivative of softmax, and the
+derivative of cross-entropy &mdash; multiply together and almost everything cancels.""")
+    + expr("&part;L / &part;z = p - y",
+           "predicted probabilities minus the true one-hot answer")
+    + p("""Work it on <b>z = [2, 1, 0.5]</b> where the <b>first</b> class is the true
+one.""")
+    + values([("softmax(z)", "[0.6285, 0.2312, 0.1402]", "the predicted probabilities"),
+              ("y, one-hot", "[1, 0, 0]", "the truth: it really was class one"),
+              ("p &minus; y", "[&minus;0.3715, 0.2312, 0.1402]", "and that is the gradient")],
+             "no calculus required at the point of use")
+    + point("""Read the signs. The <b>true</b> class has a negative gradient &mdash; push
+its score <b>up</b>. Every wrong class has a positive one &mdash; push those <b>down</b>.
+The size of each push is exactly how wrong that probability was.""")
+    + p("""<b>Why it cancels:</b> softmax's derivative carries a factor of
+<b>p&#7527;</b>, and the log inside cross-entropy contributes <b>1 / p&#7527;</b>. They
+annihilate. It is the same cancellation that makes the sigmoid and log loss pair up in
+C1 W3, and it is why these two are always used together &mdash; pair either with something
+else and you lose the clean gradient.""")
+),
+
+})
