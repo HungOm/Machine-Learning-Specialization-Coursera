@@ -260,8 +260,16 @@ hr { border: 0; border-top: 1px solid var(--line-soft); margin: 32px 0; }
 var, .v { font-family: var(--serif); font-style: italic; }
 .op { padding: 0 .28em; font-style: normal; }
 sub, sup { font-size: .62em; font-style: normal; font-family: var(--sans); }
-.frac { display: inline-flex; flex-direction: column; vertical-align: -0.55em;
+/* A fraction is two stacked lines, so it has no single baseline to sit on. The
+   old fixed -0.55em drop was tuned for a one-character 1/m and left anything
+   taller — ∂J/∂w especially — hanging below the line while the =, the Σ and the
+   rest of the expression floated up by its numerator. `middle` aligns the
+   fraction's own centre with the parent's midline, which is where a reader
+   expects the fraction bar and the equals sign to meet, at any height. */
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle;
   text-align: center; margin: 0 .25em; line-height: 1.25; }
+/* and give a line carrying a fraction the room a two-line glyph needs */
+.eq:has(.frac), .fanat-eq:has(.frac) { line-height: 2.6; }
 .frac > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 .35em 2px; }
 .frac > span:last-child { padding: 2px .35em 0; }
 /* Overset marks, drawn rather than typed.
