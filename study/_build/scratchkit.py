@@ -60,12 +60,27 @@ def hl(src):
     return highlight(src)
 
 
-def render_section(name, code, output, err, prose):
+def render_section(name, code, output, err, prose, walk=None):
+    """One section: the note, the code, the walkthrough, the real output.
+
+    `prose` is the short expert note — why this block exists, in one or two
+    sentences. `walk` is the slow read: what each line actually does, with the
+    numbers small enough to follow. They are different jobs and the page wants
+    both, so the walkthrough is additive and never replaces the note.
+
+    It sits BELOW the code and ABOVE the output, which is the order a person
+    reads in: see the block, have it read to you line by line, then see what it
+    printed. Putting it above the code would make you read an explanation of
+    something you have not looked at yet.
+    """
     import html as _h
     parts = ['<section class="sx" id="sx-%s">' % name]
     if prose:
         parts.append('<div class="sx-prose">%s</div>' % prose)
     parts.append('<div class="sx-code"><pre><code>%s</code></pre></div>' % hl(code))
+    if walk:
+        parts.append('<div class="sx-walk"><span class="tag">Line by line, '
+                     'in plain words</span>%s</div>' % walk)
     if err:
         parts.append('<div class="sx-out err"><span class="lbl">error</span>'
                      '<pre>%s</pre></div>' % _h.escape(err))

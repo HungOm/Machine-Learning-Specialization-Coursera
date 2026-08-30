@@ -1710,3 +1710,18 @@ ol.gistlist li.soon .tag2 { margin-left: auto; font-size: 11px; color: var(--ink
   padding: 7px 11px; background: var(--bg-sunk); border-radius: var(--radius-sm); }
 .ch-say .lbl { display: block; font-size: 10px; letter-spacing: .07em; text-transform: uppercase;
   color: var(--ink-faint); font-weight: 700; font-style: normal; margin-bottom: 3px; }
+
+/* ---- build lane: the slow read of a code block ----
+   The short prose note above a block says WHY it exists. This says what each
+   line does. Two different jobs, so this is additive and sits below the code:
+   you look at the block, then have it read to you, then see what it printed. */
+.sx-walk { margin: 10px 0 12px; padding: 13px 16px; border: 1px solid var(--line);
+  border-left: 3px solid var(--green); background: var(--bg-panel);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.sx-walk > .tag { display: block; font-size: 10.5px; letter-spacing: .08em;
+  text-transform: uppercase; font-weight: 700; color: var(--green); margin-bottom: 7px; }
+.sx-walk p { font-size: 14px; line-height: 1.62; margin: 0 0 10px; }
+.sx-walk p:last-child { margin-bottom: 0; }
+.sx-walk ul { margin: 0 0 10px; padding-left: 20px; }
+.sx-walk li { font-size: 14px; line-height: 1.6; margin-bottom: 4px; }
+.sx-walk code { font-size: .87em; }

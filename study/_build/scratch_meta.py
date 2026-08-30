@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
+import walk_02
+
 LANE = [
 dict(file="01_linear_regression.py", slug="01-linear-regression",
      title="Linear regression",
@@ -93,7 +95,9 @@ dict(file="02_logistic_regression.py", slug="02-logistic-regression",
                "−1 and the weights flip sign and grow every iteration. A λ that is "
                "perfectly safe at one α diverges at another — and this is not in any "
                "lecture.</p>",
-     }),
+     },
+     walk=walk_02.WALK,
+     picture=walk_02.PICTURE),
 
 dict(file="03_neural_net_forward.py", slug="03-forward-propagation",
      title="Forward propagation",

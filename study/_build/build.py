@@ -1944,7 +1944,7 @@ python3 {file}</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built {builds}.</p>
 </div>
-
+{picture}
 {body}
 {primer}
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
@@ -2113,7 +2113,8 @@ def build_scratch(weeks, flat):
             if err:
                 failures.append((d["file"], name, err))
             body.append(scratchkit.render_section(
-                name, code, out, err, d["prose"].get(name, "")))
+                name, code, out, err, d["prose"].get(name, ""),
+                d.get("walk", {}).get(name)))
         lessons = "".join(
             '<li><a href="../%s">%s</a></li>' % (href, html.escape(t))
             for href, t in d["lessons"] if shown_href(href))
@@ -2130,7 +2131,19 @@ def build_scratch(weeks, flat):
                   'do not cover</h2>\n<div class="callout key"><span class="tag">Enough '
                   'theory to read this file</span>%s</div>' % d["primer"]
                   ) if d.get("primer") else ""
+        # The whole program as one picture, before any of it is read in pieces.
+        # A file of 150 lines in eleven blocks is a list until you can see the
+        # shape it makes; the shape is what the blocks are FOR.
+        pic = ""
+        if d.get("picture"):
+            import gistkit
+            importlib.reload(gistkit)
+            pic = ('<h2><span class="ico">&#128444;&#65039;</span>The whole program in '
+                   'one picture</h2>' + gistkit.flow(d["picture"][0],
+                                                     tag=d["picture"][1],
+                                                     cap=d["picture"][2]))
         page = SCRATCHPAGE.format(
+            picture=pic,
             primer=primer,
             title=html.escape(d["title"]), slug=d["slug"], lede=d["lede"],
             file=d["file"], builds=d["builds"], nlines=src_lines,

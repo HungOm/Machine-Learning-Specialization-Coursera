@@ -244,7 +244,7 @@ python3 02_logistic_regression.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a regularized logistic classifier, an overflow-proof sigmoid, and a demonstration of the hidden constraint between α and λ.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">Eighty students</span><span class="fl-b">Two exam scores each. Forty failed (label <b>0</b>), forty passed (label <b>1</b>). The two groups overlap on purpose, so no line can separate them perfectly.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">start with every weight at zero</span></li><li class="fl-loop"><span class="fl-loop-t">repeat 5,000 times</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Add up the scores, weighted</span><span class="fl-b"><var>z</var> = exam1×<var>w</var><sub>1</sub> + exam2×<var>w</var><sub>2</sub> + <var>b</var>. Any number at all comes out: −40, 0, +17.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">but a <span class="gterm" data-g="probability-f0">probability</span> has to sit between 0 and 1</span></li><li class="fl k-op"><span class="fl-t">Squash it — the sigmoid</span><span class="fl-b">Turns any number into a probability. Very negative → near 0. Zero → exactly 0.5. Very positive → near 1.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">compare that probability with what actually happened</span></li><li class="fl k-op"><span class="fl-t">Score the guess — the log loss</span><span class="fl-b">Confident and right costs almost nothing. Unsure costs a bit. <b>Confident and wrong costs enormously.</b> That asymmetry is the whole point.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">plus a fine for large weights (that is λ)</span></li><li class="fl k-op"><span class="fl-t">Which way is downhill</span><span class="fl-b">One <span class="gterm" data-g="slope-f0">slope</span> per weight — the identical formula to linear regression, with the sigmoid in place of the straight line.</span></li><li class="fl k-back"><span class="fl-t">Nudge every weight</span><span class="fl-b">Each weight steps a little way downhill. Repeat.</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the cost stops falling</span></li><li class="fl k-out"><span class="fl-t">A probability for any student</span><span class="fl-b">Feed it two exam scores and it returns the chance of passing.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">and only then, separately, choose a cut-off</span></li><li class="fl k-stop"><span class="fl-t">Pass or fail</span><span class="fl-b">0.5 is the usual line, but it is a <b>decision you make</b>, not something the model learned. Move it and <span class="gterm" data-g="precisionrecall-native">precision</span> and recall move with it.</span></li></ol><p class="flow-cap">Compare this with file 01. Every box is the same except two: a squash after the <span class="gterm" data-g="weighted-mean">weighted sum</span>, and a different way of scoring the guess. That is the entire difference between predicting a number and predicting a class.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-prose"><p>Eighty students, two exam scores, pass or fail. Two overlapping blobs so the problem is not trivially separable.</p></div><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Logistic regression from scratch — C1 W3 in NumPy.
 
 Run me:  python3 02_logistic_regression.py
@@ -252,7 +252,13 @@ Run me:  python3 02_logistic_regression.py
 Same skeleton as linear regression. Three things change: a sigmoid on the
 output, log loss instead of squared error, and a lambda term on w.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>The file opens by importing NumPy and nothing else. No scikit-learn, no TensorFlow —
+everything below is arithmetic you could do by hand if you had the patience.</p>
+<p>Worth naming the goal before the code starts. File 01 answered <b>“how much?”</b>
+&mdash; a house is worth $420,000. This file answers <b>“which of two?”</b> &mdash; this
+student passes, that one does not. Everything that changes, changes because of that.</p>
+</div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p>Forty of each class, deliberately overlapping — a perfectly separable dataset would let the weights grow without limit and hide what λ does.</p></div><div class="sx-code"><pre><code>rng = np.random.default_rng(<span class="tok-n">7</span>)
 <span class="tok-c"># Two blobs: exam scores of students who passed (1) and failed (0)</span>
 neg = rng.normal([<span class="tok-n">45</span>, <span class="tok-n">50</span>], <span class="tok-n">12</span>, <span class="gterm" data-g="kwsize-api">size=</span>(<span class="tok-n">40</span>, <span class="tok-n">2</span>))
@@ -260,7 +266,23 @@ pos = rng.normal([<span class="tok-n">70</span>, <span class="tok-n">72</span>],
 X = np.vstack([neg, pos])
 y = np.r_[<span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="tok-n">40</span>), <span class="gterm" data-g="npcreate-api">np.ones</span>(<span class="tok-n">40</span>)]
 m, n = X.shape
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m}, n = {n}, positives = {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>m = 80, n = 2, positives = 40</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m}, n = {n}, positives = {int(y<span class="gterm" data-g="npsum-api">.sum(</span>))}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p><code>rng = np.random.default_rng(7)</code> makes a random-number generator. The
+<b>7</b> is a seed: it means “use the same recipe for randomness every time”, so you and
+this page get the identical eighty students on every run. Change the 7 and you get a
+different class of students, and every number below shifts.</p>
+<p><code>rng.normal([45, 50], 12, <span class="gterm" data-g="kwsize-api">size=</span>(40, 2))</code> invents forty students whose two
+exam scores hover <b>around 45 and 50</b>, give or take about 12. These are the ones who
+failed. The next line does the same around <b>70 and 72</b> for the forty who passed.</p>
+<p><code>np.vstack</code> means <b>stack vertically</b> — put the failing forty on top of
+the passing forty to make one table of eighty rows and two columns. <code>np.r_</code>
+builds the answer column the same way: forty zeros, then forty ones.</p>
+<p>So the shapes are <code>X</code> = (80, 2) and <code>y</code> = (80,), which is exactly
+what <code>m = 80, n = 2</code> in the output means: <b>m</b> is how many students,
+<b>n</b> is how many scores each one has.</p>
+<p>The two clouds deliberately overlap. A neat, perfectly separable dataset would let the
+weights grow forever and would hide everything this file is trying to show about λ.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>m = 80, n = 2, positives = 40</pre></div></section>
 <section class="sx" id="sx-sigmoid"><div class="sx-prose"><p>The textbook <code>1/(1+<span class="gterm" data-g="npexp-api">np.exp</span>(-z))</code> overflows for very negative z, because <code>e^1000</code> does not fit in a float. The two branches here are algebraically identical and each avoids the overflow the other would hit. Libraries all do some version of this; it is worth seeing once.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> sigmoid(z):
     <span class="tok-d">&quot;&quot;&quot;1 / (1 + e^-z), written so it never overflows.
 
@@ -278,7 +300,46 @@ m, n = X.shape
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid(-1000) =&quot;</span>, sigmoid(-<span class="tok-n">1000.0</span>), <span class="tok-s">&quot; (no overflow warning)&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;sigmoid([-2, 0, 2]) =&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(sigmoid([-<span class="tok-n">2</span>, <span class="tok-n">0</span>, <span class="tok-n">2</span>]), <span class="tok-n">4</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;g(-z) == 1 - g(z):&quot;</span>, np.allclose(sigmoid(-<span class="tok-n">3.7</span>), <span class="tok-n">1</span> - sigmoid(<span class="tok-n">3.7</span>)))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>sigmoid(-1000) = 0.0  (no overflow warning)
+<span class="tok-k">print</span>(<span class="tok-s">&quot;g(-z) == 1 - g(z):&quot;</span>, np.allclose(sigmoid(-<span class="tok-n">3.7</span>), <span class="tok-n">1</span> - sigmoid(<span class="tok-n">3.7</span>)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>This is the one genuinely new idea in the file. The weighted sum can come out as any
+number at all — −40, 0, +17. A probability may not. The sigmoid is the funnel between
+them:</p>
+<ul>
+<li>a big negative number → almost <b>0</b></li>
+<li>exactly zero → exactly <b>0.5</b></li>
+<li>a big positive number → almost <b>1</b></li>
+</ul>
+<p>You can read that straight off the output: <code>sigmoid([-2, 0, 2])</code> gives
+<b>0.1192, 0.5, 0.8808</b>. Symmetric around the middle, and it never quite reaches either
+end.</p>
+<p><b>Why the function is written in two halves.</b> The textbook formula is
+<code>1 / (1 + exp(-z))</code>. Try it at z = −1000 and the machine has to work out
+<code>exp(1000)</code>, a number with 435 digits, which does not fit in a float. It
+overflows and warns.</p>
+<p>So the code splits: for <code>z ≥ 0</code> it uses <code>1/(1+exp(-z))</code>, and for
+<code>z &lt; 0</code> it uses <code>exp(z)/(1+exp(z))</code>. Multiply the top and bottom
+of the first by <code>exp(z)</code> and you get the second — they are the <b>same
+formula rearranged</b>. Each half is chosen so the exponent it feeds to <code>exp</code>
+is never positive, and <code>exp</code> of a negative number is a safe little value
+between 0 and 1.</p>
+<p>Hence the first output line: <code>sigmoid(-1000) = 0.0</code>, no warning.</p>
+<p><b>You will meet a second spelling of this.</b> File 03 writes the same function as a
+single <code>np.where(z >= 0, 1/(1+exp(-|z|)), exp(-|z|)/(1+exp(-|z|)))</code>. It is not
+a different sigmoid &mdash; the two agree to the last bit over 20,001 values from −800 to
++800 and at ±10,000 as well.</p>
+<p>But the reason it is safe is subtly different, and worth knowing.
+<code>np.where</code> does <b>not</b> pick a branch and skip the other: it computes
+<b>both</b> branches over the <b>whole</b> array and then chooses element by element. So
+writing the obvious two formulas inside an <code>np.where</code> would still overflow —
+the doomed half gets evaluated anyway. Both branches there use <code>-|z|</code>, which is
+never positive whichever side you are on, and that is what makes it safe.</p>
+<p>So: the version on this page is safe because each formula <b>only ever runs on the half
+of the data it suits</b>. File 03's is safe because <b>neither formula can overflow in the
+first place</b>. Same answer, two different ways of avoiding the same cliff.</p>
+<p>The last line, <code>g(-z) == 1 - g(z)</code>, checks the symmetry: the chance of
+passing at z and the chance of failing at −z are the same number. It prints
+<b>True</b>.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>sigmoid(-1000) = 0.0  (no overflow warning)
 sigmoid([-2, 0, 2]) = [0.1192 0.5    0.8808]
 g(-z) == 1 - g(z): True</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Two details. <code>np.clip</code> keeps the <span class="gterm" data-g="logarithm-f0">log</span> away from 0, where it would return −inf. And the penalty is on <code>w</code> only — <b>never on b</b>, because shrinking the model's baseline towards zero buys nothing.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_cost(X, y, w, b, lam=<span class="tok-n">0.0</span>):
@@ -287,14 +348,54 @@ g(-z) == 1 - g(z): True</pre></div></section>
     eps = <span class="tok-n">1e-12</span>                                  <span class="tok-c"># keeps log() away from 0</span>
     f = np.clip(f, eps, <span class="tok-n">1</span> - eps)
     <span class="gterm" data-g="kwloss-api">loss =</span> -(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f))
-    <span class="tok-k">return</span> float(loss<span class="gterm" data-g="npmean-api">.mean(</span>) + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div></section>
+    <span class="tok-k">return</span> float(loss<span class="gterm" data-g="npmean-api">.mean(</span>) + (lam / (<span class="tok-n">2</span> * len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w ** <span class="tok-n">2</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>The cost answers one question: <b>how bad is this set of weights?</b> One number, so
+two candidate models can be compared.</p>
+<p>File 01 squared the miss. That will not do here. Suppose the model says “99% sure this
+student passed” and the student failed. The plain error is 0.99 — which sounds small, and
+it is not small at all. It is a catastrophe.</p>
+<p><code><span class="gterm" data-g="kwloss-api">loss =</span> -(y*log(f) + (1-y)*log(1-f))</code> looks forbidding and is really two
+cases wearing one coat, because <b>y is always 0 or 1</b>, so one of the two terms is
+always multiplied by zero and vanishes:</p>
+<ul>
+<li>The student <b>passed</b> (y = 1) → only <code>-log(f)</code> survives. Predict 0.99
+and the cost is 0.01. Predict 0.01 and the cost is <b>4.6</b>.</li>
+<li>The student <b>failed</b> (y = 0) → only <code>-log(1-f)</code> survives, and it
+punishes confidence the other way.</li>
+</ul>
+<p>That is the whole design: right and confident is nearly free, unsure costs a little,
+<b>wrong and confident costs enormously</b> — and it heads for infinity as the model
+approaches total certainty about something false.</p>
+<p><code>eps = 1e-12</code> and the <code>np.clip</code> line exist because of that
+infinity. <code>log(0)</code> is undefined, so a probability that rounds to exactly 0 or 1
+would crash the sum. Clipping nudges them to 0.000000000001 and 0.999999999999 — far
+enough from the edge to be safe, close enough to change no answer.</p>
+<p>The final term, <code>(lam / (2*len(y))) * <span class="gterm" data-g="npsum-api">np.sum</span>(w**2)</code>, is the fine for large
+weights. Note what is <b>not</b> in it: <code>b</code>. The bias is never penalised,
+because it only shifts the boundary rather than steepening it.</p>
+</div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>Compare this line with the linear-regression version: <code>(X.T @ err) / m</code>. Character for character the same. Only the definition of <code>err</code> changed, because a sigmoid's <span class="gterm" data-g="derivative-f0">derivative</span> and a log's derivative cancel exactly. That cancellation is the real reason these two are always paired.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_gradient(X, y, w, b, lam=<span class="tok-n">0.0</span>):
     <span class="tok-d">&quot;&quot;&quot;Character for character the same as linear regression, except f.&quot;&quot;&quot;</span>
     m = len(y)
     err = sigmoid(X @ w + b) - y
     dj_dw = (X.T @ err) / m + (lam / m) * w      <span class="tok-c"># penalty derivative is (lam/m)w</span>
     dj_db = float(err<span class="gterm" data-g="npsum-api">.sum(</span>) / m)                 <span class="tok-c"># b is NOT regularized</span>
-    <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div></section>
+    <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>Here is the payoff for all of file 01. Read these two lines next to the linear
+regression ones and they are <b>character for character the same</b>:</p>
+<p><code>err = sigmoid(X @ w + b) - y</code> — the only difference in the entire gradient
+is that <code>sigmoid(...)</code> sits where the bare line used to be. That is not a
+coincidence or a convenience; it falls out of the algebra, and it is why the log loss is
+the “right” cost for a sigmoid rather than an arbitrary one.</p>
+<p><code>X.T @ err</code> is the same weighted sum you met in file 01: each student's miss
+multiplied by that student's scores, added up. <code>.T</code> is the <span class="gterm" data-g="transpose-f0">transpose</span> — it turns
+the table on its side so the shapes line up: (2, 80) @ (80,) → (2,), one slope per
+weight.</p>
+<p><code>+ (lam / m) * w</code> is the penalty's own slope. A large weight gets a large
+push back towards zero; a weight already near zero is barely touched.</p>
+<p>And <code>dj_db</code> has no <code>lam</code> term at all, matching the cost: <b>b is
+never regularized</b>.</p>
+</div></section>
 <section class="sx" id="sx-check_gradient"><div class="sx-prose"><p>Same checker as file 01, now with λ switched on, so the penalty's derivative <code>(λ/m)·w</code> is verified too.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> numeric_gradient(f, theta, eps=<span class="tok-n">1e-6</span>):
     g = np.zeros_like(theta, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">for</span> i <span class="tok-k">in</span> range(theta.size):
@@ -309,7 +410,22 @@ ana, _ = compute_gradient(Xs, y, w0, b0, lam)
 num = numeric_gradient(<span class="tok-k">lambda</span> w: compute_cost(Xs, y, w, b0, lam), w0)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nanalytic dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(ana, <span class="tok-n">8</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(num, <span class="tok-n">8</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana - num)):.3e}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana - num)):.3e}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>This block is a test, and it is the reason to trust everything after it.</p>
+<p>There are two ways to find a slope. You can <b>do the calculus</b> — that is
+<code>compute_gradient</code>. Or you can <b>measure it</b>: nudge one weight up by a
+hair, nudge it down by a hair, see how much the cost moved, and divide. That is
+<code>numeric_gradient</code>, and <code>eps = 1e-6</code> is the size of the hair.</p>
+<p>The measured version is far too slow to train with — it re-runs the whole cost twice
+for every single weight — but it needs no calculus, so it cannot repeat a calculus
+mistake. If the two agree, the derivative was differentiated correctly.</p>
+<p>Look at the output. Both come out as <b>[-0.33510702, -0.36844957]</b> and the largest
+disagreement is <b>6.785e-11</b> — a decimal point followed by ten zeros. That is the
+noise floor of floating-point arithmetic, not an error.</p>
+<p>This is a real professional habit, not a teaching exercise. A wrong gradient does not
+crash. It trains happily and <span class="gterm" data-g="convergence-native">converges</span> to the wrong answer, and this ten-line check is how
+you find out.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 analytic dj_dw: [-0.33510702 -0.36844957]
 numeric  dj_dw: [-0.33510702 -0.36844957]
 max difference: 6.785e-11</pre></div></section>
@@ -324,7 +440,23 @@ max difference: 6.785e-11</pre></div></section>
 
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntraining (lambda = 0):&quot;</span>)
 w, b = gradient_descent(Xs, y, alpha=<span class="tok-n">0.5</span>, iters=<span class="tok-n">5000</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;learned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 4)}  b = {b:.4f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;learned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 4)}  b = {b:.4f}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p><code>w, b = <span class="gterm" data-g="npcreate-api">np.zeros</span>(X.shape[1]), 0.0</code> starts every weight at zero. Follow what
+that means on the first iteration: <code>z</code> is 0 for every student, so
+<code>sigmoid(0)</code> is 0.5, so the model's opening position is <b>“every student has a
+50-50 chance”</b>. It knows nothing, and it says so.</p>
+<p>Then the loop, three lines, repeated 5,000 times: work out which way is downhill, step
+that way, repeat.</p>
+<p><code>Xs = (X - X<span class="gterm" data-g="npmean-api">.mean(</span>0)) / X<span class="gterm" data-g="npstd-api">.std(</span>0)</code>, back in the check block, is why it works
+at all. Raw exam scores run 20–100; after scaling they run about −2 to +2. Without that,
+one weight needs a big step and the other a small one, and a single <code>alpha</code>
+cannot suit both.</p>
+<p>The printed cost tells the story: <b>0.568</b> at the start, <b>0.121</b> by iteration
+1,000, and then 0.12139 forever. It has stopped improving by a fifth of the way in — the
+remaining 4,000 iterations change nothing. The final weights are <b>w = [4.72, 2.85]</b>
+and <b>b = −0.095</b>, meaning the first exam matters roughly 1.7 times as much as the
+second.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 training (lambda = 0):
   iter     0  cost 0.56794
   iter  1000  cost 0.12141
@@ -332,21 +464,58 @@ training (lambda = 0):
   iter  3000  cost 0.12139
   iter  4000  cost 0.12139
 learned w = [4.7222 2.8503]  b = -0.0952</pre></div></section>
-<section class="sx" id="sx-evaluate"><div class="sx-prose"><p>The threshold at 0.5 is a <i>separate decision</i> made after training. The model outputs a <span class="gterm" data-g="probability-f0">probability</span>; turning it into a label is your choice, and moving it trades <span class="gterm" data-g="precisionrecall-native">precision</span> against recall.</p></div><div class="sx-code"><pre><code>prob = sigmoid(Xs @ w + b)
+<section class="sx" id="sx-evaluate"><div class="sx-prose"><p>The threshold at 0.5 is a <i>separate decision</i> made after training. The model outputs a probability; turning it into a label is your choice, and moving it trades precision against recall.</p></div><div class="sx-code"><pre><code>prob = sigmoid(Xs @ w + b)
 pred = (prob &gt;= <span class="tok-n">0.5</span>).astype(int)                 <span class="tok-c"># the threshold is a separate choice</span>
 acc = (pred == y)<span class="gterm" data-g="npmean-api">.mean(</span>)
 tp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">1</span>))<span class="gterm" data-g="npsum-api">.sum(</span>)); fp = int(((pred == <span class="tok-n">1</span>) &amp; (y == <span class="tok-n">0</span>))<span class="gterm" data-g="npsum-api">.sum(</span>))
 fn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">1</span>))<span class="gterm" data-g="npsum-api">.sum(</span>)); tn = int(((pred == <span class="tok-n">0</span>) &amp; (y == <span class="tok-n">0</span>))<span class="gterm" data-g="npsum-api">.sum(</span>))
 prec = tp / (tp + fp); rec = tp / (tp + fn)
 <span class="tok-k">print</span>(f<span class="tok-s">&quot;\naccuracy {acc:.3f}   TP {tp}  FP {fp}  FN {fn}  TN {tn}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;precision {prec:.3f}   recall {rec:.3f}   F1 {2*prec*rec/(prec+rec):.3f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;precision {prec:.3f}   recall {rec:.3f}   F1 {2*prec*rec/(prec+rec):.3f}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>The model outputs probabilities. A decision needs a yes or a no, so
+<code>(prob >= 0.5)</code> draws the line. The comment in the file — “the threshold is a
+separate choice” — is the important part: <b>0.5 is not something the model learned</b>.
+You chose it, and you may choose differently.</p>
+<p><code>.astype(int)</code> just turns True/False into 1/0 so it can be compared with
+<code>y</code>.</p>
+<p>The four counts are the four things that can happen, and they are worth saying slowly.
+Treating “passed” as the positive case:</p>
+<ul>
+<li><b>TP = 38</b> — said pass, did pass. Correct.</li>
+<li><b>TN = 38</b> — said fail, did fail. Correct.</li>
+<li><b>FP = 2</b> — said pass, actually failed. A <i>false alarm</i>.</li>
+<li><b>FN = 2</b> — said fail, actually passed. A <i>miss</i>.</li>
+</ul>
+<p><b>Precision</b> = 38/(38+2) = <b>0.95</b>: when it says pass, how often is it right?
+<b>Recall</b> = 38/(38+2) = <b>0.95</b>: of everyone who really passed, how many did it
+find? They are equal here only because FP and FN happen to both be 2. <b>F1</b> combines
+them into one number, and it is 0.95 too.</p>
+<p>Accuracy is 0.95 as well — 76 right out of 80. It agrees with the others here because
+the classes are balanced, forty and forty. On a lopsided problem it stops agreeing, and
+that is precisely when precision and recall earn their keep.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 accuracy 0.950   TP 38  FP 2  FN 2  TN 38
 precision 0.950   recall 0.950   F1 0.950</pre></div></section>
 <section class="sx" id="sx-boundary"><div class="sx-prose"><p>The boundary is wherever z = 0, because g(0) = 0.5. You never compute a sigmoid to find it — solve the straight line instead.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The boundary is where z = 0, i.e. w1*x1 + w2*x2 + b = 0.</span>
 <span class="tok-c"># Solve for x2:  x2 = -(w1*x1 + b) / w2</span>
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ndecision boundary in scaled space:&quot;</span>)
 <span class="tok-k">for</span> x1 <span class="tok-k">in</span> [-<span class="tok-n">1.0</span>, <span class="tok-n">0.0</span>, <span class="tok-n">1.0</span>]:
-    <span class="tok-k">print</span>(f&quot;  x1 = {x1:+.1f}  -&gt;  x2 = {-(w[<span class="tok-n">0</span>]*x1 + b)/w[<span class="tok-n">1</span>]:+.3f}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f&quot;  x1 = {x1:+.1f}  -&gt;  x2 = {-(w[<span class="tok-n">0</span>]*x1 + b)/w[<span class="tok-n">1</span>]:+.3f}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>Where exactly does the model change its mind? At the probability 0.5. And sigmoid gives
+0.5 at exactly one input: <b>z = 0</b>.</p>
+<p>So the dividing line is wherever <code>w₁x₁ + w₂x₂ + b = 0</code>. Rearranging for
+<code>x₂</code> gives the line the code prints:
+<code>x₂ = -(w₁x₁ + b) / w₂</code>.</p>
+<p>Three points off that line appear in the output: at x₁ = −1 the boundary is at
+x₂ = +1.690; at x₁ = 0 it is at +0.033; at x₁ = +1 it is at −1.623. Three points, dropping
+steadily — it is a <b>straight line</b>, sloping down.</p>
+<p>Which is the honest limit of this model. Everything on one side is called a pass,
+everything on the other a fail, and the frontier between them is straight. It cannot curve
+around an island of failing students sitting in the middle of the passing ones.</p>
+<p>These numbers are in <b>scaled</b> space, because the model was trained on scaled data.
+To draw the line on a chart of real exam marks you would have to undo the scaling
+first.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 decision boundary in scaled space:
   x1 = -1.0  -&gt;  x2 = +1.690
   x1 = +0.0  -&gt;  x2 = +0.033
@@ -360,7 +529,25 @@ decision boundary in scaled space:
         wl, bl = wl - <span class="tok-n">0.5</span> * dw, bl - <span class="tok-n">0.5</span> * db
     a = ((sigmoid(Xs @ wl + bl) &gt;= <span class="tok-n">0.5</span>).astype(int) == y)<span class="gterm" data-g="npmean-api">.mean(</span>)
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{lam:8.0f}  {<span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(wl):8.4f}  {a:9.3f}&quot;</span>)
-<span class="tok-k">print</span>(&quot;\nbigger <span class="tok-k">lambda</span> -&gt; smaller weights -&gt; a flatter, more cautious model.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(&quot;\nbigger <span class="tok-k">lambda</span> -&gt; smaller weights -&gt; a flatter, more cautious model.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>This block runs the whole training four times with a bigger λ each time, and prints two
+things: how big the weights got, and how accurate it was.</p>
+<p><code><span class="gterm" data-g="npnorm-api">np.linalg.norm</span>(wl)</code> is the length of the weight <span class="gterm" data-g="vector-f0">vector</span> — roughly “how big
+are all the weights together”. Read the column down:</p>
+<ul>
+<li>λ = 0 → <b>|w| = 5.52</b>, accuracy 0.950</li>
+<li>λ = 1 → <b>|w| = 2.93</b>, accuracy 0.963</li>
+<li>λ = 10 → <b>|w| = 1.28</b>, accuracy 0.963</li>
+<li>λ = 100 → <b>|w| = 0.32</b>, accuracy 0.963</li>
+</ul>
+<p>The weights shrink by a factor of seventeen and the accuracy <b>goes up and stays
+up</b>. That is the argument for regularization in four lines: the same decisions, made
+with less confidence, and the confidence was never earned in the first place.</p>
+<p>What is actually happening: with λ = 0 nothing stops the weights growing, so the model
+pushes every probability towards 0.000 or 1.000 — it becomes certain. λ charges a fee for
+that certainty. The boundary stays in nearly the same place; the model just stops shouting
+about it.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 what lambda does to the weights:
   lambda       |w|  train acc
        0    5.5154      0.950
@@ -385,7 +572,31 @@ bigger lambda -&gt; smaller weights -&gt; a flatter, more cautious model.</pre><
     state = <span class="tok-s">&quot;diverged&quot;</span> <span class="tok-k">if</span> <span class="tok-k">not</span> np.isfinite(norm) <span class="tok-k">else</span> f<span class="tok-s">&quot;|w| = {norm:.4f}&quot;</span>
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{alpha:7.2f} {lam:7.0f} {factor:9.3f}   {state}&quot;</span>)
 <span class="tok-k">print</span>(&quot;\nStable only <span class="tok-k">while</span> alpha*<span class="tok-k">lambda</span>/m &lt; <span class="tok-n">2</span>, i.e. alpha &lt; 2m/<span class="tok-k">lambda</span>.&quot;)
-<span class="tok-k">print</span>(f&quot;With m = {m} <span class="tok-k">and</span> <span class="tok-k">lambda</span> = <span class="tok-n">1000</span> that means alpha &lt; {<span class="tok-n">2</span>*m/<span class="tok-n">1000</span>:.3f}.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f&quot;With m = {m} <span class="tok-k">and</span> <span class="tok-k">lambda</span> = <span class="tok-n">1000</span> that means alpha &lt; {<span class="tok-n">2</span>*m/<span class="tok-n">1000</span>:.3f}.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span>
+<p>The last block is the trap, and it is not in any lecture.</p>
+<p>Look at what the regularized update does to <code>w</code> before the gradient is even
+applied. Combining the two terms gives
+<code>w := w(1 − αλ/m) − α × gradient</code>. So every step multiplies the weights by
+<code>1 − αλ/m</code>. Call that the <b>shrink factor</b>.</p>
+<ul>
+<li>factor <b>0.9</b> → the weight gently shrinks: 10 → 9 → 8.1. Fine.</li>
+<li>factor <b>−0.5</b> → the weight <b>flips sign</b> every step: 10 → −5 → 2.5. Ugly, but
+still shrinking.</li>
+<li>factor <b>−5.25</b> → it flips <b>and</b> grows every step. Gone.</li>
+</ul>
+<p>The output walks straight through those cases. α = 0.5 with λ = 100 gives a factor of
+0.375 and settles at |w| = 0.32. Push λ to 320 and the factor hits exactly −1.000, which
+is the knife edge: it does not blow up but it does not settle either, ending at
+<b>|w| = 538</b>. At λ = 1000 the factor is −5.25 and it <b>diverges</b>.</p>
+<p>Then the last line of the block fixes it without touching λ at all: keep λ = 1000 and
+drop α to 0.05, and the factor is back to 0.375 and the weights land at 0.041.</p>
+<p>So the rule: you are safe while <code>αλ/m &lt; 2</code>, that is
+<code>α &lt; 2m/λ</code>. With m = 80 and λ = 1000 that means <b>α must be below
+0.160</b>.</p>
+<p>The lesson to carry: <b>α and λ are not independent knobs.</b> A λ that is perfectly
+safe at one learning rate destroys the model at another, and the failure looks like
+“training diverged”, which sends most people hunting for a bug in the gradient.</p>
+</div><div class="sx-out"><span class="lbl">output</span><pre>
 the hidden constraint between alpha and lambda:
   alpha  lambda   1-a*l/m   outcome
    0.50     100     0.375   |w| = 0.3225
