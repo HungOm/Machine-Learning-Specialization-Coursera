@@ -244,7 +244,7 @@ python3 01_linear_regression.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a working multi-feature linear regressor, z-score scaling, and a gradient checker you will reuse in every later file.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">Eight houses</span><span class="fl-b">Each one has <b>three</b> numbers describing it &mdash; size, bedrooms, age &mdash; and the price it actually sold for.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">start with every weight at zero</span></li><li class="fl-loop"><span class="fl-loop-t">repeat 1,500 times</span><ol class="flow inner"><li class="fl k-op"><span class="fl-t">Predict</span><span class="fl-b"><b>f = X @ w + b</b>. One <span class="gterm" data-g="dot-product-f0">dot product</span> per house: multiply each feature by its weight and add them up.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">subtract the real price from each prediction</span></li><li class="fl k-op"><span class="fl-t">Measure the miss</span><span class="fl-b">The average squared error, halved. <b>One number</b> for the whole model.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">ask which way that number falls</span></li><li class="fl k-op"><span class="fl-t">Slope of the cost</span><span class="fl-b">One <span class="gterm" data-g="slope-f0">slope</span> per weight, plus one for the bias. Four numbers, all at once.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">step downhill by &alpha;</span></li><li class="fl k-back"><span class="fl-t">Nudge all four numbers</span><span class="fl-b">Each drops by &alpha; times its own slope.</span></li></ol><span class="fl-loop-b"><span class="a">↑</span>and round again</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the cost has stopped falling</span></li><li class="fl k-out"><span class="fl-t">A price for any house</span><span class="fl-b">Give it a size, a bedroom count and an age, and it returns a number.</span></li></ol><p class="flow-cap">This is the picture the entire specialization is built on. Every later file swaps one box for a bigger one and leaves the shape alone.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-prose"><p>Eight houses, three features. Small enough that you can check any number by hand, which is the whole point of starting here.</p></div><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Linear regression from scratch — no scikit-learn, no TensorFlow.
 
 Run me:  python3 01_linear_regression.py
@@ -252,7 +252,11 @@ Run me:  python3 01_linear_regression.py
 Everything here is C1 W1-W2 in about 60 lines of NumPy. The last section
 checks the answer against scikit-learn, so you can see it really is the same.
 &quot;&quot;&quot;</span>
-<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div></section>
+<span class="tok-k">import</span> numpy <span class="tok-k">as</span> np</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Imports, and nothing else. Pure NumPy &mdash; no scikit-learn, no TensorFlow.
+Everything below is arithmetic you could do on paper if you had the patience and the
+time.</p><div class="wpoint"><span class="wp-t">The point</span>The goal of this file: predict <b>a number</b>. How much is this house worth?
+That is <b>regression</b>. File 02 will predict a <b>class</b> instead, and almost nothing
+else will change.</div></div></section>
 <section class="sx" id="sx-data"><div class="sx-prose"><p><code>X</code> is <b>(m, n)</b> — one row per house, one column per feature — and <code>y</code> is <b>(m,)</b>. Every shape error you will ever hit in the assignments comes from losing track of those two lines.</p></div><div class="sx-code"><pre><code><span class="tok-c"># A tiny house dataset: size (1000 sq ft), bedrooms, age (years) -&gt; price ($1000s)</span>
 X = <span class="gterm" data-g="nparray-api">np.array</span>([
     [<span class="tok-n">2.10</span>, <span class="tok-n">3</span>, <span class="tok-n">20</span>], [<span class="tok-n">1.60</span>, <span class="tok-n">3</span>, <span class="tok-n">15</span>], [<span class="tok-n">2.40</span>, <span class="tok-n">3</span>, <span class="tok-n">18</span>], [<span class="tok-n">1.42</span>, <span class="tok-n">2</span>, <span class="tok-n">30</span>],
@@ -260,7 +264,11 @@ X = <span class="gterm" data-g="nparray-api">np.array</span>([
 ], <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">400</span>., <span class="tok-n">330</span>., <span class="tok-n">369</span>., <span class="tok-n">232</span>., <span class="tok-n">540</span>., <span class="tok-n">400</span>., <span class="tok-n">200</span>., <span class="tok-n">480</span>.])
 m, n = X.shape
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m} examples, n = {n} features&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>m = 8 examples, n = 3 features</pre></div></section>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;m = {m} examples, n = {n} features&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Eight houses. Each one has three numbers describing it, and one number to
+predict.</p><div class="wvals"><span class="wv-t">the shapes, which are the thing to hold on to</span><table><tr><td class="wv-l">m = 8</td><td class="wv-v">examples</td><td class="wv-n">how many houses &mdash; the number of <b>rows</b></td></tr><tr><td class="wv-l">n = 3</td><td class="wv-v">features</td><td class="wv-n">size, bedrooms, age &mdash; the number of <b>columns</b></td></tr><tr><td class="wv-l">X</td><td class="wv-v">(8, 3)</td><td class="wv-n">the table of houses</td></tr><tr><td class="wv-l">y</td><td class="wv-v">(8,)</td><td class="wv-n">the eight prices</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Rows are examples, columns are features.</b> That convention holds for the
+whole specialization, and almost every shape error you will hit comes from momentarily
+forgetting it.</div><p>Eight houses is far too few to build anything real. It is exactly the right number
+to <b>check by hand</b>, which is what this file is for.</p></div><div class="sx-out"><span class="lbl">output</span><pre>m = 8 examples, n = 3 features</pre></div></section>
 <section class="sx" id="sx-cost"><div class="sx-prose"><p>Three lines. <code>X @ w</code> produces all eight predictions at once and <code>+ b</code> broadcasts the same number onto every one of them. There is no loop because there does not need to be one.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_cost(X, y, w, b):
     <span class="tok-d">&quot;&quot;&quot;J(w,b) = (1/2m) sum (f - y)^2.
 
@@ -269,7 +277,12 @@ m, n = X.shape
     &quot;&quot;&quot;</span>
     f = X @ w + b                    <span class="tok-c"># (m,)</span>
     err = f - y                      <span class="tok-c"># (m,)</span>
-    <span class="tok-k">return</span> float(<span class="gterm" data-g="npsum-api">np.sum</span>(err ** <span class="tok-n">2</span>) / (<span class="tok-n">2</span> * len(y)))</code></pre></div></section>
+    <span class="tok-k">return</span> float(<span class="gterm" data-g="npsum-api">np.sum</span>(err ** <span class="tok-n">2</span>) / (<span class="tok-n">2</span> * len(y)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The cost squashes all eight misses into <b>one number</b>, so two candidate models
+can be compared.</p><div class="wx"><code class="wx-c">f = X @ w + b
+cost = np.mean((f - y) ** 2) / 2</code><span class="wx-s">predict everything, then average the squared misses</span></div><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b"><code>X @ w</code> &mdash; one dot product per house. <b>(8,3) @ (3,) &rarr; (8,)</b>: eight predictions, in one operation.</span></li><li><span class="ws-n">2</span><span class="ws-b"><code>+ b</code> &mdash; <span class="gterm" data-g="broadcasting-f0">broadcasting</span> adds the same bias to all eight.</span></li><li><span class="ws-n">3</span><span class="ws-b"><code>f - y</code> &mdash; eight misses.</span></li><li><span class="ws-n">4</span><span class="ws-b"><code>** 2</code> &mdash; square them, so too-high and too-low both count as bad and cannot cancel.</span></li><li><span class="ws-n">5</span><span class="ws-b"><code><span class="gterm" data-g="npmean-api">np.mean</span>(...) / 2</code> &mdash; average, then halve.</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>The <b>&divide; 2</b> is pure convenience. Differentiating a square brings a
+2 down in front; putting a 2 underneath in advance means it cancels and the gradient comes
+out clean. It moves the cost's value but not <b>where its minimum is</b>, which is all that
+matters.</div></div></section>
 <section class="sx" id="sx-gradient"><div class="sx-prose"><p>The only part worth staring at is <code>X.T @ err</code>. The maths says <i>for each feature j, sum the error times that feature</i>. Transposing X makes each feature a row, so one <span class="gterm" data-g="matrix-f0">matrix</span>–<span class="gterm" data-g="vector-f0">vector</span> product does every feature at once. Shapes: (n, m) @ (m,) → (n,).</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> compute_gradient(X, y, w, b):
     <span class="tok-d">&quot;&quot;&quot;The two partial derivatives, vectorized.
 
@@ -280,7 +293,12 @@ m, n = X.shape
     err = (X @ w + b) - y            <span class="tok-c"># (m,)</span>
     dj_dw = (X.T @ err) / m          <span class="tok-c"># (n, m) @ (m,) -&gt; (n,)</span>
     dj_db = float(<span class="gterm" data-g="npsum-api">np.sum</span>(err) / m)   <span class="tok-c"># scalar</span>
-    <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div></section>
+    <span class="tok-k">return</span> dj_dw, dj_db</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Two lines of arithmetic that carry the entire idea of learning.</p><div class="wx"><code class="wx-c">err   = f - y
+dj_dw = (X.T @ err) / m
+dj_db = err.mean()</code></div><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b"><code>err</code> &mdash; how wrong each house was. Eight numbers.</span></li><li><span class="ws-n">2</span><span class="ws-b"><code>X.T</code> &mdash; the <span class="gterm" data-g="transpose-f0">transpose</span>, which turns the table on its side so the shapes line up: <b>(3,8) @ (8,) &rarr; (3,)</b>.</span></li><li><span class="ws-n">3</span><span class="ws-b">That gives <b>one slope per feature</b> &mdash; each miss weighted by that house's value for that feature, then summed.</span></li><li><span class="ws-n">4</span><span class="ws-b"><code>err<span class="gterm" data-g="npmean-api">.mean(</span>)</code> &mdash; the bias slope, with <b>no</b> feature weighting.</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>Why the feature weighting? Because <b>a miss on a big house is stronger
+evidence that the size weight is wrong</b> than a miss on a small one. The bias has no such
+factor because <b>b affects every house equally</b>, so no house's opinion counts for
+more.</div></div></section>
 <section class="sx" id="sx-check_gradient"><div class="sx-prose"><p>Before trusting a hand-derived gradient, check it. Nudge one parameter by a tiny ε, see how much the cost moved, divide. If the analytic and numerical answers disagree beyond about 1e-6, the analytic one is wrong — this catches almost every <span class="gterm" data-g="derivative-f0">derivative</span> bug you will ever write.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> numeric_gradient(f, theta, eps=<span class="tok-n">1e-6</span>):
     <span class="tok-d">&quot;&quot;&quot;Central difference. Used only to prove the analytic gradient is right.&quot;&quot;&quot;</span>
     g = np.zeros_like(theta, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
@@ -298,7 +316,10 @@ num_b = numeric_gradient(<span class="tok-k">lambda</span> bb: compute_cost(X, y
 <span class="tok-k">print</span>(<span class="tok-s">&quot;analytic dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(ana_w, <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;numeric  dj_dw:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(num_w, <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;max difference:&quot;</span>, f<span class="tok-s">&quot;{<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(ana_w - num_w)):.3e}&quot;</span>,
-      <span class="tok-s">&quot;| db diff:&quot;</span>, f<span class="tok-s">&quot;{abs(ana_b - num_b):.3e}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>analytic dj_dw: [ -795.832078 -1150.94375  -6547.42125 ]
+      <span class="tok-s">&quot;| db diff:&quot;</span>, f<span class="tok-s">&quot;{abs(ana_b - num_b):.3e}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>This block is a <b>test</b>, and it is the reason to trust everything after it.</p><div class="wcases"><span class="wk-t">two independent ways to get the same slope</span><div class="wk-row"><div class="wk-case"><span class="wk-h">The calculus version</span><div class="wk-b"><code>compute_gradient</code> &mdash; the formula you derived. Fast, and capable of being <b>silently wrong</b>.</div></div><div class="wk-case"><span class="wk-h">The measured version</span><div class="wk-b">Nudge one weight up a hair, nudge it down a hair, see how much the cost moved, divide. <b>No calculus involved</b>, so it cannot repeat a calculus mistake.</div></div></div></div><div class="wvals"><span class="wv-t">what this block printed</span><table><tr><td class="wv-l">analytic</td><td class="wv-v">[&minus;795.83, &minus;1150.94, &minus;6547.42]</td><td class="wv-n">from the formula</td></tr><tr><td class="wv-l">numeric</td><td class="wv-v">[&minus;795.83, &minus;1150.94, &minus;6547.42]</td><td class="wv-n">from measuring</td></tr><tr><td class="wv-l">max difference</td><td class="wv-v">3.9e&minus;06</td><td class="wv-n">floating-point noise, not an error</td></tr><tr><td class="wv-l">bias difference</td><td class="wv-v">7.2e&minus;07</td><td class="wv-n">same</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The measured version is far too slow to train with &mdash; it re-runs the
+whole cost twice for <b>every</b> weight &mdash; but it is exactly right for checking. This
+is a real professional habit: <b>a wrong gradient does not crash</b>. It trains happily and
+<span class="gterm" data-g="convergence-native">converges</span> to the wrong answer.</div></div><div class="sx-out"><span class="lbl">output</span><pre>analytic dj_dw: [ -795.832078 -1150.94375  -6547.42125 ]
 numeric  dj_dw: [ -795.832078 -1150.943746 -6547.421246]
 max difference: 3.931e-06 | db diff: 7.248e-07</pre></div></section>
 <section class="sx" id="sx-scaling"><div class="sx-prose"><p>Look at the ranges before and after. Age spans 32 while size spans 1.73 — a factor of nearly twenty, which means their gradients differ by nearly twenty and no single α suits both. Note the function returns μ and σ as well: <b>those are part of the trained model</b> and you must keep them to predict on anything new.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> zscore(X):
@@ -309,10 +330,16 @@ max difference: 3.931e-06 | db diff: 7.248e-07</pre></div></section>
 
 Xs, mu, sigma = zscore(X)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nbefore scaling, column ranges:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(X<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="tok-n">0</span>) - X<span class="gterm" data-g="npmaxmin-api">.min(</span><span class="tok-n">0</span>), <span class="tok-n">2</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;after  scaling, column ranges:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xs<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="tok-n">0</span>) - Xs<span class="gterm" data-g="npmaxmin-api">.min(</span><span class="tok-n">0</span>), <span class="tok-n">2</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;after  scaling, column ranges:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xs<span class="gterm" data-g="npmaxmin-api">.max(</span><span class="tok-n">0</span>) - Xs<span class="gterm" data-g="npmaxmin-api">.min(</span><span class="tok-n">0</span>), <span class="tok-n">2</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Look at what the columns actually contain before scaling.</p><div class="wvals"><span class="wv-t">column ranges</span><table><tr><td class="wv-l">before</td><td class="wv-v">[1.73, 2.0, 32.0]</td><td class="wv-n">the range of each column</td></tr><tr><td class="wv-l">after</td><td class="wv-v">[3.04, 2.83, 3.30]</td><td class="wv-n">all comparable</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Age spans <b>32</b> while size spans <b>1.73</b> &mdash; roughly
+<b>18&times;</b> wider. That single fact makes the cost surface a long thin canyon rather
+than a bowl.</div><p>In a canyon, a gradient step points <b>across</b> the valley rather than along
+it, so the path zig-zags; and &alpha; has to stay small enough not to bounce out, which
+makes the crawl slower still. Scaling turns the canyon back into something round.</p><div class="wx"><code class="wx-c">Xs = (X - X.mean(0)) / X.std(0)</code><span class="wx-s">subtract each column's mean, divide by its spread</span></div><div class="wpoint"><span class="wp-t">The point</span><code><span class="gterm" data-g="kwaxis-api">axis=</span>0</code> is doing real work in <code>X<span class="gterm" data-g="npmean-api">.mean(</span>0)</code>: it means
+&ldquo;<b>one mean per column</b>&rdquo;, which is one per feature. Use <code><span class="gterm" data-g="kwaxis-api">axis=</span>1</code>
+and you would get one per house, which is meaningless.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 before scaling, column ranges: [ 1.73  2.   32.  ]
 after  scaling, column ranges: [3.04 2.83 3.3 ]</pre></div></section>
-<section class="sx" id="sx-descent"><div class="sx-prose"><p>The two updates both use the <i>old</i> w and b, because both gradients were computed before either changed. Doing it any other way is the classic simultaneous-update bug — and it usually still <span class="gterm" data-g="convergence-native">converges</span>, which is why it survives in so much code.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradient_descent(X, y, alpha, iters):
+<section class="sx" id="sx-descent"><div class="sx-prose"><p>The two updates both use the <i>old</i> w and b, because both gradients were computed before either changed. Doing it any other way is the classic simultaneous-update bug — and it usually still converges, which is why it survives in so much code.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> gradient_descent(X, y, alpha, iters):
     w = <span class="gterm" data-g="npcreate-api">np.zeros</span>(X.shape[<span class="tok-n">1</span>])
     b = <span class="tok-n">0.0</span>
     history = []
@@ -328,7 +355,11 @@ w, b, hist = gradient_descent(Xs, y, alpha=<span class="tok-n">0.1</span>, iters
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\niteration      cost&quot;</span>)
 <span class="tok-k">for</span> i, c <span class="tok-k">in</span> hist:
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;{i:9d}  {c:9.4f}&quot;</span>)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;\nlearned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 3)}   b = {b:.3f}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;\nlearned w = {<span class="gterm" data-g="npround-api">np.round</span>(w, 3)}   b = {b:.3f}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Three lines, repeated 1,500 times. Watch the cost column.</p><div class="wvals"><span class="wv-t">what training printed</span><table><tr><td class="wv-l">iteration 0</td><td class="wv-v">58,285</td><td class="wv-n">the cost when every weight is still zero</td></tr><tr><td class="wv-l">iteration 200</td><td class="wv-v">240.9</td><td class="wv-n">almost all the progress, in the first 200 steps</td></tr><tr><td class="wv-l">iteration 600</td><td class="wv-v">237.29</td><td class="wv-n">refining</td></tr><tr><td class="wv-l">iteration 1200</td><td class="wv-v">237.2592</td><td class="wv-n">converged &mdash; nothing is moving</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The shape is the important part: <b>an enormous drop, then a long
+flattening</b>. By iteration 200 it is 99.6% of the way there, and the remaining 1,300
+iterations buy four decimal places.</div><p>That shape is what a healthy run looks like. If the cost ever <b>rises</b>
+between two iterations, &alpha; is too large &mdash; and that one rule is the most useful
+piece of debugging in the whole specialization.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 iteration      cost
         0  58285.3121
       200   240.9076
@@ -350,7 +381,11 @@ learned w = [40.894 66.565  0.18 ]   b = 368.875</pre></div></section>
 house = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2.0</span>, <span class="tok-n">3</span>, <span class="tok-n">22</span>])
 <span class="tok-k">print</span>(f&quot;\n2000 sq ft, <span class="tok-n">3</span> bed, <span class="tok-n">22</span> yrs -&gt; ${predict(house, w, b, mu, sigma):.1f}k&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;training predictions:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(Xs @ w + b, <span class="tok-n">1</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;actual prices:       &quot;</span>, y)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;actual prices:       &quot;</span>, y)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The model is trained. Now use it.</p><div class="wchain"><span class="wc-i">2000 sq ft, 3 bed, 22 yrs</span><span class="wc-a">→</span><span class="wc-i">$365.0k</span><span class="wc-cap">a house it has never seen</span></div><p>And here it is against the eight houses it <b>was</b> trained on:</p><div class="wvals"><span class="wv-t">training predictions vs. the truth (in $1000s)</span><table><tr><td class="wv-l">predicted</td><td class="wv-v">372, 336, 394, 229, 531, 364, 219, 506</td><td class="wv-n"></td></tr><tr><td class="wv-l">actual</td><td class="wv-v">400, 330, 369, 232, 540, 400, 200, 480</td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>It is close but nowhere near exact &mdash; house 1 is out by <b>28</b>, house
+6 by <b>36</b>. That is <b>correct behaviour</b>, not failure. A model that hit all eight
+exactly would have memorised eight houses and learned nothing about houses in general.</div><p>New input must be scaled with the <b>same</b> mean and <span class="gterm" data-g="variance-f0">standard deviation</span> the
+training used. Feeding a raw 2000 into a model trained on standardised inputs returns
+nonsense, silently.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 2000 sq ft, 3 bed, 22 yrs -&gt; $365.0k
 training predictions: [372.2 336.2 393.7 229.4 530.7 364.4 218.9 505.6]
 actual prices:        [400. 330. 369. 232. 540. 400. 200. 480.]</pre></div></section>
@@ -362,7 +397,15 @@ theta = np.linalg.lstsq(Xb, y, rcond=<span class="tok-k">None</span>)[<span clas
 w_unscaled = w / sigma
 b_unscaled = b - float(w @ (mu / sigma))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;gradient descent b, w:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(np.r_[b_unscaled, w_unscaled], <span class="tok-n">3</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;agree to 3 dp:&quot;</span>, np.allclose(theta, np.r_[b_unscaled, w_unscaled], atol=<span class="tok-n">1e-3</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;agree to 3 dp:&quot;</span>, np.allclose(theta, np.r_[b_unscaled, w_unscaled], atol=<span class="tok-n">1e-3</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The final check, and the most convincing one in the file. Linear regression has a
+<b>closed-form</b> solution &mdash; the normal equation &mdash; that gets the exact answer
+in one step with no iteration at all.</p><div class="wvals"><span class="wv-t">two completely different methods, one answer</span><table><tr><td class="wv-l">normal equation</td><td class="wv-v">[&minus;61.281, 71.749, 94.137, 0.019]</td><td class="wv-n">solved directly</td></tr><tr><td class="wv-l">gradient descent</td><td class="wv-v">[&minus;61.280, 71.750, 94.137, 0.019]</td><td class="wv-n">1,500 small steps</td></tr><tr><td class="wv-l">agree to 3 dp</td><td class="wv-v">True</td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>So the sixty lines above really do compute linear regression, and not merely
+something that <i>looks</i> like it. Two independent methods arriving at the same four
+numbers is about as strong a check as you get.</div><p>Then why bother with gradient descent, if a formula solves it exactly? Because
+the normal equation needs to <b>invert a matrix</b>, which costs roughly n&sup3; and becomes
+impossible past a few thousand features &mdash; and because it exists <b>only</b> for
+linear regression. Gradient descent works on everything in the rest of this
+specialization.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 normal equation  b, w: [-6.1281e+01  7.1749e+01  9.4137e+01  1.9000e-02]
 gradient descent b, w: [-6.1280e+01  7.1750e+01  9.4137e+01  1.9000e-02]
 agree to 3 dp: True</pre></div></section>

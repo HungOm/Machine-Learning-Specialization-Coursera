@@ -244,7 +244,7 @@ python3 04_backprop.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a complete two-layer network with hand-derived gradients, a gradient checker that passes, and a demonstration of why it fails on a <span class="gterm" data-g="relu-native">ReLU</span> kink.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">One batch of examples</span><span class="fl-b">Together with the answers you want.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">forward &mdash; and KEEP everything you compute</span></li><li class="fl k-op"><span class="fl-t">Forward pass</span><span class="fl-b">Layer by layer to the output. Every intermediate value is stored, because the backward pass will need it.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">compare with the truth</span></li><li class="fl k-op"><span class="fl-t">The cost</span><span class="fl-b">One number.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">now go backwards, starting from &part;J/&part;J = 1</span></li><li class="fl k-back"><span class="fl-t">Backward pass</span><span class="fl-b">Walk the layers in <b>reverse</b>, multiplying by each one's local <span class="gterm" data-g="slope-f0">slope</span>. Every weight's gradient falls out on the way.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">one small step downhill</span></li><li class="fl k-back"><span class="fl-t">Update every weight</span><span class="fl-b">And round again.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">the cost stops falling</span></li><li class="fl k-out"><span class="fl-t">A trained network</span><span class="fl-b">XOR, which no straight line can solve.</span></li></ol><p class="flow-cap">File 03 was the forward arrow only. This file adds the backward one, and the backward arrow is the entire reason deep learning is possible.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-prose"><p>This is the file that turns backprop from a word into arithmetic. Nothing here calls a library that computes a <span class="gterm" data-g="derivative-f0">derivative</span> for you.</p></div><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;Backpropagation from scratch — C2 W2, with no autodiff anywhere.
 
 Run me:  python3 04_backprop.py
@@ -258,7 +258,10 @@ rng = np.random.default_rng(<span class="tok-n">0</span>)
 
 <span class="tok-k">def</span> sigmoid(z):
     <span class="tok-k">return</span> np.where(z &gt;= <span class="tok-n">0</span>, <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))),
-                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div></section>
+                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Forward propagation asks: <b>what did the network predict?</b> Backpropagation asks
+the other question: <b>which weight caused the mistake, and by how much?</b></p><div class="wpoint"><span class="wp-t">The point</span>This file derives every gradient <b>by hand</b>, checks each one numerically,
+and then uses them to train a network on <b>XOR</b> &mdash; the smallest problem a straight
+line cannot solve.</div></div></section>
 <section class="sx" id="sx-one_node"><div class="sx-prose"><p>Start with the smallest graph that has anything to say. Forward: compute a, then J. Backward: work out how much J changes per unit of a, then multiply by how much a changes per unit of w. That multiplication <i>is</i> the chain rule, and it is all backprop ever does.</p></div><div class="sx-code"><pre><code><span class="tok-c"># Start with the smallest possible graph:  a = wx + b,  J = (a - y)^2</span>
 w, b, x, y = <span class="tok-n">3.0</span>, <span class="tok-n">1.0</span>, <span class="tok-n">2.0</span>, <span class="tok-n">5.0</span>
 a = w * x + b
@@ -270,10 +273,14 @@ dJ_db = dJ_da * <span class="tok-n">1</span>            <span class="tok-c"># da
 <span class="tok-k">print</span>(<span class="tok-s">&quot;backward:  dJ/da =&quot;</span>, dJ_da, <span class="tok-s">&quot; dJ/dw =&quot;</span>, dJ_dw, <span class="tok-s">&quot; dJ/db =&quot;</span>, dJ_db)
 eps = <span class="tok-n">1e-6</span>
 num = (((w + eps) * x + b - y) ** <span class="tok-n">2</span> - ((w - eps) * x + b - y) ** <span class="tok-n">2</span>) / (<span class="tok-n">2</span> * eps)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric dJ/dw =&quot;</span>, round(num, <span class="tok-n">6</span>), &quot; -&gt; matches:&quot;, abs(num - dJ_dw) &lt; <span class="tok-n">1e-5</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>forward :  a = 7.0  J = 4.0
+<span class="tok-k">print</span>(<span class="tok-s">&quot;numeric dJ/dw =&quot;</span>, round(num, <span class="tok-n">6</span>), &quot; -&gt; matches:&quot;, abs(num - dJ_dw) &lt; <span class="tok-n">1e-5</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Before touching a network, do the whole thing on <b>one node</b>, where you can
+follow every number.</p><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b">Forward: with the given w, b and x, the node outputs <b>a = 7.0</b>, and the cost comes out <b>J = 4.0</b>.</span></li><li><span class="ws-n">2</span><span class="ws-b">Backward: <b>&part;J/&part;a = 4.0</b> &mdash; how much J moves if a moves.</span></li><li><span class="ws-n">3</span><span class="ws-b">Then <b>&part;J/&part;w = 8.0</b> and <b>&part;J/&part;b = 4.0</b>, by multiplying along the path.</span></li><li><span class="ws-n">4</span><span class="ws-b">Check it numerically: nudge w, measure. <b>8.0</b>. <b>Matches.</b></span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>Notice the direction. The forward pass went <b>left to right</b> and produced
+one number. The backward pass starts at that number and goes <b>right to left</b>, and each
+step is just a multiplication by a local slope.</div><p>Everything after this is the same four steps with more nodes. Nothing new is
+introduced &mdash; only more of it.</p></div><div class="sx-out"><span class="lbl">output</span><pre>forward :  a = 7.0  J = 4.0
 backward:  dJ/da = 4.0  dJ/dw = 8.0  dJ/db = 4.0
 numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
-<section class="sx" id="sx-derivatives"><div class="sx-prose"><p>A sigmoid's derivative written in terms of its own output, <code>a(1−a)</code>, is why the forward pass caches activations: the backward pass reuses them rather than recomputing. Note the <span class="gterm" data-g="slope-f0">slope</span> collapses at both ends — that is saturation, and it is what ReLU was introduced to avoid.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The three derivatives every backward pass in this course is built from.</span>
+<section class="sx" id="sx-derivatives"><div class="sx-prose"><p>A sigmoid's derivative written in terms of its own output, <code>a(1−a)</code>, is why the forward pass caches activations: the backward pass reuses them rather than recomputing. Note the slope collapses at both ends — that is saturation, and it is what ReLU was introduced to avoid.</p></div><div class="sx-code"><pre><code><span class="tok-c"># The three derivatives every backward pass in this course is built from.</span>
 <span class="tok-k">def</span> d_sigmoid(a):
     <span class="tok-d">&quot;&quot;&quot;Given the OUTPUT a of a sigmoid, its derivative is a(1-a).
 
@@ -288,7 +295,15 @@ numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
 <span class="tok-k">for</span> a <span class="tok-k">in</span> [<span class="tok-n">0.1</span>, <span class="tok-n">0.5</span>, <span class="tok-n">0.9</span>]:
     <span class="tok-k">print</span>(f&quot;  sigmoid output {a}  -&gt;  slope {d_sigmoid(a):.4f}&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  slope is largest at 0.5 and vanishes at both ends — that is the&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  saturation problem ReLU was introduced to avoid.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>  sigmoid output 0.1  -&gt;  slope 0.0900
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  saturation problem ReLU was introduced to avoid.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Backprop needs the slope of every activation function. The sigmoid's has a
+famously tidy form &mdash; and a famous problem.</p><div class="wx"><code class="wx-c">g'(z) = g(z) &middot; (1 - g(z))</code><span class="wx-s">the slope, computed from the OUTPUT you already have</span></div><div class="wvals"><span class="wv-t">the sigmoid's slope at three points</span><table><tr><td class="wv-l">output 0.1</td><td class="wv-v">slope 0.0900</td><td class="wv-n">near the flat left end</td></tr><tr><td class="wv-l">output 0.5</td><td class="wv-v">slope 0.2500</td><td class="wv-n">the steepest it ever gets</td></tr><tr><td class="wv-l">output 0.9</td><td class="wv-v">slope 0.0900</td><td class="wv-n">near the flat right end</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>Two things to take from those numbers. First, you never need z &mdash; the
+slope is computable from the activation the forward pass already stored, which is why
+forward values are kept.</div><p>Second, and much more important: <b>the slope peaks at 0.25 and vanishes at both
+ends</b>. Every layer multiplies the gradient by at most 0.25. Stack ten sigmoid layers and
+the first one receives at most <b>0.25<sup>10</sup> &asymp; 0.00000095</b> of the
+signal.</p><div class="wpoint"><span class="wp-t">The point</span>That is the <b>saturation problem</b>, and it is exactly what ReLU was
+introduced to avoid: ReLU's slope on the positive side is exactly <b>1</b>, so gradients
+pass through undiminished however deep the stack.</div></div><div class="sx-out"><span class="lbl">output</span><pre>  sigmoid output 0.1  -&gt;  slope 0.0900
   sigmoid output 0.5  -&gt;  slope 0.2500
   sigmoid output 0.9  -&gt;  slope 0.0900
   slope is largest at 0.5 and vanishes at both ends — that is the
@@ -305,7 +320,14 @@ numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
 <span class="tok-k">def</span> cost(A2, y):
     eps = <span class="tok-n">1e-12</span>
     f = np.clip(A2.ravel(), eps, <span class="tok-n">1</span> - eps)
-    <span class="tok-k">return</span> float(-<span class="gterm" data-g="npmean-api">np.mean</span>(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f)))</code></pre></div></section>
+    <span class="tok-k">return</span> float(-<span class="gterm" data-g="npmean-api">np.mean</span>(y * <span class="gterm" data-g="nplog-api">np.log</span>(f) + (<span class="tok-n">1</span> - y) * <span class="gterm" data-g="nplog-api">np.log</span>(<span class="tok-n">1</span> - f)))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The forward pass, written so that it <b>returns its intermediates</b> rather than
+just the answer.</p><div class="wpoint"><span class="wp-t">The point</span>That is the only difference from file 03. The backward pass needs every
+value the forward pass computed, so the forward pass must hand them back rather than
+throwing them away.</div><p>This is also why <b>training uses far more memory than prediction</b>. A
+prediction can discard each layer's output as soon as the next layer has consumed it;
+training cannot discard anything until the backward pass has been all the way through. When
+you run out of GPU memory, this is why, and halving the batch size is the first thing to
+try.</p></div></section>
 <section class="sx" id="sx-backward"><div class="sx-prose"><p>The whole algorithm, right to left. The one piece worth pausing on: <code>dZ2 = (A2 − y)/m</code>. For a sigmoid output with <span class="gterm" data-g="logloss-native">log loss</span>, the sigmoid's derivative and the <span class="gterm" data-g="logarithm-f0">log</span>'s derivative cancel completely — the same cancellation you saw in logistic regression, and the reason that pairing is universal.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> backward(cache, y, P):
     <span class="tok-d">&quot;&quot;&quot;Derived by hand, right to left.
 
@@ -326,7 +348,12 @@ numeric dJ/dw = 8.0  -&gt; matches: True</pre></div></section>
     dZ1 = dA1 * d_relu(Z1)                     <span class="tok-c"># ReLU passes gradient only where z &gt; 0</span>
     dW1 = X.T @ dZ1                            <span class="tok-c"># (n, m) @ (m, h) -&gt; (n, h)</span>
     db1 = dZ1<span class="gterm" data-g="npsum-api">.sum(</span><span class="gterm" data-g="kwaxis-api">axis=</span><span class="tok-n">0</span>)                      <span class="tok-c"># (h,)</span>
-    <span class="tok-k">return</span> [dW1, db1, dW2, db2]</code></pre></div></section>
+    <span class="tok-k">return</span> [dW1, db1, dW2, db2]</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The backward pass. Read it as the chain rule, walked from the end.</p><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b">Start at the output with <b>&part;J/&part;J = 1</b>.</span></li><li><span class="ws-n">2</span><span class="ws-b">At each layer, multiply by that layer's <b>local slope</b> &mdash; how much its output moves when its input moves.</span></li><li><span class="ws-n">3</span><span class="ws-b">On the way past each weight, that running product <b>is</b> that weight's gradient.</span></li><li><span class="ws-n">4</span><span class="ws-b">Pass what is left to the layer before, and repeat.</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>The key insight: <b>each node only needs to know its own little
+multiplier</b>. No node knows anything about the network as a whole, and none of them needs
+to. The chain rule assembles the global answer out of purely local facts.</div><p>And this is why it is cheap. <b>One forward pass plus one backward pass</b> gives
+you <b>every</b> gradient, no matter how many parameters there are. Nudging each parameter
+separately would cost one forward pass <b>each</b> &mdash; a million passes for a million
+parameters, instead of two.</p></div></section>
 <section class="sx" id="sx-gradcheck"><div class="sx-prose"><p>Four gradients, four checks, all agreeing to about 1e-10. This is the test that tells you a hand-derived backward pass is right, and it is worth writing before you trust any network you built yourself.</p></div><div class="sx-code"><pre><code>X = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="tok-n">0</span>., <span class="tok-n">0</span>.], [<span class="tok-n">0</span>., <span class="tok-n">1</span>.], [<span class="tok-n">1</span>., <span class="tok-n">0</span>.], [<span class="tok-n">1</span>., <span class="tok-n">1</span>.]])
 y = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">0</span>., <span class="tok-n">1</span>., <span class="tok-n">1</span>., <span class="tok-n">0</span>.])                  <span class="tok-c"># XOR</span>
 h = <span class="tok-n">8</span>
@@ -362,7 +389,13 @@ grads = backward(cache, y, P)
     diff = <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(grads[i] - n))
     rel = diff / max(<span class="tok-n">1e-12</span>, <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(grads[i])) + <span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(n)))
     <span class="tok-k">print</span>(f<span class="tok-s">&quot;  {name}: max abs diff {diff:.3e}   relative {rel:.3e}   &quot;</span>
-          f&quot;{<span class="tok-s">&#x27;PASS&#x27;</span> <span class="tok-k">if</span> rel &lt; <span class="tok-n">1e-6</span> <span class="tok-k">else</span> <span class="tok-s">&#x27;FAIL&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+          f&quot;{<span class="tok-s">&#x27;PASS&#x27;</span> <span class="tok-k">if</span> rel &lt; <span class="tok-n">1e-6</span> <span class="tok-k">else</span> <span class="tok-s">&#x27;FAIL&#x27;</span>}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Every hand-derived gradient, checked against a numerical measurement. This is the
+block that makes the rest trustworthy.</p><div class="wvals"><span class="wv-t">max absolute difference between hand-derived and numerical</span><table><tr><td class="wv-l">dW1</td><td class="wv-v">7.6e&minus;11</td><td class="wv-n">PASS</td></tr><tr><td class="wv-l">db1</td><td class="wv-v">7.2e&minus;11</td><td class="wv-n">PASS</td></tr><tr><td class="wv-l">dW2</td><td class="wv-v">8.1e&minus;11</td><td class="wv-n">PASS</td></tr><tr><td class="wv-l">db2</td><td class="wv-v">3.2e&minus;11</td><td class="wv-n">PASS</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Eleven decimal places.</b> That is the noise floor of floating-point
+arithmetic, not agreement-by-luck. The hand-derived calculus is right.</div><p>Do this on any network you write by hand, once, before training. A wrong gradient
+<b>does not crash</b> &mdash; it trains, <span class="gterm" data-g="convergence-native">converges</span> to something, and quietly gives you a
+worse model than you should have had. There is no other symptom.</p><div class="wpoint"><span class="wp-t">The point</span>Turn it <b>off</b> before real training, though. The numerical version
+re-runs the entire cost twice per parameter, which is exactly the cost backprop exists to
+avoid.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 gradient check — hand-derived vs numerical:
   dW1: max abs diff 7.623e-11   relative 2.644e-10   PASS
   db1: max abs diff 7.224e-11   relative 2.690e-10   PASS
@@ -380,7 +413,14 @@ nz = numeric_grads(Pz, <span class="tok-n">1</span>)
 <span class="tok-k">print</span>(f&quot;  max diff: {<span class="gterm" data-g="npmaxmin-api">np.max</span>(np.abs(gz[<span class="tok-n">1</span>] - nz)):.3e}  &lt;- a REAL disagreement&quot;)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  ReLU has no derivative at z = 0. The analytic version picks the flat&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  side; the numeric version averages across the kink. Neither is wrong.&quot;</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  This is why gradient checks on ReLU nets need biases off the kink.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  This is why gradient checks on ReLU nets need biases off the kink.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now the interesting failure. This block deliberately sets the biases to exactly
+zero and re-runs the check.</p><div class="wvals"><span class="wv-t">the same check, now failing</span><table><tr><td class="wv-l">analytic</td><td class="wv-v">[0.117, 0, &minus;0.002, 0, 0.145, 0.126, &minus;0.001, &minus;0.011]</td><td class="wv-n"></td></tr><tr><td class="wv-l">numeric</td><td class="wv-v">[0.086, 0.024, 0.062, &minus;0.051, 0.091, 0.079, 0.025, &minus;0.007]</td><td class="wv-n"></td></tr><tr><td class="wv-l">max difference</td><td class="wv-v">6.4e&minus;02</td><td class="wv-n"><b>a REAL disagreement</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>This is not a bug in either version. <b>ReLU has no derivative at exactly
+z = 0.</b> It is a kink: the slope is 0 on one side and 1 on the other, and at the point
+itself there is no single answer.</div><div class="wcases"><span class="wk-t">two defensible answers to a question with no answer</span><div class="wk-row"><div class="wk-case"><span class="wk-h">The analytic version</span><div class="wk-b">picks the <b>flat side</b> &mdash; it applies the rule <code>z &gt; 0</code>, so z = 0 counts as 0.</div></div><div class="wk-case"><span class="wk-h">The numeric version</span><div class="wk-b"><b>averages across the kink</b> &mdash; it steps to both sides and divides, landing somewhere in between.</div></div></div></div><div class="wpoint"><span class="wp-t">The point</span><b>Neither is wrong.</b> And in practice it does not matter: hitting z
+<i>exactly</i> zero has <span class="gterm" data-g="probability-f0">probability</span> zero once weights are random, and the failure here had to
+be engineered by setting every bias to 0 deliberately.</div><p>It is worth seeing, though, because it is the one situation where a gradient
+check <b>fails on correct code</b> &mdash; and knowing that saves you from hunting a bug
+that is not there.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 with biases at exactly zero, db1 analytic vs numeric:
   analytic: [ 0.117418  0.       -0.002019  0.        0.145055  0.126218 -0.000826
  -0.010796]
@@ -404,7 +444,11 @@ alpha = <span class="tok-n">1.0</span>
 A2, _ = forward(X, P)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\n  input    target   predicted&quot;</span>)
 <span class="tok-k">for</span> xi, yi, pi <span class="tok-k">in</span> zip(X, y, A2.ravel()):
-    <span class="tok-k">print</span>(f&quot;  {xi}   {yi:.0f}       {pi:.4f}   {<span class="tok-s">&#x27;OK&#x27;</span> <span class="tok-k">if</span> (pi &gt;= .<span class="tok-n">5</span>) == (yi == <span class="tok-n">1</span>) <span class="tok-k">else</span> <span class="tok-s">&#x27;WRONG&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f&quot;  {xi}   {yi:.0f}       {pi:.4f}   {<span class="tok-s">&#x27;OK&#x27;</span> <span class="tok-k">if</span> (pi &gt;= .<span class="tok-n">5</span>) == (yi == <span class="tok-n">1</span>) <span class="tok-k">else</span> <span class="tok-s">&#x27;WRONG&#x27;</span>}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Now train it, on <b>XOR</b>: output 1 when exactly one input is 1.</p><div class="wvals"><span class="wv-t">training</span><table><tr><td class="wv-l">iter 0</td><td class="wv-v">cost 0.954843</td><td class="wv-n">knows nothing</td></tr><tr><td class="wv-l">iter 2000</td><td class="wv-v">cost 0.000245</td><td class="wv-n">essentially solved</td></tr><tr><td class="wv-l">iter 4000</td><td class="wv-v">cost 0.000109</td><td class="wv-n"></td></tr><tr><td class="wv-l">iter 8000</td><td class="wv-v">cost 0.000049</td><td class="wv-n">polishing</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The cost falls by a factor of about <b>4,000</b> in the first 2,000
+iterations. Everything after that is refinement &mdash; the same enormous-drop-then-flatten
+shape as file 01, which is what a healthy run looks like at any scale.</div><p>XOR is the classic choice here because it is the smallest problem that is
+<b>provably impossible</b> for a single linear boundary. Solving it is a real
+demonstration, not a formality.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 training on XOR:
   iter     0  cost 0.954843
   iter  2000  cost 0.000245
@@ -428,7 +472,12 @@ w1, b1 = <span class="gterm" data-g="npcreate-api">np.zeros</span>(<span class="
 pred = sigmoid(X @ w1 + b1)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  predictions:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(pred, <span class="tok-n">4</span>), &quot; -&gt; all stuck near <span class="tok-n">0.5</span>&quot;)
 <span class="tok-k">print</span>(f&quot;  accuracy {(((pred &gt;= .<span class="tok-n">5</span>).astype(float)) == y)<span class="gterm" data-g="npmean-api">.mean(</span>):.2f} — no better than guessing.&quot;)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  The hidden layer is not an optimisation. It is what makes XOR solvable.&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  The hidden layer is not an optimisation. It is what makes XOR solvable.&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The control experiment, and the punchline of the file. Same problem, same training,
+<b>no hidden layer</b> &mdash; which makes it plain logistic regression.</p><div class="wvals"><span class="wv-t">logistic regression on XOR</span><table><tr><td class="wv-l">predictions</td><td class="wv-v">[0.5, 0.5, 0.5, 0.5]</td><td class="wv-n">all four stuck at exactly 0.5</td></tr><tr><td class="wv-l">accuracy</td><td class="wv-v">0.50</td><td class="wv-n">no better than a coin flip</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>It does not do <i>badly</i>. It does <b>nothing</b> &mdash; every prediction
+is 0.5, which is the model announcing it has no idea. And it is not a training failure: no
+straight line exists that separates XOR, so there is no better answer for it to find.</div><div class="wchainset"><span class="wcs-t">the same problem, the same training loop</span><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> with a hidden layer </span><span class="wc-a">→</span><span class="wc-i">cost 0.00005</span></span><span class="wcs-n">solved</span></div><div class="wcs-row"><span class="wcs-c"><span class="wc-i"> without one </span><span class="wc-a">→</span><span class="wc-i">accuracy 0.50</span></span><span class="wcs-n">impossible</span></div></div><div class="wpoint"><span class="wp-t">The point</span><b>The hidden layer is not an optimisation. It is what makes the problem
+solvable at all.</b> That is the difference between Course 1 and Course 2, demonstrated in
+four numbers.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 same problem with no hidden layer (plain logistic regression):
   predictions: [0.5 0.5 0.5 0.5]  -&gt; all stuck near 0.5
   accuracy 0.50 — no better than guessing.

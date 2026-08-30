@@ -244,7 +244,7 @@ python3 03_neural_net_forward.py</code></pre>
   when this page was built.</b> They cannot drift apart.</p>
   <p class="rb-b">By the end you will have built a general forward pass for any depth, and a network you construct by hand whose behaviour you can predict exactly.</p>
 </div>
-
+<h2><span class="ico">&#128444;&#65039;</span>The whole program in one picture</h2><figure class="flowd"><figcaption class="tag">The whole program in one picture</figcaption><ol class="flow"><li class="fl k-in"><span class="fl-t">A batch of examples</span><span class="fl-b">Four examples, two numbers each. Shape <b>(4, 2)</b>.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">every example meets every neuron, in one matrix multiply</span></li><li class="fl k-op"><span class="fl-t">Hidden layer &mdash; 3 units</span><span class="fl-b"><b>(4,2) @ (2,3) &rarr; (4,3)</b>. Each unit computes its own <span class="gterm" data-g="weighted-mean">weighted sum</span>, adds its own bias, and squashes.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l"><span class="gterm" data-g="relu-native">ReLU</span>: keep the positives, zero the negatives</span></li><li class="fl k-op"><span class="fl-t">Output layer &mdash; 1 unit</span><span class="fl-b"><b>(4,3) @ (3,1) &rarr; (4,1)</b>. It reads the three hidden numbers, not the original two.</span></li><li class="fl-arw"><span class="a">↓</span><span class="l">sigmoid, to make it a <span class="gterm" data-g="probability-f0">probability</span></span></li><li class="fl k-out"><span class="fl-t">One number per example</span><span class="fl-b">Four answers, between 0 and 1.</span></li></ol><p class="flow-cap">Nothing here learns. This file only computes what a network with GIVEN weights would output; file 04 works out how to change those weights.</p></figure>
 <section class="sx" id="sx-prelude"><div class="sx-prose"><p>No training in this file — only the forward pass, so nothing is hidden behind an optimiser.</p></div><div class="sx-code"><pre><code><span class="tok-d">&quot;&quot;&quot;A neural network&#x27;s forward pass from scratch — C2 W1 in NumPy.
 
 Run me:  python3 03_neural_net_forward.py
@@ -257,7 +257,11 @@ the matrix version giving identical numbers.
 <span class="tok-k">def</span> sigmoid(z):
     z = np.asarray(z, <span class="gterm" data-g="kwdtype-api">dtype=</span>float)
     <span class="tok-k">return</span> np.where(z &gt;= <span class="tok-n">0</span>, <span class="tok-n">1</span> / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))),
-                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div></section>
+                    <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z)) / (<span class="tok-n">1</span> + <span class="gterm" data-g="npexp-api">np.exp</span>(-np.abs(z))))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>One import and one function. The <b>sigmoid</b> here is written to be
+overflow-proof &mdash; see file 02's sigmoid section for why, and for why this file spells
+it differently.</p><div class="wpoint"><span class="wp-t">The point</span>Nothing in this file <b>learns</b>. Every weight is either written down by
+hand or chosen to make a point. This is <b>forward propagation</b> alone: given the weights,
+what does the network compute? File 04 answers the other half.</div></div></section>
 <section class="sx" id="sx-one_neuron"><div class="sx-prose"><p>A neuron is a <span class="gterm" data-g="dot-product-f0">dot product</span> wearing a squash function. Once that sentence is genuinely obvious, the rest of neural networks is bookkeeping about shapes.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> neuron(x, w, b, g=sigmoid):
     <span class="tok-d">&quot;&quot;&quot;A neuron is a dot product wearing a squash function. That is all.&quot;&quot;&quot;</span>
     z = <span class="gterm" data-g="npdot-api">np.dot</span>(w, x) + b
@@ -266,7 +270,12 @@ the matrix version giving identical numbers.
 x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">1.0</span>, <span class="tok-n">3.0</span>])
 <span class="tok-k">print</span>(<span class="tok-s">&quot;one neuron, w=[2,-1], b=0.5, x=[1,3]&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;  z =&quot;</span>, <span class="gterm" data-g="npdot-api">np.dot</span>([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>], x) + <span class="tok-n">0.5</span>)
-<span class="tok-k">print</span>(<span class="tok-s">&quot;  a =&quot;</span>, round(float(neuron(x, <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>]), <span class="tok-n">0.5</span>)), <span class="tok-n">6</span>))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>one neuron, w=[2,-1], b=0.5, x=[1,3]
+<span class="tok-k">print</span>(<span class="tok-s">&quot;  a =&quot;</span>, round(float(neuron(x, <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n">2.0</span>, -<span class="tok-n">1.0</span>]), <span class="tok-n">0.5</span>)), <span class="tok-n">6</span>))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A neuron, in one line of code and three of arithmetic.</p><div class="wx"><code class="wx-c">z = np.dot(w, x) + b
+return g(z)</code><span class="wx-s">dot, add the bias, squash</span></div><p>With <b>w = [2, &minus;1]</b>, <b>b = 0.5</b>, <b>x = [1, 3]</b>:</p><div class="wsteps"><ol><li><span class="ws-n">1</span><span class="ws-b">2 &times; 1 = <b>2</b></span></li><li><span class="ws-n">2</span><span class="ws-b">&minus;1 &times; 3 = <b>&minus;3</b></span></li><li><span class="ws-n">3</span><span class="ws-b">2 + (&minus;3) = <b>&minus;1</b></span></li><li><span class="ws-n">4</span><span class="ws-b">&minus;1 + 0.5 = <b>&minus;0.5</b>. That is <b>z</b>.</span></li><li><span class="ws-n">5</span><span class="ws-b">g(&minus;0.5) = <b>0.377541</b>. That is <b>a</b>.</span></li></ol></div><div class="wpoint"><span class="wp-t">The point</span>The docstring puts it best: <b>a neuron is a dot product wearing a squash
+function.</b> That is the whole of it. A network with a billion parameters is doing exactly
+this, a billion times.</div><p>0.377 is below 0.5, so this neuron is leaning &ldquo;no&rdquo;. The negative
+weight on the second input is what did it: a large x&#8322; actively pushes this neuron
+<b>down</b>.</p></div><div class="sx-out"><span class="lbl">output</span><pre>one neuron, w=[2,-1], b=0.5, x=[1,3]
   z = -0.5
   a = 0.377541</pre></div></section>
 <section class="sx" id="sx-layer_loop"><div class="sx-prose"><p>The obvious version: walk the units one at a time. Note that <code>W</code> holds each unit's weights as a <i>column</i>. That convention is what makes the next version work.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> dense_loop(a_in, W, b, g=sigmoid):
@@ -279,7 +288,14 @@ x = <span class="gterm" data-g="nparray-api">np.array</span>([<span class="tok-n
     <span class="tok-k">for</span> j <span class="tok-k">in</span> range(units):
         w = W[:, j]                       <span class="tok-c"># this unit&#x27;s weight vector</span>
         a_out[j] = g(<span class="gterm" data-g="npdot-api">np.dot</span>(w, a_in) + b[j])
-    <span class="tok-k">return</span> a_out</code></pre></div></section>
+    <span class="tok-k">return</span> a_out</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>A whole layer, written the obvious way &mdash; one neuron at a time.</p><div class="wx"><code class="wx-c">for j in range(units):
+    w = W[:, j]
+    a_out[j] = g(np.dot(w, a_in) + b[j])</code></div><div class="wpoint"><span class="wp-t">The point</span><code>W[:, j]</code> means <b>all rows, column j</b>. So <b>columns are
+neurons</b> &mdash; column j holds neuron j's personal weight <span class="gterm" data-g="vector-f0">vector</span>.</div><p><code>W.shape[1]</code> is the number of <b>columns</b>, which is the number of
+neurons. Using <code>[0]</code> instead gives the number of <b>inputs</b>, and if the two
+happen to be equal &mdash; a square W &mdash; the loop runs and silently does the wrong
+thing.</p><div class="wpoint"><span class="wp-t">The point</span>This version is correct and it will never run on a GPU. The next section
+fixes that without changing a single number.</div></div></section>
 <section class="sx" id="sx-layer_matmul"><div class="sx-prose"><p>The same layer as one matrix multiply. <code>A_in @ W</code> is (m, n_in) @ (n_in, n_out) → (m, n_out): every example against every unit, in one operation. The next block proves the two agree.</p></div><div class="sx-code"><pre><code><span class="tok-k">def</span> dense(A_in, W, b, g=sigmoid):
     <span class="tok-d">&quot;&quot;&quot;The same layer for a whole batch at once.
 
@@ -295,7 +311,11 @@ loop_out = dense_loop(x, W1, b1)
 mat_out = dense(x<span class="gterm" data-g="npreshape-api">.reshape(</span><span class="tok-n">1</span>, -<span class="tok-n">1</span>), W1, b1)[<span class="tok-n">0</span>]
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nloop version  :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(loop_out, <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;matmul version:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(mat_out, <span class="tok-n">6</span>))
-<span class="tok-k">print</span>(<span class="tok-s">&quot;identical:&quot;</span>, np.allclose(loop_out, mat_out))</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(<span class="tok-s">&quot;identical:&quot;</span>, np.allclose(loop_out, mat_out))</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The same layer, for a whole batch, with no loop at all.</p><div class="wx"><code class="wx-c">return g(A_in @ W + b)</code><span class="wx-s">every example against every neuron, in one operation</span></div><div class="wvals"><span class="wv-t">the check this block prints</span><table><tr><td class="wv-l">loop version</td><td class="wv-v">[0.952574, 0.993307, 0.022977]</td><td class="wv-n"></td></tr><tr><td class="wv-l">matmul version</td><td class="wv-v">[0.952574, 0.993307, 0.022977]</td><td class="wv-n"></td></tr><tr><td class="wv-l">identical</td><td class="wv-v">True</td><td class="wv-n">not approximately &mdash; the same numbers</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>A_in @ W</b> is <b>(m, n_in) @ (n_in, n_out)</b>. The inner dimension
+&mdash; the input size &mdash; is summed away, which is precisely the dot product each
+neuron needed. The loop was never doing anything the matrix multiply cannot.</div><p><b>b</b> is <code>(n_out,)</code> and <b>broadcasts down the rows</b>: one bias
+per neuron, applied to every example, without writing that loop either.</p><div class="wpoint"><span class="wp-t">The point</span>This is the version that runs on a GPU, and it is the entire reason the
+2010s happened. Same maths, same answer, a hundred times the throughput.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 loop version  : [0.952574 0.993307 0.022977]
 matmul version: [0.952574 0.993307 0.022977]
 identical: True</pre></div></section>
@@ -316,7 +336,11 @@ batch = <span class="gterm" data-g="nparray-api">np.array</span>([[<span class="
 out = forward(batch, net, acts)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nbatch of 4 through a 2-3-1 network:&quot;</span>)
 <span class="tok-k">for</span> xi, oi <span class="tok-k">in</span> zip(batch, out.ravel()):
-    <span class="tok-k">print</span>(f&quot;  x = {xi}  -&gt;  {oi:.6f}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+    <span class="tok-k">print</span>(f&quot;  x = {xi}  -&gt;  {oi:.6f}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Two layers, stacked, and a batch of four examples pushed through.</p><div class="wx"><code class="wx-c">for (W, b), g in zip(params, activations):
+    A = dense(A, W, b, g)</code><span class="wx-s">the output of one layer becomes the input of the next</span></div><div class="wpoint"><span class="wp-t">The point</span>That loop <b>is</b> forward propagation. Three lines. Everything else in this
+file is either building the pieces it calls or examining what came out.</div><div class="wvals"><span class="wv-t">four examples through a 2-3-1 network</span><table><tr><td class="wv-l">[1, 3]</td><td class="wv-v">0.006693</td><td class="wv-n">confidently no</td></tr><tr><td class="wv-l">[0, 0]</td><td class="wv-v">0.679179</td><td class="wv-n">leaning yes</td></tr><tr><td class="wv-l">[&minus;2, 1]</td><td class="wv-v">0.000553</td><td class="wv-n">very confidently no</td></tr><tr><td class="wv-l">[4, &minus;1]</td><td class="wv-v">0.999290</td><td class="wv-n">very confidently yes</td></tr></table></div><p>The network uses <b>ReLU</b> in the hidden layer and <b>sigmoid</b> at the
+output. That is the standard arrangement: ReLU everywhere inside, and the output activation
+chosen by what the task needs &mdash; here, a probability.</p></div><div class="sx-out"><span class="lbl">output</span><pre>
 batch of 4 through a 2-3-1 network:
   x = [1. 3.]  -&gt;  0.006693
   x = [0. 0.]  -&gt;  0.679179
@@ -330,7 +354,20 @@ A = batch
     A = dense(A, W, b, g)
     <span class="tok-k">print</span>(f&quot;  -&gt;  {A.shape}&quot;)
 total = sum(W.size + b.size <span class="tok-k">for</span> W, b <span class="tok-k">in</span> net)
-<span class="tok-k">print</span>(f<span class="tok-s">&quot;  total parameters: {total}&quot;</span>)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(f<span class="tok-s">&quot;  total parameters: {total}&quot;</span>)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Shape bookkeeping. This section exists because <b>shape errors are the thing that
+actually breaks</b>, far more often than the maths.</p><div class="wart"><pre>  input          (4, 2)
+                    |
+  layer 1:  (4,2) @ (2,3) + (3,)  ->  (4, 3)
+                    |
+  layer 2:  (4,3) @ (3,1) + (1,)  ->  (4, 1)
+                    |
+  output         (4, 1)</pre></div><div class="wpoint"><span class="wp-t">The point</span>Read the middle numbers: <b>2 meets 2</b>, then <b>3 meets 3</b>. Those are
+the pairs that must match. The outer numbers &mdash; 4 and 3, then 4 and 1 &mdash; are the
+answer.</div><p>And read the whole journey as a sentence: <b>4 examples with 2 features become 4
+examples with 3 hidden values, and then 4 examples with 1 answer.</b> The <b>4</b> never
+changes, because you always have four examples.</p><div class="wvals"><span class="wv-t">counting the parameters by hand</span><table><tr><td class="wv-l">layer 1</td><td class="wv-v">2&times;3 + 3</td><td class="wv-n">6 weights, 3 biases = <b>9</b></td></tr><tr><td class="wv-l">layer 2</td><td class="wv-v">3&times;1 + 1</td><td class="wv-n">3 weights, 1 bias = <b>4</b></td></tr><tr><td class="wv-l">total</td><td class="wv-v">13</td><td class="wv-n">the whole network's learnable numbers</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>13 parameters.</b> A large language model has hundreds of billions,
+arranged exactly like this. The difference is entirely one of scale, and this is a genuinely
+useful thing to have counted once by hand.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 shape bookkeeping (the thing that actually breaks):
   input           (4, 2)
   layer 1: (4, 2) @ (2, 3) + (3,)  -&gt;  (4, 3)
@@ -345,7 +382,14 @@ collapsed = batch @ W_eq + b_eq
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\ntwo linear layers   :&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(lin.ravel(), <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;one equivalent layer:&quot;</span>, <span class="gterm" data-g="npround-api">np.round</span>(collapsed.ravel(), <span class="tok-n">6</span>))
 <span class="tok-k">print</span>(<span class="tok-s">&quot;identical:&quot;</span>, np.allclose(lin, collapsed))
-<span class="tok-k">print</span>(&quot;-&gt; stacking linear layers <span class="tok-k">is</span> pointless; the non-linearity <span class="tok-k">is</span> the point.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(&quot;-&gt; stacking linear layers <span class="tok-k">is</span> pointless; the non-linearity <span class="tok-k">is</span> the point.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>The most important experiment in the file: <b>what happens if you remove the
+activations?</b></p><div class="wx"><code class="wx-c">identity = lambda z: z</code><span class="wx-s">an activation that does nothing at all</span></div><div class="wvals"><span class="wv-t">the network, against a SINGLE matrix computed from its weights</span><table><tr><td class="wv-l">two linear layers</td><td class="wv-v">[&minus;8.75, &minus;0.75, &minus;12.75, 19.25]</td><td class="wv-n"></td></tr><tr><td class="wv-l">one equivalent layer</td><td class="wv-v">[&minus;8.75, &minus;0.75, &minus;12.75, 19.25]</td><td class="wv-n"></td></tr><tr><td class="wv-l">identical</td><td class="wv-v">True</td><td class="wv-n"></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Two linear layers are exactly one linear layer.</b> Not similar &mdash;
+identical, to the last decimal, and the code proves it by building the equivalent single
+matrix with <code>W1 @ W2</code>.</div><p>So a 100-layer linear network has <b>exactly the same expressive power</b> as a
+1-layer one, and costs a hundred times as much to run. Depth without non-linearity buys
+nothing whatsoever.</p><div class="wpoint"><span class="wp-t">The point</span>This is why activation functions exist. Not to squash, not to normalise
+&mdash; <b>to stop the layers from collapsing into each other</b>. Each ReLU adds a kink,
+and no amount of <span class="gterm" data-g="matmul-f0">matrix multiplication</span> can flatten a kink out.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 two linear layers   : [ -8.75  -0.75 -12.75  19.25]
 one equivalent layer: [ -8.75  -0.75 -12.75  19.25]
 identical: True
@@ -374,7 +418,15 @@ probs = forward(tests, coffee, [sigmoid, sigmoid]).ravel()
     want = <span class="tok-s">&quot;good&quot;</span> <span class="tok-k">if</span> (<span class="tok-n">180</span> &lt;= t &lt;= <span class="tok-n">260</span> <span class="tok-k">and</span> <span class="tok-n">12</span> &lt;= d &lt;= <span class="tok-n">15</span>) <span class="tok-k">else</span> <span class="tok-s">&quot;bad&quot;</span>
     got = <span class="tok-s">&quot;good&quot;</span> <span class="tok-k">if</span> pr &gt;= <span class="tok-n">0.5</span> <span class="tok-k">else</span> <span class="tok-s">&quot;bad&quot;</span>
     <span class="tok-k">print</span>(f&quot;  {t:<span class="tok-n">5.</span>0f} C <span class="tok-k">for</span> {d:<span class="tok-n">4.</span>1f} min  -&gt;  {pr:.4f}  {got:4s} (want {want}) &quot;
-          f&quot;{<span class="tok-s">&#x27;OK&#x27;</span> <span class="tok-k">if</span> got == want <span class="tok-k">else</span> <span class="tok-s">&#x27;WRONG&#x27;</span>}&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+          f&quot;{<span class="tok-s">&#x27;OK&#x27;</span> <span class="tok-k">if</span> got == want <span class="tok-k">else</span> <span class="tok-s">&#x27;WRONG&#x27;</span>}&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>What does &ldquo;hidden units are feature detectors&rdquo; actually mean? This
+section makes it concrete by <b>building four detectors by hand</b>.</p><p>The rule to reproduce: a roast is good if the temperature is between <b>180 and
+260</b> AND the duration is between <b>12 and 15</b> minutes.</p><div class="wcases"><span class="wk-t">four hand-built detectors in the hidden layer</span><div class="wk-row"><div class="wk-case"><span class="wk-h">Unit 1 &mdash; too cool?</span><div class="wk-b">fires when <b>T &lt; 180</b></div></div><div class="wk-case"><span class="wk-h">Unit 2 &mdash; too hot?</span><div class="wk-b">fires when <b>T &gt; 260</b></div></div><div class="wk-case"><span class="wk-h">Unit 3 &mdash; too short?</span><div class="wk-b">fires when <b>D &lt; 12</b></div></div><div class="wk-case"><span class="wk-h">Unit 4 &mdash; too long?</span><div class="wk-b">fires when <b>D &gt; 15</b></div></div></div></div><p>The output unit gives each detector a weight of <b>&minus;60</b> and itself a
+bias of <b>+30</b>. So with nothing firing it outputs sigmoid(30) &asymp; 1, and <b>any
+single detector firing</b> drags it to sigmoid(&minus;30) &asymp; 0.</p><div class="wpoint"><span class="wp-t">The point</span>That is an <b>AND gate</b>, built out of neurons: good roast = NOT too cool
+AND NOT too hot AND NOT too short AND NOT too long. Any one veto is enough.</div><div class="wvals"><span class="wv-t">the hand-built network against six test roasts</span><table><tr><td class="wv-l">200 C, 13.9 min</td><td class="wv-v">1.0000</td><td class="wv-n">good &mdash; correct</td></tr><tr><td class="wv-l">200 C, 17.0 min</td><td class="wv-v">0.0000</td><td class="wv-n">too long &mdash; correct</td></tr><tr><td class="wv-l">285 C, 12.5 min</td><td class="wv-v">0.0000</td><td class="wv-n">too hot &mdash; correct</td></tr><tr><td class="wv-l">175 C, 13.0 min</td><td class="wv-v">0.0000</td><td class="wv-n">too cool &mdash; correct</td></tr><tr><td class="wv-l">220 C, 12.5 min</td><td class="wv-v">1.0000</td><td class="wv-n">good &mdash; correct</td></tr><tr><td class="wv-l">259.9 C, 14.9 min</td><td class="wv-v">0.0000</td><td class="wv-n"><b>WRONG</b> &mdash; it wanted good</td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span>The last row is the interesting one and it is <b>not a bug</b>. That roast
+sits 0.1&deg; from one boundary and 0.1 min from another. A sigmoid boundary is <b>soft</b>:
+near the edge a detector outputs something between 0 and 1, so the AND gate is genuinely
+undecided. The next section shows this happening.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 hand-built roast checker  (temp C, minutes) -&gt; P(good)
     200 C for 13.9 min  -&gt;  1.0000  good (want good) OK
     200 C for 17.0 min  -&gt;  0.0000  bad  (want bad) OK
@@ -412,7 +464,18 @@ edge = np.minimum(np.minimum(np.abs(grid[:, <span class="tok-n">0</span>] - <spa
 <span class="tok-k">print</span>(<span class="tok-s">&quot;\nA sigmoid boundary is SOFT: near the edge the unit outputs something&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;between 0 and 1, so the AND gate is undecided. Steeper weights shrink&quot;</span>)
 <span class="tok-k">print</span>(<span class="tok-s">&quot;that band but never remove it — which is exactly why the network can&quot;</span>)
-<span class="tok-k">print</span>(&quot;express <span class="tok-s">&#x27;probably good&#x27;</span> instead of only <span class="tok-s">&#x27;good&#x27;</span> <span class="tok-k">or</span> <span class="tok-s">&#x27;bad&#x27;</span>.&quot;)</code></pre></div><div class="sx-out"><span class="lbl">output</span><pre>
+<span class="tok-k">print</span>(&quot;express <span class="tok-s">&#x27;probably good&#x27;</span> instead of only <span class="tok-s">&#x27;good&#x27;</span> <span class="tok-k">or</span> <span class="tok-s">&#x27;bad&#x27;</span>.&quot;)</code></pre></div><div class="sx-walk"><span class="tag">Line by line, in plain words</span><p>Open the hidden layer up and look at what it is actually producing. These four
+numbers <b>are</b> the detectors.</p><div class="wvals"><span class="wv-t">[too cool, too hot, too short, too long]</span><table><tr><td class="wv-l">200 C, 13.9 min</td><td class="wv-v">[0, 0, 0.001, 0.012]</td><td class="wv-n">nothing firing &mdash; a good roast</td></tr><tr><td class="wv-l">200 C, 17.0 min</td><td class="wv-v">[0, 0, 0, 1]</td><td class="wv-n">&ldquo;too long&rdquo; is fully on</td></tr><tr><td class="wv-l">285 C, 12.5 min</td><td class="wv-v">[0, 1, 0.119, 0]</td><td class="wv-n">&ldquo;too hot&rdquo; is fully on</td></tr><tr><td class="wv-l">175 C, 13.0 min</td><td class="wv-v">[0.993, 0, 0.018, 0]</td><td class="wv-n">&ldquo;too cool&rdquo;</td></tr><tr><td class="wv-l">259.9 C, 14.9 min</td><td class="wv-v">[0, 0.475, 0, 0.401]</td><td class="wv-n"><b>two half-firing</b></td></tr></table></div><div class="wpoint"><span class="wp-t">The point</span><b>Every row of zeros is a good roast.</b> The raw input was
+<code>[temperature, duration]</code>; the hidden layer has transformed it into
+<code>[too cool?, too hot?, too short?, too long?]</code> &mdash; which is a far more useful
+description of the same coffee.</div><p>That transformation is what <b>learned features</b> means. Here they were built
+by hand so you can see them; in a trained network the same kind of thing emerges from
+gradient descent, without anyone naming it.</p><div class="wpoint"><span class="wp-t">The point</span>And the last row explains the WRONG answer above: <b>0.475 and 0.401</b>
+&mdash; two detectors each about half-firing. Together they add up to enough veto to tip the
+output past 0.5, even though neither alone would have. The grid sweep that follows shows
+that sharpening the weights <b>shrinks</b> this uncertain band but can never remove it
+&mdash; which is exactly what lets a network say &ldquo;probably good&rdquo; instead of only
+&ldquo;good&rdquo; or &ldquo;bad&rdquo;.</div></div><div class="sx-out"><span class="lbl">output</span><pre>
 inside the hidden layer  [too cool, too hot, too short, too long]
     200 C, 13.9 min -&gt; [0.    0.    0.001 0.012]
     200 C, 17.0 min -&gt; [0. 0. 0. 1.]
