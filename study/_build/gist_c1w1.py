@@ -279,12 +279,13 @@ do not, and that is a later refinement — not a correction to anything here.</p
             "Which of the two loops runs over houses and which runs over steps.",
         ]),
 
-        h2("🪜", "Where this sits on the way to the translator"),
-        ladder("C1 W1", """This is the loop itself, met at the one size where it fits on a page.
-A translation model swaps the straight line for a network of millions of numbers, and the squared
-miss for a score over possible next words — but predict, measure the miss, find the slope, step
-downhill, repeat is <b>exactly</b> what fine-tuning a multilingual model on K&#8217;Cho sentence
-pairs does. Every later week changes one box in the picture above and leaves the shape alone. This
-is the shape."""),
+        h2("🪜", "Where this week sits in the whole arc"),
+        ladder("C1 W1", """This is the loop itself, met at the one size where the whole of it fits
+on a single page: two knobs, one straight line, three houses you can check with a pencil. Every
+week after this one swaps a box in the picture for a bigger box &mdash; the line becomes a network,
+the squared miss becomes a different score, the single step becomes a cleverer one &mdash; and
+leaves the <b>shape</b> untouched. If the shape is solid now, the rest of the specialization is
+mostly vocabulary. If it is not, nothing later will fix it, because nothing later re-teaches
+it."""),
     ]),
 )

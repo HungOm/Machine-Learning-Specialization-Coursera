@@ -165,8 +165,8 @@ def retell(items, tag="Say the week back, with the page shut"):
 
 # ---------------------------------------------------------------- the ladder
 # One ladder, defined once, marked differently on each page. The rungs are the
-# order the site actually teaches them in, and the last three are past the
-# specialization on purpose: they are where the user is going.
+# order the site actually teaches them in — so a week always knows what it sits
+# on top of and what it is holding up, without any page having to restate it.
 LADDER = [
     ("F0",      "Arithmetic, slopes, vectors, NumPy",       "the notation everything else is written in"),
     ("C1 W1",   "Linear regression and gradient descent",   "predict a number; roll downhill to fit it"),
@@ -181,15 +181,30 @@ LADDER = [
     ("C3 W3",   "Reinforcement learning",                   "learning from a reward instead of an answer"),
     ("C4 W1",   "Embeddings and tokenization",              "how text becomes numbers"),
     ("C4 W2",   "Attention",                                "how a model decides which words matter"),
-    ("C4 W3",   "Transformers",                             "the architecture translation is built on"),
-    ("C4 W4",   "Fine-tuning a pretrained model",           "teach a multilingual model one more language"),
+    ("C4 W3",   "Transformers",                             "the architecture modern language models use"),
+    ("C4 W4",   "Fine-tuning a pretrained model",           "teach a model that already knows a lot"),
 ]
 
-DESTINATION = ("A K’Cho ↔ English translator, fine-tuned from a pretrained "
-               "multilingual model")
+ARC = ("Every rung changes <b>one box</b> in the picture above and leaves the shape "
+       "alone. That is why the arc is worth seeing whole: there is far less to learn "
+       "than the number of new words suggests.")
 
 
-def ladder(here, why, tag="Where this sits on the way to the translator"):
+def _visible(rungs):
+    """Drop rungs for a course this build is hiding.
+
+    The site can hide a whole course from one constant in build.py. A ladder
+    that still advertised four rungs with no pages behind them would be the
+    only place on the site that disagreed with that switch.
+    """
+    try:
+        from build import shown
+    except Exception:
+        return rungs
+    return [r for r in rungs if shown(r[0].split()[0])]
+
+
+def ladder(here, why, tag="Where this week sits in the whole arc"):
     """The rung ladder, with one rung marked and one sentence on why it matters.
 
     The site otherwise answers "what is this idea"; this answers "why am I
@@ -198,7 +213,7 @@ def ladder(here, why, tag="Where this sits on the way to the translator"):
     """
     rows = []
     seen_here = False
-    for tagname, title, note in LADDER:
+    for tagname, title, note in _visible(LADDER):
         if tagname == here:
             cls, seen_here = "at", True
         elif seen_here:
@@ -209,10 +224,10 @@ def ladder(here, why, tag="Where this sits on the way to the translator"):
                     '<span class="rt">%s</span><span class="rn">%s</span></li>'
                     % (cls, tagname, title, note))
     return ('<div class="ladder"><span class="tag">%s</span>'
-            '<p class="dest"><span class="lbl">where the ladder goes</span>%s</p>'
+            '<p class="dest">%s</p>'
             '<ol class="rungs">%s</ol>'
             '<p class="why"><span class="lbl">why this rung</span>%s</p></div>'
-            % (tag, DESTINATION, "".join(rows), why))
+            % (tag, ARC, "".join(rows), why))
 
 
 # ---------------------------------------------------------------- misc
