@@ -1917,8 +1917,7 @@ SCRATCHPAGE = """<!doctype html>
 <script src="../assets/search.js"></script>
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
-<script src="../assets/gloss.js"></script>
-<script src="../assets/am.js" defer></script>
+<script src="../assets/gloss.js"></script>{am_js}
 </head>
 <body data-slug="scratch-{slug}" data-printable="From scratch &#183; {title}|{steps}">
 <header class="topbar">
@@ -2149,13 +2148,14 @@ def build_scratch(weeks, flat):
         # ---- Active Mastery: APPENDED after the lesson, never woven into it.
         # The lesson body above is byte-for-byte what it was before this layer
         # existed; verify_preservation.py proves that on every build.
-        am_html, am_anchor, n_am = "", "", 0
+        am_html, am_anchor, am_js, n_am = "", "", "", 0
         if d.get("mastery"):
             import masterykit
             importlib.reload(masterykit)
             am = d["mastery"]
             n_am = len(am["sections"])
             am_html = "\n" + masterykit.render(am)
+            am_js = '\n<script src="../assets/am.js" defer></script>' 
             am_anchor = ('\n  <p class="rb-am"><a class="am-jump" href="#active-mastery">'
                          '&#127919; Active Mastery &#8595;</a> '
                          '<span class="d">%d exercises that use this file rather than '
@@ -2167,6 +2167,7 @@ def build_scratch(weeks, flat):
         page = SCRATCHPAGE.format(
             picture=pic,
             mastery=am_html,
+            am_js=am_js,
             am_anchor=am_anchor,
             steps=steps,
             primer=primer,
