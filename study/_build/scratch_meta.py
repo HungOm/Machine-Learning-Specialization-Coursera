@@ -2,6 +2,9 @@
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
 import mastery_03
+import mastery_10
+import mastery_09
+import mastery_08
 import mastery_07
 import mastery_06
 import mastery_05
@@ -380,7 +383,8 @@ dict(file="08_pca.py", slug="08-pca",
               "being told it.</p>",
      },
      walk=walk_08.WALK,
-     picture=walk_08.PICTURE),
+     picture=walk_08.PICTURE,
+     mastery=mastery_08.AM),
 
 dict(file="09_collaborative_filtering.py", slug="09-collaborative-filtering",
      title="Collaborative filtering",
@@ -424,7 +428,8 @@ dict(file="09_collaborative_filtering.py", slug="09-collaborative-filtering",
            "action films cluster, and nobody ever told the model what a genre is.</p>",
      },
      walk=walk_09.WALK,
-     picture=walk_09.PICTURE),
+     picture=walk_09.PICTURE,
+     mastery=mastery_09.AM),
 
 dict(file="10_reinforcement_learning.py", slug="10-reinforcement-learning",
      title="Reinforcement learning",
@@ -465,7 +470,8 @@ dict(file="10_reinforcement_learning.py", slug="10-reinforcement-learning",
                "exploration at all fixes it.</p>",
      },
      walk=walk_10.WALK,
-     picture=walk_10.PICTURE),
+     picture=walk_10.PICTURE,
+     mastery=mastery_10.AM),
 
 dict(file="11_retrieval.py", slug="11-retrieval",
      title="Retrieval, the R in RAG",
