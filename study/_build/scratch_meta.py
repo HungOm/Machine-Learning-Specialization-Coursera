@@ -2,6 +2,9 @@
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
 import mastery_03
+import mastery_07
+import mastery_06
+import mastery_05
 import mastery_04
 import mastery_02
 import mastery_01
@@ -254,7 +257,8 @@ dict(file="05_softmax.py", slug="05-softmax",
               "and a bus; softmax structurally cannot say so.</p>",
      },
      walk=walk_05.WALK,
-     picture=walk_05.PICTURE),
+     picture=walk_05.PICTURE,
+     mastery=mastery_05.AM),
 
 dict(file="06_decision_tree.py", slug="06-decision-tree",
      title="A decision tree",
@@ -292,7 +296,8 @@ dict(file="06_decision_tree.py", slug="06-decision-tree",
            "accuracy from a tree is a warning, not a result.</p>",
      },
      walk=walk_06.WALK,
-     picture=walk_06.PICTURE),
+     picture=walk_06.PICTURE,
+     mastery=mastery_06.AM),
 
 dict(file="07_kmeans.py", slug="07-kmeans",
      title="k-means",
@@ -335,7 +340,8 @@ dict(file="07_kmeans.py", slug="07-kmeans",
          "minimising J.</p>",
      },
      walk=walk_07.WALK,
-     picture=walk_07.PICTURE),
+     picture=walk_07.PICTURE,
+     mastery=mastery_07.AM),
 
 dict(file="08_pca.py", slug="08-pca",
      title="PCA",
