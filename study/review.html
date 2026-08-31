@@ -231,26 +231,49 @@
 <a class="" data-slug-link="c33-16-state-of-rl" href="c3/w3-16-state-of-rl.html"><span class="n">16</span>The state of reinforcement learning</a>
 </aside>
 <main>
-<p class="kicker">Spaced repetition &#183; 176 cards</p>
-<h1>Review</h1>
-<p class="lede">The notes are for understanding something the first time. This is for still knowing it in
-six months. Cards you find easy come back rarely; cards you fumble come back tomorrow.</p>
-
-<div class="srs-top">
-  <div class="srs-stat due"><div class="k">due now</div><div class="v" id="c-due">0</div></div>
-  <div class="srs-stat new"><div class="k">new</div><div class="v" id="c-new">0</div></div>
-  <div class="srs-stat"><div class="k">scheduled</div><div class="v" id="c-later">0</div></div>
-  <div class="srs-stat done"><div class="k">done today</div><div class="v" id="c-done">0</div></div>
-  <div class="srs-stat"><div class="k">day streak</div><div class="v" id="c-streak">0</div></div>
+<div class="rv-hero">
+  <div class="rv-glow" aria-hidden="true"></div>
+  <div class="rv-hero-in">
+    <div class="rv-hero-txt">
+      <span class="rv-kicker">Spaced repetition &#183; 176 cards</span>
+      <h1 class="rv-title">Review</h1>
+      <p class="rv-lede">The notes are for understanding something the first time. This is for
+      still knowing it in six months. Cards you find easy come back rarely; cards you fumble
+      come back tomorrow.</p>
+      <button type="button" class="rv-start" id="srs-start">
+        <span class="start-go">Start reviewing</span>
+        <span class="start-badge"><b class="start-n">0</b><small class="start-l">cards ready now</small></span>
+      </button>
+    </div>
+    <div class="rv-ring" role="img" aria-label="how much of this deck is scheduled rather than new">
+      <svg viewBox="0 0 80 80" aria-hidden="true">
+        <circle class="bg" cx="40" cy="40" r="34"/>
+        <circle class="fg" id="srs-ring-fg" cx="40" cy="40" r="34"/>
+      </svg>
+      <span class="rv-ring-pc" id="srs-ring-pc">0%</span>
+      <span class="rv-ring-l">learned</span>
+    </div>
+  </div>
 </div>
 
-<div class="filters">
-  <div class="filter-row" id="f-course"></div>
-  <div class="filter-row" id="f-week"></div>
-  <div class="filter-row" id="f-kind"></div>
+<div class="rv-stats">
+  <div class="rv-stat due"><span class="v" id="c-due">0</span><span class="k">due now</span></div>
+  <div class="rv-stat new"><span class="v" id="c-new">0</span><span class="k">new</span></div>
+  <div class="rv-stat"><span class="v" id="c-later">0</span><span class="k">scheduled</span></div>
+  <div class="rv-stat done"><span class="v" id="c-done">0</span><span class="k">done today</span></div>
+  <div class="rv-stat streak"><span class="v" id="c-streak">0</span><span class="k">day streak</span></div>
 </div>
 
-<div id="card-area"></div>
+<details class="rv-filters">
+  <summary><span>Filter the deck</span><span class="rv-fhint">course &middot; week &middot; kind</span></summary>
+  <div class="filters">
+    <div class="filter-row" id="f-course"></div>
+    <div class="filter-row" id="f-week"></div>
+    <div class="filter-row" id="f-kind"></div>
+  </div>
+</details>
+
+<div id="srs-stuck"></div>
 <div id="forecast"></div>
 <div id="srs-stuck"></div>
 

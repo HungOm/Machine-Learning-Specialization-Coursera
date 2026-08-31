@@ -205,3 +205,8 @@ details.am-rev > summary::after { content: " (answer hidden \2014 reveal on scre
 .am-hero, .am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break,
 .am-wm, .am-recon, .am-conn, .am-recall, .am-check, .am-rule {
   background: none !important; border: 1px solid #ddd !important; }
+
+/* --- review: the session stage is a screen affordance --- */
+.sx-stage, .rv-start, .rv-glow { display: none !important; }
+.rv-hero { background: none !important; border: 1px solid #ddd !important; }
+.rv-stat, .rv-filters { break-inside: avoid; }
