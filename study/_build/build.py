@@ -1916,7 +1916,7 @@ SCRATCHPAGE = """<!doctype html>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
 </head>
-<body data-slug="scratch-{slug}" data-printable="From scratch &#183; {title}|{nsec} steps">
+<body data-slug="scratch-{slug}" data-printable="From scratch &#183; {title}|{steps}">
 <header class="topbar">
   <button class="btn" id="menu-toggle" aria-label="menu">&#9776;</button>
   <a class="brand" href="../index.html">ML<span>&#183;</span>notes</a>
@@ -1942,10 +1942,10 @@ python3 {file}</code></pre>
   <p>Pure NumPy &#8212; no scikit-learn, no TensorFlow. <b>Every code block below is read
   straight out of that file, and the output under it is what that exact block printed
   when this page was built.</b> They cannot drift apart.</p>
-  <p class="rb-b">By the end you will have built {builds}.</p>
+  <p class="rb-b">By the end you will have built {builds}.</p>{am_anchor}
 </div>
 {picture}
-{body}
+{body}{mastery}
 {primer}
 <h2><span class="ico">&#128218;</span>The lessons this rests on</h2>
 {lessons}
@@ -2142,8 +2142,29 @@ def build_scratch(weeks, flat):
                    'one picture</h2>' + gistkit.flow(d["picture"][0],
                                                      tag=d["picture"][1],
                                                      cap=d["picture"][2]))
+        # ---- Active Mastery: APPENDED after the lesson, never woven into it.
+        # The lesson body above is byte-for-byte what it was before this layer
+        # existed; verify_preservation.py proves that on every build.
+        am_html, am_anchor, n_am = "", "", 0
+        if d.get("mastery"):
+            import masterykit
+            importlib.reload(masterykit)
+            am = d["mastery"]
+            n_am = len(am["sections"])
+            am_html = "\n" + masterykit.render(am)
+            am_anchor = ('\n  <p class="rb-am"><a class="am-jump" href="#active-mastery">'
+                         '&#127919; Active Mastery &#8595;</a> '
+                         '<span class="d">%d exercises that use this file rather than '
+                         'explain it again</span></p>' % n_am)
+        steps = "%d steps" % len(sections)
+        if n_am:
+            steps += " + %d mastery" % n_am
+
         page = SCRATCHPAGE.format(
             picture=pic,
+            mastery=am_html,
+            am_anchor=am_anchor,
+            steps=steps,
             primer=primer,
             title=html.escape(d["title"]), slug=d["slug"], lede=d["lede"],
             file=d["file"], builds=d["builds"], nlines=src_lines,

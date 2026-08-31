@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
+import mastery_03
 import walk_01
 import walk_02
 import walk_03
@@ -157,7 +158,8 @@ dict(file="03_neural_net_forward.py", slug="03-forward-propagation",
                     "detectors would detect.</p>",
      },
      walk=walk_03.WALK,
-     picture=walk_03.PICTURE),
+     picture=walk_03.PICTURE,
+     mastery=mastery_03.AM),
 
 dict(file="04_backprop.py", slug="04-backpropagation",
      title="Backpropagation",

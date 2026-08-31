@@ -183,3 +183,19 @@
   break-inside: avoid; }
 .wpoint, .wx, .wchain, .wchainset, .wk-case, .wart pre { background: none;
   border: 1px solid #ddd; }
+
+/* --- active mastery ---
+   On paper the exercises are worth keeping and the answers are not: a printed
+   worksheet with the answers already visible is not a worksheet. */
+.am-root { break-before: page; }
+.am-sec, .am-lvl, .am-drill, .am-pred, .am-lab, .am-break, .am-wm, .am-recon,
+.am-recall, .am-check, .am-sem, .am-led { break-inside: avoid; }
+details.am-rev > .am-b { display: none !important; }
+details.am-rev > summary { color: #999; font-style: italic; }
+details.am-rev > summary::after { content: " (answer hidden — reveal on screen)";
+  font-size: 10px; }
+.am-jump, .rb-am { display: none; }
+.am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break, .am-wm,
+.am-recon, .am-conn, .am-recall, .am-check { background: none;
+  border: 1px solid #ddd; }
+.am-rule { background: none; border: 1px solid #ddd; }

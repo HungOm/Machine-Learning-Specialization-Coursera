@@ -1813,3 +1813,133 @@ ol.gistlist li.soon .tag2 { margin-left: auto; font-size: 11px; color: var(--ink
 .wcs-row:last-child { border-bottom: 0; }
 .wcs-c { display: inline-flex; align-items: center; gap: 8px; }
 .wcs-n { font-size: 13px; color: var(--ink-soft); font-style: italic; margin-left: auto; }
+
+/* ============================================================
+   --- active mastery ---
+   Appended practice layer on the build-lane pages. Every rule
+   here is .am- prefixed and additive; nothing above is altered.
+   Reuses .sx / .wpoint / .runbox / ul.links.plain for everything
+   that already has a house style, so this is not a second design
+   system — only the pieces with no existing equivalent are new.
+   ============================================================ */
+
+/* the one anchor in the existing runbox */
+.rb-am { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
+.am-jump { font-weight: 700; text-decoration: none; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 999px; padding: 5px 13px;
+  display: inline-block; font-size: 13px; }
+.am-jump:hover { background: var(--accent-soft); }
+.rb-am .d { font-size: 12.5px; color: var(--ink-faint); margin-left: 9px; }
+
+/* the block itself */
+.am-root { margin: 40px 0 0; padding-top: 8px; border-top: 3px double var(--line); }
+.am-head { margin-bottom: 20px; }
+.am-head h2 { margin-bottom: 6px; }
+.am-lede { font-size: 15px; color: var(--ink-soft); line-height: 1.7; margin: 0 0 10px; }
+.am-rule { font-size: 13.5px; line-height: 1.65; margin: 0; padding: 11px 14px;
+  background: var(--amber-soft); border-radius: var(--radius-sm); }
+
+.am-sec { margin: 0 0 26px; }
+.am-h { display: flex; align-items: baseline; gap: 10px; font-size: 17px;
+  margin: 0 0 12px; font-family: var(--sans); font-weight: 700; }
+.am-n { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--accent);
+  color: #fff; font: 700 12px/26px var(--sans); text-align: center; }
+.am-h .ico { font-size: 15px; }
+
+.am-tag { display: block; font: 700 10.5px/1.3 var(--sans); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.am-ask { font-size: 14.5px; line-height: 1.65; margin: 0 0 9px; }
+
+/* reveals — the whole point is that these start shut */
+details.am-rev { margin: 0 0 4px; border: 1px solid var(--line);
+  border-radius: var(--radius-sm); background: var(--bg-sunk); }
+details.am-rev > summary { cursor: pointer; padding: 8px 13px; font-size: 13px;
+  font-weight: 600; color: var(--ink-soft); list-style: none; }
+details.am-rev > summary::-webkit-details-marker { display: none; }
+details.am-rev > summary::before { content: "\25B8"; margin-right: 8px;
+  color: var(--accent); display: inline-block; }
+details.am-rev[open] > summary::before { transform: rotate(90deg); }
+details.am-rev[open] > summary { border-bottom: 1px solid var(--line); }
+details.am-rev > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.am-b { padding: 12px 15px; font-size: 14px; line-height: 1.7; }
+.am-b p { margin: 0 0 10px; } .am-b p:last-child { margin-bottom: 0; }
+
+/* 1 — semantics table */
+.am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break, .am-wm,
+.am-recon, .am-conn, .am-recall, .am-check {
+  margin: 18px 0; padding: 15px 17px; border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--bg-panel); }
+.am-sem > p, .am-led > p, .am-peek > p, .am-pred > p, .am-lab > p, .am-break > p,
+.am-wm > p, .am-recon > p, .am-recall > p, .am-check > p {
+  font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; margin: 0 0 12px; }
+.am-scroll { overflow-x: auto; }
+table.am-semtab, table.am-ledtab, table.am-rectab { width: 100%; border-collapse: collapse;
+  font-size: 12.5px; }
+/* seven columns need real room; .am-scroll gives them a horizontal scroller
+   rather than letting short cells wrap one character at a time */
+table.am-semtab { min-width: 1180px; table-layout: fixed; }
+table.am-semtab col.c-name { width: 96px; }
+table.am-semtab col.c-shape { width: 118px; }
+table.am-semtab col.c-code { width: 150px; }
+table.am-semtab col.c-world { width: 300px; }
+table.am-semtab col.c-unit { width: 130px; }
+table.am-semtab col.c-elem { width: 230px; }
+table.am-semtab col.c-chg { width: 300px; }
+.am-v, .am-v code { white-space: nowrap; }
+table.am-semtab th, table.am-ledtab th { text-align: left; font-size: 10px;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
+  border-bottom: 1px solid var(--line); padding: 0 9px 6px 0; font-weight: 700; }
+table.am-semtab td, table.am-ledtab td, table.am-rectab td {
+  padding: 9px 9px 9px 0; border-bottom: 1px solid var(--line-soft);
+  vertical-align: top; line-height: 1.55; }
+table.am-semtab tr:last-child td, table.am-ledtab tr:last-child td { border-bottom: 0; }
+.am-v code { font-weight: 700; color: var(--accent); }
+.am-sh { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft);
+  white-space: nowrap; }
+.am-w { color: var(--ink); }
+.am-u { font-weight: 600; color: var(--green); white-space: nowrap; }
+
+/* 1 — peek drill */
+.am-pts { margin: 0 0 12px; padding-left: 20px; font-size: 13.5px; line-height: 1.7; }
+.am-pts code { font-size: .88em; }
+
+/* 2, 4, 7, 10 — ordered exercise lists */
+ol.am-plist, ol.am-blist, ol.am-rlist, ol.am-clist, ol.am-wlist {
+  margin: 0; padding-left: 22px; }
+ol.am-plist > li, ol.am-blist > li, ol.am-rlist > li, ol.am-clist > li,
+ol.am-wlist > li { margin-bottom: 16px; }
+ol.am-plist > li:last-child, ol.am-blist > li:last-child,
+ol.am-rlist > li:last-child, ol.am-clist > li:last-child,
+ol.am-wlist > li:last-child { margin-bottom: 0; }
+
+/* 3 — the lab levels */
+.am-lvl { border-left: 3px solid var(--line); padding: 0 0 14px 14px; margin: 0; }
+.am-lvl:last-child { padding-bottom: 0; }
+.am-lvl-h { display: flex; align-items: baseline; gap: 9px; margin-bottom: 6px; }
+.am-lvl-n { font: 700 10px/1 var(--sans); letter-spacing: .06em; color: #fff;
+  background: var(--blue); border-radius: 4px; padding: 4px 7px; }
+.am-lvl-h b { font-size: 14.5px; }
+
+/* 6 — wrong mental models */
+.am-wrong { font-size: 14.5px; line-height: 1.6; margin-bottom: 7px;
+  color: var(--red); font-weight: 600; }
+
+/* 5 — invariant reuses .wpoint */
+.am-inv-w { font-size: 14px; line-height: 1.7; margin: 10px 0; }
+.am-inv pre { margin: 0; }
+
+/* 9 — recall */
+ol.am-blank { margin: 0 0 12px; padding-left: 22px; font-size: 14px; line-height: 1.7; }
+ol.am-blank li { margin-bottom: 9px; }
+.am-q { font-weight: 600; width: 46%; }
+.am-note { font-size: 12.5px; color: var(--ink-faint); margin: 12px 0 0; }
+
+@media (max-width: 640px) {
+  .am-h { font-size: 15.5px; }
+  .am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break, .am-wm,
+  .am-recon, .am-conn, .am-recall, .am-check { padding: 12px 13px; }
+}
+.am-hint { font-size: 12.5px; color: var(--ink-faint); font-style: italic;
+  margin: 0 0 8px; }
+.am-scroll { position: relative; }
+@media (min-width: 1250px) { .am-hint { display: none; } }
