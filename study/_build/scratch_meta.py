@@ -2,6 +2,9 @@
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
 import mastery_03
+import mastery_04
+import mastery_02
+import mastery_01
 import walk_01
 import walk_02
 import walk_03
@@ -65,7 +68,8 @@ dict(file="01_linear_regression.py", slug="01-linear-regression",
            "compute linear regression, and not merely something that looks like it.</p>",
      },
      walk=walk_01.WALK,
-     picture=walk_01.PICTURE),
+     picture=walk_01.PICTURE,
+     mastery=mastery_01.AM),
 
 dict(file="02_logistic_regression.py", slug="02-logistic-regression",
      title="Logistic regression and regularization",
@@ -113,7 +117,8 @@ dict(file="02_logistic_regression.py", slug="02-logistic-regression",
                "lecture.</p>",
      },
      walk=walk_02.WALK,
-     picture=walk_02.PICTURE),
+     picture=walk_02.PICTURE,
+     mastery=mastery_02.AM),
 
 dict(file="03_neural_net_forward.py", slug="03-forward-propagation",
      title="Forward propagation",
@@ -208,7 +213,8 @@ dict(file="04_backprop.py", slug="04-backpropagation",
               "tweak — it is the thing that makes the problem solvable at all.</p>",
      },
      walk=walk_04.WALK,
-     picture=walk_04.PICTURE),
+     picture=walk_04.PICTURE,
+     mastery=mastery_04.AM),
 
 dict(file="05_softmax.py", slug="05-softmax",
      title="Softmax and multi-class",
