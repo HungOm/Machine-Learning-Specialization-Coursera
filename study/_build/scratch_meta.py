@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """Narrative for the from-scratch lane. Code comes from scratch/code/*.py."""
 
+import mastery_14
+import mastery_13
+import mastery_12
+import mastery_11
 import mastery_03
 import mastery_10
 import mastery_09
@@ -550,7 +554,8 @@ knowing when to return <em>nothing</em> matters as much as ranking well.</p>""",
            "hallucination is retrieval that should have said nothing.</p>",
      },
      walk=walk_11.WALK,
-     picture=walk_11.PICTURE),
+     picture=walk_11.PICTURE,
+     mastery=mastery_11.AM),
 
 dict(file="12_fine_tuning.py", slug="12-fine-tuning",
      title="Fine-tuning: head, full, and LoRA",
@@ -619,7 +624,8 @@ same reason it always did.</p>""",
              "have enough data to steer a model but not enough to raise one.</p>",
      },
      walk=walk_12.WALK,
-     picture=walk_12.PICTURE),
+     picture=walk_12.PICTURE,
+     mastery=mastery_12.AM),
 
 dict(file="13_agent_loop.py", slug="13-agent-loop",
      title="An agent loop, and how it breaks",
@@ -686,7 +692,8 @@ loop needs a repeat guard, a step budget, and an evaluation suite with deliberat
             "written.</p>",
      },
      walk=walk_13.WALK,
-     picture=walk_13.PICTURE),
+     picture=walk_13.PICTURE,
+     mastery=mastery_13.AM),
 
 dict(file="14_mlops.py", slug="14-mlops",
      title="After the model works",
@@ -741,5 +748,6 @@ dict(file="14_mlops.py", slug="14-mlops",
              "that goes wrong afterwards is the model's fault.</p>",
      },
      walk=walk_14.WALK,
-     picture=walk_14.PICTURE),
+     picture=walk_14.PICTURE,
+     mastery=mastery_14.AM),
 ]

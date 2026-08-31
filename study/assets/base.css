@@ -2336,3 +2336,17 @@ body.sx-open { overflow: hidden; }
   .rv-glow, .sx-glow, .sx-card, .sx-answer, .sx-done-ring circle.fg, .sx-done-ring span {
     animation: none !important; transition: none !important; }
 }
+
+/* --- active mastery: long names and shapes in the semantics table --------
+   table-layout is fixed, so a monospace cell wider than its column used to
+   bleed across the next one instead of being clipped or wrapped. The names
+   and shapes are the file's real ones and must not be shortened to fit, so
+   the columns give them a little more room and then allow a wrap.
+
+   c-name at 124px holds bootstrap_diff on one line; the two that still do not
+   fit -- CHAMP['mu'] / ['sd'] and g'(z) for sigmoid -- wrap at their space. */
+table.am-semtab col.c-name { width: 124px; }
+table.am-semtab col.c-shape { width: 138px; }
+table.am-semtab td.am-v code, table.am-semtab td.am-sh {
+  white-space: normal; overflow-wrap: break-word; }
+table.am-semtab td.am-v code { display: inline-block; max-width: 100%; }
