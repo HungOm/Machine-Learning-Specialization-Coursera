@@ -194,7 +194,10 @@ _TRIG_KEY = None
 # nested inside link text fights the link's own click behaviour (the badge's
 # click handler stops the click from bubbling, but never calls
 # preventDefault, so a click there both opens the popup AND navigates).
-SKIP_EL = re.compile(r"</?(code|pre|script|style|title|h1|option|textarea|aside|a)\b", re.I)
+# `button` joins this list for the same reason `option`, `textarea` and `a` are on
+# it: a refresher badge inside a CONTROL is clickable and fights the control. The
+# Active Mastery card headers are buttons, and a badge landed inside one.
+SKIP_EL = re.compile(r"</?(code|pre|script|style|title|h1|option|textarea|aside|a|button)\b", re.I)
 
 
 def badge_terms(html_text):
@@ -1915,6 +1918,7 @@ SCRATCHPAGE = """<!doctype html>
 <script>window.GLOSS_UP="../";</script>
 <script src="../assets/gloss-data.js"></script>
 <script src="../assets/gloss.js"></script>
+<script src="../assets/am.js" defer></script>
 </head>
 <body data-slug="scratch-{slug}" data-printable="From scratch &#183; {title}|{steps}">
 <header class="topbar">

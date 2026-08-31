@@ -20,12 +20,35 @@ def _det(summary, body, cls="am-rev"):
             '</details>' % (cls, summary, body))
 
 
-def section(num, icon, title, anchor, body):
-    """One numbered Active Mastery section, in the site's existing .sx shape."""
-    return ('<section class="sx am-sec" id="am-%s">'
-            '<h3 class="am-h"><span class="am-n">%s</span>'
-            '<span class="ico">%s</span>%s</h3>%s</section>'
-            % (anchor, num, icon, title, body))
+def section(num, icon, title, anchor, body, kind="", hook="", mins=""):
+    """One Active Mastery card.
+
+    PROGRESSIVE ENHANCEMENT, and this is the important part: the body is
+    rendered inline and visible. With JavaScript off you get exactly the
+    readable stack of sections this was before, <details> and all. am.js then
+    UPGRADES it -- hides the bodies, turns the headers into a tappable grid,
+    and moves the body into a modal on open. Nothing is JS-only content.
+    """
+    return ('<li class="am-card" data-am="%s" data-kind="%s">'
+            '<button class="am-card-btn" type="button" aria-expanded="false"'
+            ' aria-controls="am-body-%s">'
+            '<span class="am-card-top">'
+            '<span class="am-card-ico" aria-hidden="true">%s</span>'
+            '<span class="am-card-n">%s</span>'
+            '<span class="am-tick" aria-hidden="true">'
+            '<svg viewBox="0 0 24 24" width="15" height="15"><path d="M4 12.5l5.5 5.5L20 7"'
+            ' fill="none" stroke="currentColor" stroke-width="3.2"'
+            ' stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
+            '</span>'
+            '<span class="am-card-title">%s</span>'
+            '<span class="am-card-hook">%s</span>'
+            '<span class="am-card-foot"><span class="am-chip">%s</span>'
+            '<span class="am-go">Open<span class="am-arrow">&#8594;</span></span></span>'
+            '</button>'
+            '<div class="am-card-body" id="am-body-%s" data-title="%s" data-ico="%s">'
+            '%s</div></li>'
+            % (anchor, kind, anchor, icon, num, title, hook, kind or "practice",
+               anchor, title, icon, body))
 
 
 def prose(html):
@@ -58,15 +81,15 @@ def semantics(rows, intro, tag="What every variable is, in the world"):
     cols = ('<colgroup><col class="c-name"><col class="c-shape"><col class="c-code">'
             '<col class="c-world"><col class="c-unit"><col class="c-elem">'
             '<col class="c-chg"></colgroup>')
-    return ('<div class="am-sem"><span class="am-tag">%s</span><p>%s</p>'
-            '<p class="am-hint">Seven columns &mdash; <b>scroll this table sideways</b> '
-            'for &ldquo;one element, read aloud&rdquo; and &ldquo;if it changed&rdquo;, '
-            'which are the two that do the work.</p>'
-            '<div class="am-scroll"><table class="am-semtab">' + cols + '<thead><tr>'
-            '<th>name</th><th>shape &amp; dtype</th><th>in code</th>'
+    head = ('<thead><tr><th>name</th><th>shape &amp; dtype</th><th>in code</th>'
             '<th>in the world</th><th>units</th><th>one element, read aloud</th>'
-            '<th>if it changed</th></tr></thead><tbody>%s</tbody></table></div></div>'
-            % (tag, intro, r))
+            '<th>if it changed</th></tr></thead>')
+    hint = ('<p class="am-hint">Seven columns &mdash; <b>scroll this table sideways</b> for '
+            '&ldquo;one element, read aloud&rdquo; and &ldquo;if it changed&rdquo;, which '
+            'are the two that do the work.</p>')
+    return ('<div class="am-sem"><span class="am-tag">' + tag + '</span><p>' + intro
+            + '</p>' + hint + '<div class="am-scroll"><table class="am-semtab">'
+            + cols + head + '<tbody>' + r + '</tbody></table></div></div>')
 
 
 def ledger(rows, intro, tag="Shape ledger"):
@@ -208,13 +231,39 @@ def check(items, intro, tag="Mastery check"):
 
 
 # ---------------------------------------------------------------- wrapper
+RING = ('<svg class="am-ring" viewBox="0 0 72 72" aria-hidden="true">'
+        '<circle class="am-ring-bg" cx="36" cy="36" r="31"/>'
+        '<circle class="am-ring-fg" cx="36" cy="36" r="31"/></svg>')
+
+
 def render(am):
-    """Assemble one page's Active Mastery block."""
+    """Assemble one page's Active Mastery block: a branded hero with live
+    progress, then a card grid. Every card's content is present inline for the
+    no-JS case; am.js turns the grid into an app."""
+    n = len(am["sections"])
     body = "".join(am["sections"])
-    return ('<section id="active-mastery" class="am-root">'
-            '<div class="am-head"><h2><span class="ico">&#127919;</span>Active Mastery</h2>'
-            '<p class="am-lede">%s</p>'
-            '<p class="am-rule">Everything above this line is the lesson, unchanged. '
-            'Everything below asks you to <b>do</b> something with it. '
-            '<b>Answers are hidden</b> &mdash; predict first, then reveal.</p></div>'
-            '%s</section>' % (am["lede"], body))
+    return (
+        '<section id="active-mastery" class="am-root" data-am-count="%d">'
+        '<div class="am-hero">'
+          '<div class="am-hero-glow" aria-hidden="true"></div>'
+          '<div class="am-hero-in">'
+            '<div class="am-hero-txt">'
+              '<span class="am-kicker">Active Mastery</span>'
+              '<h2 class="am-title">Use it, don&rsquo;t re-read it</h2>'
+              '<p class="am-lede">%s</p>'
+              '<p class="am-rule"><span class="am-rule-ico" aria-hidden="true">&#9679;</span>'
+              'Everything above is the lesson, unchanged. Every card below asks you to '
+              '<b>do</b> something. <b>Answers stay hidden until you commit.</b></p>'
+            '</div>'
+            '<div class="am-prog" role="img" aria-label="progress through the exercises">'
+              '%s<span class="am-prog-n"><b class="am-done-n">0</b>'
+              '<span class="am-prog-of">/%d</span></span>'
+              '<span class="am-prog-l">done</span>'
+            '</div>'
+          '</div>'
+          '<div class="am-bar" aria-hidden="true"><i class="am-bar-fill"></i></div>'
+        '</div>'
+        '<ol class="am-grid">%s</ol>'
+        '<p class="am-reset-w"><button type="button" class="am-reset" hidden>'
+        'reset my progress on this page</button></p>'
+        '</section>' % (n, am["lede"], RING, n, body))

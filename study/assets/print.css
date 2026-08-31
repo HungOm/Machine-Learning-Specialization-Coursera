@@ -186,16 +186,22 @@
 
 /* --- active mastery ---
    On paper the exercises are worth keeping and the answers are not: a printed
-   worksheet with the answers already visible is not a worksheet. */
+   worksheet with its answers showing is not a worksheet. The grid becomes a
+   plain stack, because a card grid is a screen affordance. */
 .am-root { break-before: page; }
-.am-sec, .am-lvl, .am-drill, .am-pred, .am-lab, .am-break, .am-wm, .am-recon,
+.am-hero-glow, .am-jump, .rb-am, .am-prog, .am-bar, .am-go, .am-reset-w,
+.am-modal { display: none !important; }
+ol.am-grid { display: block !important; }
+.am-card { break-inside: avoid; margin-bottom: 18px; }
+.am-card-btn { border: 0 !important; padding: 0 !important; background: none !important;
+  display: block !important; }
+.am-root.am-js .am-card-body[hidden] { display: block !important; }
+.am-card, .am-lvl, .am-drill, .am-pred, .am-lab, .am-break, .am-wm, .am-recon,
 .am-recall, .am-check, .am-sem, .am-led { break-inside: avoid; }
 details.am-rev > .am-b { display: none !important; }
 details.am-rev > summary { color: #999; font-style: italic; }
-details.am-rev > summary::after { content: " (answer hidden — reveal on screen)";
+details.am-rev > summary::after { content: " (answer hidden \2014 reveal on screen)";
   font-size: 10px; }
-.am-jump, .rb-am { display: none; }
-.am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break, .am-wm,
-.am-recon, .am-conn, .am-recall, .am-check { background: none;
-  border: 1px solid #ddd; }
-.am-rule { background: none; border: 1px solid #ddd; }
+.am-hero, .am-sem, .am-led, .am-peek, .am-drill, .am-pred, .am-lab, .am-break,
+.am-wm, .am-recon, .am-conn, .am-recall, .am-check, .am-rule {
+  background: none !important; border: 1px solid #ddd !important; }

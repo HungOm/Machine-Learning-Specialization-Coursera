@@ -41,7 +41,8 @@ layers into one matrix; and that one test roast comes out <b>WRONG</b> on purpos
                   "../gist/c21.html", "C2 Week 1 &mdash; the gist",
                   extra=[("lab", "../scratch/02-logistic-regression.html",
                           "File 02 first, if you have not",
-                          "one neuron is exactly the logistic unit built there")])),
+                          "one neuron is exactly the logistic unit built there")]),
+    kind="orient", hook="""Two networks in one file. Know which one you are looking at."""),
 
 # ---------------------------------------------------------------- 1  THE HEADLINE
 section("1", "&#127991;&#65039;", "What every variable is", "vars",
@@ -209,7 +210,8 @@ probs    shape=(6,)    dtype=float64  min=7.309e-17  max=1
 <b>2.5e&minus;46</b> &mdash; a sigmoid output that has saturated so hard it is numerically
 zero. And <code>probs</code> is exactly <b>[1, 0, 0, 0, 1, 0]</b> to four decimal places: the
 network is not hedging on five of the six roasts, and the one it hedges on is the one it gets
-wrong.</p>"""))),
+wrong.</p>""")),
+    kind="semantics", hook="""Twelve variables. Two mean something physical. Most mean nothing &mdash; and that is the point."""),
 
 # ---------------------------------------------------------------- 2
 section("2", "&#128302;", "Prediction checkpoints", "predict",
@@ -251,7 +253,8 @@ Three units of hidden layer reduced to two numbers.</p>"""),
     ],
     """Write each answer down <b>before</b> opening the reveal. An answer you thought is not
 an answer you committed to, and the whole value of this section is finding out which of your
-beliefs were wrong.""")),
+beliefs were wrong."""),
+    kind="predict", hook="""Four commitments to write down before you run anything."""),
 
 # ---------------------------------------------------------------- 3
 section("3", "&#128295;", "Modify the copy", "lab",
@@ -317,7 +320,8 @@ system telling you a detector exists that nothing listens to.</p>"""),
     ],
     """Work on <b>a copy</b> of <code>03_neural_net_forward.py</code>, not the original. Each
 level changes something one step further from the surface, and each asks for a prediction
-before the edit.""")),
+before the edit."""),
+    kind="lab", hook="""Five edits to your copy, each one step further from the surface."""),
 
 # ---------------------------------------------------------------- 4
 section("4", "&#128165;", "Break it, then repair it", "break",
@@ -368,7 +372,8 @@ defence.</p>"""),
     ],
     """Each of these breaks something on purpose. In every case <b>predict the failure before
 you run it</b> &mdash; including whether it fails loudly or quietly, which is the more
-important half.""")),
+important half."""),
+    kind="debug", hook="""Four deliberate breaks. Predict whether each fails loudly or quietly."""),
 
 # ---------------------------------------------------------------- 5
 section("5", "&#9878;&#65039;", "The invariant", "invariant",
@@ -383,7 +388,8 @@ network's output to the last decimal.</p>
 it. It needs no training, no data and no judgement &mdash; just equality.</p>""",
     """assert np.allclose(dense_loop(x, W1, b1), dense(x.reshape(1, -1), W1, b1)[0])
 assert np.allclose(forward(batch, net, [identity, identity]),
-                   batch @ (W1 @ W2) + (b1 @ W2 + b2))""")),
+                   batch @ (W1 @ W2) + (b1 @ W2 + b2))"""),
+    kind="invariant", hook="""The two equalities this file exists to prove."""),
 
 # ---------------------------------------------------------------- 6
 section("6", "&#129535;", "Wrong mental models", "wrong",
@@ -422,7 +428,8 @@ implementation of it, evaluated 0.1 units from two boundaries at once.</p>
 <p>No choice of finite weights removes that band. You can shrink it towards zero by
 sharpening, and the file measures exactly that. Believing this is a calibration bug will send
 you tuning numbers that were never wrong.</p>"""),
-    ])),
+    ]),
+    kind="myths", hook="""Five beliefs that survive reading and fail on running."""),
 
 # ---------------------------------------------------------------- 7
 section("7", "&#127959;&#65039;", "Reconstruction challenge", "reconstruct",
@@ -473,7 +480,8 @@ right boundary and a blunter detector &mdash; compare your <code>h</code> agains
 and you will see your duration alarms respond more gradually.</p>"""),
     ],
     """Work down the list in order. Each stage is harder and each one has a way to check
-yourself that does not require reading the answer first.""")),
+yourself that does not require reading the answer first."""),
+    kind="rebuild", hook="""Explain &rarr; skeleton &rarr; core &rarr; minimal &rarr; verify."""),
 
 # ---------------------------------------------------------------- 8
 section("8", "&#128279;", "Connections", "conn",
@@ -491,7 +499,8 @@ section("8", "&#128279;", "Connections", "conn",
                 "<code>c2w1-dense-cols</code>, <code>c2w1-shapes</code> and "
                 "<code>c2w1-master-eq</code> cover the notation this file assumes"),
                ("play", "../map.html", "Concept map",
-                "where forward propagation sits among the 82 cross-referenced terms")])),
+                "where forward propagation sits among the 82 cross-referenced terms")]),
+    kind="links", hook="""Where this sits: back to 02, on to 04, and the week&rsquo;s gist."""),
 
 # ---------------------------------------------------------------- 9
 section("9", "&#9670;", "Recall sheet", "recall",
@@ -524,7 +533,8 @@ section("9", "&#9670;", "Recall sheet", "recall",
          "how many measurements come in; all four detectors read both."),
     ],
     """Cover the answers. Say each one out loud <b>before</b> revealing &mdash; producing an
-answer from memory is what makes it stick, and re-reading one does not.""")),
+answer from memory is what makes it stick, and re-reading one does not."""),
+    kind="recall", hook="""Seven cards, none of them already in your deck."""),
 
 # ---------------------------------------------------------------- 10
 section("10", "&#9989;", "Mastery check", "check",
@@ -564,6 +574,7 @@ mistake, which it will not always do.</p>"""),
     ],
     """These do not repeat the <a href="../quiz/c21.html">C2 W1 mock quiz</a>, which already
 covers parameter counting, the shape rule and the <code>[[200, 17]]</code> convention. Every
-question here needs something you can only get from <b>this file</b>.""")),
+question here needs something you can only get from <b>this file</b>."""),
+    kind="check", hook="""Five questions you can only answer from this file."""),
     ],
 )
