@@ -69,6 +69,7 @@ MOCK_MODULES = _shown_modules([
 DRILL_MODULES = _shown_modules([
     "drill_c1w1", "drill_c1w2", "drill_c1w3",
     "drill_c2w1", "drill_c2w2", "drill_c2w3", "drill_c2w4",
+    "drill_c3w1", "drill_c3w2", "drill_c3w3",
 ])
 
 # one gist page per week — the whole week as a single connected picture. Same
