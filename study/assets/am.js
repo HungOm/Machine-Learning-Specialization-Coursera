@@ -93,6 +93,7 @@
       '</footer>' +
     '</div>';
   modal.setAttribute('aria-labelledby', 'am-modal-title');
+  if (root.classList.contains('qd-root')) modal.classList.add('qd-modal');
   document.body.appendChild(modal);
 
   var sheet = modal.querySelector('.am-sheet');
@@ -112,6 +113,7 @@
     host = card;
     sTitle.textContent = body.getAttribute('data-title') || '';
     sKind.textContent = card.getAttribute('data-kind') || '';
+    modal.setAttribute('data-kind', card.getAttribute('data-kind') || '');
     sIco.innerHTML = body.getAttribute('data-ico') || '';
     sBody.appendChild(body);              /* move, so <details> state persists */
     body.hidden = false;
@@ -200,5 +202,24 @@
   /* Entrance animation lives entirely in CSS (see am-enter). Nothing here
      gates visibility on a callback, deliberately. */
 
+  /* ---------------------------------------------------------- deep links
+     #am-<card id> opens that card, so a mock-quiz question can send you
+     straight to its drill. An unknown hash is ignored. */
+  function fromHash() {
+    var h = (location.hash || '').slice(1);
+    if (h.indexOf('am-') !== 0) return;
+    var id = h.slice(3);
+    for (var i = 0; i < total; i++) {
+      if (cards[i].getAttribute('data-am') === id) {
+        if (cards[i].scrollIntoView) cards[i].scrollIntoView({ block: 'center' });
+        lastFocus = cards[i].querySelector('.am-card-btn');
+        open(i, '');
+        return;
+      }
+    }
+  }
+  window.addEventListener('hashchange', fromHash);
+
   paint();
+  fromHash();
 })();

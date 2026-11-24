@@ -243,17 +243,16 @@ def render(am):
     n = len(am["sections"])
     body = "".join(am["sections"])
     return (
-        '<section id="active-mastery" class="am-root" data-am-count="%d">'
+        '<section id="active-mastery" class="am-root%s" data-am-count="%d">'
         '<div class="am-hero">'
           '<div class="am-hero-glow" aria-hidden="true"></div>'
           '<div class="am-hero-in">'
             '<div class="am-hero-txt">'
-              '<span class="am-kicker">Active Mastery</span>'
-              '<h2 class="am-title">Use it, don&rsquo;t re-read it</h2>'
+              '<span class="am-kicker">%s</span>'
+              '<h2 class="am-title">%s</h2>'
               '<p class="am-lede">%s</p>'
               '<p class="am-rule"><span class="am-rule-ico" aria-hidden="true">&#9679;</span>'
-              'Everything above is the lesson, unchanged. Every card below asks you to '
-              '<b>do</b> something. <b>Answers stay hidden until you commit.</b></p>'
+              '%s</p>'
             '</div>'
             '<div class="am-prog" role="img" aria-label="progress through the exercises">'
               '%s<span class="am-prog-n"><b class="am-done-n">0</b>'
@@ -266,4 +265,10 @@ def render(am):
         '<ol class="am-grid">%s</ol>'
         '<p class="am-reset-w"><button type="button" class="am-reset" hidden>'
         'reset my progress on this page</button></p>'
-        '</section>' % (n, am["lede"], RING, n, body))
+        '</section>' % ((" " + am["cls"]) if am.get("cls") else "", n,
+                        am.get("kicker", "Active Mastery"),
+                        am.get("title", "Use it, don&rsquo;t re-read it"), am["lede"],
+                        am.get("rule", "Everything above is the lesson, unchanged. Every card "
+                               "below asks you to <b>do</b> something. <b>Answers stay hidden "
+                               "until you commit.</b>"),
+                        RING, n, body))

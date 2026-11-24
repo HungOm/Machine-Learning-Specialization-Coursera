@@ -30,6 +30,9 @@
     var slug = document.body.dataset.slug;
     var head = [], leaves = [], pager = main.querySelector('.pager');
     var foot = main.querySelector('.sitefoot');
+    /* quiz drills are appended after the lesson: they get a page of their own
+       instead of trailing the last section */
+    var drills = main.querySelector(':scope > #active-mastery');
 
     /* everything before the first h2 is the title block; keep it on every page */
     var node = main.firstElementChild;
@@ -39,7 +42,7 @@
     h2s.forEach(function (h, i) {
       var wrap = document.createElement('section');
       wrap.className = 'rd-leaf';
-      var stop = h2s[i + 1] || pager || foot;
+      var stop = h2s[i + 1] || drills || pager || foot;
       var n = h, next;
       var members = [];
       while (n && n !== stop) { members.push(n); n = n.nextElementSibling; }
@@ -47,6 +50,13 @@
       members.forEach(function (m) { wrap.appendChild(m); });
       leaves.push(wrap);
     });
+    if (drills) {
+      var dl = document.createElement('section');
+      dl.className = 'rd-leaf rd-drills';
+      drills.parentNode.insertBefore(dl, drills);
+      dl.appendChild(drills);
+      leaves.push(dl);
+    }
     if (!leaves.length) return;
 
     /* ---- chrome ---- */
@@ -123,6 +133,7 @@
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       var tag = (e.target.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (document.body.classList.contains('am-open')) return;   /* a drill card owns the keys */
       if (e.key === 'r') { live ? disable() : (setOn(true), enable()); return; }
       if (!live) return;
       /* inside reader mode the arrows turn sections; site.js paging still runs
@@ -136,11 +147,16 @@
       sx = e.touches[0].clientX; sy = e.touches[0].clientY;
     }, { passive: true });
     document.addEventListener('touchend', function (e) {
-      if (!live) return;
+      if (!live || document.body.classList.contains('am-open')) return;
       var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
       if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) go(at + (dx < 0 ? 1 : -1));
     }, { passive: true });
 
-    if (on()) enable();
+    /* a link to a drill card (#am-...) lands on the drills page */
+    var toDrill = drills && (location.hash || '').indexOf('#am-') === 0;
+    if (on()) enable(toDrill ? leaves.length - 1 : undefined);
+    window.addEventListener('hashchange', function () {
+      if (live && drills && (location.hash || '').indexOf('#am-') === 0) go(leaves.length - 1);
+    });
   });
 })();

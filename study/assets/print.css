@@ -210,3 +210,18 @@ details.am-rev > summary::after { content: " (answer hidden \2014 reveal on scre
 .sx-stage, .rv-start, .rv-glow { display: none !important; }
 .rv-hero { background: none !important; border: 1px solid #ddd !important; }
 .rv-stat, .rv-filters { break-inside: avoid; }
+
+/* ---- lesson role colours (base.css "lesson roles") ---- */
+@media print {
+  /* colour: always the light role palette, whatever theme was on screen */
+  html[data-print="color"] {
+    --role-recall: #3d4f9f; --role-plain: #6b4c8f; --role-math: #9a6a1e; --role-see: #4a5363;
+    --role-trap: #a8473b; --role-link: #2b6f62; --role-key: #22262e; --role-key-t: #ffffff;
+    --role-math-text: #8a5d14;
+    --l-paper: #ffffff; --l-surface: #f4f1ec; --l-hair: #ddd7cc; --l-text: #16150f; --l-mute: #4a463f;
+  }
+  /* mono: the heading tile becomes an outlined box with a black glyph */
+  html[data-print="mono"] body.lesson main h2[data-role] .ico { border: 1pt solid #000 !important; }
+  html[data-print="mono"] body.lesson main h2[data-role] .ico::before { color: #000 !important; }
+  html[data-print="mono"] body.lesson .callout.key { border-left: 3pt solid #000 !important; }
+}

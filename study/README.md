@@ -286,6 +286,57 @@ Two related rules for anything added later:
   but must never be summed into one percentage — recognition and production are the two things
   the dashboard exists to tell apart.
 
+## One colour, one kind of thinking
+
+Every lesson page and every quiz drill uses the same seven colours, so the colour itself is
+a memory cue. Flat and solid: no gradients, glows or drop shadows.
+
+| Colour | Kind of thinking | Lessons | Quiz drills |
+|---|---|---|---|
+| Indigo | test yourself | Before you read, Say it out loud, Check yourself, Before moving on | Recall |
+| Plum | plain words | The idea in plain words, the four lenses | Like you are ten |
+| Ochre | maths & working | Maths / words decoded, Worked by hand, equations | Work it |
+| Slate | see it run | Watch it move, In code | |
+| Terracotta | traps | Traps, Watch out, Common trap | Spot the error |
+| Teal | connect | Go deeper, Before this chapter, Why this matters | Transfer |
+| Charcoal | the one thing to remember (and one-off headings) | | |
+
+- The tokens are `--role-*` on `:root` in `assets/base.css` (light and dark), scoped to
+  `body.lesson`; other pages keep their own look.
+- A section heading's role comes from its icon: `H2_ROLE` in `_build/build.py` maps it, and
+  the heading shows a solid role tile instead of the emoji. An icon not in the map gets the
+  neutral `core` tile. **A new recurring section type needs an entry there.**
+- Every white-on-role pair is WCAG AA in both themes; `print.css` forces the light palette
+  for colour printing and outlines the tiles for mono.
+
+## Quiz drills
+
+A mock quiz asks you to **recognise** the right answer. The drills make you **produce** it. Every
+concept a mock-quiz question tests is practised with the same four methods, on the lesson page
+that question points to, after the lesson:
+
+| Method | What you do |
+|---|---|
+| **Recall** | write it from a blank page, then check |
+| **Work it** | push real numbers through it by hand |
+| **Spot the error** | find the exact line where plausible working goes wrong |
+| **Transfer** | use it in a situation the lesson never showed |
+
+Every card ends with **Say it three ways**: the idea in one line, how a ten-year-old would think
+about it, and the terms in simple words. It sits behind its own reveal, after the answer.
+
+- Content: `_build/drill_c<C>w<N>.py` (one per week, keyed by the mock quiz's `qid`), helpers in
+  `_build/drillkit.py`. Add the module to `DRILL_MODULES` in `build.py`.
+- **Numbers are computed in the module at import time, never typed.**
+- The build refuses a drill whose `qid` no mock quiz defines, or a concept missing any of the
+  four methods.
+- The cards reuse the Active Mastery grid and `am.js` (done-state in `mls-am-<lesson slug>`).
+  `#am-<qid>-<method>` opens a card directly; each quiz question links to its drill, and each
+  drill links back to its question.
+- The map and the book index ignore the drill section, so they still describe the lessons.
+
+Done so far: **C1 W2** (10 concepts, 40 cards on 8 lesson pages).
+
 ## The nightly alarm
 
 A macOS LaunchAgent that plays a real sound at 22:00 every day.

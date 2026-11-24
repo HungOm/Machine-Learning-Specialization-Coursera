@@ -64,6 +64,12 @@ MOCK_MODULES = _shown_modules([
     "mock_c3w1", "mock_c3w2", "mock_c3w3",
 ])
 
+# quiz drills — every mock-quiz concept practised four ways, rendered inside the
+# lesson page the quiz question points to. A week without a module has none yet.
+DRILL_MODULES = _shown_modules([
+    "drill_c1w2",
+])
+
 # one gist page per week — the whole week as a single connected picture. Same
 # order as MODULES, and a week without a module here simply has no gist page yet.
 GIST_MODULES = _shown_modules([
@@ -484,7 +490,7 @@ def build_index_terms(weeks, flat):
         if not os.path.exists(path):
             continue
         h = open(path, encoding="utf-8").read()
-        body = h[h.find("<main"):]
+        body = _lesson_only(h[h.find("<main"):])
         for key in set(re.findall(r'data-g="([a-zA-Z0-9-]+)"', body)):
             where.setdefault(key, []).append(rec)
 
@@ -564,7 +570,7 @@ def build_map(weeks, flat):
         if not os.path.exists(path):
             continue
         html_text = open(path, encoding="utf-8").read()
-        body = html_text[html_text.find("<main"):]
+        body = _lesson_only(html_text[html_text.find("<main"):])
         for key in sorted(set(re.findall(r'data-g="([a-zA-Z0-9-]+)"', body))):
             tgt = teaches.get(key)
             if not tgt or tgt == rec["file"]:
@@ -712,9 +718,9 @@ PAGE = """<!doctype html>
 <script>window.GLOSS_UP="{up}";</script>
 <script src="{up}assets/gloss-data.js"></script>
 <script src="{up}assets/gloss.js"></script>
-<script src="{up}assets/reader.js"></script>
+<script src="{up}assets/reader.js"></script>{am_js}
 </head>
-<body data-slug="{slug}">
+<body class="lesson" data-slug="{slug}">
 <header class="topbar">
   <button class="btn" id="menu-toggle" aria-label="menu">☰</button>
   <a class="brand" href="{up}index.html">ML<span>·</span>notes</a>
@@ -2035,6 +2041,96 @@ broke, the page would show the error instead.</p></div>
 """
 
 
+# One colour = one kind of thinking, on every lesson and in the quiz drills.
+# The section icon says which kind a heading is; base.css draws the colour.
+H2_ROLE = {
+    "\u2753": "recall", "\u2705": "recall", "&#9998;": "recall", "\u270e": "recall",
+    "\U0001f388": "plain",
+    "\U0001f522": "math", "\U0001f524": "math", "\U0001f9ee": "math", "\U0001f52c": "math",
+    "\U0001f3ac": "see", "\U0001f4bb": "see", "\U0001f9f0": "see", "\U0001f9fe": "see",
+    "\U0001f573": "trap", "\U0001f573\ufe0f": "trap",
+    "\U0001f517": "link",
+}
+_H2_ICO = re.compile(r'<h2((?:\s[^>]*)?)><span class="ico">(.*?)</span>')
+
+
+def tag_h2_roles(body):
+    """Add data-role to every lesson section heading, from its icon. A one-off
+    icon gets the neutral "core" role, so every heading carries a tile and only
+    the recurring kinds of thinking carry a colour."""
+    def sub(m):
+        if "data-role" in m.group(1):
+            return m.group(0)
+        # a one-off heading is core lesson content: a neutral tile, no colour
+        role = H2_ROLE.get(m.group(2).strip(), "core")
+        return '<h2%s data-role="%s"><span class="ico">%s</span>' % (m.group(1), role, m.group(2))
+    return _H2_ICO.sub(sub, body)
+
+
+def _lesson_only(h):
+    """A lesson page's HTML without its appended quiz-drill section, so the map
+    and the book index describe the lesson and not the practice under it."""
+    i = h.find('<section id="active-mastery"')
+    if i < 0:
+        return h
+    j = h.find("</section>", i)
+    return h[:i] + h[j + len("</section>"):]
+
+
+def load_drills():
+    """Quiz drills, joined to the mock quizzes they come from.
+
+    Returns {lesson_file: [(qid, tag, drill), ...]} in quiz order, plus
+    {qid: lesson_file} for the quiz page's back-links. Refuses a drill whose qid
+    no mock quiz defines, and a concept missing any of the four methods: the
+    whole point is that every concept gets every method.
+    """
+    import drillkit
+    importlib.reload(drillkit)
+    qinfo = {}
+    for mname in MOCK_MODULES:
+        try:
+            mod = importlib.import_module(mname)
+        except ModuleNotFoundError:
+            continue
+        for q in mod.SET["questions"]:
+            qinfo[q["qid"]] = (q["lesson"], q["tag"], mod.SET)
+    by_lesson, by_qid = {}, {}
+    for mname in DRILL_MODULES:
+        try:
+            mod = importlib.import_module(mname)
+        except ModuleNotFoundError:
+            continue
+        importlib.reload(mod)
+        for d in mod.DRILLS:
+            assert d["qid"] in qinfo, "drill %s: no mock question has that qid" % d["qid"]
+            for k in drillkit.METHODS:
+                assert d.get(k), "drill %s: missing method %r" % (d["qid"], k)
+            lesson, tag, S = qinfo[d["qid"]]
+            by_lesson.setdefault(lesson, []).append((d["qid"], tag, d, S))
+            by_qid[d["qid"]] = lesson
+    return by_lesson, by_qid
+
+
+def drill_block(concepts):
+    """The appended drills section for one lesson page."""
+    import drillkit, masterykit
+    S = concepts[0][3]
+    href = "../quiz/%s%s.html" % (S["course"].lower(), S["week"])
+    label = "%s W%s mock quiz" % (S["course"], S["week"])
+    trimmed = [(q, t, d) for q, t, d, _ in concepts]
+    return "\n" + masterykit.render(dict(
+        cls="qd-root",
+        kicker="Quiz drills",
+        title="Every quiz concept, four ways",
+        lede=drillkit.lede(trimmed, href, label),
+        rule=("Everything above is the lesson, unchanged. The quiz asks you to "
+              "<b>recognise</b> the right answer; every card below asks you to "
+              "<b>produce</b> it. <b>Answers stay hidden until you commit</b>, and each "
+              "card ends with the idea said three ways."),
+        sections=drillkit.cards(trimmed, href)))
+
+
 def build_mock(weeks, flat):
     """One graded-format quiz per week, marked in the browser.
 
@@ -2056,6 +2152,7 @@ def build_mock(weeks, flat):
     files = ["quiz/%s%s.html" % (S["course"].lower(), S["week"]) for S in sets]
     total_q = sum(len(S["questions"]) for S in sets)
 
+    _, drilled = load_drills()
     for i, S in enumerate(sets):
         slug = "%s%s" % (S["course"].lower(), S["week"])
         qs = []
@@ -2074,11 +2171,16 @@ def build_mock(weeks, flat):
             tag = ('<span class="mq-tag">%s</span>' % html.escape(q["tag"])) if q["tag"] else ""
             note = ('<p class="mq-note"><span class="lbl">What this is really testing</span>%s</p>'
                     % q["note"]) if q["note"] else ""
+            drill = ('<p class="mq-drill"><a href="../%s#am-%s-recall">&#9881; Drill this '
+                     'concept four ways &#8594;</a></p>' % (drilled[q["qid"]], q["qid"])
+                     ) if q["qid"] in drilled else ""
+            anchor = (' id="q-%s"' % q["qid"]) if q["qid"] in drilled else ""
             qs.append(
-                '<li class="mq" data-qid="%s" data-lesson="%s">'
+                '<li class="mq"%s data-qid="%s" data-lesson="%s">'
                 '<p class="mq-n">%s%s</p><div class="mq-ask">%s</div>'
-                '<ul class="mq-opts">%s</ul>%s</li>'
-                % (q["qid"], q["lesson"], tag, multi, q["ask"], "".join(opts), note))
+                '<ul class="mq-opts">%s</ul>%s%s</li>'
+                % (anchor, q["qid"], q["lesson"], tag, multi, q["ask"], "".join(opts), note,
+                   drill))
 
         prev = ('<a class="prev" href="../%s"><span class="dir">&#8249; previous</span>'
                 '<span class="ttl">%s W%s quiz</span></a>'
@@ -3066,6 +3168,8 @@ def build():
     flat = flatten(weeks)
     n_pages = 0
     qcount = {}
+    drills, _ = load_drills()
+    n_drill_pages = n_drill_cards = 0
     for i, rec in enumerate(flat):
         w, L = rec["week"], rec["L"]
         depth = 1  # every lesson lives one directory deep
@@ -3099,6 +3203,14 @@ def build():
                              + body_html)
             if rec["n"] == week_len:
                 body_html += kit.chapter_close(ch["q"])
+        # quiz drills: appended after the lesson's own content, never inside it
+        am_js = ""
+        if rec["file"] in drills:
+            body_html += drill_block(drills[rec["file"]])
+            am_js = '\n<script src="{up}assets/am.js" defer></script>'.format(up=up)
+            n_drill_pages += 1
+            n_drill_cards += 4 * len(drills[rec["file"]])
+        body_html = tag_h2_roles(body_html)
         body_html, nq = tag_quiz(body_html, rec["slug"])
         qcount[rec["slug"]] = nq
         page = PAGE.format(
@@ -3116,6 +3228,7 @@ def build():
             next=pager_link(nxt, depth, "next"),
             up=up,
             widgets="w-%s%s.js" % (w["course"].lower(), "w%s" % w["week"]),
+            am_js=am_js,
         )
         wr(os.path.join(ROOT, rec["file"]), page)
         n_pages += 1
@@ -3153,6 +3266,9 @@ def build():
               % (len(torn), ", ".join(torn[:6])))
     print("built %d lesson pages + index + review + reference  (%d weeks, %d cards)"
           % (n_pages, len(weeks), len(cards)))
+    if n_drill_pages:
+        print("       + quiz drills: %d cards on %d lesson pages (4 methods per quiz concept)"
+              % (n_drill_cards, n_drill_pages))
     print("       + symbols.html (%d symbols)" % n_sym)
     print("       + search index (%d entries, %d KB)" % (n_idx, idx_bytes // 1024))
     print("       + meta.js (%d quiz questions tagged)" % n_q)
