@@ -68,6 +68,7 @@ MOCK_MODULES = _shown_modules([
 # lesson page the quiz question points to. A week without a module has none yet.
 DRILL_MODULES = _shown_modules([
     "drill_c1w1", "drill_c1w2", "drill_c1w3",
+    "drill_c2w1", "drill_c2w2", "drill_c2w3", "drill_c2w4",
 ])
 
 # one gist page per week — the whole week as a single connected picture. Same

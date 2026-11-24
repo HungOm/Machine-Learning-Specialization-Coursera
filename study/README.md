@@ -335,7 +335,8 @@ about it, and the terms in simple words. It sits behind its own reveal, after th
   drill links back to its question.
 - The map and the book index ignore the drill section, so they still describe the lessons.
 
-Done so far: **all of Course 1** &mdash; C1 W1, W2, W3 (30 concepts, 120 cards on 27 lesson pages).
+Done so far: **all of Course 1 and Course 2** &mdash; C1 W1&ndash;W3 and C2 W1&ndash;W4 (70 concepts,
+280 cards on 65 lesson pages).
 
 ## The nightly alarm
 
